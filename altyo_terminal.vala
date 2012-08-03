@@ -482,9 +482,6 @@ public class VTTerminal : Object{
 			this.vte_term.set_background_saturation (sat);
 		}
 
-//~ 		font_description.from_string (my_conf.get_string("tab_button_font","Mono 12")) ;
-//~ 		this.tbutton.label.override_font(font_description);//tab text
-
 		/*Gdk.RGBA c = Gdk.RGBA();
 		c.parse(my_conf.get_string("tab_button_color_normal","#00FF00"));
 		//this.tbutton.override_color(StateFlags.NORMAL , c);

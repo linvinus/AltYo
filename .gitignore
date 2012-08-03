@@ -5,3 +5,4 @@ syntax: glob
 *.lst
 .svn
 /altyo
+/hardcopy.0

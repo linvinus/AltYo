@@ -243,6 +243,9 @@ public class VTMainWindow : Window{
 
 		this.conf.on_load.connect(()=>{
 			this.reconfigure();
+			this.configure_position();
+			this.update_position_size();
+			this.update_events();
 			});
 	}//CreateVTWindow
 
@@ -416,6 +419,20 @@ public class VTMainWindow : Window{
 
 	}
 
+	public void update_position_size(){
+				if(this.orig_maximized){
+						this.maximized = true;
+						this.tasks_notebook.set_size_request(orig_w_note,orig_h_note);
+						this.maximize();
+					}else{
+						this.tasks_notebook.set_size_request(this.orig_w,this.orig_h);
+						this.set_default_size(this.orig_w,this.orig_h);
+						this.resize (this.orig_w,this.orig_h);
+						this.move (this.orig_x,this.orig_y);
+						this.queue_resize_no_redraw();
+					}
+	}
+	
 	public bool on_pull_down(){
 
 			this.pull_step++;
@@ -429,16 +446,7 @@ public class VTMainWindow : Window{
 				this.pull_animation_active=false;
 				this.current_state=WStates.VISIBLE;
 				this.pixwin.get_child().reparent(this);//reparent from offscreen window
-
-				if(this.orig_maximized){
-						this.maximized = true;
-						this.tasks_notebook.set_size_request(orig_w_note,orig_h_note);
-						this.maximize();
-					}else{
-						this.set_default_size(this.orig_w,this.orig_h);
-						this.resize (this.orig_w,this.orig_h);
-						this.move (this.orig_x,this.orig_y);
-					}
+				this.update_position_size();
 				this.window_set_active();
 				return false;
 			}
@@ -451,15 +459,7 @@ public class VTMainWindow : Window{
 			this.move (this.orig_x ,this.orig_y);
 			this.current_state=WStates.VISIBLE;
 			this.update_events();
-				if(this.orig_maximized){
-						this.maximized = true;
-						this.tasks_notebook.set_size_request(orig_w_note,orig_h_note);
-						this.maximize();
-					}else{
-						this.set_default_size(this.orig_w,this.orig_h);
-						this.resize (this.orig_w,this.orig_h);
-						this.move (this.orig_x,this.orig_y);
-					}
+			this.update_position_size();
 			this.update_events();
 			this.window_set_active();
 			this.update_events();
@@ -1112,15 +1112,15 @@ public class VTMainWindow : Window{
 
 			if(!this.maximized){
 				debug ("hvbox_size_changed w=%d h=%d  task_w=%d task_h=%d term_h=%d",width,height,this.tasks_notebook.get_allocated_width(),this.tasks_notebook.get_allocated_height(),this.terminal_height) ;
-				
+	
 				if(this.tasks_notebook.get_allocated_width() != width || this.tasks_notebook.get_allocated_height() > this.terminal_height+1){
 					this.tasks_notebook.set_size_request(this.terminal_width,this.terminal_height);
 					this.tasks_notebook.queue_resize_no_redraw();
 				}
-					
+				
 				var should_be_h = this.terminal_height+height + (this.search_hbox.get_visible()?this.search_hbox.get_allocated_height():0);
 				if(this.get_allocated_height()>should_be_h+2 && !this.maximized){
-					this.configure_position();
+					//this.configure_position();
 					this.set_default_size(this.orig_w,should_be_h);
 					this.resize (this.orig_w,should_be_h);
 					this.move (this.orig_x,this.orig_y);

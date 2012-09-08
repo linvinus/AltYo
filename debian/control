@@ -9,7 +9,7 @@ Homepage: http://linvinus.ru
 #Vcs-Browser: http://git.debian.org/?p=collab-maint/altyo.git;a=summary
 
 Package: altyo
-Architecture: all
+Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: AltYo - tilda analog (terminal emulator with first person shooter console likeness)
  AltYo - tilda analog (terminal emulator with first person shooter console likeness) , with many improvements, is written in vala, depends on libvte, gtk3. Supports multi-line tabs, support DnD tabs, fully customisable via text file.

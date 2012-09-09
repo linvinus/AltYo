@@ -243,9 +243,11 @@ public class VTMainWindow : Window{
 
 		this.conf.on_load.connect(()=>{
 			this.reconfigure();
-			this.configure_position();
-			this.update_position_size();
-			this.update_events();
+			if(this.current_state==WStates.VISIBLE){
+				this.configure_position();
+				this.update_position_size();
+				this.update_events();
+			}
 			});
 	}//CreateVTWindow
 

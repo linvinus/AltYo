@@ -210,7 +210,9 @@ public class HVBox : Container {
 		var dnd_done = false;
 		var allocation = Gtk.Allocation();//don't use new for struct
 		var width = this.get_allocated_width();
-
+		Gtk.StyleContext style_context = this.get_style_context();
+		Gtk.Border border=style_context.get_border(StateFlags.NORMAL);
+		
 		allocation.x=0;
 		allocation.y=0;
 		allocation.height=0;
@@ -221,7 +223,7 @@ public class HVBox : Container {
 		for (item_it = this.children; !dnd_done && item_it != null; item_it = item_it.next) {
 
 			end_of_line=item_it;
-			line_h = get_line_height(ref end_of_line, width,false);
+			line_h = get_line_height(ref end_of_line, width-border.left-border.right,false);
 			if((allocation.y+line_h)>y){
 				allocation.x = 0 ;//start of the line
 				allocation.height=line_h;//base height for line
@@ -491,12 +493,14 @@ public class HVBox : Container {
 
 		unowned List<HVBoxItem> item_it=null;
 		unowned List<HVBoxItem> end_of_line=null;
+		Gtk.StyleContext context = this.get_style_context();
+		Gtk.Border border=context.get_border(StateFlags.NORMAL);
 		for (item_it = this.children; item_it != null; item_it = item_it.next) {
 
 			end_of_line=item_it;
-			minimum_height += get_line_height(ref end_of_line, width,false);
+			minimum_height += get_line_height(ref end_of_line, width-border.left-border.right,false);
 			end_of_line=item_it;
-			natural_height +=  get_line_height(ref end_of_line,width,true);
+			natural_height +=  get_line_height(ref end_of_line,width-border.left-border.right,true);
 			item_it = end_of_line;
 		}
 
@@ -729,7 +733,7 @@ public class HVBox : Container {
 				unowned Widget widget = item.widget;
 				allocation.width+=item.widget.get_allocated_width();
 			}
-
+			render_background(context,cr, allocation.x, allocation.y,allocation.width+border.left+border.right, allocation.height+border.top+border.bottom);
 			//calculate every line width and height
 			arr_h += allocation.height;
 			arr_w += allocation.width;

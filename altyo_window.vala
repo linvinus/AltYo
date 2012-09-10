@@ -726,8 +726,8 @@ public class VTMainWindow : Window{
 	}
 
 	public void ShowQuitDialog(){
-			var dialog = new MessageDialog (null, (DialogFlags.DESTROY_WITH_PARENT | DialogFlags.MODAL), MessageType.QUESTION, ButtonsType.YES_NO, "Really quit?");
-			var checkbox = new CheckButton.with_label("Save session?");
+			var dialog = new MessageDialog (null, (DialogFlags.DESTROY_WITH_PARENT | DialogFlags.MODAL), MessageType.QUESTION, ButtonsType.YES_NO, _("Really quit?"));
+			var checkbox = new CheckButton.with_label(_("Save session?"));
 			checkbox.active=this.save_session;
 			var dialog_box = ((Gtk.ButtonBox)dialog.get_action_area ());
 			dialog_box.pack_start(checkbox,false,false,0);
@@ -975,28 +975,28 @@ public class VTMainWindow : Window{
 	
 
 		/* Add New Tab on <Ctrl><Shift>t */
-		this.add_window_accel("terminal_add_tab", "Add Tab", "Open new tab", Gtk.Stock.NEW,"<Control><Shift>T",()=>{
+		this.add_window_accel("terminal_add_tab", _("Add Tab"), _("Open new tab"), Gtk.Stock.NEW,"<Control><Shift>T",()=>{
 			this.add_tab();
 		});
 		
         /* Close Current Tab on <Ctrl><Shift>w */
-		this.add_window_accel("terminal_close_tab", "Close Tab", "Close current tab", Gtk.Stock.CLOSE,"<Control><Shift>W",()=> {
+		this.add_window_accel("terminal_close_tab", _("Close Tab"), _("Close current tab"), Gtk.Stock.CLOSE,"<Control><Shift>W",()=> {
             this.close_tab(this.hvbox.children_index(this.active_tab));
         });
 
         /* Go to Next Tab on <Ctrl>Page_Down */
-		this.add_window_accel("terminal_tab_next", "Next tab", "Switch to next tab", Gtk.Stock.GO_FORWARD,"<Control>Page_Down",()=> {
+		this.add_window_accel("terminal_tab_next", _("Next tab"), _("Switch to next tab"), Gtk.Stock.GO_FORWARD,"<Control>Page_Down",()=> {
             this.tab_next();
         });
 
         /* Go to Prev Tab on <Ctrl>Page_Up */
-		this.add_window_accel("terminal_tab_prev", "Previous tab", "Switch to previous tab", Gtk.Stock.GO_BACK,"<Control>Page_Up",()=> {
+		this.add_window_accel("terminal_tab_prev", _("Previous tab"), _("Switch to previous tab"), Gtk.Stock.GO_BACK,"<Control>Page_Up",()=> {
             this.tab_prev();
         });
 
 		/* Change page 1..9 0 */
         for(var i=1;i<11;i++){
-			this.add_window_accel("terminal_switch_tab%d".printf(i), "Switch to tab %d".printf(i), "Switch to tab %d".printf(i), null,"<Alt>%d".printf((i==10?0:i)),(a)=> {
+			this.add_window_accel("terminal_switch_tab%d".printf(i), _("Switch to tab %d").printf(i), _("Switch to tab %d").printf(i), null,"<Alt>%d".printf((i==10?0:i)),(a)=> {
 					//"a" - is action, get index from action name,
 					//because "i" is unavailable in action callback
 					var s=a.name.replace("terminal_switch_tab","");
@@ -1007,33 +1007,34 @@ public class VTMainWindow : Window{
 			});
 		}
 
-		/* Copy on <Ctrl><Shift>с */
-		this.add_window_accel("terminal_copy_text", "Copy", "Copy selected text", Gtk.Stock.COPY,"<Control><Shift>C",()=> {
+		///* Copy on <Ctrl><Shift>с */
+		
+		this.add_window_accel("terminal_copy_text",_("Copy"), _("Copy selected text"), Gtk.Stock.COPY,"<Control><Shift>C",()=> {
             this.ccopy();
         });
 
 		/* Paste on <Ctrl><Shift>v */
-		this.add_window_accel("terminal_paste_text", "Paste", "Paste from prymary clipboard", Gtk.Stock.PASTE,"<Control><Shift>V",()=> {
+		this.add_window_accel("terminal_paste_text", _("Paste"), _("Paste from prymary clipboard"), Gtk.Stock.PASTE,"<Control><Shift>V",()=> {
             this.cpaste();
         });
 
 		/* Find on <Ctrl><Shift>f */
-		this.add_window_accel("terminal_search_dialog", "Search", "Search", Gtk.Stock.FIND,"<Control><Shift>F",()=> {
+		this.add_window_accel("terminal_search_dialog", _("Search"), _("Search"), Gtk.Stock.FIND,"<Control><Shift>F",()=> {
             this.search_show();
         });
 
 		/* QuickLIst <Ctrl><Shift>d */
-		this.add_window_accel("altyo_toogle_quick_list", "Show/Hide Quick list", "Show/Hide Quick list", Gtk.Stock.QUIT,"<Control><Shift>D",()=> {
+		this.add_window_accel("altyo_toogle_quick_list", _("Show/Hide Quick list"), _("Show/Hide Quick list"), Gtk.Stock.QUIT,"<Control><Shift>D",()=> {
 			if(this.tasks_notebook.get_current_page() == TASKS.TERMINALS)
 				this.tasks_notebook.set_current_page(TASKS.QLIST);
 			else
 				this.tasks_notebook.set_current_page(TASKS.TERMINALS);
         });
         
-		this.add_window_toggle_accel("follow_the_mouse", "Follow the mouse", "Follow the mouse", Gtk.Stock.EDIT,"",()=> {
+		this.add_window_toggle_accel("follow_the_mouse", _("Follow the mouse"), _("Follow the mouse"), Gtk.Stock.EDIT,"",()=> {
 				this.mouse_follow = !this.mouse_follow;
         });
-		this.add_window_accel("open_settings", "Settings", "Settings", Gtk.Stock.EDIT,"",()=> {
+		this.add_window_accel("open_settings", _("Settings"), _("Settings"), Gtk.Stock.EDIT,"",()=> {
 				this.conf.save(true);//force save before edit
 				VTTerminal vt;
 				string editor = conf.get_string("text_editor_command","");
@@ -1063,24 +1064,24 @@ public class VTMainWindow : Window{
 					});
 				vt.auto_restart=false;
 				var tab_index =  this.children.index(vt)+1;
-				vt.tbutton.set_title(tab_index, "AltYo Settings" );
+				vt.tbutton.set_title(tab_index, _("AltYo Settings") );
         });
         
         
 
 		/* Quit on <Ctrl><Shift>q */
-		this.add_window_accel("altyo_exit", "Exit from AltYo", "Exit from AltYo", Gtk.Stock.QUIT,"<Control><Shift>Q",()=> {
+		this.add_window_accel("altyo_exit", _("Exit from AltYo"), _("Exit from AltYo"), Gtk.Stock.QUIT,"<Control><Shift>Q",()=> {
 			this.ShowQuitDialog();
         });
 
    		/* Show/hide main window on <Alt>grave
    		 * add main_hotkey just to be able show it in popup menu*/
-		this.add_window_accel("main_hotkey", "Show/Hide AltYo", "Show/Hide AltYo", Gtk.Stock.GO_UP,"<Alt>grave",()=>{
+		this.add_window_accel("main_hotkey", _("Show/Hide AltYo"), _("Show/Hide AltYo"), Gtk.Stock.GO_UP,"<Alt>grave",()=>{
 			this.toogle_widnow();
 		});
 
 		/* Add New Tab on <Ctrl><Shift>t */
-		this.add_window_accel("altyo_help", "Show Keybindings/About", "Show Keybindings/About", Gtk.Stock.NEW,"F1",()=>{
+		this.add_window_accel("altyo_help", _("Show Keybindings/About"), _("Show Keybindings/About"), Gtk.Stock.NEW,"F1",()=>{
 			this.ShowHelp();
 		});
 
@@ -1226,7 +1227,7 @@ public class VTMainWindow : Window{
 			}
 
 
-		this.search_wrap_around = new CheckButton.with_label("search wrap_around");
+		this.search_wrap_around = new CheckButton.with_label(_("search wrap_around"));
 		this.search_wrap_around.clicked.connect(()=>{
 			unowned VTTerminal vtt = ((VTTerminal)this.active_tab.object);
 			vtt.vte_term.search_set_wrap_around(this.search_wrap_around.active);
@@ -1235,7 +1236,7 @@ public class VTMainWindow : Window{
 		this.search_wrap_around.show();
 		this.search_hbox.pack_start(this.search_wrap_around,false,false,0);
 
-		this.search_match_case = new CheckButton.with_label("Match case");
+		this.search_match_case = new CheckButton.with_label(_("Match case"));
 		this.search_match_case.clicked.connect(()=>{
 			unowned VTTerminal vtt = ((VTTerminal)this.active_tab.object);
 			vtt.match_case=this.search_match_case.active;

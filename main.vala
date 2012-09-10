@@ -98,6 +98,11 @@ static void configure_debug(MySettings conf){
 
 int main (string[] args) {
 
+	Intl.setlocale (LocaleCategory.ALL, "");
+	Intl.bindtextdomain (GETTEXT_PACKAGE, null);
+	Intl.bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+	Intl.textdomain (GETTEXT_PACKAGE);
+
 	Gtk.init (ref args);
 	string[] args2=args;//copy args for local usage
 
@@ -134,7 +139,7 @@ int main (string[] args) {
 			} catch (Error e) {
 					GLib.stderr.printf("Error initializing: %s\n", e.message);
 			}
-			GLib.stderr.printf("app.command_line.connect reload=%d",(int)reload);
+			debug("app.command_line.connect reload=%d",(int)reload);
 			if(reload){
 				unowned List<weak Window> list = app.get_windows();
 				if(list!=null)

@@ -143,6 +143,7 @@ public class VTMainWindow : Window{
 		this.terms_notebook = new Notebook() ;
 		this.terms_notebook.name="terms_notebook";
 		this.terms_notebook.set_show_tabs(false);//HVBox will have tabs ;)
+		
 		//this.terms_notebook.set_show_border(false);
 
 		this.tasks_notebook = new Notebook();
@@ -266,6 +267,7 @@ public class VTMainWindow : Window{
 	
 	public void reconfigure(){
 		debug("reconfigure");
+		this.terms_notebook.set_scrollable(this.conf.get_boolean("terminal_show_scrollbar",true));
 		var css_main = new CssProvider ();
 		string style_str= ""+
 					 "VTToggleButton,VTToggleButton GtkLabel  {font: Mono 10; -GtkWidget-focus-padding: 0px;  -GtkButton-default-border:0px; -GtkButton-default-outside-border:0px; -GtkButton-inner-border:0px; border-width: 0px; -outer-stroke-width: 0px; border-radius: 0px; border-style: solid;  background-image: none; margin:0px; padding:1px 1px 0px 1px; background-color: #000000; color: #AAAAAA; transition: 0ms ease-in-out;}"+

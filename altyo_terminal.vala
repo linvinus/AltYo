@@ -264,7 +264,6 @@ public class VTTerminal : Object{
 
 
 		this.vte_term = new Vte.Terminal();
-
 		/*this.vte_term.size_allocate.connect((allocation)=>{
 			debug("[screen %p] size-alloc   %d : %d at (%d, %d)\n",
                          this.vte_term, allocation.width, allocation.height, allocation.x, allocation.y);
@@ -425,6 +424,9 @@ public class VTTerminal : Object{
 
 		this.vte_term.set_font(font_description);//same color for terminal
 
+		
+		//debian patch vte_terminal_set_alternate_screen_scroll
+		this.vte_term.set_alternate_screen_scroll(my_conf.get_boolean("terminal_set_alternate_screen_scroll",true));
 
 		this.vte_term.set_scrollback_lines (my_conf.get_integer("terminal_scrollback_lines",512));
 

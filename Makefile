@@ -29,7 +29,7 @@ source:
 clean:
 	rm *.c *.h || true
 
-install:
+install: gen_po
 	test -z "$(DESTDIR)$(PREFIX)/bin" || mkdir -p "$(DESTDIR)$(PREFIX)/bin";
 	cp -a ./$(PRG_NAME) $(DESTDIR)$(PREFIX)/bin
 	test -z "$(DESTDIR)$(PREFIX)/share/applications" || mkdir -p "$(DESTDIR)$(PREFIX)/share/applications";

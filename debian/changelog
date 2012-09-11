@@ -1,3 +1,9 @@
+altyo (0.2~120911-linvinus1) precise; urgency=low
+
+  * git-buildpackage
+
+ -- denis <linvinus@gmail.com>  Tue, 11 Sep 2012 20:57:11 +0400
+
 altyo (0.2~120910~precise~linvinus2) precise; urgency=low
 
   * added scroll options

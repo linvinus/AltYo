@@ -42,3 +42,6 @@ gen_po:
 	xgettext -o ./po/altyo.po --from-code=UTF-8 -language=C -k_ $(VALA_FILES)
 	msgmerge -s -U ./po/ru/LC_MESSAGES/$(PRG_NAME).po  ./po/$(PRG_NAME).po
 	msgfmt -c -v -o ./po/ru/LC_MESSAGES/$(PRG_NAME).mo ./po/ru/LC_MESSAGES/$(PRG_NAME).po
+
+source-package:
+	git-buildpackage --git-upstream-tree=branch --git-upstream-branch=master -rfakeroot -S -sa

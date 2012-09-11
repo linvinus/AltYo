@@ -109,7 +109,9 @@ namespace Vte {
 		public void set_scroll_background (bool scroll);
 		public void set_scroll_on_keystroke (bool scroll);
 		public void set_scroll_on_output (bool scroll);
+		#if ALTERNATE_SCREEN_SCROLL
 		public void set_alternate_screen_scroll (bool scroll);
+		#endif
 		public void set_scrollback_lines (long lines);
 		public void set_size (long columns, long rows);
 		public void set_visible_bell (bool is_visible);

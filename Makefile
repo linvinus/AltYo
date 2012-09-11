@@ -5,6 +5,7 @@ VALA_FLAGS += --disable-warnings
 VALA_FLAGS += -X -DGETTEXT_PACKAGE=\"$(PRG_NAME)\" -X -DVERSION=\"0.2\"
 #\ -I.\ -include\ "./config.h" -v
 #VALA_FLAGS += --pkg gnome-keyring-1 -D HAVE_QLIST
+VALA_FLAGS += -D ALTERNATE_SCREEN_SCROLL
 VALA_FLAGS += --vapidir ./vapi --pkg gtk+-3.0 --pkg vte-2.90 --pkg gee-1.0 --pkg gdk-x11-3.0 --pkg cairo --pkg posix 
 #DESTDIR?=
 PREFIX?=/usr

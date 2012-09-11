@@ -426,9 +426,10 @@ public class VTTerminal : Object{
 
 		this.vte_term.set_font(font_description);//same color for terminal
 
-		
+		#if ALTERNATE_SCREEN_SCROLL
 		//debian patch vte_terminal_set_alternate_screen_scroll
 		this.vte_term.set_alternate_screen_scroll(my_conf.get_boolean("terminal_set_alternate_screen_scroll",true));
+		#endif
 
 		this.vte_term.set_scrollback_lines (my_conf.get_integer("terminal_scrollback_lines",512));
 

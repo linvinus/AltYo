@@ -17,7 +17,9 @@
 
 using Gtk;
 using Vte;
+#if HAVE_QLIST
 using GnomeKeyring;
+#endif
 
 public delegate void OnChildExitCallBack(VTTerminal vt);
 
@@ -662,7 +664,7 @@ public class VTTerminal : Object{
 	}
 
 	public void try_run_command(owned TildaAuth tauth){
-
+	#if HAVE_QLIST
 	if(tauth.password=="!"){
 		debug("find_network_password");
 		//GnomeKeyring.is_available()
@@ -742,6 +744,7 @@ public class VTTerminal : Object{
 		}//if GnomeKeyring.set_default_keyring_sync
 	}else
 		run_command(tauth);
+	#endif
 	}//try_run_command
 
 	public void run_command(TildaAuth tauth){

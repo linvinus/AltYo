@@ -181,10 +181,11 @@ public class VTMainWindow : Window{
 
 		//this.main_vbox.pack_start(this.tasks_notebook,true,true,0);//maximum size
 
-
+		#if HAVE_QLIST
 		var qlist = new QList(this.conf);
 		qlist.win_parent=this;
 		this.tasks_notebook.insert_page(qlist,null,TASKS.QLIST);
+		#endif
 
 		/*this.main_overlay = new MyOverlayBox();//Gtk.Overlay();
 		this.main_overlay.show();
@@ -239,8 +240,9 @@ public class VTMainWindow : Window{
 			});
 
 		//this.setup_keyboard_accelerators() ;
-
+		#if HAVE_QLIST
 		qlist.setup_keyboard_accelerators();
+		#endif
 
 		this.conf.on_load.connect(()=>{
 			this.reconfigure();
@@ -1026,12 +1028,14 @@ public class VTMainWindow : Window{
         });
 
 		/* QuickLIst <Ctrl><Shift>d */
+		#if HAVE_QLIST
 		this.add_window_accel("altyo_toogle_quick_list", _("Show/Hide Quick list"), _("Show/Hide Quick list"), Gtk.Stock.QUIT,"<Control><Shift>D",()=> {
 			if(this.tasks_notebook.get_current_page() == TASKS.TERMINALS)
 				this.tasks_notebook.set_current_page(TASKS.QLIST);
 			else
 				this.tasks_notebook.set_current_page(TASKS.TERMINALS);
         });
+        #endif
         
 		this.add_window_toggle_accel("follow_the_mouse", _("Follow the mouse"), _("Follow the mouse"), Gtk.Stock.EDIT,"",()=> {
 				this.mouse_follow = !this.mouse_follow;

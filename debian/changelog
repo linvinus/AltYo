@@ -1,3 +1,37 @@
+altyo (0.2~120910~precise~linvinus2) precise; urgency=low
+
+  * added scroll options
+
+ -- denis <linvinus@gmail.com>  Mon, 10 Sep 2012 20:49:01 +0400
+
+altyo (0.2~120910~precise~linvinus1) precise; urgency=low
+
+  * Russian localization.
+
+ -- denis <linvinus@gmail.com>  Mon, 10 Sep 2012 16:31:51 +0400
+
+altyo (0.2~120909~precise~linvinus3) precise; urgency=low
+
+  * altyo_window: update position and size on reload
+    altyo_window,hvbox: support alpha channel
+    hvbox: consider border size when calculate line width
+    altyo_window: improvements on maximize/unmaximize event
+    altyo_window: prevent crash on reload when main window hidden
+
+ -- denis <linvinus@gmail.com>  Sun, 09 Sep 2012 19:10:14 +0400
+
+altyo (0.1-1~precise~linvinus2) precise; urgency=low
+
+  * correct Architecture support to any
+
+ -- denis <linvinus@gmail.com>  Fri, 07 Sep 2012 23:45:52 +0400
+
+altyo (0.1-1~precise~linvinus1) precise; urgency=low
+
+  * upload to ppa
+
+ -- denis <linvinus@gmail.com>  Fri, 07 Sep 2012 15:20:13 +0400
+
 altyo (0.1-1) unstable; urgency=low
 
   * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>

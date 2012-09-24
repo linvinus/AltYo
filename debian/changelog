@@ -1,3 +1,10 @@
+altyo (0.2~120924-linvinus1) precise; urgency=low
+
+  * Fixed: serach focus bug
+  * Fixed: update search pattern when prev/next button are pressed
+
+ -- denis <linvinus@gmail.com>  Mon, 24 Sep 2012 11:28:16 +0400
+
 altyo (0.2~120911-linvinus1) precise; urgency=low
 
   * move to git-buildpackage

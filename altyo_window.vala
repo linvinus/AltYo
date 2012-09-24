@@ -1173,13 +1173,7 @@ public class VTMainWindow : Window{
 		//this callback
 		return true;
 	}*/
-
-	public void create_search_box(){
-		this.search_text_combo = new ComboBoxText.with_entry ();
-		((Entry)this.search_text_combo.get_child()).key_press_event.connect((event)=>{
-			unowned VTTerminal vtt = ((VTTerminal)this.active_tab.object);
-			var keyname = Gdk.keyval_name(event.keyval);
-			if( keyname == "Return"){
+	public void search_update_pattern(VTTerminal vtt){
 					string? s_pattern = null;
 					GLib.RegexCompileFlags cflags = 0;
 					if( vtt.vte_term.search_get_gregex() != null ){
@@ -1207,7 +1201,16 @@ public class VTMainWindow : Window{
 					if(needs_udatate){
 						var reg_exp = new GLib.Regex(new_pattern,cflags);
 						vtt.vte_term.search_set_gregex(reg_exp);
-					}
+					}	
+	}
+	
+	public void create_search_box(){
+		this.search_text_combo = new ComboBoxText.with_entry ();
+		((Entry)this.search_text_combo.get_child()).key_press_event.connect((event)=>{
+			unowned VTTerminal vtt = ((VTTerminal)this.active_tab.object);
+			var keyname = Gdk.keyval_name(event.keyval);
+			if( keyname == "Return"){
+					this.search_update_pattern(vtt);
 					vtt.vte_term.search_find_previous();
 					return true;
 				}else if( keyname == "Up" && (event.state & Gdk.ModifierType.CONTROL_MASK ) == Gdk.ModifierType.CONTROL_MASK ){
@@ -1257,6 +1260,7 @@ public class VTMainWindow : Window{
 		next_button.add(img);
 		next_button.clicked.connect(()=>{
 			unowned VTTerminal vtt = ((VTTerminal)this.active_tab.object);
+			this.search_update_pattern(vtt);
 			vtt.vte_term.search_find_previous();
 			});
 		next_button.show();
@@ -1267,6 +1271,7 @@ public class VTMainWindow : Window{
 		prev_button.add(img);
 		prev_button.clicked.connect(()=>{
 			unowned VTTerminal vtt = ((VTTerminal)this.active_tab.object);
+			this.search_update_pattern(vtt);
 			vtt.vte_term.search_find_next();
 			});
 		prev_button.show();
@@ -1305,9 +1310,11 @@ public class VTMainWindow : Window{
 	}
 
 	public void search_update(){
-		unowned VTTerminal vtt = ((VTTerminal)this.active_tab.object);
-		this.search_wrap_around.active=vtt.vte_term.search_get_wrap_around();
-		this.search_match_case.active=vtt.match_case;
+		if(this.search_hbox.visible){
+			unowned VTTerminal vtt = ((VTTerminal)this.active_tab.object);
+			this.search_wrap_around.active=vtt.vte_term.search_get_wrap_around();
+			this.search_match_case.active=vtt.match_case;
+		}
 		
 //~ 		Gdk.RGBA c = Gdk.RGBA();
 //~         c.parse("#AAAAAA");//black todo: make same color as vte

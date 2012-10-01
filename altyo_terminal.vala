@@ -51,6 +51,7 @@ public class VTToggleButton : Gtk.ToggleButton {
 	public unowned Object object;
 	public string tab_format  {get;set;}
 	public string tab_title_format  {get;set;}
+	public string[] tab_title_regex  {get;set;}
 	public string host_name {get;set;default = null;}
 
 	private string tab_title {get;set;default = null;}
@@ -162,37 +163,57 @@ public class VTToggleButton : Gtk.ToggleButton {
 		return false;
 	}
 
-	private bool RegexEvalCallback (MatchInfo match_info, StringBuilder result){
-		debug(" RegexEvalCallback %s %s",result.str,match_info.fetch(0));
-		result.append("<span font_weight='bold'>");
-		result.append(match_info.fetch(0));
-		result.append("</span>");
-		host_name=match_info.fetch(0);
-		return false;
-	}
 
 	public void set_title(int tab_index,string? title){
 		debug("set_title(%d,%s)",tab_index,title);
 		if(title!=null && title!="")
 			this.tab_title = title;
 		this.tab_index = tab_index;
-		string result="";
+		string result2="";
 		if((this.tab_title!=null && this.tab_title!="") ){
 			try{
-				var grx_host = new GLib.Regex("([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+)");
-				var reg_title=grx_host.replace_eval(this.tab_title,(ssize_t) this.tab_title.size(), 0,0, this.RegexEvalCallback );
+				GLib.Regex grx_arr;
+				string reg_title=this.tab_title; //GLib.Regex.escape_string(this.tab_title);
+				for(int i=0; i<this.tab_title_regex.length-1;i+=2){
+					grx_arr = new GLib.Regex(this.tab_title_regex[i]);
+					
+					reg_title=grx_arr.replace_eval(reg_title,(ssize_t) reg_title.size(),0,0, (match_info, result)=>{
+							debug(" RegexEvalCallback %s %s %d",result.str,match_info.fetch(0),match_info.get_match_count());
+							GLib.Regex grx;
+
+							if(Regex.match_simple(".*_REPLACE_.*",this.tab_title_regex[i+1])){
+								grx = new GLib.Regex(GLib.Regex.escape_string("_REPLACE_"));
+								result.append(grx.replace_literal(this.tab_title_regex[i+1],(ssize_t) this.tab_title_regex[i+1].size(), 0, match_info.fetch(match_info.get_match_count()-1)) );
+							}else
+							if(Regex.match_simple(".*_USER_.*",this.tab_title_regex[i+1])){
+								grx = new GLib.Regex(GLib.Regex.escape_string("_USER_"));
+								result.append(grx.replace_literal(this.tab_title_regex[i+1],(ssize_t) this.tab_title_regex[i+1].size(), 0, match_info.fetch(match_info.get_match_count()-1)) );
+							}else
+							if(Regex.match_simple(".*_HOSTNAME_.*",this.tab_title_regex[i+1])){
+								grx = new GLib.Regex(GLib.Regex.escape_string("_HOSTNAME_"));
+								result.append(grx.replace_literal(this.tab_title_regex[i+1],(ssize_t) this.tab_title_regex[i+1].size(), 0, match_info.fetch(match_info.get_match_count()-1)) );
+								this.host_name=match_info.fetch(0); 
+							}else
+							if(Regex.match_simple(".*_PATH_.*",this.tab_title_regex[i+1])){
+								grx = new GLib.Regex(GLib.Regex.escape_string("_PATH_"));
+								result.append(grx.replace_literal(this.tab_title_regex[i+1],(ssize_t) this.tab_title_regex[i+1].size(), 0, match_info.fetch(match_info.get_match_count()-1)) );
+							}
+							return false;
+						} );
+					//g_free(grx_arr);
+				}
 
 				var grx_index = new GLib.Regex(GLib.Regex.escape_string("_INDEX_"));
 				var grx_title = new GLib.Regex(GLib.Regex.escape_string("_TITLE_"));
-                result = grx_index.replace_literal(this.tab_title_format,(ssize_t) this.tab_title_format.size(), 0, tab_index.to_string() );
-                result = grx_title.replace_literal(result,(ssize_t) result.size(), 0, reg_title);
+                result2 = grx_index.replace_literal(this.tab_title_format,(ssize_t) this.tab_title_format.size(), 0, tab_index.to_string() );
+                result2 = grx_title.replace_literal(result2,(ssize_t) result2.size(), 0, reg_title);
 			}catch(GLib.RegexError e){
 				this.label.set_markup("TAB: Error in regexp");
 			}
 		}else{
 			try{
 				var grx_index = new GLib.Regex(GLib.Regex.escape_string("_INDEX_"));
-                result = grx_index.replace_literal(this.tab_format,(ssize_t) this.tab_title_format.size(), 0, tab_index.to_string() );
+                result2 = grx_index.replace_literal(this.tab_format,(ssize_t) this.tab_title_format.size(), 0, tab_index.to_string() );
 
 			}catch(GLib.RegexError e){
 				this.label.set_markup("TAB: Error in regexp");
@@ -203,7 +224,7 @@ public class VTToggleButton : Gtk.ToggleButton {
         Gdk.RGBA color_b = context.get_background_color(StateFlags.NORMAL);
 		this.markup_normal="<span foreground='#"+"%I02x".printf(((int)(color_f.red*255)))+"%I02x".printf(((int)(color_f.green*255)))+"%I02x".printf(((int)(color_f.blue*255)))+"' "+
 		"background='#"+"%I02x".printf(((int)(color_b.red*255)))+"%I02x".printf(((int)(color_b.green*255)))+"%I02x".printf(((int)(color_b.blue*255)))+"' "+
-		">"+result+"</span>";
+		">"+result2+"</span>";
 		//this.label.set_markup(this.markup_normal);
 
 		//var grx_prelight = new GLib.Regex(GLib.Regex.escape_string("foreground"));
@@ -212,13 +233,13 @@ public class VTToggleButton : Gtk.ToggleButton {
         color_b = context.get_background_color(StateFlags.ACTIVE);
 		this.markup_active="<span foreground='#"+"%I02x".printf(((int)(color_f.red*255)))+"%I02x".printf(((int)(color_f.green*255)))+"%I02x".printf(((int)(color_f.blue*255)))+"' "+
 		"background='#"+"%I02x".printf(((int)(color_b.red*255)))+"%I02x".printf(((int)(color_b.green*255)))+"%I02x".printf(((int)(color_b.blue*255)))+"' "+
-		">"+result+"</span>";
+		">"+result2+"</span>";
 
         color_f = context.get_color(StateFlags.PRELIGHT);
         color_b = context.get_background_color(StateFlags.PRELIGHT);
 		this.markup_prelight="<span foreground='#"+"%I02x".printf(((int)(color_f.red*255)))+"%I02x".printf(((int)(color_f.green*255)))+"%I02x".printf(((int)(color_f.blue*255)))+"' "+
 		"background='#"+"%I02x".printf(((int)(color_b.red*255)))+"%I02x".printf(((int)(color_b.green*255)))+"%I02x".printf(((int)(color_b.blue*255)))+"' "+
-		">"+result+"</span>";
+		">"+result2+"</span>";
 		//this.markup_prelight = result;//"<i>"+result+"</i>";
 
 		if(this.active)
@@ -252,6 +273,7 @@ public class VTTerminal : Object{
 		this.tbutton = new VTToggleButton();
 		this.tbutton.tab_format = my_conf.get_string("tab_format","[ _INDEX_ ]");
 		this.tbutton.tab_title_format = my_conf.get_string("tab_title_format","[_INDEX_: _TITLE_ ]");
+		this.tbutton.tab_title_regex = my_conf.get_string_list("tab_title_format_regex",{"^([\\w\\.]+)@","<span font_weight='bold' foreground='#EEEEEE'>_USER_</span>","([\\w\\.\\-]+):","@<span font_weight='bold' foreground='#FFF000'>_HOSTNAME_</span>:","([^:]*)$","<span>_PATH_</span>"});
 		this.tbutton.set_title(tab_index,null);
 		this.tbutton.can_focus=false;//vte shoud have focus
 		this.tbutton.can_default = false; //encrease size

@@ -1,3 +1,10 @@
+altyo (0.2~121001-linvinus1) precise; urgency=low
+
+  * added: regexp title - user,hostname,path
+  * added: --cfg command line option
+
+ -- denis <linvinus@gmail.com>  Mon, 01 Oct 2012 23:37:49 +0400
+
 altyo (0.2~120924-linvinus1) precise; urgency=low
 
   * Fixed: serach focus bug

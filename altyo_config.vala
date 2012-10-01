@@ -35,8 +35,11 @@ public class MySettings : Object {
 
 	public signal void on_load();
 
-	public MySettings(){
-		this.conf_file = GLib.Environment.get_user_config_dir()+"/altyo"+"/config.ini";
+	public MySettings(string? cmd_conf_file=null){
+		if(cmd_conf_file!=null)
+			this.conf_file = cmd_conf_file;
+		else
+			this.conf_file = GLib.Environment.get_user_config_dir()+"/altyo"+"/config.ini";
 		kf = new KeyFile();
 		this.load_config();
 	}

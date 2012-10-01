@@ -46,10 +46,13 @@ using Gtk;
 using Posix;
 
 bool reload = false;
+string? cmd_conf_file = null;
 
 static const OptionEntry[] options = {
                 { "reload", 'r', 0, OptionArg.NONE, ref reload,
                         "Reload configuration", null },
+                { "cfg", 'c', 0, OptionArg.FILENAME, ref cmd_conf_file,
+                        "Read configuration from file", null },
                 { null }
         };
 
@@ -152,7 +155,7 @@ int main (string[] args) {
 	app.startup.connect(()=>{//first run
 				debug("app.startup.connect");
 
-				var conf = new MySettings();
+				var conf = new MySettings(cmd_conf_file);
 
 				configure_debug(conf);
 				

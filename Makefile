@@ -45,4 +45,5 @@ gen_po:
 	msgfmt -c -v -o ./po/ru/LC_MESSAGES/$(PRG_NAME).mo ./po/ru/LC_MESSAGES/$(PRG_NAME).po
 
 source-package:
+	rm ./altyo || true
 	git-buildpackage --git-upstream-tree=branch --git-upstream-branch=master -rfakeroot -S -sa

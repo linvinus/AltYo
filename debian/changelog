@@ -1,3 +1,10 @@
+altyo (0.2~121002-linvinus1) precise; urgency=low
+
+  * added: regexp for mc title, changed default tab_title_format
+  * fix: tasks_notebook border color
+
+ -- denis <linvinus@gmail.com>  Tue, 02 Oct 2012 11:46:07 +0400
+
 altyo (0.2~121001-linvinus1) precise; urgency=low
 
   * added: regexp title - user,hostname,path

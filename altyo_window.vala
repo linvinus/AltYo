@@ -277,11 +277,11 @@ public class VTMainWindow : Window{
 					 "VTToggleButton:prelight {background-color: #AAAAAA; color: #000000; transition: 0ms ease-in-out;}"+
 					 "#OffscreenWindow {border-width: 0px 0px 0px 0px; -outer-stroke-width: 0px; border-radius: 0px 0px 0px 0px; border-style: solid;  background-image: none; margin:0px; padding:0px 0px 1px 0px; background-color: #000000; border-color: @bg_color; color: #000000;}"+
 					 "VTMainWindow {border-width: 0px; border-style: solid; background-color: alpha(#000000,0.1);}"+
-					 "#tasks_notebook {border-width: 0px 2px 0px 2px;border-color: @fg_color;border-style: solid;}"+
+					 "GtkNotebook {border-width: 0px 0px 0px 0px; -outer-stroke-width: 0px; border-radius: 0px 0px 0px 0px; border-style: solid;  background-image: none; margin:0px; padding:0px 0px 1px 0px; background-color: #000000; border-color: @bg_color; color: #000000;}"+
+					 "#tasks_notebook {border-width: 0px 2px 0px 2px;border-color: #3C3B37;border-style: solid;}"+
 					 "#search_hbox :active {background-color: #151515; border-color: @fg_color; color: #FF0000;}"+
 					 "#search_hbox {border-width: 0px 0px 0px 0px; -outer-stroke-width: 0px; border-radius: 0px 0px 0px 0px; border-style: solid;  background-image: none; margin:0px; padding:0px 0px 1px 0px; background-color: #000000; border-color: @bg_color; color: #00FFAA;}"+
 					 "HVBox {border-width: 0px 2px 2px 2px; border-color: #3C3B37;border-style: solid; background-color: #000000;}"+
-					 "GtkNotebook {border-width: 0px 0px 0px 0px; -outer-stroke-width: 0px; border-radius: 0px 0px 0px 0px; border-style: solid;  background-image: none; margin:0px; padding:0px 0px 1px 0px; background-color: #000000; border-color: @bg_color; color: #000000;}"+
 					 "";
 		css_main.parsing_error.connect((section,error)=>{
 			debug("css_main.parsing_error %s",error.message);

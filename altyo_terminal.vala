@@ -272,8 +272,8 @@ public class VTTerminal : Object{
 			this.on_child_exit=on_child_exit;
 		this.tbutton = new VTToggleButton();
 		this.tbutton.tab_format = my_conf.get_string("tab_format","[ _INDEX_ ]");
-		this.tbutton.tab_title_format = my_conf.get_string("tab_title_format","[_INDEX_: _TITLE_ ]");
-		this.tbutton.tab_title_regex = my_conf.get_string_list("tab_title_format_regex",{"^([\\w\\.]+)@","<span font_weight='bold' foreground='#EEEEEE'>_USER_</span>","([\\w\\.\\-]+):","@<span font_weight='bold' foreground='#FFF000'>_HOSTNAME_</span>:","([^:]*)$","<span>_PATH_</span>"});
+		this.tbutton.tab_title_format = my_conf.get_string("tab_title_format","<span foreground='#FFF000'>_INDEX_</span>/_TITLE_");
+		this.tbutton.tab_title_regex = my_conf.get_string_list("tab_title_format_regex",{"^(mc) \\[","<span>_REPLACE_ </span>","([\\w\\.]+)@","<span font_weight='bold' foreground='#EEEEEE'>_USER_</span>","([\\w\\.\\-]+)\\]?:","@<span font_weight='bold' foreground='#FFF000'>_HOSTNAME_</span>:","([^:]*)$","<span>_PATH_</span>"});
 		this.tbutton.set_title(tab_index,null);
 		this.tbutton.can_focus=false;//vte shoud have focus
 		this.tbutton.can_default = false; //encrease size

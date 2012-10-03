@@ -53,6 +53,7 @@ public class VTToggleButton : Gtk.ToggleButton {
 	public string tab_title_format  {get;set;}
 	public string[] tab_title_regex  {get;set;}
 	public string host_name {get;set;default = null;}
+	public bool do_not_sort  {get;set;default = false;}
 
 	private string tab_title {get;set;default = null;}
 	private int    tab_index {get;set;default = -1;}
@@ -192,7 +193,7 @@ public class VTToggleButton : Gtk.ToggleButton {
 							if(Regex.match_simple(".*_HOSTNAME_.*",this.tab_title_regex[i+1])){
 								grx = new GLib.Regex(GLib.Regex.escape_string("_HOSTNAME_"));
 								result.append(grx.replace_literal(this.tab_title_regex[i+1],(ssize_t) this.tab_title_regex[i+1].size(), 0, match_info.fetch(match_info.get_match_count()-1)) );
-								this.host_name=match_info.fetch(0); 
+								this.host_name=match_info.fetch(match_info.get_match_count()-1); 
 							}else
 							if(Regex.match_simple(".*_PATH_.*",this.tab_title_regex[i+1])){
 								grx = new GLib.Regex(GLib.Regex.escape_string("_PATH_"));
@@ -565,6 +566,18 @@ public class VTTerminal : Object{
 		menu.append(menuitem);
 		menuitem = (Gtk.MenuItem)acg.get_action("altyo_help").create_menu_item();
 		menu.append(menuitem);
+		if(vtw.tab_sort_order==TAB_SORT_ORDER.HOSTNAME){
+			var action_sort=acg.get_action("do_not_sort_tab") as ToggleAction;
+			if(action_sort.active!=this.tbutton.do_not_sort){
+				//invert value, becouse it will inverted after set_active
+				//Gtk.Action.block_activate don't working :(
+				this.tbutton.do_not_sort=!this.tbutton.do_not_sort;
+				action_sort.set_active(!this.tbutton.do_not_sort);
+			}
+
+			menuitem = (Gtk.MenuItem)acg.get_action("do_not_sort_tab").create_menu_item();
+			menu.append(menuitem);
+		}
 
 		menuitem = new Gtk.SeparatorMenuItem();
 		menu.append(menuitem);

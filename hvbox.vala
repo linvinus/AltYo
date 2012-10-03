@@ -676,6 +676,20 @@ public class HVBox : Container {
 			return null;
 
 	}
+	public void place_before(Widget before,Widget what){
+		unowned List<unowned HVBoxItem> item_it=null;
+		int b_index=this.children_index(before);
+		int w_index=this.children_index(what);
+		debug("place_before bef=%d what=%d\n",b_index,w_index);
+		if(b_index>=0 && w_index>=0){
+			debug("place_before bef=%d what=%d\n",b_index,w_index);
+			item_it= children.nth(b_index);
+			HVBoxItem bdata=children.nth_data(w_index) ;
+			this.children.remove(bdata);
+			this.children.insert_before(item_it,bdata);
+		}
+		//else{}//shouldnot happens!
+	}
 
 	/*public  new void propagate_draw (Gtk.Widget child, Cairo.Context cr) {
 		//draw line between child widgets

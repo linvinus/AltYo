@@ -37,6 +37,11 @@ public enum TASKS{
 	QLIST
 	}
 
+public enum TAB_SORT_ORDER{
+	NONE,
+	HOSTNAME
+	}
+
 public delegate void MyCallBack(Gtk.Action a);
 
 public class VTMainWindow : Window{
@@ -58,6 +63,9 @@ public class VTMainWindow : Window{
 	private int orig_h_note = 0;
 	private int orig_w_note = 0;
 	private int position = 1;
+	private int double_hotkey_milliseconds = 0;
+	private int double_hotkey = 0;
+	private DateTime double_hotkey_last_time = null;
 	private bool orig_maximized=false;
 	private bool update_maximized_size=false;
 	private bool mouse_follow=false;
@@ -85,6 +93,7 @@ public class VTMainWindow : Window{
 
 	public int maximized_w = -1;
 	public int maximized_h = -1;
+	public TAB_SORT_ORDER tab_sort_order {get;set; default = TAB_SORT_ORDER.NONE;}
 
 
 	private List<unowned VTTerminal> children;
@@ -312,6 +321,22 @@ public class VTMainWindow : Window{
 		this.save_session  = conf.get_boolean("autosave_session",false);
 		this.animation_enabled=conf.get_boolean("animation_enabled",true);
 		this.pull_steps=conf.get_integer("animation_pull_steps",10);
+		this.double_hotkey_milliseconds=conf.get_integer("double_hotkey_milliseconds",500)*1000;
+		string ret = conf.get_string("tab_sort_order","none");
+			switch(ret){
+				case "none":
+					this.tab_sort_order=TAB_SORT_ORDER.NONE;
+				break;
+				case "hostname":
+					this.tab_sort_order=TAB_SORT_ORDER.HOSTNAME;
+				break;
+				default:
+					this.tab_sort_order=TAB_SORT_ORDER.NONE;
+					conf.set_string("tab_sort_order","none");
+				break;
+				}
+			
+		
 		
 		this.hotkey.unbind();
 		KeyBinding grave=this.hotkey.bind (this.conf.get_accel_string("main_hotkey","<Alt>grave"));
@@ -724,8 +749,52 @@ public class VTMainWindow : Window{
 			if (vt.vte_term == term){
 				var tab_index =  this.children.index(vt)+1;
 				vt.tbutton.set_title(tab_index, s );
+				if(this.tab_sort_order==TAB_SORT_ORDER.HOSTNAME)
+					this.tab_sort(vt);
 				break;
 			}
+		}
+		
+	}
+
+	
+	public void tab_sort (VTTerminal vt_new_title) {
+//~		this.children.sort_with_data( (vt_a, vt_next_b)=>{
+//~			VTTerminal vt = vt_a as VTTerminal, vt_next = vt_next_b as VTTerminal;
+			//unowned VTTerminal vt = (VTTerminal)a;
+			//unowned VTTerminal vt_next = (VTTerminal)b;
+//~			debug("compare: %s == %s",vt.tbutton.host_name,vt_next.tbutton.host_name);
+//~			if(vt.tbutton.host_name!=null && vt_next.tbutton.host_name!=null){
+//~				int res=vt.tbutton.host_name.collate(vt_next.tbutton.host_name);
+//~				if(res>0)
+//~					return 1;
+//~				else if(res<0)
+//~					return -1;
+//~				else
+//~					return 0;
+//~				//return vt.tbutton.host_name.collate(vt_next.tbutton.host_name);
+//~			}else
+//~				return 0;
+//~		});
+		if(vt_new_title.tbutton.host_name==null ||
+		   vt_new_title.tbutton.do_not_sort) return;//do not sort if hostname empty
+
+		unowned List<unowned VTTerminal> item_it=null;
+		unowned VTTerminal vt=null;
+		for (item_it = this.children; item_it != null ; item_it = item_it.next) {
+				vt = item_it.data;
+				debug("compare: %s == %s",vt.tbutton.host_name,vt_new_title.tbutton.host_name);
+				if(vt.tbutton.host_name!=null && !vt.tbutton.do_not_sort){
+					int res=vt.tbutton.host_name.collate(vt_new_title.tbutton.host_name);
+					if(res>0 && this.children.position(item_it)<this.children.index(vt_new_title)){
+						debug("compare: >0");
+						this.children.remove(vt_new_title);
+						this.children.insert_before(item_it,vt_new_title);
+						this.hvbox.place_before(vt.tbutton,vt_new_title.tbutton);
+						this.update_tabs_title();
+						break;
+					}
+				}
 		}
 	}
 
@@ -1005,6 +1074,16 @@ public class VTMainWindow : Window{
 					//because "i" is unavailable in action callback
 					var s=a.name.replace("terminal_switch_tab","");
 					var j=int.parse(s);
+					var now = new DateTime.now_local();
+
+					if(this.double_hotkey==j && this.double_hotkey_last_time!=null && now.difference(this.double_hotkey_last_time)<this.double_hotkey_milliseconds){
+						this.double_hotkey=j;
+						j+=10;
+					}else
+						this.double_hotkey=j;
+					
+					this.double_hotkey_last_time=now;
+					
 					unowned VTTerminal vt = children.nth_data(j-1);
 					if(vt != null)
 						this.activate_tab(vt.tbutton);
@@ -1091,7 +1170,13 @@ public class VTMainWindow : Window{
 			this.ShowHelp();
 		});
 
-
+		this.add_window_toggle_accel("do_not_sort_tab", _("Do not sort this tab"), _("Do not sort this tab"), Gtk.Stock.EDIT,"",()=> {
+			if(this.active_tab!=null){
+				debug("action do_not_sort_tab");
+				this.active_tab.do_not_sort=!this.active_tab.do_not_sort;
+				//((Gtk.ToggleAction)
+			}
+        });
 
 	}//setup_keyboard_accelerators
 

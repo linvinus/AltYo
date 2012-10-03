@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-10 15:36+0400\n"
+"POT-Creation-Date: 2012-10-03 14:20+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,103 +17,107 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: altyo_window.vala:978
+#: altyo_window.vala:1029
 msgid "Add Tab"
 msgstr "Добавить терминал"
 
-#: altyo_window.vala:1067
+#: altyo_window.vala:1130
 msgid "AltYo Settings"
 msgstr "Настройки программы AltYo"
 
-#: altyo_window.vala:983
+#: altyo_window.vala:1034
 msgid "Close Tab"
 msgstr "Закрыть терминал"
 
-#: altyo_window.vala:983
+#: altyo_window.vala:1034
 msgid "Close current tab"
 msgstr "Закрыть текущий терминал"
 
-#: altyo_window.vala:1012
+#: altyo_window.vala:1073
 msgid "Copy"
 msgstr "Копировать"
 
-#: altyo_window.vala:1012
+#: altyo_window.vala:1073
 msgid "Copy selected text"
 msgstr "Копировать выделенный текст"
 
-#: altyo_window.vala:1073
+#: altyo_window.vala:1151
+msgid "Do not sort this tab"
+msgstr "Исключить из сортировки"
+
+#: altyo_window.vala:1136
 msgid "Exit from AltYo"
 msgstr "Выйти из программы AltYo"
 
-#: altyo_window.vala:1034
+#: altyo_window.vala:1097
 msgid "Follow the mouse"
 msgstr "Следовать за мышью"
 
-#: altyo_window.vala:1239
+#: altyo_window.vala:1311
 msgid "Match case"
 msgstr "Учитывать регистр"
 
-#: altyo_window.vala:988
+#: altyo_window.vala:1039
 msgid "Next tab"
 msgstr "Следующий терминал"
 
-#: altyo_window.vala:978
+#: altyo_window.vala:1029
 msgid "Open new tab"
 msgstr "Открыть новый терминал"
 
-#: altyo_window.vala:1017
+#: altyo_window.vala:1078
 msgid "Paste"
 msgstr "Вставить"
 
-#: altyo_window.vala:1017
+#: altyo_window.vala:1078
 msgid "Paste from prymary clipboard"
 msgstr "Вставить из основного буфера обмена"
 
-#: altyo_window.vala:993
+#: altyo_window.vala:1044
 msgid "Previous tab"
 msgstr "Предыдущий терминал"
 
-#: altyo_window.vala:729
+#: altyo_window.vala:780
 msgid "Really quit?"
 msgstr "Действительно выйти?"
 
-#: altyo_window.vala:730
+#: altyo_window.vala:781
 msgid "Save session?"
 msgstr "Сохранить сессию?"
 
-#: altyo_window.vala:1022
+#: altyo_window.vala:1083
 msgid "Search"
 msgstr "Поиск"
 
-#: altyo_window.vala:1037
+#: altyo_window.vala:1100
 msgid "Settings"
 msgstr "Настройки"
 
-#: altyo_window.vala:1084
+#: altyo_window.vala:1147
 msgid "Show Keybindings/About"
 msgstr "Показать список горячих клавиш/О программе"
 
-#: altyo_window.vala:1079
+#: altyo_window.vala:1142
 msgid "Show/Hide AltYo"
 msgstr "Показать/скрыть окно AltYo"
 
-#: altyo_window.vala:1027
+#: altyo_window.vala:1089
 msgid "Show/Hide Quick list"
 msgstr "Показать/скрыть быстрые команды"
 
-#: altyo_window.vala:988
+#: altyo_window.vala:1039
 msgid "Switch to next tab"
 msgstr "Следующий терминал"
 
-#: altyo_window.vala:993
+#: altyo_window.vala:1044
 msgid "Switch to previous tab"
 msgstr "Предыдущий терминал"
 
-#: altyo_window.vala:999
+#: altyo_window.vala:1050
 #, c-format
 msgid "Switch to tab %d"
 msgstr "Переключиться в терминал № %d"
 
-#: altyo_window.vala:1230
+#: altyo_window.vala:1302
 msgid "search wrap_around"
 msgstr "Искать циклически"

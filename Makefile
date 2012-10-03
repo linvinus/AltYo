@@ -49,3 +49,5 @@ source-package:
 	git-buildpackage --git-upstream-tree=branch --git-upstream-branch=master -rfakeroot -S -sa
 
 #git tag "debian/0.2_121003-linvinus1" ~ -> _ , : -> %
+#git-dch --ignore-branch --debian-branch=master --verbose
+#git push origin --tags

@@ -165,22 +165,25 @@ public class PanelHotkey {
 			if(window==null)
 				return;
 
-	        var event = X.ClientMessageEvent ();
-	        event.type          = X.EventType.ClientMessage;
-	        event.serial        = 0;
-	        event.send_event    = true;
-	        event.display       = Gdk.x11_get_default_xdisplay (); //this.display;
-	        event.window        = Gdk.X11Window.get_xid(window);//send altyo window id
-	        event.message_type  = x11_get_xatom_by_name ("_NET_ACTIVE_WINDOW");
-	        event.format        = 32;
-	        event.data.l [0]    = 2;
-	        event.data.l [1]    = Gdk.CURRENT_TIME;//(this.processing_event == true ? this.last_event_time : Gdk.CURRENT_TIME);
-	        event.data.l [2]    = 0;
-	        event.data.l [3]    = 0;
-	        event.data.l [4]    = 0;
-	        X.Event e = (X.Event) event;
+			var t = Gdk.x11_get_server_time(window);
+			window.focus(t);
 
-	        display.send_event (Gdk.x11_get_default_root_xwindow(), false, X.EventMask.SubstructureRedirectMask|X.EventMask.StructureNotifyMask, ref e);
+//~ 	        var event = X.ClientMessageEvent ();
+//~ 	        event.type          = X.EventType.ClientMessage;
+//~ 	        event.serial        = 0;
+//~ 	        event.send_event    = true;
+//~ 	        event.display       = Gdk.x11_get_default_xdisplay (); //this.display;
+//~ 	        event.window        = Gdk.X11Window.get_xid(window);//send altyo window id
+//~ 	        event.message_type  = x11_get_xatom_by_name ("_NET_ACTIVE_WINDOW");
+//~ 	        event.format        = 32;
+//~ 	        event.data.l [0]    = 2;
+//~ 	        event.data.l [1]    = Gtk.get_current_event_time();//(this.processing_event == true ? this.last_event_time : Gdk.CURRENT_TIME);
+//~ 	        event.data.l [2]    = 0;
+//~ 	        event.data.l [3]    = 0;
+//~ 	        event.data.l [4]    = 0;
+//~ 	        X.Event e = (X.Event) event;
+//~ 
+//~ 	        display.send_event (Gdk.x11_get_default_root_xwindow(), false, X.EventMask.SubstructureRedirectMask|X.EventMask.StructureNotifyMask, ref e);
 
 	}
 }

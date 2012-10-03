@@ -1,3 +1,17 @@
+altyo (0.2~121003-linvinus1) precise; urgency=low
+
+  [ denis ]
+  * makefile:source-package, remove binary file
+
+  [ linvinus ]
+  * added: the ability to automatically sort tabs by hostname (tab_sort_order=hostname)
+  * added: the ability to quickly switch to tabs 11-20 using double-press hotkey <alt>1 <alt>2 ...
+  * fix: _NET_ACTIVE_WINDOW message with a timestamp of 0
+
+  [ denis ]
+
+ -- denis <linvinus@gmail.com>  Wed, 03 Oct 2012 20:48:28 +0400
+
 altyo (0.2~121002-linvinus1) precise; urgency=low
 
   * added: regexp for mc title, changed default tab_title_format

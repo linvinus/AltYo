@@ -47,3 +47,5 @@ gen_po:
 source-package:
 	rm ./altyo || true
 	git-buildpackage --git-upstream-tree=branch --git-upstream-branch=master -rfakeroot -S -sa
+
+#git tag "debian/0.2_121003-linvinus1" ~ -> _ , : -> %

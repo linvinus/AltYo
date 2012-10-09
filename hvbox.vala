@@ -690,6 +690,18 @@ public class HVBox : Container {
 		}
 		//else{}//shouldnot happens!
 	}
+	public void place_on_index(Widget what,int new_index){
+		unowned List<unowned HVBoxItem> item_it=null;
+		int w_index=this.children_index(what);
+
+		if(w_index!=new_index){
+			debug("place_on_index w_index=%d new_index=%d\n",w_index,new_index);
+			//item_it= children.nth(a_index);
+			HVBoxItem bdata=children.nth_data(w_index) ;
+			this.children.remove(bdata);
+			this.children.insert(bdata,new_index);
+		}
+	}
 
 	/*public  new void propagate_draw (Gtk.Widget child, Cairo.Context cr) {
 		//draw line between child widgets

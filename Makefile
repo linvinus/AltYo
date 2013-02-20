@@ -1,11 +1,33 @@
 PRG_NAME=altyo
+
+# guess Linux distro
+LINUX.DISTRIB.FILE=$(shell ls /etc/lsb-release)
+ifeq ($(LINUX.DISTRIB.FILE),)
+LINUX.DISTRIB.FILE=$(shell ls /etc/debian_version)
+endif
+
+ifeq ($(LINUX.DISTRIB.FILE),/etc/lsb-release)
+LINUX.DISTRIB.ID=$(shell grep DISTRIB_ID /etc/lsb-release | sed 's/DISTRIB_ID=//')
+endif
+
+ifeq ($(LINUX.DISTRIB.FILE),/etc/debian_version)
+LINUX.DISTRIB.ID=debian
+endif
+
+ifeq ($(LINUX.DISTRIB.ID),Ubuntu)
+LINUX.DISTRIB.ID=debian
+endif
+
 VALA_FLAGS = -v
 VALA_FLAGS += --disable-warnings
 #VALA_FLAGS += -g --save-temps
 VALA_FLAGS += -X -DGETTEXT_PACKAGE=\"$(PRG_NAME)\" -X -DVERSION=\"0.2\"
 #\ -I.\ -include\ "./config.h" -v
 #VALA_FLAGS += --pkg gnome-keyring-1 -D HAVE_QLIST
+ifeq ($(LINUX.DISTRIB.ID),debian)
+#debian specific possibility
 VALA_FLAGS += -D ALTERNATE_SCREEN_SCROLL
+endif
 VALA_FLAGS += --vapidir ./vapi --pkg gtk+-3.0 --pkg vte-2.90 --pkg gee-1.0 --pkg gdk-x11-3.0 --pkg cairo --pkg posix 
 #DESTDIR?=
 PREFIX?=/usr

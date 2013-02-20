@@ -767,13 +767,13 @@ public class VTMainWindow : Window{
 //~			//unowned VTTerminal vt = (VTTerminal)a;
 //~			//unowned VTTerminal vt_next = (VTTerminal)b;
 			debug("compare: %s == %s",vt.tbutton.host_name,vt_next.tbutton.host_name);
-			if(vt.tbutton.host_name!=null && vt_next.tbutton.host_name!=null){
+			if(vt.tbutton.host_name!=null && vt_next.tbutton.host_name!=null ){
 				int res=vt.tbutton.host_name.collate(vt_next.tbutton.host_name);
 				debug("compare: %d> %d == %d",res,this.children.index(vt),this.children.index(vt_next));
-				if(res>0){
+				if(res>0 && !vt.tbutton.do_not_sort){
 					this.hvbox.place_before(vt.tbutton,vt_next.tbutton);
 					return 1;
-				}else if(res<0){
+				}else if(res<0 /*&& !vt.tbutton.do_not_sort*/){
 					return -1;
 				}else
 					return 0;

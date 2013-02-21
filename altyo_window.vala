@@ -102,6 +102,7 @@ public class VTMainWindow : Window{
 	private int hvbox_height_old {get;set; default = 0;}
 	//public bool maximized {get; set; default = false;}
 	//private bool quit_dialog {get; set; default = false;}
+	public bool keep_above=true;
 
 
 	public VTMainWindow(WindowType type) {
@@ -140,6 +141,11 @@ public class VTMainWindow : Window{
 
 	public void CreateVTWindow(MySettings conf) {
 		this.conf=conf;
+		this.keep_above=conf.get_boolean("keep_above_at_startup",this.keep_above);
+		if(!this.keep_above){
+			this.skip_taskbar_hint = false;
+			this.set_keep_above(false);
+		}
 
 		this.hotkey = new PanelHotkey ();
 
@@ -1195,6 +1201,18 @@ public class VTMainWindow : Window{
 			}
         });
 
+		this.add_window_toggle_accel("keep_above", _("Keep window above others"), _("Keep window above others"), Gtk.Stock.EDIT,"",()=> {
+			this.keep_above=!this.keep_above;
+			debug("action keep_above %d",(int)this.keep_above);
+			if(this.keep_above){
+				this.skip_taskbar_hint = true;
+				this.set_keep_above(true);
+			}else{
+				this.skip_taskbar_hint = false;
+				this.set_keep_above(false);
+			}
+        });
+
 	}//setup_keyboard_accelerators
 
 
@@ -1209,9 +1227,16 @@ public class VTMainWindow : Window{
 					this.resize (terminal_width,this.terminal_height+this.hvbox.get_allocated_height ());
 				}
 			}
-			this.stick ();
-			//this.show ();//first show then send_net_active_window!
-			this.present() ;
+			if(this.keep_above){
+				this.skip_taskbar_hint = true;
+				this.set_keep_above(true);
+				this.stick ();
+				//this.show ();//first show then send_net_active_window!
+				this.present() ;
+			}else{
+				this.skip_taskbar_hint = false;
+				this.set_keep_above(false);			
+			}
 			hotkey.send_net_active_window(this.get_window ());
 			if(this.prev_focus!=null)
 				this.prev_focus.grab_focus();

@@ -562,10 +562,18 @@ public class VTTerminal : Object{
 		menu.append(menuitem);
 		menuitem = (Gtk.MenuItem)acg.get_action("open_settings").create_menu_item();
 		menu.append(menuitem);
-		menuitem = (Gtk.MenuItem)acg.get_action("follow_the_mouse").create_menu_item();
-		menu.append(menuitem);
 		menuitem = (Gtk.MenuItem)acg.get_action("altyo_help").create_menu_item();
 		menu.append(menuitem);
+		menuitem = (Gtk.MenuItem)acg.get_action("follow_the_mouse").create_menu_item();
+		menu.append(menuitem);
+		var action_keepabove = acg.get_action("keep_above") as ToggleAction;
+		menuitem = (Gtk.MenuItem)action_keepabove.create_menu_item();
+		menu.append(menuitem);
+		if(action_keepabove.active!=vtw.keep_above){
+			vtw.keep_above=!vtw.keep_above;//invert value, becouse it will inverted after set_active
+			action_keepabove.set_active(!vtw.keep_above);
+		}
+
 		if(vtw.tab_sort_order==TAB_SORT_ORDER.HOSTNAME){
 			var action_sort=acg.get_action("do_not_sort_tab") as ToggleAction;
 			if(action_sort.active!=this.tbutton.do_not_sort){

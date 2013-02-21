@@ -1,3 +1,9 @@
+altyo (0.2~130221-linvinus1) quantal; urgency=low
+
+  * non critical fixes, updated copyright
+
+ -- denis <linvinus@gmail.com>  Thu, 21 Feb 2013 10:06:42 +0400
+
 altyo (0.2~121003-linvinus1) precise; urgency=low
 
   [ denis ]

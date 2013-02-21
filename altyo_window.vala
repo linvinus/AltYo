@@ -920,7 +920,7 @@ public class VTMainWindow : Window{
 			var dialog = new AboutDialog();
 			dialog.license_type = Gtk.License.GPL_3_0;
 			dialog.authors={"Konstantinov Denis linvinus@gmail.com"};
-			dialog.website ="linvinus.ru";
+			dialog.website ="https://github.com/linvinus/AltYo";
 			dialog.version ="0.1";
 			
 			AccelMap am=Gtk.AccelMap.get();

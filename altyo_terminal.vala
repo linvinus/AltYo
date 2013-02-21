@@ -502,10 +502,10 @@ public class VTTerminal : Object{
 		this.vte_term.set_colors(fg,bg,palette);
 
 		var bg_img_file = my_conf.get_string("terminal_background_image_file","");
+		var sat = my_conf.get_double("terminal_background_saturation",0.5);
 		if(bg_img_file!=null && bg_img_file!="" && GLib.FileUtils.test(bg_img_file,GLib.FileTest.EXISTS)){
 			message("set_background_image_file=%s",bg_img_file);
 			this.vte_term.set_background_image_file (bg_img_file);
-			var sat = my_conf.get_double("terminal_background_saturation",0.5);
 			if(sat>1) sat=1; if(sat<0) sat=0;
 			this.vte_term.set_background_saturation (sat);
 		}

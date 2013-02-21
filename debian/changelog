@@ -1,8 +1,23 @@
 altyo (0.2~130221-linvinus1) quantal; urgency=low
 
-  * non critical fixes, updated copyright
+  [ denis ]
+  * git tag example
+  * git-dch  example
+  * fix: sort tab by hostname
+  * smal fix, in file readme added link to Arch linux package
+  * disable ALTERNATE_SCREEN_SCROLL for non debian based distributives
+  * small fixes, updated copyright, changed homepage link
 
- -- denis <linvinus@gmail.com>  Thu, 21 Feb 2013 10:06:42 +0400
+  [ linvinus ]
+  * New option Keep window above others
+  * fix: terminal_background_saturation - visible in configuration file
+  * fix: for height 100%, use maximized mode
+
+  [ denis ]
+  * fix: terminal_show_scrollbar, in fact did not work
+  * update English,Russian translation,new version 0.2
+
+ -- denis <denis@tentorium>  Thu, 21 Feb 2013 22:00:10 +0400
 
 altyo (0.2~121003-linvinus1) precise; urgency=low
 

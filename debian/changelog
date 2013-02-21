@@ -17,7 +17,7 @@ altyo (0.2~130221-linvinus1) quantal; urgency=low
   * fix: terminal_show_scrollbar, in fact did not work
   * update English,Russian translation,new version 0.2
 
- -- denis <denis@tentorium>  Thu, 21 Feb 2013 22:00:10 +0400
+ -- denis <linvinus@gmail.com>  Thu, 21 Feb 2013 22:00:10 +0400
 
 altyo (0.2~121003-linvinus1) precise; urgency=low
 

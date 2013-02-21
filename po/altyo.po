@@ -26,7 +26,7 @@ msgid "Save session?"
 msgstr ""
 
 #: altyo_window.vala:1074
-msgid "Add Tab"
+msgid "Add tab"
 msgstr ""
 
 #: altyo_window.vala:1074
@@ -34,7 +34,7 @@ msgid "Open new tab"
 msgstr ""
 
 #: altyo_window.vala:1079
-msgid "Close Tab"
+msgid "Close tab"
 msgstr ""
 
 #: altyo_window.vala:1079
@@ -75,7 +75,7 @@ msgid "Paste"
 msgstr ""
 
 #: altyo_window.vala:1123
-msgid "Paste from prymary clipboard"
+msgid "Paste from primary clipboard"
 msgstr ""
 
 #: altyo_window.vala:1128
@@ -87,7 +87,7 @@ msgid "Show/Hide Quick list"
 msgstr ""
 
 #: altyo_window.vala:1142
-msgid "Follow the mouse"
+msgid "Follow mouse cursor"
 msgstr ""
 
 #: altyo_window.vala:1145
@@ -95,33 +95,33 @@ msgid "Settings"
 msgstr ""
 
 #: altyo_window.vala:1175
-msgid "AltYo Settings"
+msgid "Settings"
 msgstr ""
 
 #: altyo_window.vala:1181
-msgid "Exit from AltYo"
+msgid "Quit"
 msgstr ""
 
 #: altyo_window.vala:1187
-msgid "Show/Hide AltYo"
+msgid "Show/Hide"
 msgstr ""
 
 #: altyo_window.vala:1192
-msgid "Show Keybindings/About"
+msgid "About and keybindings"
 msgstr ""
 
 #: altyo_window.vala:1196
-msgid "Do not sort this tab"
+msgid "Do not sort tabs"
 msgstr ""
 
 #: altyo_window.vala:1204
-msgid "Keep window above others"
+msgid "Stay on top"
 msgstr ""
 
 #: altyo_window.vala:1366
-msgid "search wrap_around"
+msgid "Wrap search"
 msgstr ""
 
 #: altyo_window.vala:1375
-msgid "Match case"
+msgid "Match case-sensitive"
 msgstr ""

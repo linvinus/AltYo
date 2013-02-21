@@ -319,7 +319,6 @@ public class VTTerminal : Object{
 		this.hbox.show();
 		this.vte_term.show();
 		this.scrollbar = new VScrollbar(((Scrollable)this.vte_term).get_vadjustment());
-		this.scrollbar.show () ;
 		hbox.pack_start(scrollbar,false,false,0);
 		page_index = this.notebook.prepend_page (hbox,null);
 
@@ -399,6 +398,12 @@ public class VTTerminal : Object{
 		uint path_length=0;
 		string spath = "";
 		string spath_reversed = "";
+
+		if(my_conf.get_boolean("terminal_show_scrollbar",true))
+			this.scrollbar.show();
+		else
+			this.scrollbar.hide();
+
 
 //~ 		StyleContext style = this.tbutton.get_style_context ();//new StyleContext ();//
 //~ 		var css = new CssProvider ();

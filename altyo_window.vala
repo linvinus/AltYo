@@ -221,6 +221,7 @@ public class VTMainWindow : Window{
 
 		this.reconfigure();
 		this.configure_position();
+		this.main_vbox.show_all();
 
 		var restore_terminal_session=this.conf.get_string_list("terminal_session",null);
 		if(restore_terminal_session != null && restore_terminal_session.length>0){
@@ -233,7 +234,6 @@ public class VTMainWindow : Window{
 		}else
 			this.add_tab();
 
-		this.main_vbox.show_all();
 		this.search_hbox.hide();//search hidden by default
 		//this.overlay_notebook.hide();//this.overlay_notebook hidden by default
 		this.tasks_notebook.set_current_page(TASKS.TERMINALS);//this.overlay_notebook hidden by default
@@ -284,7 +284,6 @@ public class VTMainWindow : Window{
 	
 	public void reconfigure(){
 		debug("reconfigure");
-		this.terms_notebook.set_scrollable(this.conf.get_boolean("terminal_show_scrollbar",true));
 		var css_main = new CssProvider ();
 		string style_str= ""+
 					 "VTToggleButton,VTToggleButton GtkLabel  {font: Mono 10; -GtkWidget-focus-padding: 0px;  -GtkButton-default-border:0px; -GtkButton-default-outside-border:0px; -GtkButton-inner-border:0px; border-width: 0px; -outer-stroke-width: 0px; border-radius: 0px; border-style: solid;  background-image: none; margin:0px; padding:1px 1px 0px 1px; background-color: #000000; color: #AAAAAA; transition: 0ms ease-in-out;}"+

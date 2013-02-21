@@ -929,7 +929,8 @@ public class VTMainWindow : Window{
 			dialog.license_type = Gtk.License.GPL_3_0;
 			dialog.authors={"Konstantinov Denis linvinus@gmail.com"};
 			dialog.website ="https://github.com/linvinus/AltYo";
-			dialog.version ="0.1";
+			dialog.version ="0.2";
+			dialog.translator_credits="English by willemw12@gmail.com";
 			
 			AccelMap am=Gtk.AccelMap.get();
 
@@ -1073,12 +1074,12 @@ public class VTMainWindow : Window{
 	
 
 		/* Add New Tab on <Ctrl><Shift>t */
-		this.add_window_accel("terminal_add_tab", _("Add Tab"), _("Open new tab"), Gtk.Stock.NEW,"<Control><Shift>T",()=>{
+		this.add_window_accel("terminal_add_tab", _("Add tab"), _("Open new tab"), Gtk.Stock.NEW,"<Control><Shift>T",()=>{
 			this.add_tab();
 		});
 		
         /* Close Current Tab on <Ctrl><Shift>w */
-		this.add_window_accel("terminal_close_tab", _("Close Tab"), _("Close current tab"), Gtk.Stock.CLOSE,"<Control><Shift>W",()=> {
+		this.add_window_accel("terminal_close_tab", _("Close tab"), _("Close current tab"), Gtk.Stock.CLOSE,"<Control><Shift>W",()=> {
             this.close_tab(this.hvbox.children_index(this.active_tab));
         });
 
@@ -1122,7 +1123,7 @@ public class VTMainWindow : Window{
         });
 
 		/* Paste on <Ctrl><Shift>v */
-		this.add_window_accel("terminal_paste_text", _("Paste"), _("Paste from prymary clipboard"), Gtk.Stock.PASTE,"<Control><Shift>V",()=> {
+		this.add_window_accel("terminal_paste_text", _("Paste"), _("Paste from primary clipboard"), Gtk.Stock.PASTE,"<Control><Shift>V",()=> {
             this.cpaste();
         });
 
@@ -1141,7 +1142,7 @@ public class VTMainWindow : Window{
         });
         #endif
         
-		this.add_window_toggle_accel("follow_the_mouse", _("Follow the mouse"), _("Follow the mouse"), Gtk.Stock.EDIT,"",()=> {
+		this.add_window_toggle_accel("follow_the_mouse", _("Follow mouse cursor"), _("Follow mouse cursor"), Gtk.Stock.EDIT,"",()=> {
 				this.mouse_follow = !this.mouse_follow;
         });
 		this.add_window_accel("open_settings", _("Settings"), _("Settings"), Gtk.Stock.EDIT,"",()=> {
@@ -1180,18 +1181,18 @@ public class VTMainWindow : Window{
         
 
 		/* Quit on <Ctrl><Shift>q */
-		this.add_window_accel("altyo_exit", _("Exit from AltYo"), _("Exit from AltYo"), Gtk.Stock.QUIT,"<Control><Shift>Q",()=> {
+		this.add_window_accel("altyo_exit", _("Quit"), _("Quit"), Gtk.Stock.QUIT,"<Control><Shift>Q",()=> {
 			this.ShowQuitDialog();
         });
 
    		/* Show/hide main window on <Alt>grave
    		 * add main_hotkey just to be able show it in popup menu*/
-		this.add_window_accel("main_hotkey", _("Show/Hide AltYo"), _("Show/Hide AltYo"), Gtk.Stock.GO_UP,"<Alt>grave",()=>{
+		this.add_window_accel("main_hotkey", _("Show/Hide"), _("Show/Hide"), Gtk.Stock.GO_UP,"<Alt>grave",()=>{
 			this.toogle_widnow();
 		});
 
 		/* Add New Tab on <Ctrl><Shift>t */
-		this.add_window_accel("altyo_help", _("Show Keybindings/About"), _("Show Keybindings/About"), Gtk.Stock.NEW,"F1",()=>{
+		this.add_window_accel("altyo_help", _("About and keybindings"), _("About and keybindings"), Gtk.Stock.NEW,"F1",()=>{
 			this.ShowHelp();
 		});
 
@@ -1203,7 +1204,7 @@ public class VTMainWindow : Window{
 			}
         });
 
-		this.add_window_toggle_accel("keep_above", _("Keep window above others"), _("Keep window above others"), Gtk.Stock.EDIT,"",()=> {
+		this.add_window_toggle_accel("keep_above", _("Stay on top"), _("Stay on top"), Gtk.Stock.EDIT,"",()=> {
 			this.keep_above=!this.keep_above;
 			debug("action keep_above %d",(int)this.keep_above);
 			if(this.keep_above){
@@ -1365,7 +1366,7 @@ public class VTMainWindow : Window{
 			}
 
 
-		this.search_wrap_around = new CheckButton.with_label(_("search wrap_around"));
+		this.search_wrap_around = new CheckButton.with_label(_("Wrap search"));
 		this.search_wrap_around.clicked.connect(()=>{
 			unowned VTTerminal vtt = ((VTTerminal)this.active_tab.object);
 			vtt.vte_term.search_set_wrap_around(this.search_wrap_around.active);
@@ -1374,7 +1375,7 @@ public class VTMainWindow : Window{
 		this.search_wrap_around.show();
 		this.search_hbox.pack_start(this.search_wrap_around,false,false,0);
 
-		this.search_match_case = new CheckButton.with_label(_("Match case"));
+		this.search_match_case = new CheckButton.with_label(_("Match case-sensitive"));
 		this.search_match_case.clicked.connect(()=>{
 			unowned VTTerminal vtt = ((VTTerminal)this.active_tab.object);
 			vtt.match_case=this.search_match_case.active;

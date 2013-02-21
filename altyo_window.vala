@@ -385,17 +385,20 @@ public class VTMainWindow : Window{
 		
 			int w = conf.get_integer("terminal_width",80);//if less 101 then it persentage
 			int h = conf.get_integer("terminal_height",50);//if less 101 then it persentage
-			
-			if(w<101){
-				this.terminal_width=(int)(((float)rectangle.width/100.0)*(float)w);
+			if(h==100){//workaround for fullscreen, otherwise tabbutton will be out of screen
+				this.maximize();
 			}else{
-				this.terminal_width=w;
-			}
-			
-			if(h<101){
-				this.terminal_height=(int)(((float)rectangle.height/100.0)*(float)h);
-			}else{
-				this.terminal_height=h;
+				if(w<101){
+					this.terminal_width=(int)(((float)rectangle.width/100.0)*(float)w);
+				}else{
+					this.terminal_width=w;
+				}
+				
+				if(h<101){
+					this.terminal_height=(int)(((float)rectangle.height/100.0)*(float)h);
+				}else{
+					this.terminal_height=h;
+				}
 			}
 			this.orig_w=this.terminal_width;
 			this.orig_h=this.terminal_height;

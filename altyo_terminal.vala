@@ -266,7 +266,7 @@ public class VTTerminal : Object{
 	private OnChildExitCallBack on_child_exit {get; set; default = null;}
 
 
-	public VTTerminal(MySettings my_conf,Notebook notebook, int tab_index,string? session_command=null,OnChildExitCallBack? on_child_exit=null) {
+	public VTTerminal(MySettings my_conf,Notebook notebook, int tab_index,string? session_command=null,string? session_path=null,OnChildExitCallBack? on_child_exit=null) {
 		this.my_conf=my_conf;
 		this.notebook=notebook;
 		if(on_child_exit!=null)
@@ -302,7 +302,7 @@ public class VTTerminal : Object{
 
 
 
-		if(!this.start_command(session_command)){
+		if(!this.start_command(session_command,session_path)){
 			if(!this.start_command()){//try without session
 				this.my_conf.set_string("custom_command","");
 				if(!this.start_command()){//try without custom_command
@@ -341,7 +341,7 @@ public class VTTerminal : Object{
 		this.hbox.destroy();//destroy all widgets and unref self
 	}
 
-	public bool start_command(string? session_command = null){
+	public bool start_command(string? session_command = null,string? session_path=null){
 		string? command = this.my_conf.get_string("custom_command","");
 
 		if(command == null || command == "")
@@ -361,8 +361,12 @@ public class VTTerminal : Object{
 			error("Error: Shell not found!"); //todo gui err
 
 		PtyFlags pty_flags = PtyFlags.DEFAULT;
-
-		var path = GLib.Environment.get_current_dir();
+		string path="";
+		if(session_path==null || session_path==""){
+			path = GLib.Environment.get_current_dir();
+		}else{
+			path = session_path;
+		}
 		if(path==null)
 			path="/";
 
@@ -561,26 +565,36 @@ public class VTTerminal : Object{
 
 		menuitem = (Gtk.MenuItem)acg.get_action("terminal_add_tab").create_menu_item();
 		menu.append(menuitem);
+		menuitem = (Gtk.MenuItem)acg.get_action("terminal_new_tab_in_current_directory").create_menu_item();
+		menu.append(menuitem);
+		
 		menuitem = (Gtk.MenuItem)acg.get_action("terminal_close_tab").create_menu_item();
 		menu.append(menuitem);
 		menuitem = (Gtk.MenuItem)acg.get_action("terminal_search_dialog").create_menu_item();
 		menu.append(menuitem);
+		
+		menuitem = new Gtk.SeparatorMenuItem();
+		menu.append(menuitem);
 		menuitem = (Gtk.MenuItem)acg.get_action("open_settings").create_menu_item();
 		menu.append(menuitem);
-		menuitem = (Gtk.MenuItem)acg.get_action("altyo_help").create_menu_item();
+		
+		var submenu = new Gtk.Menu ();
+		menuitem = new Gtk.MenuItem.with_label ("Additional settings");
+		menuitem.set_submenu(submenu);
 		menu.append(menuitem);
+		
 		menuitem = (Gtk.MenuItem)acg.get_action("follow_the_mouse").create_menu_item();
-		menu.append(menuitem);
+		submenu.append(menuitem);
 		var action_keepabove = acg.get_action("keep_above") as ToggleAction;
 		menuitem = (Gtk.MenuItem)action_keepabove.create_menu_item();
-		menu.append(menuitem);
+		submenu.append(menuitem);
 		if(action_keepabove.active!=vtw.keep_above){
 			vtw.keep_above=!vtw.keep_above;//invert value, becouse it will inverted after set_active
 			action_keepabove.set_active(!vtw.keep_above);
 		}
 
 		if(vtw.tab_sort_order==TAB_SORT_ORDER.HOSTNAME){
-			var action_sort=acg.get_action("do_not_sort_tab") as ToggleAction;
+			var action_sort=acg.get_action("disable_sort_tab") as ToggleAction;
 			if(action_sort.active!=this.tbutton.do_not_sort){
 				//invert value, becouse it will inverted after set_active
 				//Gtk.Action.block_activate don't working :(
@@ -588,9 +602,12 @@ public class VTTerminal : Object{
 				action_sort.set_active(!this.tbutton.do_not_sort);
 			}
 
-			menuitem = (Gtk.MenuItem)acg.get_action("do_not_sort_tab").create_menu_item();
-			menu.append(menuitem);
+			menuitem = (Gtk.MenuItem)acg.get_action("disable_sort_tab").create_menu_item();
+			submenu.append(menuitem);
 		}
+				
+		menuitem = (Gtk.MenuItem)acg.get_action("altyo_help").create_menu_item();
+		menu.append(menuitem);
 
 		menuitem = new Gtk.SeparatorMenuItem();
 		menu.append(menuitem);
@@ -614,7 +631,7 @@ public class VTTerminal : Object{
 			//debug("popup_menu ref_count=%d",(int)m.ref_count);//normal count 4
 		}
 
-	private string find_other_pgrp(int pid){
+	private int find_other_pgrp(int pid){
 	GLib.Dir dir = GLib.Dir.open("/proc/");
 	unowned string filename;
 	/* scan whole proc, for another last-child
@@ -636,15 +653,16 @@ public class VTTerminal : Object{
 					//debug("pid=%d parse=%d stat_cont0=%s",pid,int.parse(stat_cont[1]),stat_cont[0]);
 					//we found another last child, probably from subshell
 					if(pid==int.parse(stat_cont[0]) ){
-						return "/proc/"+stat_cont[4]+"/cmdline";
+						return int.parse(stat_cont[4]);
+						//"/proc/"+stat_cont[4]+"/cmdline";
 					}
 				}
 			}
 		}
-	return "";
+	return -1;
 	}
 
-	public string find_tty_pgrp(int pid){
+	public string find_tty_pgrp(int pid,bool find_cwd=false){
 		//for more info look at kernel/Documentation/filesystems/proc.txt
 		var parent_stat = "/proc/"+((int)pid).to_string()+"/stat";
 
@@ -654,26 +672,36 @@ public class VTTerminal : Object{
 			if(GLib.FileUtils.get_contents (parent_stat,out contents,out length) ){
 				contents=contents.substring(contents.last_index_of(")")+4,-1);
 				var stat_cont=contents.split(" ");
-				var tty_pgrp = "/proc/"+stat_cont[4]+"/cmdline";
+				var tty_pgrp = "/proc/"+stat_cont[4];
 
-				var other=find_other_pgrp(int.parse(stat_cont[4]));
-				if(other!=null && other!="")	tty_pgrp=other;
+				int other=find_other_pgrp(int.parse(stat_cont[4]));
+				if(other>0)	tty_pgrp="/proc/"+((int)other).to_string();
 				//debug("find_others_pgrp=%s",other);
-				if(GLib.FileUtils.test(tty_pgrp,GLib.FileTest.EXISTS) ){
-					uint8[] data;
-					if(GLib.FileUtils.get_data(tty_pgrp,out data) ){
-						for(var i=0;i<data.length-1;i++){
-							if(data[i]==0)
-								data[i]=' ';
-							}
+				if(!find_cwd){
+					tty_pgrp+="/cmdline";
+					if(GLib.FileUtils.test(tty_pgrp,GLib.FileTest.EXISTS) ){
+						uint8[] data;
+						if(GLib.FileUtils.get_data(tty_pgrp,out data) ){
+							for(var i=0;i<data.length-1;i++){
+								if(data[i]==0)
+									data[i]=' ';
+								}
+						}
+							return (string)data;
 					}
-						return (string)data;
+				}else{
+					tty_pgrp+="/cwd";
+					if(GLib.FileUtils.test(tty_pgrp,GLib.FileTest.EXISTS|GLib.FileTest.IS_SYMLINK) ){
+						return (string)GLib.FileUtils.read_link(tty_pgrp);
+					}
+					
 				}
 			}
 		}
 		return "";
 	}
 
+	
 	public delegate void expect_callback();
 
 	public void expect_and_paste(string expect_string,string paste,owned expect_callback cb){

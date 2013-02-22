@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-21 21:40+0400\n"
+"POT-Creation-Date: 2013-02-22 14:36+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,111 +17,119 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: altyo_window.vala:827
+#: altyo_window.vala:830
 msgid "Really quit?"
 msgstr ""
 
-#: altyo_window.vala:828
-msgid "Save session?"
+#: altyo_window.vala:831
+msgid "Save session"
 msgstr ""
 
-#: altyo_window.vala:1077
-msgid "Add tab"
+#: altyo_window.vala:1080
+msgid "New tab"
 msgstr ""
 
-#: altyo_window.vala:1077
+#: altyo_window.vala:1080
 msgid "Open new tab"
 msgstr ""
 
-#: altyo_window.vala:1082
+#: altyo_window.vala:1083
+msgid "Open new tab in current directory"
+msgstr ""
+
+#: altyo_window.vala:1094
 msgid "Close tab"
 msgstr ""
 
-#: altyo_window.vala:1082
+#: altyo_window.vala:1094
 msgid "Close current tab"
 msgstr ""
 
-#: altyo_window.vala:1087
+#: altyo_window.vala:1099
 msgid "Next tab"
 msgstr ""
 
-#: altyo_window.vala:1087
+#: altyo_window.vala:1099
 msgid "Switch to next tab"
 msgstr ""
 
-#: altyo_window.vala:1092
+#: altyo_window.vala:1104
 msgid "Previous tab"
 msgstr ""
 
-#: altyo_window.vala:1092
+#: altyo_window.vala:1104
 msgid "Switch to previous tab"
 msgstr ""
 
-#: altyo_window.vala:1098
+#: altyo_window.vala:1110
 #, c-format
 msgid "Switch to tab %d"
 msgstr ""
 
-#: altyo_window.vala:1121
+#: altyo_window.vala:1133
 msgid "Copy"
 msgstr ""
 
-#: altyo_window.vala:1121
+#: altyo_window.vala:1133
 msgid "Copy selected text"
 msgstr ""
 
-#: altyo_window.vala:1126
+#: altyo_window.vala:1138
 msgid "Paste"
 msgstr ""
 
-#: altyo_window.vala:1126
+#: altyo_window.vala:1138
 msgid "Paste from primary clipboard"
 msgstr ""
 
-#: altyo_window.vala:1131
+#: altyo_window.vala:1143
 msgid "Search"
 msgstr ""
 
-#: altyo_window.vala:1137
+#: altyo_window.vala:1149
 msgid "Show/Hide Quick list"
 msgstr ""
 
-#: altyo_window.vala:1145
+#: altyo_window.vala:1157
 msgid "Follow mouse cursor"
 msgstr ""
 
-#: altyo_window.vala:1148
+#: altyo_window.vala:1160
+msgid "Settings..."
+msgstr ""
+
+#: altyo_window.vala:1160
 msgid "Settings"
 msgstr ""
 
-#: altyo_window.vala:1178
+#: altyo_window.vala:1190
 msgid "AltYo Settings"
 msgstr ""
 
-#: altyo_window.vala:1184
+#: altyo_window.vala:1196
 msgid "Quit"
 msgstr ""
 
-#: altyo_window.vala:1190
+#: altyo_window.vala:1202
 msgid "Show/Hide"
 msgstr ""
 
-#: altyo_window.vala:1195
+#: altyo_window.vala:1207
 msgid "About and keybindings"
 msgstr ""
 
-#: altyo_window.vala:1199
-msgid "Do not sort this tab"
+#: altyo_window.vala:1211
+msgid "Disable sort tab"
 msgstr ""
 
-#: altyo_window.vala:1207
+#: altyo_window.vala:1219
 msgid "Stay on top"
 msgstr ""
 
-#: altyo_window.vala:1369
+#: altyo_window.vala:1381
 msgid "Wrap search"
 msgstr ""
 
-#: altyo_window.vala:1378
+#: altyo_window.vala:1390
 msgid "Match case-sensitive"
 msgstr ""

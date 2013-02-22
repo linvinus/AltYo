@@ -325,7 +325,10 @@ public class VTMainWindow : Window{
 		this.mouse_follow  = conf.get_boolean("follow_the_white_rabbit",false);
 		this.save_session  = conf.get_boolean("autosave_session",false);
 		this.animation_enabled=conf.get_boolean("animation_enabled",true);
-		this.pull_steps=conf.get_integer("animation_pull_steps",10);
+		this.pull_steps=conf.get_integer("animation_pull_steps",10,(ref new_val)=>{
+				if(new_val<1){new_val=10;return true;}
+				return false;
+			});
 		this.double_hotkey_milliseconds=conf.get_integer("double_hotkey_milliseconds",500)*1000;
 		string ret = conf.get_string("tab_sort_order","none");
 			switch(ret){
@@ -595,8 +598,8 @@ public class VTMainWindow : Window{
 	return false;
 	}
 
-	public VTTerminal add_tab(string? session_command=null,OnChildExitCallBack? on_exit=null) {
-		var vt = new VTTerminal(this.conf,this.terms_notebook,(int)(this.children.length()+1),session_command,on_exit );
+	public VTTerminal add_tab(string? session_command=null,string? session_path=null,OnChildExitCallBack? on_exit=null) {
+		var vt = new VTTerminal(this.conf,this.terms_notebook,(int)(this.children.length()+1),session_command,session_path,on_exit );
 
 		vt.configure(this.conf);
 
@@ -825,7 +828,7 @@ public class VTMainWindow : Window{
 
 	public void ShowQuitDialog(){
 			var dialog = new MessageDialog (null, (DialogFlags.DESTROY_WITH_PARENT | DialogFlags.MODAL), MessageType.QUESTION, ButtonsType.YES_NO, _("Really quit?"));
-			var checkbox = new CheckButton.with_label(_("Save session?"));
+			var checkbox = new CheckButton.with_label(_("Save session"));
 			checkbox.active=this.save_session;
 			var dialog_box = ((Gtk.ButtonBox)dialog.get_action_area ());
 			dialog_box.pack_start(checkbox,false,false,0);
@@ -1074,8 +1077,17 @@ public class VTMainWindow : Window{
 	
 
 		/* Add New Tab on <Ctrl><Shift>t */
-		this.add_window_accel("terminal_add_tab", _("Add tab"), _("Open new tab"), Gtk.Stock.NEW,"<Control><Shift>T",()=>{
+		this.add_window_accel("terminal_add_tab", _("New tab"), _("Open new tab"), Gtk.Stock.NEW,"<Control><Shift>T",()=>{
 			this.add_tab();
+		});
+		this.add_window_accel("terminal_new_tab_in_current_directory", _("Open new tab in current directory"), _("Open new tab in current directory"), Gtk.Stock.NEW,"",()=>{
+			debug("terminal_new_tab_in_current_directory");
+			if(this.active_tab!=null){
+				VTTerminal vt =((VTTerminal)this.active_tab.object);
+				var tmp=vt.find_tty_pgrp(vt.pid,true);
+				debug("path: %s",tmp);
+				this.add_tab(null,tmp);
+			}
 		});
 		
         /* Close Current Tab on <Ctrl><Shift>w */
@@ -1145,7 +1157,7 @@ public class VTMainWindow : Window{
 		this.add_window_toggle_accel("follow_the_mouse", _("Follow mouse cursor"), _("Follow mouse cursor"), Gtk.Stock.EDIT,"",()=> {
 				this.mouse_follow = !this.mouse_follow;
         });
-		this.add_window_accel("open_settings", _("Settings"), _("Settings"), Gtk.Stock.EDIT,"",()=> {
+		this.add_window_accel("open_settings", _("Settings..."), _("Settings"), Gtk.Stock.EDIT,"",()=> {
 				this.conf.save(true);//force save before edit
 				VTTerminal vt;
 				string editor = conf.get_string("text_editor_command","");
@@ -1168,7 +1180,7 @@ public class VTMainWindow : Window{
 					if(done) break;
 				}
 				debug("Found editor: %s",editor);
-				vt = this.add_tab(editor+" "+this.conf.conf_file,(vt1)=>{
+				vt = this.add_tab(editor+" "+this.conf.conf_file,null,(vt1)=>{
 					debug("OnChildExited");
 					this.conf.load_config();
 					this.close_tab(this.hvbox.children_index(vt1.tbutton));
@@ -1196,9 +1208,9 @@ public class VTMainWindow : Window{
 			this.ShowHelp();
 		});
 
-		this.add_window_toggle_accel("do_not_sort_tab", _("Do not sort this tab"), _("Do not sort this tab"), Gtk.Stock.EDIT,"",()=> {
+		this.add_window_toggle_accel("disable_sort_tab", _("Disable sort tab"), _("Disable sort tab"), Gtk.Stock.EDIT,"",()=> {
 			if(this.active_tab!=null){
-				debug("action do_not_sort_tab");
+				debug("disable_sort_tab");
 				this.active_tab.do_not_sort=!this.active_tab.do_not_sort;
 				//((Gtk.ToggleAction)
 			}

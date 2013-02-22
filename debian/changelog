@@ -1,3 +1,21 @@
+altyo (0.2~130222-linvinus1) quantal; urgency=low
+
+  [ denis ]
+  * new package 0.2_130221-linvinus1
+  * correct changed-by-address
+
+  [ linvinus ]
+  * new: action Open new tab in current directory, fix:animation_pull_steps=0  -->  Floating point exception, updated translations, updated popup menu
+  * update En,Ru translation
+  * gresource p1.
+
+  [ denis ]
+  * new: config option terminal_opacity
+  * update: terminal_opacity - double, 0 .. 1
+  * new: gresource application icon, based on Faenza icon theme, updated desktop file
+
+ -- denis <linvinus@gmail.com>  Fri, 22 Feb 2013 21:44:12 +0400
+
 altyo (0.2~130221-linvinus1) quantal; urgency=low
 
   [ denis ]

@@ -7,3 +7,4 @@ syntax: glob
 /altyo
 /hardcopy.0
 *.mo
+/data/altyo.c

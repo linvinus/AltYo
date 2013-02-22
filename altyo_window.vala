@@ -111,6 +111,8 @@ public class VTMainWindow : Window{
 
 	construct {
 		this.title = "AltYo";
+		Image img = new Image.from_stock ("gtk-go-up",Gtk.IconSize.SMALL_TOOLBAR);
+		this.set_icon(img.pixbuf);
 		//this.border_width = 0;
 		this.skip_taskbar_hint = true;
 		this.urgency_hint = true;

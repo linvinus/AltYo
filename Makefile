@@ -55,6 +55,7 @@ source:
 clean:
 	rm *.c *.h || true
 	rm ./altyo || true
+	rm ./data/*.c *.h || true
 
 install: gen_po
 	test -z "$(DESTDIR)$(PREFIX)/bin" || mkdir -p "$(DESTDIR)$(PREFIX)/bin";

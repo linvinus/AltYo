@@ -2,6 +2,6 @@
 <gresources>
   <gresource prefix="/org/gnome/altyo">
     <file alias="altyo.png" preprocess="to-pixdata">altyo.png</file>
-    <file alias="altyo.svg" preprocess="to-pixdata">altyo.svg</file>
+    <file alias="altyo.svg">altyo.svg</file>
   </gresource>
 </gresources>

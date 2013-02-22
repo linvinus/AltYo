@@ -1,3 +1,9 @@
+altyo (0.2~130223-linvinus1) quantal; urgency=low
+
+  * fix building package
+
+ -- denis <linvinus@gmail.com>  Fri, 22 Feb 2013 22:55:03 +0400
+
 altyo (0.2~130222-linvinus1) quantal; urgency=low
 
   [ denis ]

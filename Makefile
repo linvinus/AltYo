@@ -75,6 +75,14 @@ source-package:
 	rm ./altyo || true
 	git-buildpackage --git-upstream-tree=branch --git-upstream-branch=master -rfakeroot -S -sa
 
+#gen_changes:
+#	git-dch --ignore-branch --debian-branch=master --verbose
+#	git add .
+#	git commit -m "debian/0.2_130222-linvinus1"
+#	git tag "debian/0.2_130222-linvinus1"
+#	git push
+#	git push origin --tags
+
 #git tag "debian/0.2_121003-linvinus1" ~ -> _ , : -> %
 #git-dch --ignore-branch --debian-branch=master --verbose
 #git push origin --tags

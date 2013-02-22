@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
   <gresource prefix="/org/gnome/altyo">
-    <file alias="altyo.png">altyo.png</file>
+    <file alias="altyo.png" preprocess="to-pixdata">altyo.png</file>
+    <file alias="altyo.svg" preprocess="to-pixdata">altyo.svg</file>
   </gresource>
 </gresources>

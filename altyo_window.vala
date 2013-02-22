@@ -111,8 +111,6 @@ public class VTMainWindow : Window{
 
 	construct {
 		this.title = "AltYo";
-		Image img = new Image.from_stock ("gtk-go-up",Gtk.IconSize.SMALL_TOOLBAR);
-		this.set_icon(img.pixbuf);
 		//this.border_width = 0;
 		this.skip_taskbar_hint = true;
 		this.urgency_hint = true;
@@ -151,6 +149,9 @@ public class VTMainWindow : Window{
 
 		this.hotkey = new PanelHotkey ();
 
+		Image img = new Image.from_resource ("/org/gnome/altyo/altyo.svg");
+		this.set_icon(img.pixbuf);
+
 
 		this.main_vbox = new VBox(false,0);
 		this.main_vbox.name="main_vbox";
@@ -160,7 +161,7 @@ public class VTMainWindow : Window{
 		this.terms_notebook = new Notebook() ;
 		this.terms_notebook.name="terms_notebook";
 		this.terms_notebook.set_show_tabs(false);//HVBox will have tabs ;)
-		
+
 		//this.terms_notebook.set_show_border(false);
 
 		this.tasks_notebook = new Notebook();
@@ -283,7 +284,7 @@ public class VTMainWindow : Window{
 			return base.draw(cr);
 		}
 	}
-	
+
 	public void reconfigure(){
 		debug("reconfigure");
 		var css_main = new CssProvider ();
@@ -302,7 +303,7 @@ public class VTMainWindow : Window{
 		css_main.parsing_error.connect((section,error)=>{
 			debug("css_main.parsing_error %s",error.message);
 			});
-		
+
 		try{
 			css_main.load_from_data (this.conf.get_string("program_style",style_str),-1);
 			Gtk.StyleContext.add_provider_for_screen(this.get_screen(),css_main,Gtk.STYLE_PROVIDER_PRIORITY_USER);
@@ -345,9 +346,9 @@ public class VTMainWindow : Window{
 					conf.set_string("tab_sort_order","none");
 				break;
 				}
-			
-		
-		
+
+
+
 		this.hotkey.unbind();
 		KeyBinding grave=this.hotkey.bind (this.conf.get_accel_string("main_hotkey","<Alt>grave"));
 		if(grave!=null)
@@ -364,10 +365,10 @@ public class VTMainWindow : Window{
 
 		this.setup_keyboard_accelerators();
 	}
-	
+
 	public void configure_position(){
-		
-			unowned Gdk.Screen gscreen = this.get_screen (); 
+
+			unowned Gdk.Screen gscreen = this.get_screen ();
 			debug("x=%d,y=%d",this.orig_x,this.orig_y);
 			int current_monitor;
 			if(this.mouse_follow){
@@ -378,15 +379,15 @@ public class VTMainWindow : Window{
 				display.query_pointer(window, out window,
 				out event.xbutton.subwindow, out event.xbutton.x_root,
 				out event.xbutton.y_root, out event.xbutton.x,
-				out event.xbutton.y, out event.xbutton.state);			
+				out event.xbutton.y, out event.xbutton.state);
 				current_monitor = gscreen.get_monitor_at_point (event.xbutton.x,event.xbutton.y);
 			}else
 			    current_monitor = gscreen.get_monitor_at_point (this.orig_x,this.orig_y);
-			    
+
 			Gdk.Rectangle rectangle;
 			rectangle=gscreen.get_monitor_workarea(current_monitor);
 
-		
+
 			int w = conf.get_integer("terminal_width",80);//if less 101 then it persentage
 			int h = conf.get_integer("terminal_height",50);//if less 101 then it persentage
 			if(h==100){//workaround for fullscreen, otherwise tabbutton will be out of screen
@@ -397,7 +398,7 @@ public class VTMainWindow : Window{
 				}else{
 					this.terminal_width=w;
 				}
-				
+
 				if(h<101){
 					this.terminal_height=(int)(((float)rectangle.height/100.0)*(float)h);
 				}else{
@@ -406,9 +407,9 @@ public class VTMainWindow : Window{
 			}
 			this.orig_w=this.terminal_width;
 			this.orig_h=this.terminal_height;
-			
+
 			if(this.position>3)this.position=1;
-			
+
 			switch(this.position){
 				case 0:
 					this.orig_x=rectangle.x;
@@ -420,12 +421,12 @@ public class VTMainWindow : Window{
 					this.orig_x=rectangle.x+(rectangle.width-this.terminal_width);
 				break;
 			}
-			
+
 			//this.orig_x=rectangle.x;
 			this.orig_y=rectangle.y;
-			
+
 			//this.tasks_notebook.set_size_request(this.terminal_width,this.terminal_height);
-			//we can't change height , otherwise vte will change 
+			//we can't change height , otherwise vte will change
 			//this.tasks_notebook.set_size_request(terminal_width,this.terminal_height);
 			debug("new x=%d,y=%d",this.orig_x,this.orig_y);
 			debug("new h=%d,w=%d",this.orig_h,this.orig_w);
@@ -476,7 +477,7 @@ public class VTMainWindow : Window{
 						this.queue_resize_no_redraw();
 					}
 	}
-	
+
 	public bool on_pull_down(){
 
 			this.pull_step++;
@@ -625,21 +626,21 @@ public class VTMainWindow : Window{
 		this.hvbox.remove(tab_button);
 		if(tab_button==this.active_tab)
 			this.active_tab=null;
-		//unowned 
+		//unowned
 		VTTerminal vtt = ((VTTerminal)tab_button.object);
 
 		this.children.remove(vtt);
-		
+
 //~ 		try {
 //~ 			//if vte was in swap it may took long time, so run it in separate thread
-//~ 			//GLib.Thread<void*> thread_a = 
-//~ 			//GLib.Thread<weak void*>thread_a = 
+//~ 			//GLib.Thread<void*> thread_a =
+//~ 			//GLib.Thread<weak void*>thread_a =
 //~ 			GLib.Thread.create<void*>(()=>{debug ("close_tab close in thread\n"); vtt.destroy(); return null;},false);//vtt.destroy() also destroys tab_button
 //~ 		} catch (Error e) {
 //~ 			debug ("close_tab thread %s\n", e.message);
 			vtt.destroy();
 //~ 		}
-    
+
 
 		if(this.children.length()>0){
 			if (tab_position>(this.children.length()-1))
@@ -767,10 +768,10 @@ public class VTMainWindow : Window{
 				break;
 			}
 		}
-		
+
 	}
 
-	
+
 	public void tab_sort (VTTerminal vt_new_title) {
 		if(vt_new_title.tbutton.host_name==null ||
 		   vt_new_title.tbutton.do_not_sort) return;//do not sort if hostname empty
@@ -928,7 +929,7 @@ public class VTMainWindow : Window{
 			dialog.run();
 			return accelerator_name;
 	}
-	
+
 	public void ShowHelp(){
 			var dialog = new AboutDialog();
 			dialog.license_type = Gtk.License.GPL_3_0;
@@ -936,12 +937,12 @@ public class VTMainWindow : Window{
 			dialog.website ="https://github.com/linvinus/AltYo";
 			dialog.version ="0.2";
 			dialog.translator_credits="English by willemw12@gmail.com";
-			
+
 			AccelMap am=Gtk.AccelMap.get();
 
 			var p = new point_a(this.action_group);
-			
-			
+
+
 			am.foreach(p,(pvoid,accel_path,accel_key,accel_mods,ref changed)=>{
 				unowned point_a pp=(point_a*) pvoid;
 				string[] regs;
@@ -958,8 +959,8 @@ public class VTMainWindow : Window{
 				var sw=new ScrolledWindow(null,null);
 				sw.border_width=6;
 				sw.set_policy(Gtk.PolicyType.AUTOMATIC,Gtk.PolicyType.AUTOMATIC);
-				
-				
+
+
 				var tvbuf = new TextBuffer( new TextTagTable() );
 
 				tag_command = new TextTag ("command-name");
@@ -967,7 +968,7 @@ public class VTMainWindow : Window{
 				tag_command.justification=Gtk.Justification.LEFT;
                 tag_command.set ("weight", Pango.Weight.NORMAL, "family", "Monospace");
                 tvbuf.tag_table.add (tag_command);
-				
+
 				tag_key = new TextTag ("key");
 				tag_key.justification_set=true;
 				tag_key.justification=Gtk.Justification.RIGHT;
@@ -987,10 +988,10 @@ public class VTMainWindow : Window{
 					string[] tarr=line.split ("\t");
 					tvbuf.get_end_iter(out iter);
 					tvbuf.insert_with_tags(iter,tarr[0]+":",-1,tag_command);
-					
+
 					tvbuf.get_end_iter(out iter);
 					tvbuf.insert_with_tags(iter,tarr[1]+"\n",-1,tag_key);
-					
+
 				}
 
  			var dialog_box = ((Gtk.Box)dialog.get_content_area ());
@@ -1042,7 +1043,7 @@ public class VTMainWindow : Window{
 		}
 		return false;
 	}
-	
+
 	private void add_window_accel(string name,string? label, string? tooltip, string? stock_id,string default_accel, MyCallBack cb){
 		if(!check_for_existing_action(name,default_accel))
 			this.add_window_accel_real(new Gtk.Action(name, label, tooltip, stock_id),conf.get_accel_string(name,default_accel),cb);
@@ -1065,7 +1066,7 @@ public class VTMainWindow : Window{
 		//inc refcount otherwise action will be freed at the end of this function
 		//action.ref();
 	}
-	
+
 	public void setup_keyboard_accelerators() {
 
 
@@ -1073,10 +1074,10 @@ public class VTMainWindow : Window{
 			this.accel_group = new Gtk.AccelGroup();
 			this.add_accel_group (accel_group);
 		}
-		
+
 		if(this.action_group==null)
 			this.action_group = new Gtk.ActionGroup("AltYo");
-	
+
 
 		/* Add New Tab on <Ctrl><Shift>t */
 		this.add_window_accel("terminal_add_tab", _("New tab"), _("Open new tab"), Gtk.Stock.NEW,"<Control><Shift>T",()=>{
@@ -1091,7 +1092,7 @@ public class VTMainWindow : Window{
 				this.add_tab(null,tmp);
 			}
 		});
-		
+
         /* Close Current Tab on <Ctrl><Shift>w */
 		this.add_window_accel("terminal_close_tab", _("Close tab"), _("Close current tab"), Gtk.Stock.CLOSE,"<Control><Shift>W",()=> {
             this.close_tab(this.hvbox.children_index(this.active_tab));
@@ -1121,9 +1122,9 @@ public class VTMainWindow : Window{
 						j+=10;
 					}else
 						this.double_hotkey=j;
-					
+
 					this.double_hotkey_last_time=now;
-					
+
 					unowned VTTerminal vt = children.nth_data(j-1);
 					if(vt != null)
 						this.activate_tab(vt.tbutton);
@@ -1131,7 +1132,7 @@ public class VTMainWindow : Window{
 		}
 
 		///* Copy on <Ctrl><Shift>с */
-		
+
 		this.add_window_accel("terminal_copy_text",_("Copy"), _("Copy selected text"), Gtk.Stock.COPY,"<Control><Shift>C",()=> {
             this.ccopy();
         });
@@ -1155,7 +1156,7 @@ public class VTMainWindow : Window{
 				this.tasks_notebook.set_current_page(TASKS.TERMINALS);
         });
         #endif
-        
+
 		this.add_window_toggle_accel("follow_the_mouse", _("Follow mouse cursor"), _("Follow mouse cursor"), Gtk.Stock.EDIT,"",()=> {
 				this.mouse_follow = !this.mouse_follow;
         });
@@ -1163,10 +1164,10 @@ public class VTMainWindow : Window{
 				this.conf.save(true);//force save before edit
 				VTTerminal vt;
 				string editor = conf.get_string("text_editor_command","");
-				
+
 				if(editor=="" ||editor==null)
 					editor=GLib.Environment.get_variable("EDITOR");
-					
+
 				string[] editor_names={"editor","nano","vi","emacs"};
 				string[] paths={"/usr/bin/","/bin/","/usr/local/bin/"};
 				bool done=false;
@@ -1191,8 +1192,8 @@ public class VTMainWindow : Window{
 				var tab_index =  this.children.index(vt)+1;
 				vt.tbutton.set_title(tab_index, _("AltYo Settings") );
         });
-        
-        
+
+
 
 		/* Quit on <Ctrl><Shift>q */
 		this.add_window_accel("altyo_exit", _("Quit"), _("Quit"), Gtk.Stock.QUIT,"<Control><Shift>Q",()=> {
@@ -1252,7 +1253,7 @@ public class VTMainWindow : Window{
 				this.present() ;
 			}else{
 				this.skip_taskbar_hint = false;
-				this.set_keep_above(false);			
+				this.set_keep_above(false);
 			}
 			hotkey.send_net_active_window(this.get_window ());
 			if(this.prev_focus!=null)
@@ -1266,12 +1267,12 @@ public class VTMainWindow : Window{
 
 			if(!this.maximized){
 				debug ("hvbox_size_changed w=%d h=%d  task_w=%d task_h=%d term_h=%d",width,height,this.tasks_notebook.get_allocated_width(),this.tasks_notebook.get_allocated_height(),this.terminal_height) ;
-	
+
 				if(this.tasks_notebook.get_allocated_width() != width || this.tasks_notebook.get_allocated_height() > this.terminal_height+1){
 					this.tasks_notebook.set_size_request(this.terminal_width,this.terminal_height);
 					this.tasks_notebook.queue_resize_no_redraw();
 				}
-				
+
 				var should_be_h = this.terminal_height+height + (this.search_hbox.get_visible()?this.search_hbox.get_allocated_height():0);
 				if(this.get_allocated_height()>should_be_h+2 && !this.maximized){
 					this.configure_position();//this needed to update position after unmaximize
@@ -1345,9 +1346,9 @@ public class VTMainWindow : Window{
 					if(needs_udatate){
 						var reg_exp = new GLib.Regex(new_pattern,cflags);
 						vtt.vte_term.search_set_gregex(reg_exp);
-					}	
+					}
 	}
-	
+
 	public void create_search_box(){
 		this.search_text_combo = new ComboBoxText.with_entry ();
 		((Entry)this.search_text_combo.get_child()).key_press_event.connect((event)=>{
@@ -1459,7 +1460,7 @@ public class VTMainWindow : Window{
 			this.search_wrap_around.active=vtt.vte_term.search_get_wrap_around();
 			this.search_match_case.active=vtt.match_case;
 		}
-		
+
 //~ 		Gdk.RGBA c = Gdk.RGBA();
 //~         c.parse("#AAAAAA");//black todo: make same color as vte
 //~         c.alpha = 1.0;//transparency
@@ -1530,7 +1531,7 @@ public class VTMainWindow : Window{
 		if(page_num==TASKS.TERMINALS){
 			//while loading,on_switch_task perhaps before this.action_group is configured
 			if(this.action_group!=null) //ignore if not configured
-				this.action_group.sensitive=true; 
+				this.action_group.sensitive=true;
 			//this.overlay_notebook.hide();
 			unowned VTTerminal vtt = ((VTTerminal)this.active_tab.object);
 			vtt.vte_term.grab_focus();

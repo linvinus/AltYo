@@ -28,7 +28,7 @@ ifeq ($(LINUX.DISTRIB.ID),debian)
 #debian specific possibility
 VALA_FLAGS += -D ALTERNATE_SCREEN_SCROLL
 endif
-VALA_FLAGS += --vapidir ./vapi --pkg gtk+-3.0 --pkg vte-2.90 --pkg gee-1.0 --pkg gdk-x11-3.0 --pkg cairo --pkg posix 
+VALA_FLAGS += --vapidir ./vapi --pkg gtk+-3.0 --pkg vte-2.90 --pkg gee-1.0 --pkg gdk-x11-3.0 --pkg cairo --pkg posix
 #DESTDIR?=
 PREFIX?=/usr
 
@@ -38,13 +38,15 @@ VALA_FILES  = vapi/config.vapi \
 				altyo_terminal.vala \
 				altyo_window.vala \
 				altyo_hotkey.vala \
-				altyo_config.vala
+				altyo_config.vala \
+				data/altyo.c
 #				altyo_myoverlaybox.vala
 
 #VALA_FILES  += 	altyo_quick_connectios.vala
 
 default:
 	#test -e ./altyo && rm ./altyo
+	glib-compile-resources --sourcedir=./data --generate-source ./data/altyo.gresource.xml
 	valac -o $(PRG_NAME) $(VALA_FLAGS) $(VALA_FILES)
 
 source:
@@ -61,6 +63,8 @@ install: gen_po
 	cp -a ./altyo.desktop $(DESTDIR)$(PREFIX)/share/applications
 	test -z "$(DESTDIR)$(PREFIX)/share/locale/ru/LC_MESSAGES" || mkdir -p "$(DESTDIR)$(PREFIX)/share/locale/ru/LC_MESSAGES";
 	cp -a ./po/ru/LC_MESSAGES/altyo.mo $(DESTDIR)$(PREFIX)/share/locale/ru/LC_MESSAGES
+	test -z "$(DESTDIR)$(PREFIX)/share/icons" || mkdir -p "$(DESTDIR)$(PREFIX)/share/icons";
+	cp -a ./data/altyo.png $(DESTDIR)$(PREFIX)/share/icons
 
 gen_po:
 	xgettext -o ./po/altyo.po --from-code=UTF-8 -language=C -k_ $(VALA_FILES)

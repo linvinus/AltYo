@@ -579,7 +579,7 @@ public class VTTerminal : Object{
 		menu.append(menuitem);
 		
 		var submenu = new Gtk.Menu ();
-		menuitem = new Gtk.MenuItem.with_label ("Additional settings");
+		menuitem = new Gtk.MenuItem.with_label (_("Additional settings"));
 		menuitem.set_submenu(submenu);
 		menu.append(menuitem);
 		

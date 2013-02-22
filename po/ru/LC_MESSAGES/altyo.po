@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-22 14:35+0400\n"
+"POT-Creation-Date: 2013-02-22 16:31+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,6 +19,10 @@ msgstr ""
 #: altyo_window.vala:1207
 msgid "About and keybindings"
 msgstr "Показать список горячих клавиш/О программе"
+
+#: altyo_terminal.vala:582
+msgid "Additional settings"
+msgstr "Дополнительные настройки"
 
 #: altyo_window.vala:1190
 msgid "AltYo Settings"
@@ -55,6 +59,10 @@ msgstr "Учитывать регистр"
 #: altyo_window.vala:1080
 msgid "New tab"
 msgstr "Добавить терминал"
+
+#: altyo_window.vala:1083
+msgid "New tab in current directory"
+msgstr "Открыть новый терминал в текущей директории"
 
 #: altyo_window.vala:1099
 msgid "Next tab"
@@ -132,4 +140,3 @@ msgstr "Переключиться в терминал № %d"
 #: altyo_window.vala:1381
 msgid "Wrap search"
 msgstr "Искать циклически"
-

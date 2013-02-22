@@ -1080,7 +1080,7 @@ public class VTMainWindow : Window{
 		this.add_window_accel("terminal_add_tab", _("New tab"), _("Open new tab"), Gtk.Stock.NEW,"<Control><Shift>T",()=>{
 			this.add_tab();
 		});
-		this.add_window_accel("terminal_new_tab_in_current_directory", _("Open new tab in current directory"), _("Open new tab in current directory"), Gtk.Stock.NEW,"",()=>{
+		this.add_window_accel("terminal_new_tab_in_current_directory", _("New tab in current directory"), _("Open new tab in current directory"), Gtk.Stock.NEW,"",()=>{
 			debug("terminal_new_tab_in_current_directory");
 			if(this.active_tab!=null){
 				VTTerminal vt =((VTTerminal)this.active_tab.object);

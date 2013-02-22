@@ -518,11 +518,11 @@ public class VTTerminal : Object{
 			if(sat>1) sat=1; if(sat<0) sat=0;
 			this.vte_term.set_background_saturation (sat);
 		}
-		this.vte_term.set_opacity((uint16)my_conf.get_integer("terminal_opacity",65535,(ref new_val)=>{
+		this.vte_term.set_opacity((uint16)((my_conf.get_double("terminal_opacity",1,(ref new_val)=>{
 			if(new_val<0){new_val=0;return true;}
-			if(new_val>65535){new_val=65535;return true;}
+			if(new_val>1){new_val=1;return true;}
 			return false;
-			}));
+			}) )*65535) );
 		/*Gdk.RGBA c = Gdk.RGBA();
 		c.parse(my_conf.get_string("tab_button_color_normal","#00FF00"));
 		//this.tbutton.override_color(StateFlags.NORMAL , c);

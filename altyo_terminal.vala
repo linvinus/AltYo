@@ -177,7 +177,7 @@ public class VTToggleButton : Gtk.ToggleButton {
 				string reg_title=this.tab_title; //GLib.Regex.escape_string(this.tab_title);
 				for(int i=0; i<this.tab_title_regex.length-1;i+=2){
 					grx_arr = new GLib.Regex(this.tab_title_regex[i]);
-					
+
 					reg_title=grx_arr.replace_eval(reg_title,(ssize_t) reg_title.size(),0,0, (match_info, result)=>{
 							debug(" RegexEvalCallback %s %s %d",result.str,match_info.fetch(0),match_info.get_match_count());
 							GLib.Regex grx;
@@ -193,7 +193,7 @@ public class VTToggleButton : Gtk.ToggleButton {
 							if(Regex.match_simple(".*_HOSTNAME_.*",this.tab_title_regex[i+1])){
 								grx = new GLib.Regex(GLib.Regex.escape_string("_HOSTNAME_"));
 								result.append(grx.replace_literal(this.tab_title_regex[i+1],(ssize_t) this.tab_title_regex[i+1].size(), 0, match_info.fetch(match_info.get_match_count()-1)) );
-								this.host_name=match_info.fetch(match_info.get_match_count()-1); 
+								this.host_name=match_info.fetch(match_info.get_match_count()-1);
 							}else
 							if(Regex.match_simple(".*_PATH_.*",this.tab_title_regex[i+1])){
 								grx = new GLib.Regex(GLib.Regex.escape_string("_PATH_"));
@@ -518,7 +518,11 @@ public class VTTerminal : Object{
 			if(sat>1) sat=1; if(sat<0) sat=0;
 			this.vte_term.set_background_saturation (sat);
 		}
-
+		this.vte_term.set_opacity((uint16)my_conf.get_integer("terminal_opacity",65535,(ref new_val)=>{
+			if(new_val<0){new_val=0;return true;}
+			if(new_val>65535){new_val=65535;return true;}
+			return false;
+			}));
 		/*Gdk.RGBA c = Gdk.RGBA();
 		c.parse(my_conf.get_string("tab_button_color_normal","#00FF00"));
 		//this.tbutton.override_color(StateFlags.NORMAL , c);
@@ -567,22 +571,22 @@ public class VTTerminal : Object{
 		menu.append(menuitem);
 		menuitem = (Gtk.MenuItem)acg.get_action("terminal_new_tab_in_current_directory").create_menu_item();
 		menu.append(menuitem);
-		
+
 		menuitem = (Gtk.MenuItem)acg.get_action("terminal_close_tab").create_menu_item();
 		menu.append(menuitem);
 		menuitem = (Gtk.MenuItem)acg.get_action("terminal_search_dialog").create_menu_item();
 		menu.append(menuitem);
-		
+
 		menuitem = new Gtk.SeparatorMenuItem();
 		menu.append(menuitem);
 		menuitem = (Gtk.MenuItem)acg.get_action("open_settings").create_menu_item();
 		menu.append(menuitem);
-		
+
 		var submenu = new Gtk.Menu ();
 		menuitem = new Gtk.MenuItem.with_label (_("Additional settings"));
 		menuitem.set_submenu(submenu);
 		menu.append(menuitem);
-		
+
 		menuitem = (Gtk.MenuItem)acg.get_action("follow_the_mouse").create_menu_item();
 		submenu.append(menuitem);
 		var action_keepabove = acg.get_action("keep_above") as ToggleAction;
@@ -605,7 +609,7 @@ public class VTTerminal : Object{
 			menuitem = (Gtk.MenuItem)acg.get_action("disable_sort_tab").create_menu_item();
 			submenu.append(menuitem);
 		}
-				
+
 		menuitem = (Gtk.MenuItem)acg.get_action("altyo_help").create_menu_item();
 		menu.append(menuitem);
 
@@ -694,14 +698,14 @@ public class VTTerminal : Object{
 					if(GLib.FileUtils.test(tty_pgrp,GLib.FileTest.EXISTS|GLib.FileTest.IS_SYMLINK) ){
 						return (string)GLib.FileUtils.read_link(tty_pgrp);
 					}
-					
+
 				}
 			}
 		}
 		return "";
 	}
 
-	
+
 	public delegate void expect_callback();
 
 	public void expect_and_paste(string expect_string,string paste,owned expect_callback cb){

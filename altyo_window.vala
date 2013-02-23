@@ -1437,6 +1437,13 @@ public class VTMainWindow : Window{
 	public void search_show(){
 		if(!((Entry)this.search_text_combo.get_child()).has_focus){
 			this.search_hbox.show();
+			this.update_events();
+			if(this.maximized){
+				var should_be_h = this.maximized_h-this.hvbox.get_allocated_height() - this.search_hbox.get_allocated_height();
+				this.tasks_notebook.set_size_request(this.tasks_notebook.get_allocated_width(),should_be_h);//update size after maximize event
+				this.queue_resize_no_redraw();
+			}
+			
 			var term = ((VTTerminal)this.active_tab.object).vte_term;
 			if( term.get_has_selection()){
 				term.copy_clipboard();

@@ -23,12 +23,11 @@ VALA_FLAGS += --disable-warnings
 #VALA_FLAGS += -g --save-temps
 VALA_FLAGS += -X -DGETTEXT_PACKAGE=\"$(PRG_NAME)\" -X -DVERSION=\"0.2\"
 #\ -I.\ -include\ "./config.h" -v
-#VALA_FLAGS += --pkg gnome-keyring-1 -D HAVE_QLIST
 ifeq ($(LINUX.DISTRIB.ID),debian)
 #debian specific possibility
 VALA_FLAGS += -D ALTERNATE_SCREEN_SCROLL
 endif
-VALA_FLAGS += --vapidir ./vapi --pkg gtk+-3.0 --pkg vte-2.90 --pkg gee-1.0 --pkg gdk-x11-3.0 --pkg cairo --pkg posix
+VALA_FLAGS += --vapidir ./vapi --pkg gtk+-3.0 --pkg vte-2.90 --pkg gee-1.0 --pkg gdk-x11-3.0 --pkg cairo --pkg posix --pkg gmodule-2.0
 #DESTDIR?=
 PREFIX?=/usr
 
@@ -39,10 +38,12 @@ VALA_FILES  = vapi/config.vapi \
 				altyo_window.vala \
 				altyo_hotkey.vala \
 				altyo_config.vala \
+				altyo_settings.vala \
 				data/altyo.c
 #				altyo_myoverlaybox.vala
 
-#VALA_FILES  += 	altyo_quick_connectios.vala
+#VALA_FLAGS += --pkg gnome-keyring-1 -D HAVE_QLIST
+#VALA_FILES += 	altyo_quick_connectios.vala
 
 default:
 	#test -e ./altyo && rm ./altyo

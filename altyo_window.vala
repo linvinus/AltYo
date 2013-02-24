@@ -96,7 +96,7 @@ public class VTMainWindow : Window{
 	public TAB_SORT_ORDER tab_sort_order {get;set; default = TAB_SORT_ORDER.NONE;}
 
 
-	private List<unowned VTTerminal> children;
+	private List<unowned AYTab> children;
 	public int terminal_width {get;set; default = 80;}
 	public int terminal_height {get;set; default = 50;}
 	private int hvbox_height_old {get;set; default = 0;}
@@ -246,10 +246,12 @@ public class VTMainWindow : Window{
 			string[] terminal_session = {};
 			var grx_exclude = new GLib.Regex(this.conf.get_string("terminal_session_exclude_regex","/?zsh\\ ?|/?mc\\ ?|/?bash\\ ?"));
 			foreach (var vt in this.children) {
-				var tmp=vt.find_tty_pgrp(vt.pid);
-				if(tmp!="" && !grx_exclude.match_all(tmp,0,null) && this.save_session)
-					terminal_session+=tmp;
-				vt.destroy();
+				if(vt is VTTerminal){
+					var tmp=((VTTerminal)vt).find_tty_pgrp(((VTTerminal)vt).pid);
+					if(tmp!="" && !grx_exclude.match_all(tmp,0,null) && this.save_session)
+						terminal_session+=tmp;
+					((VTTerminal)vt).destroy();
+				}
 			}
 			//g_list_free(this.children);
 			this.conf.set_string_list("terminal_session",terminal_session);
@@ -629,7 +631,7 @@ public class VTMainWindow : Window{
 		if(tab_button==this.active_tab)
 			this.active_tab=null;
 		//unowned
-		VTTerminal vtt = ((VTTerminal)tab_button.object);
+		AYTab vtt = ((AYTab)tab_button.object);
 
 		this.children.remove(vtt);
 
@@ -640,7 +642,10 @@ public class VTMainWindow : Window{
 //~ 			GLib.Thread.create<void*>(()=>{debug ("close_tab close in thread\n"); vtt.destroy(); return null;},false);//vtt.destroy() also destroys tab_button
 //~ 		} catch (Error e) {
 //~ 			debug ("close_tab thread %s\n", e.message);
-			vtt.destroy();
+			if(vtt is VTTerminal)
+				((VTTerminal)vtt).destroy();
+			else
+				vtt.destroy();
 //~ 		}
 
 
@@ -671,8 +676,9 @@ public class VTMainWindow : Window{
 	public void activate_tab (VTToggleButton tab_button){
 		if (tab_button != null )
 		if(this.active_tab==null || this.active_tab!=tab_button){
-			foreach (var vt in this.children) {
+			foreach (AYTab vt in this.children) {
 				if (vt.tbutton == tab_button){
+					
 					this.terms_notebook.set_current_page(this.terms_notebook.page_num(vt.hbox));
 
 					if (this.active_tab!=null){
@@ -683,17 +689,20 @@ public class VTMainWindow : Window{
 					this.active_tab.really_toggling=true;
 					this.active_tab.set_active(this.active_tab.really_toggling);
 					vt.tbutton.set_title((this.children.index(vt)+1),null);
-
-					vt.vte_term.grab_focus();
-					vt.vte_term.show () ;
+					if(vt is VTTerminal){
+						((VTTerminal)vt).vte_term.grab_focus();
+						((VTTerminal)vt).vte_term.show () ;
+						//this.set_default(vt.vte_term);
+					}
 					this.search_update();
-					//this.set_default(vt.vte_term);
 					break;
 					}
 			}
 		}else{
+			if(this.active_tab.object is VTTerminal){
 			((VTTerminal)this.active_tab.object).vte_term.grab_focus();
 			((VTTerminal)this.active_tab.object).vte_term.show () ;
+			}
 			this.search_update();
 		}
 	}
@@ -720,13 +729,14 @@ public class VTMainWindow : Window{
 	}
 
 	public void tab_next () {
-		unowned List<unowned VTTerminal> item_it = null;
-		unowned VTTerminal vt = null;
+		unowned List<unowned AYTab> item_it = null;
+		unowned AYTab vt = null;
 		for (item_it = this.children; item_it != null; item_it = item_it.next) {
 			vt = item_it.data;
 			if (vt.tbutton == this.active_tab){
 				if (item_it.next!=null){
 					vt = item_it.next.data;
+					debug("tab_next %s",vt.tbutton.label.get_text());
 					this.activate_tab(vt.tbutton) ;
 					break;
 				}else{
@@ -739,8 +749,8 @@ public class VTMainWindow : Window{
 	}
 
 	public void tab_prev () {
-		unowned List<unowned VTTerminal> item_it=null;
-		unowned VTTerminal vt=null;
+		unowned List<unowned AYTab> item_it=null;
+		unowned AYTab vt=null;
 		for (item_it = this.children; item_it != null; item_it = item_it.next) {
 			vt = item_it.data;
 			if (vt.tbutton == this.active_tab){
@@ -762,11 +772,11 @@ public class VTMainWindow : Window{
 		//title_changed in altyo_window
 		//becouse of this.children.index
 		foreach (var vt in this.children) {
-			if (vt.vte_term == term){
+			if (vt is VTTerminal && ((VTTerminal)vt).vte_term == term){
 				var tab_index =  this.children.index(vt)+1;
 				vt.tbutton.set_title(tab_index, s );
 				if(this.tab_sort_order==TAB_SORT_ORDER.HOSTNAME)
-					this.tab_sort(vt);
+					this.tab_sort(((VTTerminal)vt));
 				break;
 			}
 		}
@@ -1127,7 +1137,7 @@ public class VTMainWindow : Window{
 
 					this.double_hotkey_last_time=now;
 
-					unowned VTTerminal vt = children.nth_data(j-1);
+					unowned AYTab vt = children.nth_data(j-1);
 					if(vt != null)
 						this.activate_tab(vt.tbutton);
 			});
@@ -1164,6 +1174,7 @@ public class VTMainWindow : Window{
         });
 		this.add_window_accel("open_settings", _("Settings..."), _("Settings"), Gtk.Stock.EDIT,"",()=> {
 				this.conf.save(true);//force save before edit
+				/*
 				VTTerminal vt;
 				string editor = conf.get_string("text_editor_command","");
 
@@ -1193,6 +1204,13 @@ public class VTMainWindow : Window{
 				vt.auto_restart=false;
 				var tab_index =  this.children.index(vt)+1;
 				vt.tbutton.set_title(tab_index, _("AltYo Settings") );
+				*/
+				var settings=new AYSettings(this.conf,this.terms_notebook,(int)(this.children.length()+1) );
+				this.children.append(settings);
+				settings.tbutton.button_press_event.connect(tab_button_press_event);
+				this.hvbox.add(settings.tbutton);
+				this.activate_tab(settings.tbutton) ;//this.active_tab = this.hvbox.children_index(tbutton);
+				settings.ref();
         });
 
 
@@ -1303,13 +1321,15 @@ public class VTMainWindow : Window{
 	}
 
 	public void ccopy() {
-				unowned VTTerminal vtt = ((VTTerminal)this.active_tab.object);
-				vtt.vte_term.copy_clipboard ();
+				unowned AYTab vtt = ((AYTab)this.active_tab.object);
+				if(vtt is VTTerminal)
+					((VTTerminal)vtt).vte_term.copy_clipboard ();
 	}
 
 	public void cpaste() {
-				unowned VTTerminal vtt = ((VTTerminal)this.active_tab.object);
-				vtt.vte_term.paste_clipboard ();
+				unowned AYTab vtt = ((AYTab)this.active_tab.object);
+				if(vtt is VTTerminal)
+					((VTTerminal)vtt).vte_term.paste_clipboard ();
 	}
 
 	/*public override bool focus_out_event (Gdk.EventFocus event){
@@ -1354,7 +1374,9 @@ public class VTMainWindow : Window{
 	public void create_search_box(){
 		this.search_text_combo = new ComboBoxText.with_entry ();
 		((Entry)this.search_text_combo.get_child()).key_press_event.connect((event)=>{
-			unowned VTTerminal vtt = ((VTTerminal)this.active_tab.object);
+			unowned AYTab ayt = ((AYTab)this.active_tab.object);
+			if(!(ayt is VTTerminal)) return false;
+			unowned VTTerminal vtt = ((VTTerminal) ayt);
 			var keyname = Gdk.keyval_name(event.keyval);
 			if( keyname == "Return"){
 					this.search_update_pattern(vtt);
@@ -1385,8 +1407,9 @@ public class VTMainWindow : Window{
 
 		this.search_wrap_around = new CheckButton.with_label(_("Wrap search"));
 		this.search_wrap_around.clicked.connect(()=>{
-			unowned VTTerminal vtt = ((VTTerminal)this.active_tab.object);
-			vtt.vte_term.search_set_wrap_around(this.search_wrap_around.active);
+			unowned AYTab vtt = ((AYTab)this.active_tab.object);
+			if(!(vtt is VTTerminal)) return;
+			((VTTerminal)vtt).vte_term.search_set_wrap_around(this.search_wrap_around.active);
 			this.search_text_combo.grab_focus();
 			});
 		this.search_wrap_around.show();
@@ -1394,8 +1417,9 @@ public class VTMainWindow : Window{
 
 		this.search_match_case = new CheckButton.with_label(_("Match case-sensitive"));
 		this.search_match_case.clicked.connect(()=>{
-			unowned VTTerminal vtt = ((VTTerminal)this.active_tab.object);
-			vtt.match_case=this.search_match_case.active;
+			unowned AYTab vtt = ((AYTab)this.active_tab.object);
+			if(!(vtt is VTTerminal)) return;
+			((VTTerminal)vtt).match_case=this.search_match_case.active;
 			this.search_text_combo.grab_focus();
 			});
 		this.search_match_case.show();
@@ -1406,7 +1430,9 @@ public class VTMainWindow : Window{
 		Image img = new Image.from_stock ("gtk-go-up",Gtk.IconSize.SMALL_TOOLBAR);
 		next_button.add(img);
 		next_button.clicked.connect(()=>{
-			unowned VTTerminal vtt = ((VTTerminal)this.active_tab.object);
+			unowned AYTab ayt = ((AYTab)this.active_tab.object);
+			if(!(ayt is VTTerminal)) return;
+			unowned VTTerminal vtt = (VTTerminal)ayt;
 			this.search_update_pattern(vtt);
 			vtt.vte_term.search_find_previous();
 			});
@@ -1418,7 +1444,9 @@ public class VTMainWindow : Window{
 		img = new Image.from_stock ("gtk-go-down",Gtk.IconSize.SMALL_TOOLBAR);
 		prev_button.add(img);
 		prev_button.clicked.connect(()=>{
-			unowned VTTerminal vtt = ((VTTerminal)this.active_tab.object);
+			unowned AYTab ayt = ((AYTab)this.active_tab.object);
+			if(!(ayt is VTTerminal)) return;
+			unowned VTTerminal vtt = (VTTerminal)ayt;
 			this.search_update_pattern(vtt);
 			vtt.vte_term.search_find_next();
 			});
@@ -1440,6 +1468,8 @@ public class VTMainWindow : Window{
 	}//create_search_box
 
 	public void search_show(){
+		unowned AYTab vtt = ((AYTab)this.active_tab.object);
+		if(!(vtt is VTTerminal)) return;
 		if(!((Entry)this.search_text_combo.get_child()).has_focus){
 			this.search_hbox.show();
 			
@@ -1469,9 +1499,14 @@ public class VTMainWindow : Window{
 
 	public void search_update(){
 		if(this.search_hbox.visible){
-			unowned VTTerminal vtt = ((VTTerminal)this.active_tab.object);
-			this.search_wrap_around.active=vtt.vte_term.search_get_wrap_around();
-			this.search_match_case.active=vtt.match_case;
+			unowned AYTab vtt = ((AYTab)this.active_tab.object);
+			if(!(vtt is VTTerminal)) {
+				this.search_hide();
+				return;
+			}
+			
+			this.search_wrap_around.active=((VTTerminal)vtt).vte_term.search_get_wrap_around();
+			this.search_match_case.active=((VTTerminal)vtt).match_case;
 		}
 
 //~ 		Gdk.RGBA c = Gdk.RGBA();
@@ -1499,8 +1534,12 @@ public class VTMainWindow : Window{
 			debug ("search_hide terminal_width=%d should_be_h=%d",terminal_width,should_be_h) ;
 		}				
 		this.search_hbox.hide();
-		((VTTerminal)this.active_tab.object).vte_term.search_set_gregex(null);
-		((VTTerminal)this.active_tab.object).vte_term.grab_focus();
+
+		unowned AYTab vtt = ((AYTab)this.active_tab.object);
+		if(vtt is VTTerminal) {
+			((VTTerminal)vtt).vte_term.search_set_gregex(null);
+			((VTTerminal)vtt).vte_term.grab_focus();
+		}
 	}
 
 	public bool search_add_string(string text){
@@ -1557,8 +1596,9 @@ public class VTMainWindow : Window{
 			if(this.action_group!=null) //ignore if not configured
 				this.action_group.sensitive=true;
 			//this.overlay_notebook.hide();
-			unowned VTTerminal vtt = ((VTTerminal)this.active_tab.object);
-			vtt.vte_term.grab_focus();
+			unowned AYTab vtt = ((AYTab)this.active_tab.object);
+			if((vtt is VTTerminal)) 
+				((VTTerminal) vtt).vte_term.grab_focus();
 		}else if(page_num==TASKS.QLIST){
 			if(this.action_group!=null) //ignore if not configured
 				this.action_group.sensitive=false;

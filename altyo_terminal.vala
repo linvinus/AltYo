@@ -252,25 +252,16 @@ public class VTToggleButton : Gtk.ToggleButton {
 	}
 }//private class VTToggleButton
 
-public class VTTerminal : Object{
-	public Vte.Terminal vte_term {get; set; default = null;}
+public class AYTab : Object{
 	public HBox hbox {get; set; default = null;}
 	public Scrollbar scrollbar {get; set; default = null;}
 	public VTToggleButton tbutton {get; set; default = null;}
 	public int page_index {get; set; default = -1;}
-	public Pid pid {get; set; default = -1;}
-	public bool auto_restart {get; set; default = true;}
-	public bool match_case {get; set; default = false;}
-	private Notebook notebook {get; set; default = null;}
-	private unowned MySettings my_conf {get; set; default = null;}
-	private OnChildExitCallBack on_child_exit {get; set; default = null;}
-
-
-	public VTTerminal(MySettings my_conf,Notebook notebook, int tab_index,string? session_command=null,string? session_path=null,OnChildExitCallBack? on_child_exit=null) {
+	public Notebook notebook {get; set; default = null;}
+	public unowned MySettings my_conf {get; set; default = null;}
+	public AYTab(MySettings my_conf,Notebook notebook, int tab_index) {
 		this.my_conf=my_conf;
 		this.notebook=notebook;
-		if(on_child_exit!=null)
-			this.on_child_exit=on_child_exit;
 		this.tbutton = new VTToggleButton();
 		this.tbutton.tab_format = my_conf.get_string("tab_format","[ _INDEX_ ]");
 		this.tbutton.tab_title_format = my_conf.get_string("tab_title_format","<span foreground='#FFF000'>_INDEX_</span>/_TITLE_");
@@ -285,8 +276,42 @@ public class VTTerminal : Object{
 		this.tbutton.set_has_window (false);
 		this.tbutton.show();
 
-		this.hbox = new HBox(false, 0);
+		this.hbox = new HBox(false, 0);				
+		//this.hbox.pack_start(this.vte_term,true,true,0);
+		//this.vte_term.grab_focus();
+		//this.vte_term.can_default=true;
+		this.hbox.show();
+//~		this.scrollbar = new VScrollbar(((Scrollable)this.vte_term).get_vadjustment());
+//~		hbox.pack_start(scrollbar,false,false,0);
+		page_index = this.notebook.prepend_page (hbox,null);
 
+		this.tbutton.object = this;
+	}
+	public void destroy(){
+		this.hbox.hide();
+		this.notebook.remove_page(this.notebook.page_num(this.hbox));
+		//this.tbutton.label.destroy();
+		//this.tbutton.destroy();
+		//this.vte_term.destroy();
+		this.hbox.destroy();//destroy all widgets and unref self
+	}
+	
+}
+
+public class VTTerminal : AYTab{
+	public Vte.Terminal vte_term {get; set; default = null;}
+	public Pid pid {get; set; default = -1;}
+	public bool auto_restart {get; set; default = true;}
+	public bool match_case {get; set; default = false;}
+	private OnChildExitCallBack on_child_exit {get; set; default = null;}
+
+
+	public VTTerminal(MySettings my_conf,Notebook notebook, int tab_index,string? session_command=null,string? session_path=null,OnChildExitCallBack? on_child_exit=null) {
+		base(my_conf, notebook, tab_index);
+		this.my_conf=my_conf;
+		this.notebook=notebook;
+		if(on_child_exit!=null)
+			this.on_child_exit=on_child_exit;
 
 		this.vte_term = new Vte.Terminal();
 		/*this.vte_term.size_allocate.connect((allocation)=>{
@@ -320,9 +345,7 @@ public class VTTerminal : Object{
 		this.vte_term.show();
 		this.scrollbar = new VScrollbar(((Scrollable)this.vte_term).get_vadjustment());
 		hbox.pack_start(scrollbar,false,false,0);
-		page_index = this.notebook.prepend_page (hbox,null);
 
-		this.tbutton.object = this;
 
 		this.vte_term.search_set_wrap_around(my_conf.get_boolean("search_wrap_around",true));
 		this.match_case =my_conf.get_boolean("search_match_case",this.match_case);
@@ -333,12 +356,7 @@ public class VTTerminal : Object{
 
 	public void destroy() {
 		this.vte_term.child_exited.disconnect(this.child_exited);
-		this.hbox.hide();
-		this.notebook.remove_page(this.notebook.page_num(this.hbox));
-		//this.tbutton.label.destroy();
-		//this.tbutton.destroy();
-		//this.vte_term.destroy();
-		this.hbox.destroy();//destroy all widgets and unref self
+		base.destroy();
 	}
 
 	public bool start_command(string? session_command = null,string? session_path=null){
@@ -759,7 +777,8 @@ public class VTTerminal : Object{
 		if(res!=Result.OK)
 			debug("GnomeKeyring.set_default_keyring_sync error");
 		else{
-			unowned Info info=null;
+			//unowned
+			Info info=null;
 			GnomeKeyring.get_info_sync (vtw.conf.get_string("terminal_default_keyring","altyo"), out info) ;
 			if(info!=null){
 				debug("Update keyring info...");

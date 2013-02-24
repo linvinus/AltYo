@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
   <gresource prefix="/org/gnome/altyo">
-    <file alias="altyo.png" preprocess="to-pixdata">altyo.png</file>
+    <!--file alias="altyo.png" preprocess="to-pixdata">altyo.png</file-->
     <file alias="altyo.svg">altyo.svg</file>
+    <file alias="preferences.ui" preprocess="xml-stripblanks">preferences.ui</file>
   </gresource>
 </gresources>

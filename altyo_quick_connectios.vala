@@ -527,7 +527,7 @@ public class QList: HBox {
 				this.view.get_cursor(out path,out s_column);
 				if(store.get_iter(out iter,path))
 				if(!store.iter_has_child(iter)){
-					this.store.remove(iter);
+					this.store.remove(ref iter);
 					if(store.get_iter(out iter,path))
 						this.view.set_cursor(path,null,false);
 					else if(path.prev())

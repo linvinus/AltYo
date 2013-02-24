@@ -78,7 +78,7 @@ public class VTMainWindow : Window{
 	public Notebook tasks_notebook {get; set;}
 	public Notebook overlay_notebook {get; set;}
 	public HVBox hvbox {get;set;}
-	public HBox search_hbox  {get;set;}
+	public Gtk.Box search_hbox  {get;set;}
 	public ComboBoxText search_text_combo {get;set;}
 	public CheckButton search_wrap_around {get;set;}
 	public CheckButton search_match_case {get;set;}
@@ -182,7 +182,7 @@ public class VTMainWindow : Window{
 		this.hvbox.can_default = false;
 		this.hvbox.has_focus = false;
 
-		this.search_hbox = new HBox(false,0);
+		this.search_hbox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);//new HBox(false,0);
 		this.search_hbox.name="search_hbox";
 		this.search_hbox.draw.connect((cr)=>{
 			int width = this.search_hbox.get_allocated_width ();
@@ -490,7 +490,9 @@ public class VTMainWindow : Window{
 				this.pull_active=false;
 				this.pull_animation_active=false;
 				this.current_state=WStates.VISIBLE;
-				this.pixwin.get_child().reparent(this);//reparent from offscreen window
+				var ch=this.pixwin.get_child();//.reparent(this);//reparent from offscreen window
+				this.pixwin.remove(ch);
+				this.add(ch);
 				this.update_position_size();
 				this.window_set_active();
 				return false;
@@ -1408,6 +1410,7 @@ public class VTMainWindow : Window{
 			this.search_update_pattern(vtt);
 			vtt.vte_term.search_find_previous();
 			});
+		next_button.set_focus_on_click(false);
 		next_button.show();
 		this.search_hbox.pack_start(next_button,false,false,0);
 
@@ -1419,6 +1422,7 @@ public class VTMainWindow : Window{
 			this.search_update_pattern(vtt);
 			vtt.vte_term.search_find_next();
 			});
+		prev_button.set_focus_on_click(false);
 		prev_button.show();
 		this.search_hbox.pack_start(prev_button,false,false,0);
 
@@ -1428,6 +1432,7 @@ public class VTMainWindow : Window{
 		hide_button.clicked.connect(()=>{
 			this.search_hide();
 			});
+		hide_button.set_focus_on_click(false);
 		hide_button.show();
 		this.search_hbox.pack_end(hide_button,false,false,0);
 
@@ -1437,13 +1442,14 @@ public class VTMainWindow : Window{
 	public void search_show(){
 		if(!((Entry)this.search_text_combo.get_child()).has_focus){
 			this.search_hbox.show();
-			this.update_events();
+			
 			if(this.maximized){
+				this.update_events();
 				var should_be_h = this.maximized_h-this.hvbox.get_allocated_height() - this.search_hbox.get_allocated_height();
 				this.tasks_notebook.set_size_request(this.tasks_notebook.get_allocated_width(),should_be_h);//update size after maximize event
 				this.queue_resize_no_redraw();
 			}
-			
+		
 			var term = ((VTTerminal)this.active_tab.object).vte_term;
 			if( term.get_has_selection()){
 				term.copy_clipboard();
@@ -1481,6 +1487,17 @@ public class VTMainWindow : Window{
 	}
 
 	public void search_hide(){
+		//prevent resizing of the terminal after closing the search
+		var should_be_h = this.terminal_height+this.hvbox.get_allocated_height();
+		if(this.get_allocated_height()>should_be_h+2){
+			//this.configure_position();//this needed to update position after unmaximize
+			this.set_default_size(this.orig_w,should_be_h);
+			this.resize (this.orig_w,should_be_h);
+			this.queue_resize_no_redraw();
+			
+			//GLib.Timeout.add(10,()=>{debug("Update events");this.update_events(); return false;});
+			debug ("search_hide terminal_width=%d should_be_h=%d",terminal_width,should_be_h) ;
+		}				
 		this.search_hbox.hide();
 		((VTTerminal)this.active_tab.object).vte_term.search_set_gregex(null);
 		((VTTerminal)this.active_tab.object).vte_term.grab_focus();

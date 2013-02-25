@@ -16,6 +16,7 @@
  */
  
 using Gtk;
+using Gee;
 
 public delegate bool check_string(ref string s);
 public delegate bool check_string_list(ref string[] sl);
@@ -23,6 +24,15 @@ public delegate bool check_integer(ref int i);
 public delegate bool check_double(ref double d);
 public delegate bool check_boolean(ref bool b);
 
+public enum CFG_TYPE{
+	TYPE_UNKNOWN,
+	TYPE_BOOLEAN,
+	TYPE_DOUBLE,
+	TYPE_INTEGER,
+	TYPE_STRING,
+	TYPE_STRING_LIST,
+	TYPE_ACCEL_STRING
+	}
 
 public class MySettings : Object {
 	private KeyFile kf;
@@ -32,10 +42,12 @@ public class MySettings : Object {
 	private string qconnection_section {get;set;default = "QConnections";}
 	private bool opened {get;set; default = false;}
 	private bool changed {get;set; default = false;}
-
+	private HashMap<string, CFG_TYPE> typemap;
+	
 	public signal void on_load();
 
 	public MySettings(string? cmd_conf_file=null){
+		this.typemap = new HashMap<string, CFG_TYPE> ();
 		if(cmd_conf_file!=null)
 			this.conf_file = cmd_conf_file;
 		else
@@ -89,7 +101,12 @@ public class MySettings : Object {
 		}
 	}
 
-	public bool get_boolean (string key,bool def,check_boolean? check_cb=null){
+	public bool get_boolean (string key,bool? def,check_boolean? check_cb=null){
+		if(!this.typemap.has_key(key))
+			this.typemap[key]=CFG_TYPE.TYPE_BOOLEAN;
+		else if(this.typemap[key]!=CFG_TYPE.TYPE_BOOLEAN)
+			assert(this.typemap[key]==CFG_TYPE.TYPE_BOOLEAN);
+
 		bool ret = def;
 			try {
 				ret = kf.get_boolean(this.profile,key);
@@ -108,6 +125,11 @@ public class MySettings : Object {
 		}
 
 	public int get_integer (string key,int def,check_integer? check_cb=null){
+		if(!this.typemap.has_key(key))
+			this.typemap[key]=CFG_TYPE.TYPE_INTEGER;
+		else if(this.typemap[key]!=CFG_TYPE.TYPE_INTEGER)
+			assert(this.typemap[key]==CFG_TYPE.TYPE_INTEGER);
+			
 		int ret = def;
 			try {
 				ret = kf.get_integer(this.profile,key);
@@ -126,6 +148,11 @@ public class MySettings : Object {
 		}
 
 	public double get_double (string key,double def,check_double? check_cb=null){
+		if(!this.typemap.has_key(key))
+			this.typemap[key]=CFG_TYPE.TYPE_DOUBLE;
+		else if(this.typemap[key]!=CFG_TYPE.TYPE_DOUBLE)
+			assert(this.typemap[key]==CFG_TYPE.TYPE_DOUBLE);
+
 		double ret = def;
 			try {
 				ret = kf.get_double(this.profile,key);
@@ -144,6 +171,11 @@ public class MySettings : Object {
 		}
 
 	public string[] get_string_list (string key, string[] def,check_string_list? check_cb=null) {
+		if(!this.typemap.has_key(key))
+			this.typemap[key]=CFG_TYPE.TYPE_STRING_LIST;
+		else if(this.typemap[key]!=CFG_TYPE.TYPE_STRING_LIST)
+			assert(this.typemap[key]==CFG_TYPE.TYPE_STRING_LIST);
+			
 		string[] ret = def;
 			try {
 				ret = kf.get_string_list(this.profile,key);
@@ -162,6 +194,11 @@ public class MySettings : Object {
 		}
 
 	public string get_string(string key, string def,check_string? check_cb=null) {
+		if(!this.typemap.has_key(key))
+			this.typemap[key]=CFG_TYPE.TYPE_STRING;
+		else if(this.typemap[key]!=CFG_TYPE.TYPE_STRING)
+			assert(this.typemap[key]==CFG_TYPE.TYPE_STRING);
+			
 		string ret = def;
 			try {
 				ret = kf.get_string(this.profile,key);
@@ -181,6 +218,11 @@ public class MySettings : Object {
 
 
 	public bool set_string_list (string key, string[] def,check_string_list? check_cb=null) {
+		if(!this.typemap.has_key(key))
+			this.typemap[key]=CFG_TYPE.TYPE_STRING_LIST;
+		else if(this.typemap[key]!=CFG_TYPE.TYPE_STRING_LIST)
+			assert(this.typemap[key]==CFG_TYPE.TYPE_STRING_LIST);
+					
 		bool ret = true;
 			try {
 				this.changed=true;
@@ -193,6 +235,11 @@ public class MySettings : Object {
 		}
 
 	public bool set_string(string key, string def) {
+		if(!this.typemap.has_key(key))
+			this.typemap[key]=CFG_TYPE.TYPE_STRING;
+		else if(this.typemap[key]!=CFG_TYPE.TYPE_STRING)
+			assert(this.typemap[key]==CFG_TYPE.TYPE_STRING);
+					
 		bool ret = true;
 			try {
 				this.changed=true;
@@ -205,6 +252,11 @@ public class MySettings : Object {
 		}
 	
 	public bool set_integer (string key,int def){
+		if(!this.typemap.has_key(key))
+			this.typemap[key]=CFG_TYPE.TYPE_INTEGER;
+		else if(this.typemap[key]!=CFG_TYPE.TYPE_INTEGER)
+			assert(this.typemap[key]==CFG_TYPE.TYPE_INTEGER);
+					
 		bool ret = true;
 			try {
 				this.changed=true;
@@ -217,6 +269,11 @@ public class MySettings : Object {
 		}
 		
 	public string get_accel_string(string key, string def,check_string? check_cb=null) {
+		if(!this.typemap.has_key(key))
+			this.typemap[key]=CFG_TYPE.TYPE_ACCEL_STRING;
+		else if(this.typemap[key]!=CFG_TYPE.TYPE_ACCEL_STRING)
+			assert(this.typemap[key]==CFG_TYPE.TYPE_ACCEL_STRING);
+					
 		string ret = def;
 			try {
 				ret = kf.get_string(this.accel_section,key);
@@ -230,6 +287,11 @@ public class MySettings : Object {
 		}
 
 	public bool set_accel_string(string key, string def) {
+		if(!this.typemap.has_key(key))
+			this.typemap[key]=CFG_TYPE.TYPE_ACCEL_STRING;
+		else if(this.typemap[key]!=CFG_TYPE.TYPE_ACCEL_STRING)
+			assert(this.typemap[key]==CFG_TYPE.TYPE_ACCEL_STRING);
+		
 		bool ret = true;
 			try {
 				this.changed=true;
@@ -269,6 +331,18 @@ public class MySettings : Object {
 		return ret;
 		}
 
+	public string[] get_profile_keys (){
+		return this.kf.get_keys (this.profile);
+	}
+
+	public CFG_TYPE  get_key_type(string key){
+		if(this.typemap.has_key(key)){
+			return this.typemap[key];
+		}else{
+			debug("get_key_type TYPE_UNKNOWN for key=%s",key);
+			return CFG_TYPE.TYPE_UNKNOWN;
+		}
+	}
 /*	todo
 public get_boolean_list
 public get_comment

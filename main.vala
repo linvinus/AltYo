@@ -41,6 +41,7 @@
  * http://www.mono-project.com/GtkSharp_TreeView_Tutorial
  * http://www.kksou.com/php-gtk2/articles/finetune-interactive-search-in-GtkTreeView---Part-4---set-custom-compare-function.php
  * https://mail.gnome.org/archives/commits-list/2012-February/msg03582.html
+ * about reparent http://developer.gnome.org/gtk-faq/stable/x635.html
  */
 
 using Gtk;

@@ -717,6 +717,7 @@ public class HVBox : Container {
 		base.propagate_draw (child, cr);
 	}*/
 	public override  bool draw (Cairo.Context cr){
+		if(!this.visible)return false;//prevent X Window System error
 		int width = this.get_allocated_width ();
 		int height = this.get_allocated_height ();
 		debug("draw\n");

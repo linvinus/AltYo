@@ -134,9 +134,8 @@ public class VTMainWindow : Window{
 		this.set_visual (this.screen.get_rgba_visual ());//transparancy
 		this.set_app_paintable(true);//do not draw backgroud
 //~ 		this.override_background_color(StateFlags.NORMAL, c);
-
-		this.pixwin.set_visual (this.pixwin.screen.get_rgba_visual ());//transparancy
-		this.pixwin.set_app_paintable(true);//do not draw backgroud
+		//this.pixwin.set_visual (this.screen.get_rgba_visual ());//transparancy
+		//this.pixwin.set_app_paintable(true);//do not draw backgroud
 	}
 
 	public void CreateVTWindow(MySettings conf) {

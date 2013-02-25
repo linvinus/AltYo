@@ -341,17 +341,16 @@ public class VTTerminal : AYTab{
 		this.hbox.pack_start(this.vte_term,true,true,0);
 		//this.vte_term.grab_focus();
 		//this.vte_term.can_default=true;
-		this.hbox.show();
-		this.vte_term.show();
 		this.scrollbar = new VScrollbar(((Scrollable)this.vte_term).get_vadjustment());
 		hbox.pack_start(scrollbar,false,false,0);
-
-
 		this.vte_term.search_set_wrap_around(my_conf.get_boolean("search_wrap_around",true));
 		this.match_case =my_conf.get_boolean("search_match_case",this.match_case);
 		this.my_conf.on_load.connect(()=>{
 			this.configure(this.my_conf);
 			});
+		this.configure(my_conf);
+		this.hbox.show_all();
+		this.vte_term.show();
 	}
 
 	public void destroy() {
@@ -527,20 +526,42 @@ public class VTTerminal : AYTab{
 		}
 
 		this.vte_term.set_colors(fg,bg,palette);
+		//vte bug, set_opacity don't call vte_terminal_queue_background_update
+		// we force update later
+		this.vte_term.set_opacity((uint16)((my_conf.get_double("terminal_opacity",1.0,(ref new_val)=>{
+			if(new_val<0.0){new_val=0.0;return true;}
+			if(new_val>1.0){new_val=1.0;return true;}
+			return false;
+			}) )*65535) );
+
 
 		var bg_img_file = my_conf.get_string("terminal_background_image_file","");
-		var sat = my_conf.get_double("terminal_background_saturation",0.5);
 		if(bg_img_file!=null && bg_img_file!="" && GLib.FileUtils.test(bg_img_file,GLib.FileTest.EXISTS)){
 			message("set_background_image_file=%s",bg_img_file);
 			this.vte_term.set_background_image_file (bg_img_file);
-			if(sat>1) sat=1; if(sat<0) sat=0;
-			this.vte_term.set_background_saturation (sat);
+			
 		}
-		this.vte_term.set_opacity((uint16)((my_conf.get_double("terminal_opacity",1,(ref new_val)=>{
-			if(new_val<0){new_val=0;return true;}
-			if(new_val>1){new_val=1;return true;}
+		
+		var bg_faket = my_conf.get_boolean("terminal_background_fake_transparent",false);	
+		this.vte_term.set_scroll_background(my_conf.get_boolean("terminal_background_fake_transparent_scroll",false));
+		unowned Gdk.Color? tint;
+		if(Gdk.Color.parse(my_conf.get_string("terminal_tint_color","#000000"),out tint))
+			this.vte_term.set_background_tint_color(tint);
+			
+		var sat = my_conf.get_double("terminal_background_saturation",0.5,(ref new_val)=>{
+			if(new_val>1){ new_val=1; return true;}
+			if(new_val<0){ new_val=0; return true;}
 			return false;
-			}) )*65535) );
+			});
+		this.vte_term.set_background_saturation(sat);
+		if(bg_faket){
+			this.vte_term.set_background_transparent(true);//fake transparent
+		}else{
+			//set_background_transparent call vte_terminal_queue_background_update
+			this.vte_term.set_background_transparent(true);//but only when changes
+			this.vte_term.set_background_transparent(false);//but only when changes
+		}
+		
 		/*Gdk.RGBA c = Gdk.RGBA();
 		c.parse(my_conf.get_string("tab_button_color_normal","#00FF00"));
 		//this.tbutton.override_color(StateFlags.NORMAL , c);

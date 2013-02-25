@@ -16,9 +16,15 @@ public class AYSettings : AYTab{
 		
 		this.hbox.add(B);
 		name="blabla";
+		get_from_conf();
 	}
 	[CCode (instance_pos = -1)]
 	public void on_font_set  (Gtk.FontButton w) {
 		debug("New font is: %s",w.get_font_name());
 	}
+
+	public void get_from_conf() {
+		//this.my_conf.get_string("custom_command","");
+	}
+
 }//class AYSettings

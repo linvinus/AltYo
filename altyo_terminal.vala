@@ -539,8 +539,8 @@ public class VTTerminal : AYTab{
 		if(bg_img_file!=null && bg_img_file!="" && GLib.FileUtils.test(bg_img_file,GLib.FileTest.EXISTS)){
 			message("set_background_image_file=%s",bg_img_file);
 			this.vte_term.set_background_image_file (bg_img_file);
-			
-		}
+		}else
+			this.vte_term.set_background_image_file ("/dev/null");
 		
 		var bg_faket = my_conf.get_boolean("terminal_background_fake_transparent",false);	
 		this.vte_term.set_scroll_background(my_conf.get_boolean("terminal_background_fake_transparent_scroll",false));

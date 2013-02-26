@@ -89,6 +89,11 @@ public class MySettings : Object {
 				}
 	}
 
+	public void reload_config(){
+		this.on_load();
+		this.changed=false;
+	}
+
 	public void save(bool force=false){
 		if(this.changed || force){
 			var str = kf.to_data (null);
@@ -193,7 +198,7 @@ public class MySettings : Object {
 		return ret;
 		}
 
-	public string get_string(string key, string def,check_string? check_cb=null) {
+	public string? get_string(string key, string def,check_string? check_cb=null) {
 		if(!this.typemap.has_key(key))
 			this.typemap[key]=CFG_TYPE.TYPE_STRING;
 		else if(this.typemap[key]!=CFG_TYPE.TYPE_STRING)
@@ -213,7 +218,7 @@ public class MySettings : Object {
 				kf.set_string(this.profile,key,def);
 				ret = def;
 			}
-		return ret;
+		return ret;//can be null
 		}
 
 
@@ -234,7 +239,7 @@ public class MySettings : Object {
 		return ret;
 		}
 
-	public bool set_string(string key, string def) {
+	public bool set_string(string key, string? def) {
 		if(!this.typemap.has_key(key))
 			this.typemap[key]=CFG_TYPE.TYPE_STRING;
 		else if(this.typemap[key]!=CFG_TYPE.TYPE_STRING)
@@ -243,7 +248,10 @@ public class MySettings : Object {
 		bool ret = true;
 			try {
 				this.changed=true;
-				kf.set_string(this.profile,key,def);
+				if(def==null)
+					kf.set_string(this.profile,key,"");
+				else
+					kf.set_string(this.profile,key,def);
 			} catch (KeyFileError err) {
 				warning (err.message);
 				ret = false;
@@ -261,6 +269,40 @@ public class MySettings : Object {
 			try {
 				this.changed=true;
 				kf.set_integer(this.profile,key,def);
+			} catch (KeyFileError err) {
+				warning (err.message);
+				ret = false;
+			}
+		return ret;
+		}
+
+	public bool set_boolean (string key,bool def){
+		if(!this.typemap.has_key(key))
+			this.typemap[key]=CFG_TYPE.TYPE_BOOLEAN;
+		else if(this.typemap[key]!=CFG_TYPE.TYPE_BOOLEAN)
+			assert(this.typemap[key]==CFG_TYPE.TYPE_BOOLEAN);
+					
+		bool ret = true;
+			try {
+				this.changed=true;
+				kf.set_boolean(this.profile,key,def);
+			} catch (KeyFileError err) {
+				warning (err.message);
+				ret = false;
+			}
+		return ret;
+		}
+
+	public bool set_double (string key,double def){
+		if(!this.typemap.has_key(key))
+			this.typemap[key]=CFG_TYPE.TYPE_DOUBLE;
+		else if(this.typemap[key]!=CFG_TYPE.TYPE_DOUBLE)
+			assert(this.typemap[key]==CFG_TYPE.TYPE_DOUBLE);
+					
+		bool ret = true;
+			try {
+				this.changed=true;
+				kf.set_double(this.profile,key,def);
 			} catch (KeyFileError err) {
 				warning (err.message);
 				ret = false;

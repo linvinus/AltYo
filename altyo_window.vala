@@ -103,6 +103,8 @@ public class VTMainWindow : Window{
 	//public bool maximized {get; set; default = false;}
 	//private bool quit_dialog {get; set; default = false;}
 	public bool keep_above=true;
+	private AYSettings aysettings {get;set; default = null;}
+	private bool aysettings_shown=false;
 
 
 	public VTMainWindow(WindowType type) {
@@ -293,7 +295,6 @@ public class VTMainWindow : Window{
 					 "VTToggleButton,VTToggleButton GtkLabel  {font: Mono 10; -GtkWidget-focus-padding: 0px;  -GtkButton-default-border:0px; -GtkButton-default-outside-border:0px; -GtkButton-inner-border:0px; border-width: 0px; -outer-stroke-width: 0px; border-radius: 0px; border-style: solid;  background-image: none; margin:0px; padding:1px 1px 0px 1px; background-color: #000000; color: #AAAAAA; transition: 0ms ease-in-out;}"+
 					 "VTToggleButton:active{background-color: #00AAAA; color: #000000; transition: 0ms ease-in-out;}"+
 					 "VTToggleButton:prelight {background-color: #AAAAAA; color: #000000; transition: 0ms ease-in-out;}"+
-					 "GtkNotebook {border-width: 0px 0px 0px 0px; -outer-stroke-width: 0px; border-radius: 0px 0px 0px 0px; border-style: solid;  background-image: none; margin:0px; padding:0px 0px 1px 0px; background-color: #000000; border-color: @bg_color; color: #000000;}"+
 					 "#tasks_notebook {border-width: 0px 2px 0px 2px;border-color: #3C3B37;border-style: solid;}"+
 					 "#search_hbox :active {background-color: #151515; border-color: @fg_color; color: #FF0000;}"+
 					 "#search_hbox {border-width: 0px 0px 0px 0px; -outer-stroke-width: 0px; border-radius: 0px 0px 0px 0px; border-style: solid;  background-image: none; margin:0px; padding:0px 0px 1px 0px; background-color: #000000; border-color: @bg_color; color: #00FFAA;}"+
@@ -625,6 +626,7 @@ public class VTMainWindow : Window{
 
 	public void close_tab (int tab_position){
 		unowned VTToggleButton tab_button=(VTToggleButton)this.hvbox.children_nth(tab_position);
+		if(tab_button==null) return;
 		this.hvbox.remove(tab_button);
 		if(tab_button==this.active_tab)
 			this.active_tab=null;
@@ -643,6 +645,10 @@ public class VTMainWindow : Window{
 			if(vtt is VTTerminal)
 				((VTTerminal)vtt).destroy();
 			else
+			if(vtt is AYSettings){
+				((AYSettings)vtt).destroy();
+				this.aysettings_shown=false;
+			}else
 				vtt.destroy();
 //~ 		}
 
@@ -1203,12 +1209,21 @@ public class VTMainWindow : Window{
 				var tab_index =  this.children.index(vt)+1;
 				vt.tbutton.set_title(tab_index, _("AltYo Settings") );
 				*/
-				var settings=new AYSettings(this.conf,this.terms_notebook,(int)(this.children.length()+1) );
-				this.children.append(settings);
-				settings.tbutton.button_press_event.connect(tab_button_press_event);
-				this.hvbox.add(settings.tbutton);
-				this.activate_tab(settings.tbutton) ;//this.active_tab = this.hvbox.children_index(tbutton);
-				settings.ref();
+				if(!this.aysettings_shown){
+					this.aysettings=new AYSettings(this.conf,this.terms_notebook,(int)(this.children.length()+1),this);
+					this.children.append(this.aysettings);
+					this.aysettings.tbutton.button_press_event.connect(tab_button_press_event);
+					this.hvbox.add(this.aysettings.tbutton);
+					this.activate_tab(this.aysettings.tbutton) ;//this.active_tab = this.hvbox.children_index(tbutton);
+					this.aysettings_shown=true;
+				}else{
+					if(this.active_tab!=this.aysettings.tbutton){
+						this.activate_tab(this.aysettings.tbutton);
+					}else{//close
+						this.close_tab(this.hvbox.children_index(this.aysettings.tbutton));
+						this.aysettings_shown=false;
+					}
+				}
         });
 
 

@@ -118,8 +118,11 @@ public class AYSettings : AYTab{
 						if(key=="program_style"){
 							var B = builder.get_object (key) as Gtk.TextView;
 							var s=this.my_conf.get_string(key,"");
-							Regex regex = new Regex ("}");
-							string result = regex.replace (s, s.length, 0, "}\n");
+							Regex regex = new Regex ("[{};]");
+							string result = regex.replace_eval(s, s.length,0,0, (match_info, result)=>{
+							result.append(match_info.fetch(match_info.get_match_count()-1)+"\n");	
+							return false;//continue
+							});
 							B.buffer.text=result;
 						}else{
 							var B = builder.get_object (key) as Gtk.Entry;
@@ -199,8 +202,8 @@ public class AYSettings : AYTab{
 						if(key=="program_style"){
 							var B = builder.get_object (key) as Gtk.TextView;
 							var s=B.buffer.text;
-							Regex regex = new Regex ("}\n");
-							string result = regex.replace (s, s.length, 0, "}");
+							Regex regex = new Regex ("\n");
+							string result = regex.replace (s, s.length, 0, "");
 							if(result!=this.my_conf.get_string(key,"")){
 								this.my_conf.set_string(key,result);
 							}

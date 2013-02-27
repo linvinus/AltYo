@@ -158,7 +158,7 @@ public class AYSettings : AYTab{
 				var B = builder.get_object (key) as Gtk.SpinButton;
 					if(B!=null){
 						if(B.value!=this.my_conf.get_double(key,0))
-							this.my_conf.set_double(key,B.value);
+							this.my_conf.set_double(key, B.value, 2);
 					}else debug(" no gui for key %s",key);
 				break;
 				case CFG_TYPE.TYPE_INTEGER:

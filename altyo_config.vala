@@ -293,7 +293,7 @@ public class MySettings : Object {
 		return ret;
 		}
 
-	public bool set_double (string key,double def){
+	public bool set_double (string key,double def,uint digits_after_comma){
 		if(!this.typemap.has_key(key))
 			this.typemap[key]=CFG_TYPE.TYPE_DOUBLE;
 		else if(this.typemap[key]!=CFG_TYPE.TYPE_DOUBLE)
@@ -302,7 +302,24 @@ public class MySettings : Object {
 		bool ret = true;
 			try {
 				this.changed=true;
-				kf.set_double(this.profile,key,def);
+				if(digits_after_comma>0){
+					uint round=1;
+					while(digits_after_comma-->0){
+						round*=10;
+					}
+					int i=(int)(def * round);//round
+					def=(double)((double)(i)/(double)round);
+					string S="%.2f".printf(def);
+					//printf string is localized, but KeyFile allow only
+					//dot as digits delimeter in double,
+					//so replace comma with dot
+					//is there better solution?
+					S=S.replace(",",".");
+					debug("set_double=%s",S);
+					kf.set_string(this.profile,key,S);
+				}else{
+					kf.set_double(this.profile,key,def);
+				}
 			} catch (KeyFileError err) {
 				warning (err.message);
 				ret = false;

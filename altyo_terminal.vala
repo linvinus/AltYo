@@ -76,8 +76,8 @@ public class VTToggleButton : Gtk.ToggleButton {
 		this.label.use_underline=false;
 		this.label.show();
 		this.add(this.label);
-		this.inconsistent=true;//prevent 2px shift
-		this.draw_indicator=false;
+		this.inconsistent=true;//prevent 2px shift//If the toggle button is in an \"in between\" state
+		this.draw_indicator=true;
 		this.label.mnemonic_widget=null;
 	}
 
@@ -93,37 +93,38 @@ public class VTToggleButton : Gtk.ToggleButton {
 //~ 	public  bool draw22 (Cairo.Context cr){
 
  	public override  bool draw (Cairo.Context cr){
-
+		//cr.save();
 		//base.draw(cr);
+		//cr.restore();
+		
 		int width = this.get_allocated_width ();
 		int height = this.get_allocated_height ();
+		//cr.save();
+		var context = this.get_style_context();
+		var BORDER_WIDTH = 1;
 		cr.save();
-		/*var context = this.get_style_context();
-		var BORDER_WIDTH = 3;
-		cr.save();
-		//cr.translate (-3, -2);//actual move in context
-		if ( (this.get_state_flags() & Gtk.StateFlags.ACTIVE) == Gtk.StateFlags.ACTIVE ){
-			var color = context.get_background_color(StateFlags.ACTIVE);
-			//cr.set_source_rgba (color.red,color.green,color.blue,color.alpha);//background
-			//cr.set_source_rgba (1.0 , 0.0, 0.0, 1.0);
-			//render_background(context,cr, 0, 0, width, height);
-			//render_extension(context,cr, 0, 0, width, height,PositionType.TOP);
-			var p = new Cairo.Pattern.linear(0,0,0,height);
-			p.add_color_stop_rgba (0.0, 0, 0, 0, 1.0);
-			p.add_color_stop_rgba (1.0, color.red, color.green, color.blue, 1.0);
-			//cr.set_source (p);
+		var flags = this.get_state_flags();
+		if(this.active || (flags & Gtk.StateFlags.PRELIGHT)==Gtk.StateFlags.PRELIGHT){
+			//draw "button"
+			var color = context.get_background_color((this.active ? Gtk.StateFlags.ACTIVE : flags ));
+			//debug("draw no=%d active=%d flags=%d color=%s",this.tab_index,(int)this.active,this.get_state_flags(),color.to_string());
 			cr.set_source_rgba (color.red,color.green,color.blue,color.alpha);//background
 			cr.rectangle (BORDER_WIDTH, BORDER_WIDTH,
-                         width - 2 * BORDER_WIDTH,
-                         height - 2 * BORDER_WIDTH);
+						 width - 2 * BORDER_WIDTH,
+						 height - 2 * BORDER_WIDTH);
+			cr.fill ();
+			cr.stroke ();
+		}else{
+			//draw background
+			//child must be with transparent background!
+			//VTToggleButton GtkLabel {background-color: alpha(#000000,0.0);}
+			var color = context.get_background_color(flags);
+			//debug("draw no=%d active=%d flags=%d color=%s",this.tab_index,(int)this.active,this.get_state_flags(),color.to_string());
+			cr.set_source_rgba (color.red,color.green,color.blue,color.alpha);//background
+			cr.rectangle (0, 0, width, height);
 			cr.fill ();
 			cr.stroke ();
 		}
-		//render_background(context,cr, -2, -2, width+3, height+3);
-		//render_frame (context, cr, 0, 0, width+1, height+1);
-
-		//cr.stroke ();
-		*/
 		//draw small devision line
 		cr.set_source_rgb (0.6, 0.6, 0.6);
 		cr.set_line_width (2.0);
@@ -150,16 +151,21 @@ public class VTToggleButton : Gtk.ToggleButton {
 	}
 
 	public override bool enter_notify_event (Gdk.EventCrossing event) {
-		if( event.type == Gdk.EventType.ENTER_NOTIFY)
+		if( event.type == Gdk.EventType.ENTER_NOTIFY){
+			this.set_state_flags(Gtk.StateFlags.PRELIGHT,true);
 			this.label.set_markup(this.markup_prelight);
+		}
 		return false;
 	}
 	public override bool leave_notify_event (Gdk.EventCrossing event) {
 		if(event.type == Gdk.EventType.LEAVE_NOTIFY){
-			if(this.active)
+			if(this.active){
+				this.set_state_flags(Gtk.StateFlags.ACTIVE,true);
 				this.label.set_markup(this.markup_active);
-			else
+			}else{
+				this.set_state_flags(Gtk.StateFlags.NORMAL,true);
 				this.label.set_markup(this.markup_normal);
+			}
 		}
 		return false;
 	}
@@ -224,7 +230,7 @@ public class VTToggleButton : Gtk.ToggleButton {
         Gdk.RGBA color_f = context.get_color(StateFlags.NORMAL);
         Gdk.RGBA color_b = context.get_background_color(StateFlags.NORMAL);
 		this.markup_normal="<span foreground='#"+"%I02x".printf(((int)(color_f.red*255)))+"%I02x".printf(((int)(color_f.green*255)))+"%I02x".printf(((int)(color_f.blue*255)))+"' "+
-		"background='#"+"%I02x".printf(((int)(color_b.red*255)))+"%I02x".printf(((int)(color_b.green*255)))+"%I02x".printf(((int)(color_b.blue*255)))+"' "+
+		/*"background='#"+"%I02x".printf(((int)(color_b.red*255)))+"%I02x".printf(((int)(color_b.green*255)))+"%I02x".printf(((int)(color_b.blue*255)))+"' "+*/
 		">"+result2+"</span>";
 		//this.label.set_markup(this.markup_normal);
 
@@ -233,13 +239,13 @@ public class VTToggleButton : Gtk.ToggleButton {
         color_f = context.get_color(StateFlags.ACTIVE);
         color_b = context.get_background_color(StateFlags.ACTIVE);
 		this.markup_active="<span foreground='#"+"%I02x".printf(((int)(color_f.red*255)))+"%I02x".printf(((int)(color_f.green*255)))+"%I02x".printf(((int)(color_f.blue*255)))+"' "+
-		"background='#"+"%I02x".printf(((int)(color_b.red*255)))+"%I02x".printf(((int)(color_b.green*255)))+"%I02x".printf(((int)(color_b.blue*255)))+"' "+
+		/*"background='#"+"%I02x".printf(((int)(color_b.red*255)))+"%I02x".printf(((int)(color_b.green*255)))+"%I02x".printf(((int)(color_b.blue*255)))+"' "+*/
 		">"+result2+"</span>";
 
         color_f = context.get_color(StateFlags.PRELIGHT);
         color_b = context.get_background_color(StateFlags.PRELIGHT);
 		this.markup_prelight="<span foreground='#"+"%I02x".printf(((int)(color_f.red*255)))+"%I02x".printf(((int)(color_f.green*255)))+"%I02x".printf(((int)(color_f.blue*255)))+"' "+
-		"background='#"+"%I02x".printf(((int)(color_b.red*255)))+"%I02x".printf(((int)(color_b.green*255)))+"%I02x".printf(((int)(color_b.blue*255)))+"' "+
+		/*"background='#"+"%I02x".printf(((int)(color_b.red*255)))+"%I02x".printf(((int)(color_b.green*255)))+"%I02x".printf(((int)(color_b.blue*255)))+"' "+*/
 		">"+result2+"</span>";
 		//this.markup_prelight = result;//"<i>"+result+"</i>";
 

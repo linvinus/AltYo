@@ -29,6 +29,22 @@
       </row>
     </data>
   </object>
+  <object class="GtkAdjustment" id="terminal_background_saturation_adjustment">
+    <property name="upper">1</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="terminal_height_adjustment">
+    <property name="lower">1</property>
+    <property name="upper">10000</property>
+    <property name="step_increment">10</property>
+    <property name="page_increment">100</property>
+  </object>
+  <object class="GtkAdjustment" id="terminal_opacity_adjustment">
+    <property name="upper">1</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">10</property>
+  </object>
   <object class="GtkNotebook" id="settings-notebook">
     <property name="visible">True</property>
     <property name="can_focus">True</property>
@@ -185,7 +201,7 @@
                                               <object class="GtkLabel" id="label37">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">False</property>
-                                                <property name="label" translatable="yes">value less 101, means percentage</property>
+                                                <property name="label" translatable="yes">Value less 101, means percentage</property>
                                                 <property name="wrap">True</property>
                                               </object>
                                               <packing>
@@ -467,7 +483,7 @@
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
-                                <property name="top_attach">0</property>
+                                <property name="top_attach">1</property>
                                 <property name="width">1</property>
                                 <property name="height">1</property>
                               </packing>
@@ -476,11 +492,12 @@
                               <object class="GtkLabel" id="label11">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Font</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
-                                <property name="top_attach">0</property>
+                                <property name="top_attach">1</property>
                                 <property name="width">1</property>
                                 <property name="height">1</property>
                               </packing>
@@ -489,18 +506,18 @@
                               <object class="GtkLabel" id="label12">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Show scrollbar</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
-                                <property name="top_attach">1</property>
+                                <property name="top_attach">2</property>
                                 <property name="width">1</property>
                                 <property name="height">1</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="terminal_show_scrollbar">
-                                <property name="label" translatable="yes">Enable</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
@@ -509,7 +526,7 @@
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
-                                <property name="top_attach">1</property>
+                                <property name="top_attach">2</property>
                                 <property name="width">1</property>
                                 <property name="height">1</property>
                               </packing>
@@ -518,18 +535,18 @@
                               <object class="GtkLabel" id="label13">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Wrap search by default</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
-                                <property name="top_attach">2</property>
+                                <property name="top_attach">3</property>
                                 <property name="width">1</property>
                                 <property name="height">1</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="search_wrap_around">
-                                <property name="label" translatable="yes">Enable</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
@@ -538,7 +555,7 @@
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
-                                <property name="top_attach">2</property>
+                                <property name="top_attach">3</property>
                                 <property name="width">1</property>
                                 <property name="height">1</property>
                               </packing>
@@ -547,18 +564,18 @@
                               <object class="GtkLabel" id="label14">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Match case-sensitive by default</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
-                                <property name="top_attach">3</property>
+                                <property name="top_attach">4</property>
                                 <property name="width">1</property>
                                 <property name="height">1</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="search_match_case">
-                                <property name="label" translatable="yes">Enable</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
@@ -567,7 +584,7 @@
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
-                                <property name="top_attach">3</property>
+                                <property name="top_attach">4</property>
                                 <property name="width">1</property>
                                 <property name="height">1</property>
                               </packing>
@@ -576,11 +593,12 @@
                               <object class="GtkLabel" id="label15">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Terminal scrollback lines</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
-                                <property name="top_attach">4</property>
+                                <property name="top_attach">5</property>
                                 <property name="width">1</property>
                                 <property name="height">1</property>
                               </packing>
@@ -599,7 +617,7 @@
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
-                                <property name="top_attach">4</property>
+                                <property name="top_attach">5</property>
                                 <property name="width">1</property>
                                 <property name="height">1</property>
                               </packing>
@@ -608,11 +626,12 @@
                               <object class="GtkLabel" id="label16">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Terminal text color</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
-                                <property name="top_attach">5</property>
+                                <property name="top_attach">8</property>
                                 <property name="width">1</property>
                                 <property name="height">1</property>
                               </packing>
@@ -625,7 +644,7 @@
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
-                                <property name="top_attach">5</property>
+                                <property name="top_attach">8</property>
                                 <property name="width">1</property>
                                 <property name="height">1</property>
                               </packing>
@@ -634,11 +653,12 @@
                               <object class="GtkLabel" id="label17">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Background Color</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
-                                <property name="top_attach">6</property>
+                                <property name="top_attach">9</property>
                                 <property name="width">1</property>
                                 <property name="height">1</property>
                               </packing>
@@ -651,7 +671,7 @@
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
-                                <property name="top_attach">6</property>
+                                <property name="top_attach">9</property>
                                 <property name="width">1</property>
                                 <property name="height">1</property>
                               </packing>
@@ -660,11 +680,12 @@
                               <object class="GtkLabel" id="label18">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Background image file</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
-                                <property name="top_attach">7</property>
+                                <property name="top_attach">11</property>
                                 <property name="width">1</property>
                                 <property name="height">1</property>
                               </packing>
@@ -673,11 +694,12 @@
                               <object class="GtkLabel" id="label19">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Background saturation</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
-                                <property name="top_attach">8</property>
+                                <property name="top_attach">12</property>
                                 <property name="width">1</property>
                                 <property name="height">1</property>
                               </packing>
@@ -696,7 +718,7 @@
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
-                                <property name="top_attach">8</property>
+                                <property name="top_attach">12</property>
                                 <property name="width">1</property>
                                 <property name="height">1</property>
                               </packing>
@@ -705,11 +727,12 @@
                               <object class="GtkLabel" id="label20">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">terminal opacity </property>
+                                <property name="xalign">0</property>
+                                <property name="label" translatable="yes">Terminal opacity</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
-                                <property name="top_attach">9</property>
+                                <property name="top_attach">13</property>
                                 <property name="width">1</property>
                                 <property name="height">1</property>
                               </packing>
@@ -727,63 +750,7 @@
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
-                                <property name="top_attach">9</property>
-                                <property name="width">1</property>
-                                <property name="height">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="label26">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Custom shell</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">10</property>
-                                <property name="width">1</property>
-                                <property name="height">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkEntry" id="custom_command">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="invisible_char">•</property>
-                                <property name="invisible_char_set">True</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">10</property>
-                                <property name="width">1</property>
-                                <property name="height">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="label27">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Alternate screen scroll</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">11</property>
-                                <property name="width">1</property>
-                                <property name="height">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkCheckButton" id="terminal_set_alternate_screen_scroll">
-                                <property name="label" translatable="yes">Enable</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="xalign">0</property>
-                                <property name="draw_indicator">True</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">11</property>
+                                <property name="top_attach">13</property>
                                 <property name="width">1</property>
                                 <property name="height">1</property>
                               </packing>
@@ -825,7 +792,7 @@
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
-                                <property name="top_attach">7</property>
+                                <property name="top_attach">11</property>
                                 <property name="width">1</property>
                                 <property name="height">1</property>
                               </packing>
@@ -834,18 +801,18 @@
                               <object class="GtkLabel" id="label33">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Fake transparent</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
-                                <property name="top_attach">12</property>
+                                <property name="top_attach">14</property>
                                 <property name="width">1</property>
                                 <property name="height">1</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="terminal_background_fake_transparent">
-                                <property name="label" translatable="yes">Enable</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
@@ -854,7 +821,7 @@
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
-                                <property name="top_attach">12</property>
+                                <property name="top_attach">14</property>
                                 <property name="width">1</property>
                                 <property name="height">1</property>
                               </packing>
@@ -863,18 +830,18 @@
                               <object class="GtkLabel" id="label34">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Scroll background</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
-                                <property name="top_attach">13</property>
+                                <property name="top_attach">15</property>
                                 <property name="width">1</property>
                                 <property name="height">1</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="terminal_background_fake_transparent_scroll">
-                                <property name="label" translatable="yes">Enable</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
@@ -883,7 +850,7 @@
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
-                                <property name="top_attach">13</property>
+                                <property name="top_attach">15</property>
                                 <property name="width">1</property>
                                 <property name="height">1</property>
                               </packing>
@@ -892,11 +859,12 @@
                               <object class="GtkLabel" id="label35">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Tint color</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
-                                <property name="top_attach">14</property>
+                                <property name="top_attach">10</property>
                                 <property name="width">1</property>
                                 <property name="height">1</property>
                               </packing>
@@ -909,7 +877,88 @@
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
-                                <property name="top_attach">14</property>
+                                <property name="top_attach">10</property>
+                                <property name="width">1</property>
+                                <property name="height">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="label26">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="xalign">0</property>
+                                <property name="label" translatable="yes">Custom shell</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">0</property>
+                                <property name="width">1</property>
+                                <property name="height">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkEntry" id="custom_command">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="invisible_char">•</property>
+                                <property name="invisible_char_set">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">0</property>
+                                <property name="width">1</property>
+                                <property name="height">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkSeparator" id="separator1">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">7</property>
+                                <property name="width">1</property>
+                                <property name="height">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkSeparator" id="separator2">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">7</property>
+                                <property name="width">1</property>
+                                <property name="height">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="label27">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="xalign">0</property>
+                                <property name="label" translatable="yes">Alternate screen scroll</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">6</property>
+                                <property name="width">1</property>
+                                <property name="height">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="terminal_set_alternate_screen_scroll">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="xalign">0</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">6</property>
                                 <property name="width">1</property>
                                 <property name="height">1</property>
                               </packing>
@@ -958,12 +1007,10 @@
                                     <property name="valign">start</property>
                                     <property name="hexpand">True</property>
                                     <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
                                       <object class="GtkLabel" id="label29">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <property name="xalign">0</property>
                                         <property name="label" translatable="yes">Base title</property>
                                       </object>
                                       <packing>
@@ -991,6 +1038,7 @@
                                       <object class="GtkLabel" id="label30">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <property name="xalign">0</property>
                                         <property name="label" translatable="yes">Terminal header</property>
                                       </object>
                                       <packing>
@@ -1018,6 +1066,7 @@
                                       <object class="GtkLabel" id="label31">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <property name="xalign">0</property>
                                         <property name="label" translatable="yes">Terminal header regexp</property>
                                       </object>
                                       <packing>
@@ -1026,6 +1075,9 @@
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
                                     </child>
                                   </object>
                                 </child>
@@ -1133,7 +1185,7 @@
                     </child>
                     <child>
                       <object class="GtkButton" id="button3">
-                        <property name="label">gtk-close</property>
+                        <property name="label">gtk-discard</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
@@ -1211,22 +1263,6 @@
         <property name="tab_fill">False</property>
       </packing>
     </child>
-  </object>
-  <object class="GtkAdjustment" id="terminal_background_saturation_adjustment">
-    <property name="upper">1</property>
-    <property name="step_increment">0.10000000000000001</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="terminal_height_adjustment">
-    <property name="lower">1</property>
-    <property name="upper">10000</property>
-    <property name="step_increment">10</property>
-    <property name="page_increment">100</property>
-  </object>
-  <object class="GtkAdjustment" id="terminal_opacity_adjustment">
-    <property name="upper">1</property>
-    <property name="step_increment">0.10000000000000001</property>
-    <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="terminal_scrollback_lines_adjustment">
     <property name="upper">100000</property>

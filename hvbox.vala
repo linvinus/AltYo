@@ -86,6 +86,7 @@ public class HVBox : Container {
 		/* set the view as a drag destination for these targets */
 		drag_dest_set (this, 0, target_entries, Gdk.DragAction.MOVE);
 		this.set_reallocate_redraws(true);//redraw all elements, needed for redraw HVBox border
+		this.resize_mode=ResizeMode.QUEUE;
 
     }
 
@@ -586,6 +587,7 @@ public class HVBox : Container {
 			  widget.unparent ();
 
 			  dnd_window = new Window (WindowType.POPUP);
+			  dnd_window.name="HVBox_dnd_window";
 			  dnd_window.set_screen(widget.get_screen());
 			  dnd_window.add (widget);
 			  dnd_window.show();

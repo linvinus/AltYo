@@ -91,7 +91,6 @@ public class MySettings : Object {
 
 	public void reload_config(){
 		this.on_load();
-		this.changed=false;
 	}
 
 	public void save(bool force=false){
@@ -104,6 +103,7 @@ public class MySettings : Object {
 				warning (err.message);
 			}
 		}
+		this.changed=false;
 	}
 
 	public bool get_boolean (string key,bool? def,check_boolean? check_cb=null){

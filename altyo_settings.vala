@@ -220,6 +220,7 @@ public class AYSettings : AYTab{
 			}
 		}
 		this.my_conf.reload_config();
+		this.my_conf.save();
 	}//apply
 
 }//class AYSettings

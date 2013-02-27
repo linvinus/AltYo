@@ -201,7 +201,7 @@
                                               <object class="GtkLabel" id="label37">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">False</property>
-                                                <property name="label" translatable="yes">Value less 101, means percentage</property>
+                                                <property name="label" translatable="yes">100 or lower is in percentage</property>
                                                 <property name="wrap">True</property>
                                               </object>
                                               <packing>

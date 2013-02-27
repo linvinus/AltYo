@@ -1242,7 +1242,7 @@ public class VTMainWindow : Window{
 		});
 
 		/* Add New Tab on <Ctrl><Shift>t */
-		this.add_window_accel("altyo_help", _("About and keybindings"), _("About and keybindings"), Gtk.Stock.NEW,"F1",()=>{
+		this.add_window_accel("altyo_help", _("About and key bindings"), _("About and key bindings"), Gtk.Stock.NEW,"F1",()=>{
 			this.ShowHelp();
 		});
 

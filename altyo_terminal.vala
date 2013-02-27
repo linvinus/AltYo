@@ -667,9 +667,9 @@ public class VTTerminal : AYTab{
 		menu.append(menuitem);
 
 		menu.deactivate.connect (this.on_deactivate);
+		menu.show_all();
         //menu.attach_to_widget (this.vte_term, null);
 		menu.popup(null, null, null, event.button, event.time);
-		menu.show_all();
 		menu.ref();//no one own menu,emulate owners,uref will be on_deactivate
 		//debug("popup_menu ref_count=%d",(int)menu.ref_count);
 	}

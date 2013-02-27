@@ -29,11 +29,6 @@
       </row>
     </data>
   </object>
-  <object class="GtkAdjustment" id="terminal_background_saturation_adjustment">
-    <property name="upper">1</property>
-    <property name="step_increment">0.10000000000000001</property>
-    <property name="page_increment">10</property>
-  </object>
   <object class="GtkAdjustment" id="terminal_height_adjustment">
     <property name="lower">1</property>
     <property name="upper">10000</property>
@@ -44,6 +39,11 @@
     <property name="upper">1</property>
     <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="terminal_scrollback_lines_adjustment">
+    <property name="upper">100000</property>
+    <property name="step_increment">10</property>
+    <property name="page_increment">100</property>
   </object>
   <object class="GtkNotebook" id="settings-notebook">
     <property name="visible">True</property>
@@ -201,6 +201,7 @@
                                               <object class="GtkLabel" id="label37">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">False</property>
+                                                <property name="xalign">0</property>
                                                 <property name="label" translatable="yes">100 or lower is in percentage</property>
                                                 <property name="wrap">True</property>
                                               </object>
@@ -218,6 +219,7 @@
                                                   <object class="GtkLabel" id="label23">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
+                                                    <property name="xalign">0</property>
                                                     <property name="label" translatable="yes">Width</property>
                                                   </object>
                                                   <packing>
@@ -231,6 +233,7 @@
                                                   <object class="GtkLabel" id="label24">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
+                                                    <property name="xalign">0</property>
                                                     <property name="label" translatable="yes">Height</property>
                                                   </object>
                                                   <packing>
@@ -312,6 +315,7 @@
                                                   <object class="GtkLabel" id="width_label">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
+                                                    <property name="xalign">0</property>
                                                     <property name="label" translatable="yes">label</property>
                                                   </object>
                                                   <packing>
@@ -325,6 +329,7 @@
                                                   <object class="GtkLabel" id="height_label">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
+                                                    <property name="xalign">0</property>
                                                     <property name="label" translatable="yes">label</property>
                                                   </object>
                                                   <packing>
@@ -1264,10 +1269,10 @@
       </packing>
     </child>
   </object>
-  <object class="GtkAdjustment" id="terminal_scrollback_lines_adjustment">
-    <property name="upper">100000</property>
-    <property name="step_increment">10</property>
-    <property name="page_increment">100</property>
+  <object class="GtkAdjustment" id="terminal_background_saturation_adjustment">
+    <property name="upper">1</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="terminal_width_adjustment">
     <property name="lower">1</property>

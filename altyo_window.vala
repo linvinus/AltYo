@@ -328,6 +328,7 @@ public class VTMainWindow : Window{
 			if(new_val>3){new_val=this.position;return true;}
 			return false;
 			});
+		this.hvbox.background_only_behind_widgets= !conf.get_boolean("tab_box_have_background",false);
 		this.mouse_follow  = conf.get_boolean("follow_the_white_rabbit",false);
 		this.save_session  = conf.get_boolean("autosave_session",false);
 		this.animation_enabled=conf.get_boolean("animation_enabled",true);

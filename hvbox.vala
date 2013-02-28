@@ -56,7 +56,8 @@ public class HVBox : Container {
     private string[]? drop_uris { get; set; default = null; }
     private Window dnd_window { get; set; default = null; }
     private bool dnd_inprocess { get; set; default = false; }
-
+	
+	public bool background_only_behind_widgets { get; set; default = true; }
 	public bool minimize_size { get; set; default = true; }
     public signal void child_reordered(Widget child, uint new_index);
     public signal void size_changed(int width, int height,bool on_size_request);
@@ -741,6 +742,8 @@ public class HVBox : Container {
 		var color = context.get_background_color(StateFlags.NORMAL);
 		cr.set_source_rgba (color.red,color.green,color.blue,color.alpha);//background
 		
+		if(!background_only_behind_widgets)
+			render_background(context,cr, 0, 0,width+border.left+border.right, height+border.top+border.bottom);
 
 		unowned List<HVBoxItem> item_it=null;
 		unowned List<HVBoxItem> end_of_line=null;
@@ -762,7 +765,8 @@ public class HVBox : Container {
 				unowned Widget widget = item.widget;
 				allocation.width+=item.widget.get_allocated_width();
 			}
-			render_background(context,cr, allocation.x, allocation.y,allocation.width+border.left+border.right, allocation.height+border.top+border.bottom);
+			if(background_only_behind_widgets)
+				render_background(context,cr, allocation.x, allocation.y,allocation.width+border.left+border.right, allocation.height+border.top+border.bottom);
 			//calculate every line width and height
 			arr_h += allocation.height;
 			arr_w += allocation.width;

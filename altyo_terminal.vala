@@ -320,6 +320,9 @@ public class VTTerminal : AYTab{
 			this.on_child_exit=on_child_exit;
 
 		this.vte_term = new Vte.Terminal();
+//~		this.vte_term.halign=Gtk.Align.START;
+//~		this.vte_term.valign=Gtk.Align.START;
+//~		this.vte_term.expand=false;		
 		/*this.vte_term.size_allocate.connect((allocation)=>{
 			debug("[screen %p] size-alloc   %d : %d at (%d, %d)\n",
                          this.vte_term, allocation.width, allocation.height, allocation.x, allocation.y);
@@ -602,8 +605,8 @@ public class VTTerminal : AYTab{
 			parent = this.vte_term;
 			while(parent.parent!=null ){parent = parent.parent;} //find VTMainWindow
 		VTMainWindow vtw=(VTMainWindow)parent;
-		menu.set_accel_group(vtw.accel_group);
-		Gtk.ActionGroup acg=vtw.action_group;
+		menu.set_accel_group(vtw.ayobject.accel_group);
+		Gtk.ActionGroup acg=vtw.ayobject.action_group;
 
 		Gtk.MenuItem menuitem;
 
@@ -645,7 +648,7 @@ public class VTTerminal : AYTab{
 			action_keepabove.set_active(!vtw.keep_above);
 		}
 
-		if(vtw.tab_sort_order==TAB_SORT_ORDER.HOSTNAME){
+		if(vtw.ayobject.tab_sort_order==TAB_SORT_ORDER.HOSTNAME){
 			var action_sort=acg.get_action("disable_sort_tab") as ToggleAction;
 			if(action_sort.active!=this.tbutton.do_not_sort){
 				//invert value, becouse it will inverted after set_active

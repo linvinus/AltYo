@@ -2,8 +2,8 @@ using Gtk;
 
 public class AYSettings : AYTab{
 	private Gtk.Builder builder;
-	public VTMainWindow win_parent {get;set;default=null;}
-	public AYSettings(MySettings my_conf,Notebook notebook, int tab_index,VTMainWindow wp) {
+	public AYObject win_parent {get;set;default=null;}
+	public AYSettings(MySettings my_conf,Notebook notebook, int tab_index,AYObject wp) {
 		base(my_conf, notebook, tab_index);
 		this.tbutton.tab_format="AYSettings";
 		this.win_parent=wp;

@@ -46,67 +46,39 @@ public delegate void MyCallBack(Gtk.Action a);
 
 public class VTMainWindow : Window{
 	public OffscreenWindow pixwin;
-
+	public AYObject ayobject;
+	
 	public bool maximized=false;
 	public bool animation_enabled = true;
 	public int animation_speed=25;
 	public int pull_steps=20;
-	public bool save_session = false;
-
 	public bool pull_animation_active = false;
 	public bool pull_active = false;
-	private int pull_step = 0;
-	private int orig_x = 0;
-	private int orig_y = 0;
-	private int orig_w = 0;
-	private int orig_h = 0;
-	private int orig_h_note = 0;
-	private int orig_w_note = 0;
-	private int position = 1;
-	private int double_hotkey_milliseconds = 0;
-	private int double_hotkey = 0;
-	private DateTime double_hotkey_last_time = null;
-	private bool orig_maximized=false;
-	private bool update_maximized_size=false;
-	private bool mouse_follow=false;
-	private unowned Widget prev_focus=null;
-
-//~ 	public Overlay main_overlay {get;set;}
-//~ 	public MyOverlayBox main_overlay {get;set;}
-	public VBox main_vbox  {get;set;}
-	public Notebook terms_notebook {get; set;}
-	public Notebook tasks_notebook {get; set;}
-	public Notebook overlay_notebook {get; set;}
-	public HVBox hvbox {get;set;}
-	public Gtk.Box search_hbox  {get;set;}
-	public ComboBoxText search_text_combo {get;set;}
-	public CheckButton search_wrap_around {get;set;}
-	public CheckButton search_match_case {get;set;}
-	public int search_history_length = 10;
-	public unowned VTToggleButton active_tab {get;set; default = null;}
 	public WStates current_state {get;set; default = WStates.VISIBLE;}
 	public unowned MySettings conf {get;set; default = null;}
-	//public Gtk.Window win {get;set; default = null;}
-	public PanelHotkey hotkey;
-	public Gtk.ActionGroup action_group;
-	public Gtk.AccelGroup  accel_group;
+	public bool keep_above=true;
 
+	public PanelHotkey hotkey;
 	public int maximized_w = -1;
 	public int maximized_h = -1;
-	public TAB_SORT_ORDER tab_sort_order {get;set; default = TAB_SORT_ORDER.NONE;}
+	public bool mouse_follow=false;
+	private unowned Widget prev_focus=null;
+	
+	private int pull_step = 0;
+	public int orig_x = 0;
+	public int orig_y = 0;
+	private int pull_w = 0;
+	private int pull_h = 0;
+	public int orig_w = 0;
+	public int orig_h = 0;
+	private int orig_h_note = 0;
+	private int orig_w_note = 0;
+	public int position = 1;
+	public bool orig_maximized=false;
+	public bool update_maximized_size=false;
 
-
-	private List<unowned AYTab> children;
-	public int terminal_width {get;set; default = 80;}
-	public int terminal_height {get;set; default = 50;}
-	private int hvbox_height_old {get;set; default = 0;}
-	//public bool maximized {get; set; default = false;}
-	//private bool quit_dialog {get; set; default = false;}
-	public bool keep_above=true;
-	private AYSettings aysettings {get;set; default = null;}
-	private bool aysettings_shown=false;
-
-
+	
+	
 	public VTMainWindow(WindowType type) {
 		Object(type:type);
 		}
@@ -148,123 +120,31 @@ public class VTMainWindow : Window{
 			this.set_keep_above(false);
 		}
 
-		this.hotkey = new PanelHotkey ();
 
 		Image img = new Image.from_resource ("/org/gnome/altyo/altyo.svg");
 		this.set_icon(img.pixbuf);
 
-
-		this.main_vbox = new VBox(false,0);
-		this.main_vbox.name="main_vbox";
-		this.main_vbox.show();
-		this.add(main_vbox);
-
-		this.terms_notebook = new Notebook() ;
-		this.terms_notebook.name="terms_notebook";
-		this.terms_notebook.set_show_tabs(false);//HVBox will have tabs ;)
-
-		//this.terms_notebook.set_show_border(false);
-
-		this.tasks_notebook = new Notebook();
-		this.tasks_notebook.name="tasks_notebook";
-		this.tasks_notebook.set_show_tabs(false);
-		this.tasks_notebook.insert_page(terms_notebook,null,TASKS.TERMINALS);
-		this.tasks_notebook.switch_page.connect(on_switch_task);
-
-		this.save_session    = conf.get_boolean("autosave_session",false);
-
-		this.tasks_notebook.set_size_request(terminal_width,this.terminal_height);
-
-		this.hvbox = new HVBox();
-		this.hvbox.child_reordered.connect(this.move_tab);
-		this.hvbox.size_changed.connect(this.hvbox_size_changed);
-
-		this.hvbox.can_focus=false;//vte shoud have focus
-		this.hvbox.can_default = false;
-		this.hvbox.has_focus = false;
-
-		this.search_hbox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);//new HBox(false,0);
-		this.search_hbox.name="search_hbox";
-		this.search_hbox.draw.connect((cr)=>{
-			int width = this.search_hbox.get_allocated_width ();
-			int height = this.search_hbox.get_allocated_height ();
-			var context = this.search_hbox.get_style_context();
-			render_background(context,cr, -1, -1,width+2, height+2);
-			this.search_hbox.foreach((widget)=>{
-				if(widget.parent==this.search_hbox)
-					this.search_hbox.propagate_draw(widget,cr);
-				});
-				return false;
-			});
-		this.create_search_box();
-
-		//this.main_vbox.pack_start(this.tasks_notebook,true,true,0);//maximum size
-
-		#if HAVE_QLIST
-		var qlist = new QList(this.conf);
-		qlist.win_parent=this;
-		this.tasks_notebook.insert_page(qlist,null,TASKS.QLIST);
-		#endif
-
-		/*this.main_overlay = new MyOverlayBox();//Gtk.Overlay();
-		this.main_overlay.show();
-		this.main_overlay.add(this.tasks_notebook);
-
-		this.overlay_notebook = new Notebook() ;
-		this.overlay_notebook.set_show_tabs(false);
-
-		this.main_overlay.add_overlay(this.overlay_notebook);*/
-
-		//this.main_vbox.pack_start(this.main_overlay,true,true,0);//maximum size
-		this.main_vbox.pack_start(this.tasks_notebook,true,true,0);//maximum size
+		this.keep_above=conf.get_boolean("keep_above_at_startup",this.keep_above);
+		if(!this.keep_above){
+			this.skip_taskbar_hint = false;
+			this.set_keep_above(false);
+		}
 
 
-		//this.main_vbox.pack_start(notebook,true,true,0);//maximum size
-		this.main_vbox.pack_start(this.search_hbox,false,false,0);//minimum size
-		this.main_vbox.pack_start(hvbox,false,false,0);//minimum size
 
+		this.ayobject= new AYObject(this,conf);
+
+		this.add(this.ayobject.main_vbox);
+		
+		this.hotkey = new PanelHotkey ();
 		this.reconfigure();
-		this.configure_position();
-		this.main_vbox.show_all();
-
-		var restore_terminal_session=this.conf.get_string_list("terminal_session",null);
-		if(restore_terminal_session != null && restore_terminal_session.length>0){
-			foreach(var s in restore_terminal_session){
-				if(s!="")
-					this.add_tab(s);
-				else
-					this.add_tab();
-			}
-		}else
-			this.add_tab();
-
-		this.search_hbox.hide();//search hidden by default
-		//this.overlay_notebook.hide();//this.overlay_notebook hidden by default
-		this.tasks_notebook.set_current_page(TASKS.TERMINALS);//this.overlay_notebook hidden by default
-
+		
 		this.destroy.connect (()=>{
-			this.save_configuration();
-			string[] terminal_session = {};
-			var grx_exclude = new GLib.Regex(this.conf.get_string("terminal_session_exclude_regex","/?zsh\\ ?|/?mc\\ ?|/?bash\\ ?"));
-			foreach (var vt in this.children) {
-				if(vt is VTTerminal){
-					var tmp=((VTTerminal)vt).find_tty_pgrp(((VTTerminal)vt).pid);
-					if(tmp!="" && !grx_exclude.match_all(tmp,0,null) && this.save_session)
-						terminal_session+=tmp;
-					((VTTerminal)vt).destroy();
-				}
-			}
-			//g_list_free(this.children);
-			this.conf.set_string_list("terminal_session",terminal_session);
+			this.ayobject.save_configuration();
 			this.conf.save();
 			Gtk.main_quit();
 			});
-
-		//this.setup_keyboard_accelerators() ;
-		#if HAVE_QLIST
-		qlist.setup_keyboard_accelerators();
-		#endif
-
+			
 		this.conf.on_load.connect(()=>{
 			this.reconfigure();
 			if(this.current_state==WStates.VISIBLE){
@@ -272,216 +152,10 @@ public class VTMainWindow : Window{
 				this.update_position_size();
 				this.update_events();
 			}
-			});
-	}//CreateVTWindow
-
-	public override  bool draw (Cairo.Context cr){
-		if(pull_animation_active){
-			cr.save();
-			cr.set_source_surface(this.pixwin.get_surface(),0,this.get_allocated_height()-this.orig_h);
-			cr.paint();
-			cr.stroke ();
-			cr.restore();
-			return false;
-		}else{
-			return base.draw(cr);
-		}
+			});			
+		
 	}
-
-	public void reconfigure(){
-		debug("reconfigure");
-		var css_main = new CssProvider ();
-		string style_str= ""+
-					 "VTToggleButton,VTToggleButton GtkLabel  {font: Mono 10; -GtkWidget-focus-padding: 0px;  -GtkButton-default-border:0px; -GtkButton-default-outside-border:0px; -GtkButton-inner-border:0px; border-width: 0px; -outer-stroke-width: 0px; border-radius: 0px; border-style: solid;  background-image: none; margin:0px; padding:1px 1px 0px 1px; background-color: alpha(#000000,0.0); color: #AAAAAA; transition: 0ms ease-in-out;}"+
-					 "VTToggleButton:active{background-color: #00AAAA; color: #000000; transition: 0ms ease-in-out;}"+
-					 "VTToggleButton:prelight {background-color: #AAAAAA; color: #000000; transition: 0ms ease-in-out;}"+
-					 "#tasks_notebook {border-width: 0px 2px 0px 2px;border-color: #3C3B37;border-style: solid;}"+
-					 "#search_hbox :active { border-color: @fg_color; color: #FF0000;}"+
-					 "#search_hbox :prelight { background-color: alpha(#000000,0.0); border-color: @fg_color; color: #FF0000;}"+
-					 "#search_hbox {border-width: 0px 0px 0px 0px; -outer-stroke-width: 0px; border-radius: 0px 0px 0px 0px; border-style: solid;  background-image: none; margin:0px; padding:0px 0px 1px 0px; background-color: #000000; border-color: @bg_color; color: #00FFAA;}"+
-					 "HVBox {border-width: 0px 2px 2px 2px; border-color: #3C3B37;border-style: solid; background-color: #000000;}"+
-					 "#OffscreenWindow, VTMainWindow,#HVBox_dnd_window {border-width: 0px; border-style: solid; background-color: alpha(#000000,0.1);}"+
-					 "HVBox,#search_hbox{background-color: alpha(#000000,1.0);}"+
-					 "";
-		css_main.parsing_error.connect((section,error)=>{
-			debug("css_main.parsing_error %s",error.message);
-			});
-
-		try{
-			css_main.load_from_data (this.conf.get_string("program_style",style_str),-1);
-			Gtk.StyleContext.add_provider_for_screen(this.get_screen(),css_main,Gtk.STYLE_PROVIDER_PRIORITY_USER);
-		}catch (Error e) {
-			debug("Theme error! loading default..");
-			css_main.load_from_data (style_str,-1);
-			Gtk.StyleContext.add_provider_for_screen(this.get_screen(),css_main,Gtk.STYLE_PROVIDER_PRIORITY_USER);
-		}
-
-		this.terminal_width = conf.get_integer("terminal_width",80,(ref new_val)=>{
-			if(new_val<1){new_val=this.terminal_width;return true;}
-			return false;
-			});
-		this.terminal_height = conf.get_integer("terminal_height",50,(ref new_val)=>{
-			if(new_val<1){new_val=this.terminal_height;return true;}
-			return false;
-			});
-		this.position  = conf.get_integer("position",1,(ref new_val)=>{
-			if(new_val>3){new_val=this.position;return true;}
-			return false;
-			});
-		this.hvbox.background_only_behind_widgets= !conf.get_boolean("tab_box_have_background",false);
-		this.mouse_follow  = conf.get_boolean("follow_the_white_rabbit",false);
-		this.save_session  = conf.get_boolean("autosave_session",false);
-		this.animation_enabled=conf.get_boolean("animation_enabled",true);
-		this.pull_steps=conf.get_integer("animation_pull_steps",10,(ref new_val)=>{
-				if(new_val<1){new_val=10;return true;}
-				return false;
-			});
-		this.double_hotkey_milliseconds=conf.get_integer("double_hotkey_milliseconds",500)*1000;
-		string ret = conf.get_string("tab_sort_order","none");
-			switch(ret){
-				case "none":
-					this.tab_sort_order=TAB_SORT_ORDER.NONE;
-				break;
-				case "hostname":
-					this.tab_sort_order=TAB_SORT_ORDER.HOSTNAME;
-				break;
-				default:
-					this.tab_sort_order=TAB_SORT_ORDER.NONE;
-					conf.set_string("tab_sort_order","none");
-				break;
-				}
-
-
-
-		this.hotkey.unbind();
-		KeyBinding grave=this.hotkey.bind (this.conf.get_accel_string("main_hotkey","<Alt>grave"));
-		if(grave!=null)
-			grave.on_trigged.connect(this.toogle_widnow);
-		else{
-			var new_key = this.conf.get_accel_string("main_hotkey","<Alt>grave");
-			do{
-				new_key = this.ShowGrabKeyDialog(new_key);
-				grave=this.hotkey.bind (new_key);
-			}while(grave==null);
-			this.conf.set_accel_string("main_hotkey",new_key);
-			grave.on_trigged.connect(this.toogle_widnow);
-		}
-
-		this.setup_keyboard_accelerators();
-	}
-
-	public void configure_position(){
-
-			unowned Gdk.Screen gscreen = this.get_screen ();
-			debug("x=%d,y=%d",this.orig_x,this.orig_y);
-			int current_monitor;
-			if(this.mouse_follow){
-				X.Display display = new X.Display();
-				X.Event event = X.Event();
-				X.Window window = display.default_root_window();
-
-				display.query_pointer(window, out window,
-				out event.xbutton.subwindow, out event.xbutton.x_root,
-				out event.xbutton.y_root, out event.xbutton.x,
-				out event.xbutton.y, out event.xbutton.state);
-				current_monitor = gscreen.get_monitor_at_point (event.xbutton.x,event.xbutton.y);
-			}else
-			    current_monitor = gscreen.get_monitor_at_point (this.orig_x,this.orig_y);
-
-			Gdk.Rectangle rectangle;
-			rectangle=gscreen.get_monitor_workarea(current_monitor);
-
-
-			int w = conf.get_integer("terminal_width",80);//if less 101 then it persentage
-			int h = conf.get_integer("terminal_height",50);//if less 101 then it persentage
-			if(h==100){//workaround for fullscreen, otherwise tabbutton will be out of screen
-				this.maximize();
-			}else{
-				if(w<101){
-					this.terminal_width=(int)(((float)rectangle.width/100.0)*(float)w);
-				}else{
-					this.terminal_width=w;
-				}
-
-				if(h<101){
-					this.terminal_height=(int)(((float)rectangle.height/100.0)*(float)h);
-				}else{
-					this.terminal_height=h;
-				}
-			}
-			this.orig_w=this.terminal_width;
-			this.orig_h=this.terminal_height;
-
-			if(this.position>3)this.position=1;
-
-			switch(this.position){
-				case 0:
-					this.orig_x=rectangle.x;
-				break;
-				case 1:
-					this.orig_x=rectangle.x+((rectangle.width/2)-(this.terminal_width/2));
-				break;
-				case 2:
-					this.orig_x=rectangle.x+(rectangle.width-this.terminal_width);
-				break;
-			}
-
-			//this.orig_x=rectangle.x;
-			this.orig_y=rectangle.y;
-
-			//this.tasks_notebook.set_size_request(this.terminal_width,this.terminal_height);
-			//we can't change height , otherwise vte will change
-			//this.tasks_notebook.set_size_request(terminal_width,this.terminal_height);
-			debug("new x=%d,y=%d",this.orig_x,this.orig_y);
-			debug("new h=%d,w=%d",this.orig_h,this.orig_w);
-			debug("x=%d,y=%d",this.orig_x,this.orig_y);
-	}
-
-	public override bool configure_event(Gdk.EventConfigure event){
-
-		if(this.update_maximized_size){
-			this.maximized_w = event.width;
-			this.maximized_h = event.height;
-			this.update_maximized_size=false;
-			this.update_events();
-			debug("maximized event.type=%d window=%d x=%d y=%d width=%d height=%d",event.type,(int)event.window,event.x,event.y,event.width,event.height);
-
-		}
-		if(event.type==13 && this.current_state==WStates.VISIBLE){
-			//this.terminal_width=event.width;
-			this.orig_x=event.x;
-			this.orig_y=event.y;
-			debug("event.type=%d window=%d x=%d y=%d width=%d height=%d",event.type,(int)event.window,event.x,event.y,event.width,event.height);
-		}
-	return base.configure_event(event);
-	}
-
-
-	private void update_events(){
-		var window = this.get_window();
-			//window.process_updates(true);//force update
-			window.enable_synchronized_configure();//force update
-		while (Gtk.events_pending ()){
-			Gtk.main_iteration ();
-			}
-		Gdk.flush();
-
-	}
-
-	public void update_position_size(){
-				if(this.orig_maximized){
-						this.maximized = true;
-						this.tasks_notebook.set_size_request(orig_w_note,orig_h_note);
-						this.maximize();
-					}else{
-						this.tasks_notebook.set_size_request(this.orig_w,this.orig_h);
-						this.set_default_size(this.orig_w,this.orig_h);
-						this.resize (this.orig_w,this.orig_h);
-						this.move (this.orig_x,this.orig_y);
-						this.queue_resize_no_redraw();
-					}
-	}
-
+	
 	public bool on_pull_down(){
 
 			this.pull_step++;
@@ -525,7 +199,7 @@ public class VTMainWindow : Window{
 		this.resize (this.orig_w,2);//start height
 		this.move (this.orig_x,this.orig_y);
 		this.update_events();
-		if (this.orig_w != 0 && this.orig_h != 0)
+		if (this.pull_w != 0 && this.pull_h != 0)
 			this.pull_step=0;
 		else
 			this.pull_step=this.pull_steps;//skip animation
@@ -534,7 +208,7 @@ public class VTMainWindow : Window{
 
 	public bool on_pull_up(){
 			this.pull_step++;
-			this.resize (this.orig_w,(this.orig_h-(this.orig_h/this.pull_steps)*this.pull_step)+1);
+			this.resize (this.pull_w,(this.pull_h-(this.pull_h/this.pull_steps)*this.pull_step)+1);
 			this.update_events();
 			if(this.pull_step<this.pull_steps)
 				return true;//continue animation
@@ -549,10 +223,11 @@ public class VTMainWindow : Window{
 	}
 
 	public void pull_up(){
-		this.orig_h=this.get_allocated_height();
-		this.orig_w=this.get_allocated_width();
-		this.orig_h_note = this.tasks_notebook.get_allocated_height();
-		this.orig_w_note = this.tasks_notebook.get_allocated_width();
+		this.orig_h=this.pull_h=this.get_allocated_height();
+		this.orig_w=this.pull_w=this.get_allocated_width();
+		debug("pull_up orig_h=%d orig_w=%d",this.pull_h,this.pull_w);
+		this.orig_h_note = this.ayobject.tasks_notebook.get_allocated_height();
+		this.orig_w_note = this.ayobject.tasks_notebook.get_allocated_width();
 		this.orig_maximized=this.maximized;
 		if(!this.animation_enabled){
 			this.prev_focus=this.get_focus();
@@ -571,16 +246,19 @@ public class VTMainWindow : Window{
 		this.pull_animation_active=true;
 		this.pixwin.resize (orig_w,orig_h);
 		debug("reparent to offscreen window");
-		this.get_child().reparent(this.pixwin);//reparent to offscreen window
+//~		this.get_child().reparent(this.pixwin);//reparent to offscreen window
+			var ch=this.get_child();//.reparent(this);//reparent from offscreen window
+				this.remove(ch);
+				this.pixwin.add(ch);		
 		debug("end reparent to offscreen window");
 
 		if(this.orig_maximized) this.unmaximize();
 
 		//correct size after unmaximize
 		//just to be shure that terminal will not change size
-		this.tasks_notebook.set_size_request(orig_w_note,orig_h_note);
-
-		this.update_events();
+		this.ayobject.tasks_notebook.set_size_request(orig_w_note,orig_h_note);
+		//this.update_events();
+		debug("pull_up orig_h=%d orig_w=%d",this.pull_h,this.pull_w);
 		this.pull_step=0;
 		GLib.Timeout.add(this.animation_speed,this.on_pull_up);
 	}
@@ -605,6 +283,486 @@ public class VTMainWindow : Window{
 				this.maximized_h=-1;
 		}
 	return false;
+	}
+
+	public override  bool draw (Cairo.Context cr){
+		if(pull_animation_active){
+			cr.save();
+			debug("draw 0-%d  this.get_allocated_height=%d this.orig_h=%d",this.get_allocated_height()-this.pull_h, this.get_allocated_height(),this.pull_h);
+			cr.set_source_surface(this.pixwin.get_surface(),0,this.get_allocated_height()-this.pull_h);
+			cr.paint();
+			cr.stroke ();
+			cr.restore();
+			return false;
+		}else{
+			return base.draw(cr);
+		}
+	}
+	public override bool configure_event(Gdk.EventConfigure event){
+
+		if(this.update_maximized_size){
+			this.maximized_w = event.width;
+			this.maximized_h = event.height;
+			this.update_maximized_size=false;
+			this.update_events();
+			debug("maximized event.type=%d window=%d x=%d y=%d width=%d height=%d",event.type,(int)event.window,event.x,event.y,event.width,event.height);
+
+		}
+		if(event.type==13 /*&& this.current_state==WStates.VISIBLE*/){
+			//this.terminal_width=event.width;
+			this.orig_x=event.x;
+			this.orig_y=event.y;
+			debug("event.type=%d window=%d x=%d y=%d width=%d height=%d",event.type,(int)event.window,event.x,event.y,event.width,event.height);
+		}
+	return base.configure_event(event);
+	}
+
+
+	public void update_events(){
+		var window = this.get_window();
+			//window.process_updates(true);//force update
+			window.enable_synchronized_configure();//force update
+		while (Gtk.events_pending ()){
+			Gtk.main_iteration ();
+			}
+		Gdk.flush();
+
+	}
+
+	public void update_position_size(){
+				if(this.orig_maximized){
+						this.maximized = true;
+						this.ayobject.tasks_notebook.set_size_request(orig_w_note,orig_h_note);
+						this.maximize();
+					}else{
+						this.ayobject.tasks_notebook.set_size_request(this.orig_w,this.orig_h);
+						this.set_default_size(this.orig_w,this.orig_h);
+						this.resize (this.orig_w,this.orig_h);
+						this.move (this.orig_x,this.orig_y);
+						this.queue_resize_no_redraw();
+					}
+	}
+	public void reconfigure(){
+		debug("reconfigure");
+		var css_main = new CssProvider ();
+		string style_str= ""+
+					 "VTToggleButton,VTToggleButton GtkLabel  {font: Mono 10; -GtkWidget-focus-padding: 0px;  -GtkButton-default-border:0px; -GtkButton-default-outside-border:0px; -GtkButton-inner-border:0px; border-width: 0px; -outer-stroke-width: 0px; border-radius: 0px; border-style: solid;  background-image: none; margin:0px; padding:1px 1px 0px 1px; background-color: alpha(#000000,0.0); color: #AAAAAA; transition: 0ms ease-in-out;}"+
+					 "VTToggleButton:active{background-color: #00AAAA; color: #000000; transition: 0ms ease-in-out;}"+
+					 "VTToggleButton:prelight {background-color: #AAAAAA; color: #000000; transition: 0ms ease-in-out;}"+
+					 "#tasks_notebook {border-width: 0px 2px 0px 2px;border-color: #3C3B37;border-style: solid;}"+
+					 "#search_hbox :active { border-color: @fg_color; color: #FF0000;}"+
+					 "#search_hbox :prelight { background-color: alpha(#000000,0.0); border-color: @fg_color; color: #FF0000;}"+
+					 "#search_hbox {border-width: 0px 0px 0px 0px; -outer-stroke-width: 0px; border-radius: 0px 0px 0px 0px; border-style: solid;  background-image: none; margin:0px; padding:0px 0px 1px 0px; background-color: #000000; border-color: @bg_color; color: #00FFAA;}"+
+					 "HVBox {border-width: 0px 2px 2px 2px; border-color: #3C3B37;border-style: solid; background-color: #000000;}"+
+					 "#OffscreenWindow, VTMainWindow,#HVBox_dnd_window {border-width: 0px; border-style: solid; background-color: alpha(#000000,0.1);}"+
+					 "HVBox,#search_hbox{background-color: alpha(#000000,1.0);}"+
+					 "";
+		css_main.parsing_error.connect((section,error)=>{
+			debug("css_main.parsing_error %s",error.message);
+			});
+
+		try{
+			css_main.load_from_data (this.conf.get_string("program_style",style_str),-1);
+			Gtk.StyleContext.add_provider_for_screen(this.get_screen(),css_main,Gtk.STYLE_PROVIDER_PRIORITY_USER);
+		}catch (Error e) {
+			debug("Theme error! loading default..");
+			css_main.load_from_data (style_str,-1);
+			Gtk.StyleContext.add_provider_for_screen(this.get_screen(),css_main,Gtk.STYLE_PROVIDER_PRIORITY_USER);
+		}
+		this.position  = conf.get_integer("position",1,(ref new_val)=>{
+			if(new_val>3){new_val=this.position;return true;}
+			return false;
+			});
+
+		this.animation_enabled=conf.get_boolean("animation_enabled",true);
+		this.pull_steps=conf.get_integer("animation_pull_steps",10,(ref new_val)=>{
+				if(new_val<1){new_val=10;return true;}
+				return false;
+			});
+
+		this.hotkey.unbind();
+		KeyBinding grave=this.hotkey.bind (this.conf.get_accel_string("main_hotkey","<Alt>grave"));
+		if(grave!=null)
+			grave.on_trigged.connect(this.toogle_widnow);
+		else{
+			var new_key = this.conf.get_accel_string("main_hotkey","<Alt>grave");
+			do{
+				new_key = this.ShowGrabKeyDialog(new_key);
+				grave=this.hotkey.bind (new_key);
+			}while(grave==null);
+			this.conf.set_accel_string("main_hotkey",new_key);
+			grave.on_trigged.connect(this.toogle_widnow);
+		}
+
+		this.mouse_follow  = conf.get_boolean("follow_the_white_rabbit",false);
+	}//reconfigure
+
+	public void configure_position(){
+
+			unowned Gdk.Screen gscreen = this.get_screen ();
+			debug("x=%d,y=%d",this.orig_x,this.orig_y);
+			int current_monitor;
+			if(this.mouse_follow){
+				X.Display display = new X.Display();
+				X.Event event = X.Event();
+				X.Window window = display.default_root_window();
+
+				display.query_pointer(window, out window,
+				out event.xbutton.subwindow, out event.xbutton.x_root,
+				out event.xbutton.y_root, out event.xbutton.x,
+				out event.xbutton.y, out event.xbutton.state);
+				current_monitor = gscreen.get_monitor_at_point (event.xbutton.x,event.xbutton.y);
+			}else
+			    current_monitor = gscreen.get_monitor_at_point (this.orig_x,this.orig_y);
+
+			Gdk.Rectangle rectangle;
+			rectangle=gscreen.get_monitor_workarea(current_monitor);
+
+
+			int w = conf.get_integer("terminal_width",80);//if less 101 then it persentage
+			int h = conf.get_integer("terminal_height",50);//if less 101 then it persentage
+			if(h==100){//workaround for fullscreen, otherwise tabbutton will be out of screen
+				this.maximize();
+			}else{
+				if(w<101){
+					this.ayobject.terminal_width=(int)(((float)rectangle.width/100.0)*(float)w);
+				}else{
+					this.ayobject.terminal_width=w;
+				}
+
+				if(h<101){
+					this.ayobject.terminal_height=(int)(((float)rectangle.height/100.0)*(float)h);
+				}else{
+					this.ayobject.terminal_height=h;
+				}
+			}
+			this.orig_w=this.ayobject.terminal_width;
+			this.orig_h=this.ayobject.terminal_height;
+
+			if(this.position>3)this.position=1;
+
+			switch(this.position){
+				case 0:
+					this.orig_x=rectangle.x;
+				break;
+				case 1:
+					this.orig_x=rectangle.x+((rectangle.width/2)-(this.ayobject.terminal_width/2));
+				break;
+				case 2:
+					this.orig_x=rectangle.x+(rectangle.width-this.ayobject.terminal_width);
+				break;
+			}
+
+			//this.orig_x=rectangle.x;
+			this.orig_y=rectangle.y;
+
+			//this.tasks_notebook.set_size_request(this.terminal_width,this.terminal_height);
+			//we can't change height , otherwise vte will change
+			//this.tasks_notebook.set_size_request(terminal_width,this.terminal_height);
+			debug("new x=%d,y=%d",this.orig_x,this.orig_y);
+			debug("new h=%d,w=%d",this.orig_h,this.orig_w);
+			debug("x=%d,y=%d",this.orig_x,this.orig_y);
+	}//configure_position
+
+
+		public void window_set_active(){
+
+		if(this.current_state==WStates.VISIBLE){
+			if(!this.maximized){
+				this.ayobject.tasks_notebook.set_size_request(this.ayobject.terminal_width,this.ayobject.terminal_height);
+
+				if(this.get_allocated_height()>this.ayobject.terminal_height+this.ayobject.hvbox.get_allocated_height ()){
+					this.set_default_size (this.ayobject.terminal_width,this.ayobject.terminal_height+this.ayobject.hvbox.get_allocated_height ());
+					this.resize (this.ayobject.terminal_width,this.ayobject.terminal_height+this.ayobject.hvbox.get_allocated_height ());
+				}
+			}
+			if(this.keep_above){
+				this.skip_taskbar_hint = true;
+				this.set_keep_above(true);
+				this.stick ();
+				//this.show ();//first show then send_net_active_window!
+				this.present() ;
+			}else{
+				this.skip_taskbar_hint = false;
+				this.set_keep_above(false);
+			}
+			this.hotkey.send_net_active_window(this.get_window ());
+			if(this.prev_focus!=null)
+				this.prev_focus.grab_focus();
+			else
+				this.ayobject.activate_tab(this.ayobject.active_tab);
+		}
+	}
+
+
+	public string ShowGrabKeyDialog(string? prev_bind=null){
+
+			var title="Please select key combination, to show/hide AltYo.";
+			if(prev_bind!=null)
+				title+="\nprevious key '%s' incorrect or busy".printf(prev_bind);
+			var dialog = new MessageDialog (null, (DialogFlags.DESTROY_WITH_PARENT | DialogFlags.MODAL), MessageType.QUESTION, ButtonsType.OK, title);
+			var aLabel = new Label("Press any key");
+			var dialog_box = ((Gtk.Box)dialog.get_content_area ());
+			dialog_box.pack_start(aLabel,false,false,0);
+			aLabel.show();
+			dialog.response.connect ((response_id) => {
+				if(response_id == Gtk.ResponseType.OK){
+					dialog.destroy ();
+				}else{
+					this.window_set_active();
+					dialog.destroy ();
+				}
+			});
+
+			var grab_another_key = new Button.with_label("Grab another key.");
+			grab_another_key.clicked.connect(()=>{
+				grab_another_key.sensitive=false;
+				dialog.set_response_sensitive(Gtk.ResponseType.OK,false);
+				});
+
+			((Gtk.ButtonBox)dialog.get_action_area ()).pack_start(grab_another_key,false,false,0);
+			grab_another_key.show();
+			grab_another_key.sensitive=false;
+
+			dialog.focus_out_event.connect (() => {
+				return true; //same bug as discribed in this.focus_out_event
+				});
+
+			dialog.set_response_sensitive(Gtk.ResponseType.OK,false);
+			dialog.set_transient_for(this);
+			dialog.show ();
+			//disable close by window manager
+			Gdk.Window w = dialog.get_window();
+			w.set_functions((Gdk.WMFunction.ALL|Gdk.WMFunction.CLOSE));
+			dialog.grab_focus();
+			this.hotkey.send_net_active_window(dialog.get_window ());
+			string accelerator_name="";
+
+			dialog.key_press_event.connect((widget,event) => {
+					unowned Button ok = (Button)dialog.get_widget_for_response(Gtk.ResponseType.OK);
+					if(!ok.sensitive)
+						if (Gtk.accelerator_valid (event.keyval, event.state))
+						/*See GDK_KEY_* in gdk/gdkkeysyms.h (not available in Vala)*/
+							if(event.keyval!=0xff1b && /*GDK_KEY_Escape*/
+							   event.keyval!=0xff0d && /*GDK_KEY_Return*/
+							   event.keyval!=0xff08    /*GDK_KEY_BackSpace*/
+							   ){
+								event.state &= Gtk.accelerator_get_default_mod_mask();
+								accelerator_name = Gtk.accelerator_name (event.keyval, event.state);
+								aLabel.label = Gtk.accelerator_get_label  (event.keyval, event.state);
+								ok.sensitive=true;
+								ok.grab_focus();
+								grab_another_key.sensitive=true;
+							}
+					if(event.keyval!=0xff1b && ok.sensitive)
+						return false;
+					else
+						return true; //true == ignore event
+				});//tab_button_press_event
+			dialog.run();
+			return accelerator_name;
+	}
+}//class VTMainWindow
+
+/*********************************************************************/
+/*********************************************************************/
+/*********************************************************************/
+/*********************************************************************/
+/*********************************************************************/
+/*********************************************************************/
+/*********************************************************************/
+
+public class AYObject :Object{
+	public Gtk.ActionGroup action_group;
+	public Gtk.AccelGroup  accel_group;
+
+	public bool save_session = false;
+
+	private int double_hotkey_milliseconds = 0;
+	private int double_hotkey = 0;
+	private DateTime double_hotkey_last_time = null;
+
+//~ 	public Overlay main_overlay {get;set;}
+//~ 	public MyOverlayBox main_overlay {get;set;}
+	public VTMainWindow main_window;
+	public Notebook terms_notebook {get; set;}
+	public Notebook tasks_notebook {get; set;}
+	public Notebook overlay_notebook {get; set;}
+	public HVBox hvbox {get;set;}
+	public Gtk.Box search_hbox  {get;set;}
+	public ComboBoxText search_text_combo {get;set;}
+	public CheckButton search_wrap_around {get;set;}
+	public CheckButton search_match_case {get;set;}
+	public int search_history_length = 10;
+	public unowned VTToggleButton active_tab {get;set; default = null;}
+	public unowned MySettings conf {get;set; default = null;}
+	//public Gtk.Window win {get;set; default = null;}
+
+	public Gtk.Box main_vbox  {get;set;}
+
+	public TAB_SORT_ORDER tab_sort_order {get;set; default = TAB_SORT_ORDER.NONE;}
+
+
+	private List<unowned AYTab> children;
+	public int terminal_width {get;set; default = 80;}
+	public int terminal_height {get;set; default = 50;}
+	private int hvbox_height_old {get;set; default = 0;}
+	//public bool maximized {get; set; default = false;}
+	//private bool quit_dialog {get; set; default = false;}
+
+	private AYSettings aysettings {get;set; default = null;}
+	private bool aysettings_shown=false;
+
+	public AYObject(VTMainWindow _MW ,MySettings _conf) {
+		this.conf=_conf;
+		this.main_window=_MW;
+
+		this.main_vbox = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);//new VBox(false,0);
+//~		this.main_vbox.halign=Gtk.Align.START;
+//~		this.main_vbox.valign=Gtk.Align.START;
+//~		this.main_vbox.expand=false;
+		this.main_vbox.name="main_vbox";
+		this.main_vbox.show();
+
+		
+		this.terms_notebook = new Notebook() ;
+//~		this.terms_notebook.halign=Gtk.Align.START;
+//~		this.terms_notebook.valign=Gtk.Align.START;
+//~		this.terms_notebook.expand=false;
+
+		this.terms_notebook.name="terms_notebook";
+		this.terms_notebook.set_show_tabs(false);//HVBox will have tabs ;)
+
+		//this.terms_notebook.set_show_border(false);
+
+		this.tasks_notebook = new Notebook();
+//~		this.tasks_notebook.halign=Gtk.Align.START;
+//~		this.tasks_notebook.valign=Gtk.Align.START;
+//~		this.tasks_notebook.expand=false;
+		this.tasks_notebook.name="tasks_notebook";
+		this.tasks_notebook.set_show_tabs(false);
+		this.tasks_notebook.insert_page(terms_notebook,null,TASKS.TERMINALS);
+		this.tasks_notebook.switch_page.connect(on_switch_task);
+
+		this.save_session    = conf.get_boolean("autosave_session",false);
+
+		this.tasks_notebook.set_size_request(terminal_width,this.terminal_height);
+
+		this.hvbox = new HVBox();
+		this.hvbox.child_reordered.connect(this.move_tab);
+		this.hvbox.size_changed.connect(this.hvbox_size_changed);
+
+		this.hvbox.can_focus=false;//vte shoud have focus
+		this.hvbox.can_default = false;
+		this.hvbox.has_focus = false;
+
+		this.search_hbox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);//new HBox(false,0);
+//~		this.search_hbox.halign=Gtk.Align.START;
+//~		this.search_hbox.valign=Gtk.Align.START;
+//~		this.search_hbox.expand=false;
+		this.search_hbox.name="search_hbox";
+//~		this.search_hbox.draw.connect((cr)=>{
+//~			int width = this.search_hbox.get_allocated_width ();
+//~			int height = this.search_hbox.get_allocated_height ();
+//~			var context = this.search_hbox.get_style_context();
+//~			render_background(context,cr, -1, -1,width+2, height+2);
+//~			this.search_hbox.foreach((widget)=>{
+//~				if(widget.parent==this.search_hbox)
+//~					this.search_hbox.propagate_draw(widget,cr);
+//~				});
+//~				return false;
+//~			});
+		this.create_search_box();
+
+		//this.main_vbox.pack_start(this.tasks_notebook,true,true,0);//maximum size
+
+		#if HAVE_QLIST
+		var qlist = new QList(this.conf);
+		qlist.win_parent=this;
+		this.tasks_notebook.insert_page(qlist,null,TASKS.QLIST);
+		#endif
+
+		/*this.main_overlay = new MyOverlayBox();//Gtk.Overlay();
+		this.main_overlay.show();
+		this.main_overlay.add(this.tasks_notebook);
+
+		this.overlay_notebook = new Notebook() ;
+		this.overlay_notebook.set_show_tabs(false);
+
+		this.main_overlay.add_overlay(this.overlay_notebook);*/
+
+		//this.main_vbox.pack_start(this.main_overlay,true,true,0);//maximum size
+		this.main_vbox.pack_start(this.tasks_notebook,true,true,0);//maximum size
+
+
+		//this.main_vbox.pack_start(notebook,true,true,0);//maximum size
+		this.main_vbox.pack_start(this.search_hbox,true,true,0);//minimum size
+		this.main_vbox.pack_start(hvbox,false,false,0);//minimum size
+
+		this.reconfigure();
+		this.main_window.configure_position();
+		this.main_vbox.show_all();
+
+		var restore_terminal_session=this.conf.get_string_list("terminal_session",null);
+		if(restore_terminal_session != null && restore_terminal_session.length>0){
+			foreach(var s in restore_terminal_session){
+				if(s!="")
+					this.add_tab(s);
+				else
+					this.add_tab();
+			}
+		}else
+			this.add_tab();
+
+		this.search_hbox.hide();//search hidden by default
+		//this.overlay_notebook.hide();//this.overlay_notebook hidden by default
+		this.tasks_notebook.set_current_page(TASKS.TERMINALS);//this.overlay_notebook hidden by default
+
+
+		//this.setup_keyboard_accelerators() ;
+		#if HAVE_QLIST
+		qlist.setup_keyboard_accelerators();
+		#endif
+
+		this.conf.on_load.connect(()=>{
+			this.reconfigure();
+			});
+	}//CreateVTWindow
+
+
+	public void reconfigure(){
+		debug("reconfigure");
+
+		this.terminal_width = conf.get_integer("terminal_width",80,(ref new_val)=>{
+			if(new_val<1){new_val=this.terminal_width;return true;}
+			return false;
+			});
+		this.terminal_height = conf.get_integer("terminal_height",50,(ref new_val)=>{
+			if(new_val<1){new_val=this.terminal_height;return true;}
+			return false;
+			});
+
+		this.hvbox.background_only_behind_widgets= !conf.get_boolean("tab_box_have_background",false);
+
+		this.save_session  = conf.get_boolean("autosave_session",false);
+		this.double_hotkey_milliseconds=conf.get_integer("double_hotkey_milliseconds",500)*1000;
+		string ret = conf.get_string("tab_sort_order","none");
+			switch(ret){
+				case "none":
+					this.tab_sort_order=TAB_SORT_ORDER.NONE;
+				break;
+				case "hostname":
+					this.tab_sort_order=TAB_SORT_ORDER.HOSTNAME;
+				break;
+				default:
+					this.tab_sort_order=TAB_SORT_ORDER.NONE;
+					conf.set_string("tab_sort_order","none");
+				break;
+				}
+
+
+
+		this.setup_keyboard_accelerators();
 	}
 
 	public VTTerminal add_tab(string? session_command=null,string? session_path=null,OnChildExitCallBack? on_exit=null) {
@@ -871,94 +1029,28 @@ public class VTMainWindow : Window{
 				if(response_id == Gtk.ResponseType.YES){
 					this.save_session=checkbox.active;
 					dialog.destroy ();
-					this.destroy();
+					this.main_window.destroy();
 				}else{
-					this.window_set_active();
+					this.main_window.window_set_active();
 					dialog.destroy ();
 				}
 			});
 
 			dialog.close.connect ((response_id) => {
-				this.window_set_active();
+				this.main_window.window_set_active();
 				dialog.destroy ();
 			});
 			dialog.focus_out_event.connect (() => {
 				return true; //same bug as discribed in this.focus_out_event
 				});
-			dialog.set_transient_for(this);
+			dialog.set_transient_for(this.main_window);
 			dialog.show ();
 			dialog.grab_focus();
-			hotkey.send_net_active_window(dialog.get_window ());
+			this.main_window.hotkey.send_net_active_window(dialog.get_window ());
 			dialog.run();
 	}
 
-	public string ShowGrabKeyDialog(string? prev_bind=null){
-
-			var title="Please select key combination, to show/hide AltYo.";
-			if(prev_bind!=null)
-				title+="\nprevious key '%s' incorrect or busy".printf(prev_bind);
-			var dialog = new MessageDialog (null, (DialogFlags.DESTROY_WITH_PARENT | DialogFlags.MODAL), MessageType.QUESTION, ButtonsType.OK, title);
-			var aLabel = new Label("Press any key");
-			var dialog_box = ((Gtk.Box)dialog.get_content_area ());
-			dialog_box.pack_start(aLabel,false,false,0);
-			aLabel.show();
-			dialog.response.connect ((response_id) => {
-				if(response_id == Gtk.ResponseType.OK){
-					dialog.destroy ();
-				}else{
-					this.window_set_active();
-					dialog.destroy ();
-				}
-			});
-
-			var grab_another_key = new Button.with_label("Grab another key.");
-			grab_another_key.clicked.connect(()=>{
-				grab_another_key.sensitive=false;
-				dialog.set_response_sensitive(Gtk.ResponseType.OK,false);
-				});
-
-			((Gtk.ButtonBox)dialog.get_action_area ()).pack_start(grab_another_key,false,false,0);
-			grab_another_key.show();
-			grab_another_key.sensitive=false;
-
-			dialog.focus_out_event.connect (() => {
-				return true; //same bug as discribed in this.focus_out_event
-				});
-
-			dialog.set_response_sensitive(Gtk.ResponseType.OK,false);
-			dialog.set_transient_for(this);
-			dialog.show ();
-			//disable close by window manager
-			Gdk.Window w = dialog.get_window();
-			w.set_functions((Gdk.WMFunction.ALL|Gdk.WMFunction.CLOSE));
-			dialog.grab_focus();
-			hotkey.send_net_active_window(dialog.get_window ());
-			string accelerator_name="";
-
-			dialog.key_press_event.connect((widget,event) => {
-					unowned Button ok = (Button)dialog.get_widget_for_response(Gtk.ResponseType.OK);
-					if(!ok.sensitive)
-						if (Gtk.accelerator_valid (event.keyval, event.state))
-						/*See GDK_KEY_* in gdk/gdkkeysyms.h (not available in Vala)*/
-							if(event.keyval!=0xff1b && /*GDK_KEY_Escape*/
-							   event.keyval!=0xff0d && /*GDK_KEY_Return*/
-							   event.keyval!=0xff08    /*GDK_KEY_BackSpace*/
-							   ){
-								event.state &= Gtk.accelerator_get_default_mod_mask();
-								accelerator_name = Gtk.accelerator_name (event.keyval, event.state);
-								aLabel.label = Gtk.accelerator_get_label  (event.keyval, event.state);
-								ok.sensitive=true;
-								ok.grab_focus();
-								grab_another_key.sensitive=true;
-							}
-					if(event.keyval!=0xff1b && ok.sensitive)
-						return false;
-					else
-						return true; //true == ignore event
-				});//tab_button_press_event
-			dialog.run();
-			return accelerator_name;
-	}
+	
 
 	public void ShowHelp(){
 			var dialog = new AboutDialog();
@@ -1029,21 +1121,21 @@ public class VTMainWindow : Window{
 			dialog_box.reorder_child(sw,0);
 			sw.set_size_request(500,200);
 			dialog.response.connect ((response_id) => {
-					this.window_set_active();
+					this.main_window.window_set_active();
 					dialog.destroy ();
 			});
 
 			dialog.close.connect ((response_id) => {
-				this.window_set_active();
+				this.main_window.window_set_active();
 				dialog.destroy ();
 			});
 			dialog.focus_out_event.connect (() => {
 				return true; //same bug as discribed in this.focus_out_event
 				});
-			dialog.set_transient_for(this);
+			dialog.set_transient_for(this.main_window);
 			dialog.show_all();
 			dialog.grab_focus();
-			hotkey.send_net_active_window(dialog.get_window ());
+			this.main_window.hotkey.send_net_active_window(dialog.get_window ());
 			dialog.run();
 	}
 
@@ -1102,7 +1194,7 @@ public class VTMainWindow : Window{
 
 		if(this.accel_group==null){
 			this.accel_group = new Gtk.AccelGroup();
-			this.add_accel_group (accel_group);
+			this.main_window.add_accel_group (accel_group);
 		}
 
 		if(this.action_group==null)
@@ -1188,7 +1280,7 @@ public class VTMainWindow : Window{
         #endif
 
 		this.add_window_toggle_accel("follow_the_mouse", _("Follow mouse cursor"), _("Follow mouse cursor"), Gtk.Stock.EDIT,"",()=> {
-				this.mouse_follow = !this.mouse_follow;
+				this.main_window.mouse_follow = !this.main_window.mouse_follow;
         });
 		this.add_window_accel("open_settings", _("Settings..."), _("Settings"), Gtk.Stock.EDIT,"",()=> {
 				this.conf.save(true);//force save before edit
@@ -1250,7 +1342,7 @@ public class VTMainWindow : Window{
    		/* Show/hide main window on <Alt>grave
    		 * add main_hotkey just to be able show it in popup menu*/
 		this.add_window_accel("main_hotkey", _("Show/Hide"), _("Show/Hide"), Gtk.Stock.GO_UP,"<Alt>grave",()=>{
-			this.toogle_widnow();
+			this.main_window.toogle_widnow();
 		});
 
 		/* Add New Tab on <Ctrl><Shift>t */
@@ -1267,52 +1359,25 @@ public class VTMainWindow : Window{
         });
 
 		this.add_window_toggle_accel("keep_above", _("Stay on top"), _("Stay on top"), Gtk.Stock.EDIT,"",()=> {
-			this.keep_above=!this.keep_above;
-			debug("action keep_above %d",(int)this.keep_above);
-			if(this.keep_above){
-				this.skip_taskbar_hint = true;
-				this.set_keep_above(true);
+			this.main_window.keep_above=!this.main_window.keep_above;
+			debug("action keep_above %d",(int)this.main_window.keep_above);
+			if(this.main_window.keep_above){
+				this.main_window.skip_taskbar_hint = true;
+				this.main_window.set_keep_above(true);
 			}else{
-				this.skip_taskbar_hint = false;
-				this.set_keep_above(false);
+				this.main_window.skip_taskbar_hint = false;
+				this.main_window.set_keep_above(false);
 			}
         });
 
 	}//setup_keyboard_accelerators
 
 
-	public void window_set_active(){
 
-		if(this.current_state==WStates.VISIBLE){
-			if(!this.maximized){
-				this.tasks_notebook.set_size_request(terminal_width,this.terminal_height);
-
-				if(this.get_allocated_height()>this.terminal_height+this.hvbox.get_allocated_height ()){
-					this.set_default_size (terminal_width,this.terminal_height+this.hvbox.get_allocated_height ());
-					this.resize (terminal_width,this.terminal_height+this.hvbox.get_allocated_height ());
-				}
-			}
-			if(this.keep_above){
-				this.skip_taskbar_hint = true;
-				this.set_keep_above(true);
-				this.stick ();
-				//this.show ();//first show then send_net_active_window!
-				this.present() ;
-			}else{
-				this.skip_taskbar_hint = false;
-				this.set_keep_above(false);
-			}
-			hotkey.send_net_active_window(this.get_window ());
-			if(this.prev_focus!=null)
-				this.prev_focus.grab_focus();
-			else
-				this.activate_tab(this.active_tab);
-		}
-	}
 
 	public void hvbox_size_changed(int width, int height,bool on_size_request){
 
-			if(!this.maximized){
+			if(!this.main_window.maximized){
 				debug ("hvbox_size_changed w=%d h=%d  task_w=%d task_h=%d term_h=%d",width,height,this.tasks_notebook.get_allocated_width(),this.tasks_notebook.get_allocated_height(),this.terminal_height) ;
 
 				if(this.tasks_notebook.get_allocated_width() != width || this.tasks_notebook.get_allocated_height() > this.terminal_height+1){
@@ -1321,21 +1386,21 @@ public class VTMainWindow : Window{
 				}
 
 				var should_be_h = this.terminal_height+height + (this.search_hbox.get_visible()?this.search_hbox.get_allocated_height():0);
-				if(this.get_allocated_height()>should_be_h+2 && !this.maximized){
-					this.configure_position();//this needed to update position after unmaximize
-					this.set_default_size(this.orig_w,should_be_h);
-					this.resize (this.orig_w,should_be_h);
-					this.move (this.orig_x,this.orig_y);
-					this.queue_resize_no_redraw();
+				if(this.main_window.get_allocated_height()>should_be_h+2 && !this.main_window.maximized){
+					this.main_window.configure_position();//this needed to update position after unmaximize
+					this.main_window.set_default_size(this.main_window.orig_w,should_be_h);
+					this.main_window.resize (this.main_window.orig_w,should_be_h);
+					this.main_window.move (this.main_window.orig_x,this.main_window.orig_y);
+					this.main_window.queue_resize_no_redraw();
 					//GLib.Timeout.add(10,()=>{debug("Update events");this.update_events(); return false;});
 					debug ("hvbox_size_changed terminal_width=%d should_be_h=%d",terminal_width,should_be_h) ;
 				}
 			}else{
-				if(!this.update_maximized_size && this.maximized_h >0){
+				if(!this.main_window.update_maximized_size && this.main_window.maximized_h >0){
 				//don't call this.tasks_notebook.get_allocated_width/height
 				//untill get maximized size in this.configure_event
-				debug("hvbox_size_changed this.maximized_h=%d hvbox_height=%d this.notebook.get_allocated_height=%d",this.maximized_h,height,this.tasks_notebook.get_allocated_height());
-				var should_be_h = this.maximized_h-height - (this.search_hbox.get_visible()?this.search_hbox.get_allocated_height():0);
+				debug("hvbox_size_changed this.maximized_h=%d hvbox_height=%d this.notebook.get_allocated_height=%d",this.main_window.maximized_h,height,this.tasks_notebook.get_allocated_height());
+				var should_be_h = this.main_window.maximized_h-height - (this.search_hbox.get_visible()?this.search_hbox.get_allocated_height():0);
 					if( (this.tasks_notebook.get_allocated_width() != width ||
 					 this.tasks_notebook.get_allocated_height() != should_be_h) ){
 						this.tasks_notebook.set_size_request(width,should_be_h);//update size after maximize event
@@ -1500,17 +1565,17 @@ public class VTMainWindow : Window{
 		if(!((Entry)this.search_text_combo.get_child()).has_focus){
 			this.search_hbox.show();
 			
-			if(this.maximized){
-				this.update_events();
-				var should_be_h = this.maximized_h-this.hvbox.get_allocated_height() - this.search_hbox.get_allocated_height();
+			if(this.main_window.maximized){
+				this.main_window.update_events();
+				var should_be_h = this.main_window.maximized_h-this.hvbox.get_allocated_height() - this.search_hbox.get_allocated_height();
 				this.tasks_notebook.set_size_request(this.tasks_notebook.get_allocated_width(),should_be_h);//update size after maximize event
-				this.queue_resize_no_redraw();
+				this.main_window.queue_resize_no_redraw();
 			}
 		
 			var term = ((VTTerminal)this.active_tab.object).vte_term;
 			if( term.get_has_selection()){
 				term.copy_clipboard();
-				var display = this.get_display ();
+				var display = this.main_window.get_display ();
 				var clipboard = Clipboard.get_for_display (display, Gdk.SELECTION_CLIPBOARD);
 				// Get text from clipboard
 				string text = clipboard.wait_for_text ();
@@ -1551,11 +1616,11 @@ public class VTMainWindow : Window{
 	public void search_hide(){
 		//prevent resizing of the terminal after closing the search
 		var should_be_h = this.terminal_height+this.hvbox.get_allocated_height();
-		if(this.get_allocated_height()>should_be_h+2){
+		if(this.main_window.get_allocated_height()>should_be_h+2){
 			//this.configure_position();//this needed to update position after unmaximize
-			this.set_default_size(this.orig_w,should_be_h);
-			this.resize (this.orig_w,should_be_h);
-			this.queue_resize_no_redraw();
+			this.main_window.set_default_size(this.main_window.orig_w,should_be_h);
+			this.main_window.resize (this.main_window.orig_w,should_be_h);
+			this.main_window.queue_resize_no_redraw();
 			
 			//GLib.Timeout.add(10,()=>{debug("Update events");this.update_events(); return false;});
 			debug ("search_hide terminal_width=%d should_be_h=%d",terminal_width,should_be_h) ;
@@ -1615,6 +1680,18 @@ public class VTMainWindow : Window{
 
 		this.conf.set_string_list("search_history",search_s);
 
+			string[] terminal_session = {};
+			var grx_exclude = new GLib.Regex(this.conf.get_string("terminal_session_exclude_regex","/?zsh\\ ?|/?mc\\ ?|/?bash\\ ?"));
+			foreach (var vt in this.children) {
+				if(vt is VTTerminal){
+					var tmp=((VTTerminal)vt).find_tty_pgrp(((VTTerminal)vt).pid);
+					if(tmp!="" && !grx_exclude.match_all(tmp,0,null) && this.save_session)
+						terminal_session+=tmp;
+					((VTTerminal)vt).destroy();
+				}
+			}
+			//g_list_free(this.children);
+			this.conf.set_string_list("terminal_session",terminal_session);
 	}//save_configuration
 
 	public void on_switch_task (Widget page, uint page_num) {

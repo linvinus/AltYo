@@ -104,9 +104,9 @@ public class AYSettings : AYTab{
 						}else
 						if(key=="terminal_color_fg" || key=="terminal_color_bg" || key=="terminal_tint_color"){
 							var B = builder.get_object (key) as Gtk.ColorButton;
-							unowned Gdk.Color? color;
-							if(Gdk.Color.parse(this.my_conf.get_string(key,""),out color))
-								B.set_color(color);
+							var color=new Gdk.RGBA();
+							if(color.parse(this.my_conf.get_string(key,"")))
+								B.set_rgba(color);
 						}else
 						if(key=="terminal_background_image_file"){
 							var S = this.my_conf.get_string(key,"");
@@ -182,8 +182,7 @@ public class AYSettings : AYTab{
 						}else
 						if(key=="terminal_color_fg" || key=="terminal_color_bg" || key=="terminal_tint_color"){
 							var B = builder.get_object (key) as Gtk.ColorButton;
-							unowned Gdk.Color? color;
-							B.get_color(out color);
+							var color=B.get_rgba();
 							var S = color.to_string();
 							if(S!=null && S != this.my_conf.get_string(key,"")){
 								this.my_conf.set_string(key,S);

@@ -489,32 +489,34 @@ public class VTTerminal : AYTab{
 
 		this.vte_term.set_scrollback_lines (my_conf.get_integer("terminal_scrollback_lines",512));
 
-		unowned Gdk.Color? fg;
-		unowned Gdk.Color? bg;
-		if(!Gdk.Color.parse(my_conf.get_string("terminal_color_fg","#00FFAA"),out fg))
+		Gdk.RGBA? fg;
+		fg=new Gdk.RGBA();
+		Gdk.RGBA? bg;
+		bg=new Gdk.RGBA();
+		if(!fg.parse(my_conf.get_string("terminal_color_fg","#00FFAA")))
 			fg = null;//use color from pallete
-		if(!Gdk.Color.parse(my_conf.get_string("terminal_color_bg",""),out bg))
+		if(!bg.parse(my_conf.get_string("terminal_color_bg","")))
 			bg = null;//use color from pallete
 
 		//default color palette - "Linux", in term of gnome-terminal
-		Gdk.Color[] palette=  new Gdk.Color[16];
+		Gdk.RGBA[] palette=  new Gdk.RGBA[16];
 		palette=  {
-				Gdk.Color(){ pixel=0, red=0x0000, green=0x0000, blue=0x0000 },
-				Gdk.Color(){ pixel=0, red=0xaaaa, green=0x0000, blue=0x0000 },
-				Gdk.Color(){ pixel=0, red=0x0000, green=0xaaaa, blue=0x0000 },
-				Gdk.Color(){ pixel=0, red=0xaaaa, green=0x5555, blue=0x0000 },
-				Gdk.Color(){ pixel=0, red=0x0000, green=0x0000, blue=0xaaaa },
-				Gdk.Color(){ pixel=0, red=0xaaaa, green=0x0000, blue=0xaaaa },
-				Gdk.Color(){ pixel=0, red=0x0000, green=0xaaaa, blue=0xaaaa },
-				Gdk.Color(){ pixel=0, red=0xaaaa, green=0xaaaa, blue=0xaaaa },
-				Gdk.Color(){ pixel=0, red=0x5555, green=0x5555, blue=0x5555 },
-				Gdk.Color(){ pixel=0, red=0xffff, green=0x5555, blue=0x5555 },
-				Gdk.Color(){ pixel=0, red=0x5555, green=0xffff, blue=0x5555 },
-				Gdk.Color(){ pixel=0, red=0xffff, green=0xffff, blue=0x5555 },
-				Gdk.Color(){ pixel=0, red=0x5555, green=0x5555, blue=0xffff },
-				Gdk.Color(){ pixel=0, red=0xffff, green=0x5555, blue=0xffff },
-				Gdk.Color(){ pixel=0, red=0x5555, green=0xffff, blue=0xffff },
-				Gdk.Color(){ pixel=0, red=0xffff, green=0xffff, blue=0xffff }
+				Gdk.RGBA(){  red=0x0000/65535.0,green=0x0000/65535.0,blue=0x0000/65535.0,alpha=1.0 },
+				Gdk.RGBA(){  red=0xaaaa/65535.0,green=0x0000/65535.0,blue=0x0000/65535.0,alpha=1.0 },
+				Gdk.RGBA(){  red=0x0000/65535.0,green=0xaaaa/65535.0,blue=0x0000/65535.0,alpha=1.0 },
+				Gdk.RGBA(){  red=0xaaaa/65535.0,green=0x5555/65535.0,blue=0x0000/65535.0,alpha=1.0 },
+				Gdk.RGBA(){  red=0x0000/65535.0,green=0x0000/65535.0,blue=0xaaaa/65535.0,alpha=1.0 },
+				Gdk.RGBA(){  red=0xaaaa/65535.0,green=0x0000/65535.0,blue=0xaaaa/65535.0,alpha=1.0 },
+				Gdk.RGBA(){  red=0x0000/65535.0,green=0xaaaa/65535.0,blue=0xaaaa/65535.0,alpha=1.0 },
+				Gdk.RGBA(){  red=0xaaaa/65535.0,green=0xaaaa/65535.0,blue=0xaaaa/65535.0,alpha=1.0 },
+				Gdk.RGBA(){  red=0x5555/65535.0,green=0x5555/65535.0,blue=0x5555/65535.0,alpha=1.0 },
+				Gdk.RGBA(){  red=0xffff/65535.0,green=0x5555/65535.0,blue=0x5555/65535.0,alpha=1.0 },
+				Gdk.RGBA(){  red=0x5555/65535.0,green=0xffff/65535.0,blue=0x5555/65535.0,alpha=1.0 },
+				Gdk.RGBA(){  red=0xffff/65535.0,green=0xffff/65535.0,blue=0x5555/65535.0,alpha=1.0 },
+				Gdk.RGBA(){  red=0x5555/65535.0,green=0x5555/65535.0,blue=0xffff/65535.0,alpha=1.0 },
+				Gdk.RGBA(){  red=0xffff/65535.0,green=0x5555/65535.0,blue=0xffff/65535.0,alpha=1.0 },
+				Gdk.RGBA(){  red=0x5555/65535.0,green=0xffff/65535.0,blue=0xffff/65535.0,alpha=1.0 },
+				Gdk.RGBA(){  red=0xffff/65535.0,green=0xffff/65535.0,blue=0xffff/65535.0,alpha=1.0 }
 				};
 
 		string[] palette_s = new string [16];
@@ -528,11 +530,11 @@ public class VTTerminal : AYTab{
 		i = 0;
 		if(palette_s_conf != null && palette_s_conf.length==16)//todo: make different sizes
 		foreach(var s in palette_s_conf){
-			 Gdk.Color.parse(s,out palette[i]);
+			palette[i].parse(s);
 			i++;
 		}
 
-		this.vte_term.set_colors(fg,bg,palette);
+		this.vte_term.set_colors_rgba(fg,bg,palette);
 		//vte bug, set_opacity don't call vte_terminal_queue_background_update
 		// we force update later
 		this.vte_term.set_opacity((uint16)((my_conf.get_double("terminal_opacity",1.0,(ref new_val)=>{
@@ -551,7 +553,7 @@ public class VTTerminal : AYTab{
 		
 		var bg_faket = my_conf.get_boolean("terminal_background_fake_transparent",false);	
 		this.vte_term.set_scroll_background(my_conf.get_boolean("terminal_background_fake_transparent_scroll",false));
-		unowned Gdk.Color? tint;
+		Gdk.Color? tint;//currently libvte don't support rgba tint
 		if(Gdk.Color.parse(my_conf.get_string("terminal_tint_color","#000000"),out tint))
 			this.vte_term.set_background_tint_color(tint);
 			

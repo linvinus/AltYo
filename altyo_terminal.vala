@@ -480,6 +480,7 @@ public class VTTerminal : AYTab{
 		Pango.FontDescription font_description = Pango.FontDescription.from_string (my_conf.get_string("terminal_font","Mono 12")) ;
 
 		this.vte_term.set_font(font_description);//same color for terminal
+		this.auto_restart=my_conf.get_boolean("terminal_auto_restart_shell",true);
 
 		#if ALTERNATE_SCREEN_SCROLL
 		//debian patch vte_terminal_set_alternate_screen_scroll

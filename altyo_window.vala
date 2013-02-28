@@ -608,7 +608,18 @@ public class VTMainWindow : Window{
 	}
 
 	public VTTerminal add_tab(string? session_command=null,string? session_path=null,OnChildExitCallBack? on_exit=null) {
-		var vt = new VTTerminal(this.conf,this.terms_notebook,(int)(this.children.length()+1),session_command,session_path,on_exit );
+		VTTerminal vt;
+		if(on_exit==null){
+			vt = new VTTerminal(this.conf,this.terms_notebook,(int)(this.children.length()+1),session_command,session_path,(terminal)=>{
+				//close tab if autorestart=false
+				if(this.children.length()>1)//don't close last tab
+					this.close_tab(this.hvbox.children_index(terminal.tbutton));
+				else
+					terminal.start_command();
+			});
+		}else{
+			vt = new VTTerminal(this.conf,this.terms_notebook,(int)(this.children.length()+1),session_command,session_path,on_exit );
+		}
 
 		vt.configure(this.conf);
 

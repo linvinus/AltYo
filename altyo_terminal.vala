@@ -412,7 +412,7 @@ public class VTTerminal : AYTab{
 
 	public void child_exited(){
 		if(this.auto_restart){
-			string S=_("... all is finished, your command was terminated, all your environment variables are gone, leaving only a shadow in the history\n\n");
+			string S=_("Shell terminated.\n\r\n\r");
 			debug(S);
 			this.vte_term.feed(S,S.length);
 			if(!this.start_command()){//try without session

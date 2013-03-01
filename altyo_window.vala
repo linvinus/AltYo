@@ -314,18 +314,16 @@ public class VTMainWindow : Window{
 		var ret=base.configure_event(event);
 		if(this.pull_active)
 			return ret;
-		if(this.update_maximized_size || (this.maximized && !this.pull_active) ){
-			if(this.maximized && !this.pull_active && !this.update_maximized_size && !this.config_maximized){
-				this.update_position_size();
-				//this.update_events();
-			}
+		if(this.update_maximized_size || (this.maximized) ){
+			this.update_maximized_size=false;
+//~			if(this.maximized==true && this.update_maximized_size==false && this.config_maximized==false){
+//~				this.update_position_size();
+//~				//this.update_events();
+//~			}
 
 			this.maximized_w = event.width;
 			this.maximized_h = event.height;
-			this.update_maximized_size=false;
 			debug("maximized event.type=%d window=%d x=%d y=%d width=%d height=%d",event.type,(int)event.window,event.x,event.y,event.width,event.height);
-			
-				
 		}
 		if(event.type==13 && this.current_state==WStates.VISIBLE){
 			//this.terminal_width=event.width;
@@ -455,8 +453,10 @@ public class VTMainWindow : Window{
 			int w = conf.get_integer("terminal_width",80);//if less 101 then it persentage
 			int h = conf.get_integer("terminal_height",50);//if less 101 then it persentage
 			if(h==100){//workaround for fullscreen, otherwise tabbutton will be out of screen
+				if(!this.config_maximized && !this.maximized){
+					this.orig_maximized=true;
+				}
 				this.config_maximized=true;
-				this.maximize();
 			}else{
 				if(this.config_maximized && this.maximized){
 					this.config_maximized=false;
@@ -1607,15 +1607,20 @@ public class AYObject :Object{
 		unowned AYTab vtt = ((AYTab)this.active_tab.object);
 		if(!(vtt is VTTerminal)) return;
 		if(!((Entry)this.search_text_combo.get_child()).has_focus){
-			this.search_hbox.show();
 			
 			if(this.main_window.maximized){
-				this.main_window.update_events();
-				var should_be_h = this.main_window.maximized_h-this.hvbox.get_allocated_height() - this.search_hbox.get_allocated_height();
-				this.tasks_notebook.set_size_request(this.tasks_notebook.get_allocated_width(),should_be_h);//update size after maximize event
+				var was_h=this.main_window.get_allocated_height();
+				var was_w=this.main_window.get_allocated_width();
+				var was_wn=this.tasks_notebook.get_allocated_width();
+				this.tasks_notebook.set_size_request(was_wn,-1);
+				this.search_hbox.show();
+
+				this.main_window.set_default_size(was_w,was_h);
+				this.main_window.resize (was_w,was_h);							
 				this.main_window.queue_resize_no_redraw();
-			}
-		
+			}else
+				this.search_hbox.show();
+					
 			var term = ((VTTerminal)this.active_tab.object).vte_term;
 			if( term.get_has_selection()){
 				term.copy_clipboard();

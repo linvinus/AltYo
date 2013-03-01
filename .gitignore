@@ -8,3 +8,5 @@ syntax: glob
 /hardcopy.0
 *.mo
 /data/altyo.c
+/*.c
+/*.h

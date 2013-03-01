@@ -74,8 +74,11 @@ public class VTMainWindow : Window{
 	private int orig_h_note = 0;
 	private int orig_w_note = 0;
 	public int position = 1;
+	public bool config_maximized=false;
 	public bool orig_maximized=false;
+	public bool temporary_maximized=false;
 	public bool update_maximized_size=false;
+	public bool allow_close=false;
 
 	
 	
@@ -138,6 +141,15 @@ public class VTMainWindow : Window{
 		
 		this.hotkey = new PanelHotkey ();
 		this.reconfigure();
+		conf.get_boolean("prevent_close_window",true);//just read value
+		this.delete_event.connect (()=>{
+			var b=conf.get_boolean("prevent_close_window",true);
+			if(b==true && this.allow_close==false){
+				this.ayobject.ShowQuitDialog();
+				return true;//prevent close
+			}
+			return false;//default is allow
+			});
 		
 		this.destroy.connect (()=>{
 			this.ayobject.save_configuration();
@@ -173,6 +185,7 @@ public class VTMainWindow : Window{
 				this.add(ch);
 				this.update_position_size();
 				this.window_set_active();
+				this.update_events();
 				return false;
 			}
 	}
@@ -196,6 +209,7 @@ public class VTMainWindow : Window{
 		if(!this.orig_maximized)
 			this.configure_position();
 		this.show();
+		this.realize();
 		this.resize (this.orig_w,2);//start height
 		this.move (this.orig_x,this.orig_y);
 		this.update_events();
@@ -273,16 +287,51 @@ public class VTMainWindow : Window{
 	public override bool window_state_event (Gdk.EventWindowState event){
 
 		if(this.pull_active)
-			return false;//ignore this events
-
+			return true;//ignore this events
+		//this.set_events(this.get_events() | Gdk.EventMask.STRUCTURE_MASK);
+		debug("window_state_event %d ev=%d",(int)event.new_window_state,(int)this.get_events());
 		if((Gdk.WindowState.MAXIMIZED & event.new_window_state)== Gdk.WindowState.MAXIMIZED){
 				this.maximized = true;
 				this.update_maximized_size=true;
 		}else{
+			if(this.maximized){
 				this.maximized = false;
 				this.maximized_h=-1;
+				this.update_maximized_size=true;
+				this.orig_maximized = false;
+				this.configure_position();
+				this.update_position_size();
+			}
 		}
+	base.window_state_event(event);
 	return false;
+	//false;//continue
+	//base.window_state_event(event);
+	}
+
+	public override bool configure_event(Gdk.EventConfigure event){
+		debug("configure_event");
+		var ret=base.configure_event(event);
+		if(this.update_maximized_size || (this.maximized && !this.pull_active) ){
+			if(this.maximized && !this.pull_active && !this.update_maximized_size && !this.config_maximized){
+				this.update_position_size();
+				//this.update_events();
+			}
+
+			this.maximized_w = event.width;
+			this.maximized_h = event.height;
+			this.update_maximized_size=false;
+			debug("maximized event.type=%d window=%d x=%d y=%d width=%d height=%d",event.type,(int)event.window,event.x,event.y,event.width,event.height);
+			
+				
+		}
+		if(event.type==13 && this.current_state==WStates.VISIBLE){
+			//this.terminal_width=event.width;
+			this.orig_x=event.x;
+			this.orig_y=event.y;
+			debug("event.type=%d window=%d x=%d y=%d width=%d height=%d",event.type,(int)event.window,event.x,event.y,event.width,event.height);
+		}
+	return ret;
 	}
 
 	public override  bool draw (Cairo.Context cr){
@@ -297,24 +346,6 @@ public class VTMainWindow : Window{
 		}else{
 			return base.draw(cr);
 		}
-	}
-	public override bool configure_event(Gdk.EventConfigure event){
-
-		if(this.update_maximized_size){
-			this.maximized_w = event.width;
-			this.maximized_h = event.height;
-			this.update_maximized_size=false;
-			this.update_events();
-			debug("maximized event.type=%d window=%d x=%d y=%d width=%d height=%d",event.type,(int)event.window,event.x,event.y,event.width,event.height);
-
-		}
-		if(event.type==13 /*&& this.current_state==WStates.VISIBLE*/){
-			//this.terminal_width=event.width;
-			this.orig_x=event.x;
-			this.orig_y=event.y;
-			debug("event.type=%d window=%d x=%d y=%d width=%d height=%d",event.type,(int)event.window,event.x,event.y,event.width,event.height);
-		}
-	return base.configure_event(event);
 	}
 
 
@@ -335,10 +366,11 @@ public class VTMainWindow : Window{
 						this.ayobject.tasks_notebook.set_size_request(orig_w_note,orig_h_note);
 						this.maximize();
 					}else{
+						this.move (this.orig_x,this.orig_y);
+						this.update_events();
 						this.ayobject.tasks_notebook.set_size_request(this.orig_w,this.orig_h);
 						this.set_default_size(this.orig_w,this.orig_h);
 						this.resize (this.orig_w,this.orig_h);
-						this.move (this.orig_x,this.orig_y);
 						this.queue_resize_no_redraw();
 					}
 	}
@@ -422,8 +454,10 @@ public class VTMainWindow : Window{
 			int w = conf.get_integer("terminal_width",80);//if less 101 then it persentage
 			int h = conf.get_integer("terminal_height",50);//if less 101 then it persentage
 			if(h==100){//workaround for fullscreen, otherwise tabbutton will be out of screen
+				this.config_maximized=true;
 				this.maximize();
 			}else{
+				this.config_maximized=false;
 				if(w<101){
 					this.ayobject.terminal_width=(int)(((float)rectangle.width/100.0)*(float)w);
 				}else{
@@ -1029,8 +1063,10 @@ public class AYObject :Object{
 				if(response_id == Gtk.ResponseType.YES){
 					this.save_session=checkbox.active;
 					dialog.destroy ();
+					this.main_window.allow_close=true;
 					this.main_window.destroy();
 				}else{
+					this.main_window.allow_close=false;
 					this.main_window.window_set_active();
 					dialog.destroy ();
 				}
@@ -1058,7 +1094,7 @@ public class AYObject :Object{
 			dialog.authors={"Konstantinov Denis linvinus@gmail.com"};
 			dialog.website ="https://github.com/linvinus/AltYo";
 			dialog.version ="0.2";
-			dialog.translator_credits="English by willemw12@gmail.com";
+			dialog.translator_credits="Translation in English by willemw12@gmail.com";
 
 			AccelMap am=Gtk.AccelMap.get();
 

@@ -1440,17 +1440,15 @@ public class AYObject :Object{
 					debug ("hvbox_size_changed terminal_width=%d should_be_h=%d",terminal_width,should_be_h) ;
 				}
 			}else{
-				if(!this.main_window.update_maximized_size && this.main_window.maximized_h >0){
-				//don't call this.tasks_notebook.get_allocated_width/height
-				//untill get maximized size in this.configure_event
-				debug("hvbox_size_changed this.maximized_h=%d hvbox_height=%d this.notebook.get_allocated_height=%d",this.main_window.maximized_h,height,this.tasks_notebook.get_allocated_height());
-				var should_be_h = this.main_window.maximized_h-height - (this.search_hbox.get_visible()?this.search_hbox.get_allocated_height():0);
-					if( (this.tasks_notebook.get_allocated_width() != width ||
-					 this.tasks_notebook.get_allocated_height() != should_be_h) ){
-						this.tasks_notebook.set_size_request(width,should_be_h);//update size after maximize event
-					}
-				}
+				var was_h=this.main_window.get_allocated_height();
+				var was_w=this.main_window.get_allocated_width();
+				var was_wn=this.tasks_notebook.get_allocated_width();
+				this.tasks_notebook.set_size_request(was_wn,-1);
 
+				this.main_window.set_default_size(was_w,was_h);
+				this.main_window.resize (was_w,was_h);							
+				this.main_window.queue_resize_no_redraw();
+				
 			}
 
 //example (gdk_window_get_state (gtk_widget_get_window (widget)) & (GDK_WINDOW_STATE_MAXIMIZED | GDK_WINDOW_STATE_FULLSCREEN)) != 0)

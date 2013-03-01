@@ -412,6 +412,9 @@ public class VTTerminal : AYTab{
 
 	public void child_exited(){
 		if(this.auto_restart){
+			string S=_("... all is finished, your command was terminated, all your environment variables are gone, leaving only a shadow in the history\n\n");
+			debug(S);
+			this.vte_term.feed(S,S.length);
 			if(!this.start_command()){//try without session
 				this.my_conf.set_string("custom_command","");
 				if(!this.start_command()){//try without custom_command

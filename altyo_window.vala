@@ -695,17 +695,17 @@ public class AYObject :Object{
 //~		this.search_hbox.valign=Gtk.Align.START;
 //~		this.search_hbox.expand=false;
 		this.search_hbox.name="search_hbox";
-//~		this.search_hbox.draw.connect((cr)=>{
-//~			int width = this.search_hbox.get_allocated_width ();
-//~			int height = this.search_hbox.get_allocated_height ();
-//~			var context = this.search_hbox.get_style_context();
-//~			render_background(context,cr, -1, -1,width+2, height+2);
-//~			this.search_hbox.foreach((widget)=>{
-//~				if(widget.parent==this.search_hbox)
-//~					this.search_hbox.propagate_draw(widget,cr);
-//~				});
-//~				return false;
-//~			});
+		this.search_hbox.draw.connect((cr)=>{
+			int width = this.search_hbox.get_allocated_width ();
+			int height = this.search_hbox.get_allocated_height ();
+			var context = this.search_hbox.get_style_context();
+			render_background(context,cr, -1, -1,width+2, height+2);
+			this.search_hbox.foreach((widget)=>{
+				if(widget.parent==this.search_hbox)
+					this.search_hbox.propagate_draw(widget,cr);
+				});
+				return false;
+			});
 		this.create_search_box();
 
 		//this.main_vbox.pack_start(this.tasks_notebook,true,true,0);//maximum size

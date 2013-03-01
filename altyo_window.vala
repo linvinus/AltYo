@@ -312,6 +312,8 @@ public class VTMainWindow : Window{
 	public override bool configure_event(Gdk.EventConfigure event){
 		debug("configure_event");
 		var ret=base.configure_event(event);
+		if(this.pull_active)
+			return ret;
 		if(this.update_maximized_size || (this.maximized && !this.pull_active) ){
 			if(this.maximized && !this.pull_active && !this.update_maximized_size && !this.config_maximized){
 				this.update_position_size();
@@ -337,7 +339,7 @@ public class VTMainWindow : Window{
 	public override  bool draw (Cairo.Context cr){
 		if(pull_animation_active){
 			cr.save();
-			debug("draw 0-%d  this.get_allocated_height=%d this.orig_h=%d",this.get_allocated_height()-this.pull_h, this.get_allocated_height(),this.pull_h);
+//~			debug("draw 0-%d  this.get_allocated_height=%d this.orig_h=%d",this.get_allocated_height()-this.pull_h, this.get_allocated_height(),this.pull_h);
 			cr.set_source_surface(this.pixwin.get_surface(),0,this.get_allocated_height()-this.pull_h);
 			cr.paint();
 			cr.stroke ();
@@ -430,7 +432,6 @@ public class VTMainWindow : Window{
 	}//reconfigure
 
 	public void configure_position(){
-
 			unowned Gdk.Screen gscreen = this.get_screen ();
 			debug("x=%d,y=%d",this.orig_x,this.orig_y);
 			int current_monitor;
@@ -457,7 +458,14 @@ public class VTMainWindow : Window{
 				this.config_maximized=true;
 				this.maximize();
 			}else{
-				this.config_maximized=false;
+				if(this.config_maximized && this.maximized){
+					this.config_maximized=false;
+					this.unmaximize();
+					this.orig_maximized=false;
+					this.maximized = false;
+				}else
+					this.config_maximized=false;
+					
 				if(w<101){
 					this.ayobject.terminal_width=(int)(((float)rectangle.width/100.0)*(float)w);
 				}else{

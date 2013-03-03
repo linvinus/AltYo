@@ -163,7 +163,8 @@ public class VTMainWindow : Window{
 				this.update_events();
 			}
 			});
-
+		this.configure_position();
+		this.update_position_size();
 	}
 	
 	public bool on_pull_down(){
@@ -178,27 +179,20 @@ public class VTMainWindow : Window{
 				this.pull_active=false;
 				this.pull_animation_active=false;
 				this.current_state=WStates.VISIBLE;
-				/* update hints, so first pull up ,after maximize, will be smooth
-				 * this size will be after unmaximize (pull_up call unmaximize)
-				 * */
-				if(this.pull_maximized){
-					var gem=new Gdk.Geometry();
-					gem.base_height=this.pull_h;
-					gem.base_width=this.pull_w;
-					gem.height_inc=0;
-					gem.max_aspect=0;
-					gem.max_height=0;
-					gem.max_width=0;
-					gem.min_aspect=0;
-					gem.min_height=this.pull_h;//this size will be after unmaximize
-					gem.min_width=this.pull_w;//this size will be after unmaximize
-					gem.width_inc=0;
-					gem.win_gravity=Gdk.Gravity.NORTH_WEST;
-					this.set_geometry_hints(null,gem,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
+				if(this.pull_step==this.pull_steps){
+					debug("on_pull_down last step");
+					/* update hints, so first pull up ,after maximize, will be smooth
+					 * this size will be after unmaximize (pull_up call unmaximize)
+					 * */
+					if(this.pull_maximized){
+						this.maximize();
+					}else{
+						this.set_default_size(this.pull_w,pull_h);
+						this.resize (this.pull_w,pull_h);
+					}
+					this.update_events();
+					return true;//continue animation
 				}
-				this.set_default_size(this.pull_w,pull_h);
-				this.resize (this.pull_w,pull_h);
-				this.update_events();
 							
 				var ch=this.pixwin.get_child();//.reparent(this);//reparent from offscreen window
 				this.pixwin.remove(ch);
@@ -245,6 +239,7 @@ public class VTMainWindow : Window{
 			this.configure_position();
 		this.show();
 		this.realize();
+		this.update_events();
 		this.resize (this.pull_w,2);//start height
 		this.move (this.orig_x,this.orig_y);
 		this.update_events();
@@ -264,6 +259,20 @@ public class VTMainWindow : Window{
 				return true;//continue animation
 			else{
 				//look at source of gtk_window_reshow_with_initial_size (GtkWindow *window)
+				var gem=new Gdk.Geometry();
+				gem.base_height=0;//this.pull_h;
+				gem.base_width=this.pull_w;
+				gem.height_inc=0;
+				gem.max_aspect=0;
+				gem.max_height=0;
+				gem.max_width=0;
+				gem.min_aspect=0;
+				gem.min_height=1;//allow min height
+				gem.min_width=this.pull_w;
+				gem.width_inc=0;
+				gem.win_gravity=Gdk.Gravity.NORTH_WEST;
+				this.set_geometry_hints(null,gem,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);				
+
 				this.hide();
 				this.unrealize();//important!
 				this.current_state=WStates.HIDDEN;
@@ -356,7 +365,8 @@ public class VTMainWindow : Window{
 	}
 
 	public override bool window_state_event (Gdk.EventWindowState event){
-		debug("window_state_event %d mask=%d ev=%d",(int)event.new_window_state,(int)event.changed_mask,(int)this.get_events());
+		debug("window_state_event type=%d new_state=%d mask=%d",(int)event.type,(int)event.new_window_state,(int)event.changed_mask);
+		 var ret=base.window_state_event(event);
 		if(!this.pull_active && !this.pull_animation_active){
 				debug("window_state_event !!!!!!!!! this.maximized=%d",(int)this.maximized);
 			//ignore maximize event when pull active
@@ -395,8 +405,7 @@ public class VTMainWindow : Window{
 				}
 			}
 		}
-	base.window_state_event(event);
-	return false;
+	return ret;
 	//false;//continue
 	//base.window_state_event(event);
 	}
@@ -452,7 +461,8 @@ public class VTMainWindow : Window{
 	public void update_events(){
 		var window = this.get_window();
 			//window.process_updates(true);//force update
-			window.enable_synchronized_configure();//force update
+			if(window!=null)
+				window.enable_synchronized_configure();//force update
 		while (Gtk.events_pending ()){
 			Gtk.main_iteration ();
 			}
@@ -467,7 +477,7 @@ public class VTMainWindow : Window{
 				this.ayobject.on_maximize(this.maximized);
 				/* update position only in unmaximized mode
 				 * */
-				if(!this.maximized){
+				if(!this.maximized && !this.config_maximized){
 						var should_be_h = this.ayobject.terminal_height+this.ayobject.hvbox.get_allocated_height();
 						
 						if(this.get_allocated_height()>should_be_h+2||
@@ -485,8 +495,11 @@ public class VTMainWindow : Window{
 						this.move (this.orig_x,this.orig_y);
 						this.update_events();
 				}else{
+					if(this.orig_w_main_vbox!=0 && this.orig_h_main_vbox!=0 &&
+						this.orig_w_tasks_notebook!=0 && this.orig_h_tasks_notebook!=0){
 					this.ayobject.main_vbox.set_size_request(this.orig_w_main_vbox,this.orig_h_main_vbox);
 					this.ayobject.tasks_notebook.set_size_request(this.orig_w_tasks_notebook,this.orig_h_tasks_notebook);
+					}
 					this.maximize();
 				}
 	}
@@ -573,6 +586,8 @@ public class VTMainWindow : Window{
 					this.maximize();
 				}
 				this.config_maximized=true;
+				this.ayobject.terminal_width=(int)rectangle.width;
+				this.ayobject.terminal_height=(int)rectangle.height-rectangle.height/3;
 			}else{
 					
 				if(w<101){

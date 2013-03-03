@@ -49,6 +49,7 @@ public class VTMainWindow : Window{
 	public AYObject ayobject;
 	
 	public bool maximized=false;
+	private bool update_maximized_size=false;
 	public bool animation_enabled = true;
 	public int animation_speed=25;
 	public int pull_steps=20;
@@ -59,8 +60,6 @@ public class VTMainWindow : Window{
 	public bool keep_above=true;
 
 	public PanelHotkey hotkey;
-	public int maximized_w = -1;
-	public int maximized_h = -1;
 	public bool mouse_follow=false;
 	private unowned Widget prev_focus=null;
 	
@@ -69,15 +68,14 @@ public class VTMainWindow : Window{
 	public int orig_y = 0;
 	private int pull_w = 0;
 	private int pull_h = 0;
-	public int orig_w = 0;
-	public int orig_h = 0;
-	private int orig_h_note = 0;
-	private int orig_w_note = 0;
+	private int orig_h_tasks_notebook=0;
+	private int orig_w_tasks_notebook=0;
+	private int orig_h_main_vbox=0;
+	private int orig_w_main_vbox=0;
 	public int position = 1;
 	public bool config_maximized=false;
-	public bool orig_maximized=false;
+	public bool pull_maximized=false;
 	public bool temporary_maximized=false;
-	public bool update_maximized_size=false;
 	public bool allow_close=false;
 
 	
@@ -133,14 +131,14 @@ public class VTMainWindow : Window{
 			this.set_keep_above(false);
 		}
 
-
-
+		this.hotkey = new PanelHotkey ();
+		this.reconfigure();//window
+	
 		this.ayobject= new AYObject(this,conf);
 
 		this.add(this.ayobject.main_vbox);
 		
-		this.hotkey = new PanelHotkey ();
-		this.reconfigure();
+
 		conf.get_boolean("prevent_close_window",true);//just read value
 		this.delete_event.connect (()=>{
 			var b=conf.get_boolean("prevent_close_window",true);
@@ -164,15 +162,15 @@ public class VTMainWindow : Window{
 				this.update_position_size();
 				this.update_events();
 			}
-			});			
-		
+			});
+
 	}
 	
 	public bool on_pull_down(){
 
 			this.pull_step++;
 			if(this.pull_step<this.pull_steps){
-				this.resize (this.orig_w,(this.orig_h/this.pull_steps)*this.pull_step);
+				this.resize (this.pull_w,(this.pull_h/this.pull_steps)*this.pull_step);
 				this.update_events();
 				return true;//continue animation
 			}else{
@@ -180,17 +178,56 @@ public class VTMainWindow : Window{
 				this.pull_active=false;
 				this.pull_animation_active=false;
 				this.current_state=WStates.VISIBLE;
+				/* update hints, so first pull up ,after maximize, will be smooth
+				 * this size will be after unmaximize (pull_up call unmaximize)
+				 * */
+				if(this.pull_maximized){
+					var gem=new Gdk.Geometry();
+					gem.base_height=this.pull_h;
+					gem.base_width=this.pull_w;
+					gem.height_inc=0;
+					gem.max_aspect=0;
+					gem.max_height=0;
+					gem.max_width=0;
+					gem.min_aspect=0;
+					gem.min_height=this.pull_h;//this size will be after unmaximize
+					gem.min_width=this.pull_w;//this size will be after unmaximize
+					gem.width_inc=0;
+					gem.win_gravity=Gdk.Gravity.NORTH_WEST;
+					this.set_geometry_hints(null,gem,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
+				}
+				this.set_default_size(this.pull_w,pull_h);
+				this.resize (this.pull_w,pull_h);
+				this.update_events();
+							
 				var ch=this.pixwin.get_child();//.reparent(this);//reparent from offscreen window
 				this.pixwin.remove(ch);
 				this.add(ch);
+
 				this.update_position_size();
 				this.window_set_active();
 				this.update_events();
+				
+//~				if(this.pull_maximized){
+//~					this.maximize();
+//~					this.update_events();
+//~				}
+//~
+//~				var ch=this.pixwin.get_child();//.reparent(this);//reparent from offscreen window
+//~				this.pixwin.remove(ch);
+//~				this.add(ch);
+//~				
+//~				this.update_position_size();
+//~				this.window_set_active();
+//~				this.update_events();
+							
 				return false;
 			}
 	}
 
 	public void pull_down(){
+		if(this.pull_animation_active)
+			return;		
 		if(!this.animation_enabled){
 			this.configure_position();
 			this.show();
@@ -203,14 +240,12 @@ public class VTMainWindow : Window{
 			this.update_events();
 			return;
 		}
-		if(this.pull_animation_active)
-			return;
 		this.pull_animation_active=true;
-		if(!this.orig_maximized)
+		if(!this.pull_maximized)
 			this.configure_position();
 		this.show();
 		this.realize();
-		this.resize (this.orig_w,2);//start height
+		this.resize (this.pull_w,2);//start height
 		this.move (this.orig_x,this.orig_y);
 		this.update_events();
 		if (this.pull_w != 0 && this.pull_h != 0)
@@ -223,6 +258,7 @@ public class VTMainWindow : Window{
 	public bool on_pull_up(){
 			this.pull_step++;
 			this.resize (this.pull_w,(this.pull_h-(this.pull_h/this.pull_steps)*this.pull_step)+1);
+//~			this.queue_draw();
 			this.update_events();
 			if(this.pull_step<this.pull_steps)
 				return true;//continue animation
@@ -237,12 +273,18 @@ public class VTMainWindow : Window{
 	}
 
 	public void pull_up(){
-		this.orig_h=this.pull_h=this.get_allocated_height();
-		this.orig_w=this.pull_w=this.get_allocated_width();
+		if(this.pull_animation_active)
+			return;		
+		this.pull_h=this.get_allocated_height();
+		this.pull_w=this.get_allocated_width();
+		this.prev_focus=this.get_focus();
 		debug("pull_up orig_h=%d orig_w=%d",this.pull_h,this.pull_w);
-		this.orig_h_note = this.ayobject.tasks_notebook.get_allocated_height();
-		this.orig_w_note = this.ayobject.tasks_notebook.get_allocated_width();
-		this.orig_maximized=this.maximized;
+		this.orig_h_main_vbox = this.ayobject.main_vbox.get_allocated_height();
+		this.orig_w_main_vbox = this.ayobject.main_vbox.get_allocated_width();
+		this.orig_h_tasks_notebook = this.ayobject.tasks_notebook.get_allocated_height();
+		this.orig_w_tasks_notebook = this.ayobject.tasks_notebook.get_allocated_width();
+		debug("pull_up orig_h_note=%d orig_w_note=%d",orig_h_main_vbox,orig_w_main_vbox);
+		this.pull_maximized=this.maximized;
 		if(!this.animation_enabled){
 			this.prev_focus=this.get_focus();
 			this.hide();
@@ -250,34 +292,63 @@ public class VTMainWindow : Window{
 			this.current_state=WStates.HIDDEN;
 			return;
 		}
-		if(this.pull_animation_active)
-			return;
-		this.prev_focus=this.get_focus();
+
 		this.pull_active=true;
-		if(this.orig_w<=0 || this.orig_h<=0)
+		this.pull_animation_active=false;
+		if(this.pull_w<=0 || this.pull_h<=0)
 			return;
 
-		this.pull_animation_active=true;
-		this.pixwin.resize (orig_w,orig_h);
+		this.pixwin.set_default_size(pull_w,pull_h);//important
+		this.pixwin.set_size_request (pull_w,pull_h);//important
+		this.pixwin.resize (pull_w,pull_h);//important
+		this.update_events();
 		debug("reparent to offscreen window");
-//~		this.get_child().reparent(this.pixwin);//reparent to offscreen window
+		//this.get_child().reparent(this.pixwin);//reparent to offscreen window
 			var ch=this.get_child();//.reparent(this);//reparent from offscreen window
 				this.remove(ch);
 				this.pixwin.add(ch);		
 		debug("end reparent to offscreen window");
-
-		if(this.orig_maximized) this.unmaximize();
-
 		//correct size after unmaximize
 		//just to be shure that terminal will not change size
-		this.ayobject.tasks_notebook.set_size_request(orig_w_note,orig_h_note);
-		//this.update_events();
+		
+		if(this.maximized){
+			this.ayobject.main_vbox.set_size_request(orig_w_main_vbox,orig_h_main_vbox);
+			this.update_events();
+
+			/*reset geometry hints, allow min height =1
+			 * */
+			var gem=new Gdk.Geometry();
+			gem.base_height=0;//this.pull_h;
+			gem.base_width=this.pull_w;
+			gem.height_inc=0;
+			gem.max_aspect=0;
+			gem.max_height=0;
+			gem.max_width=0;
+			gem.min_aspect=0;
+			gem.min_height=1;//allow min height
+			gem.min_width=this.pull_w;
+			gem.width_inc=0;
+			gem.win_gravity=Gdk.Gravity.NORTH_WEST;
+			this.set_geometry_hints(null,gem,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);			
+
+			this.unmaximize();
+			this.update_events();
+		}else{
+			this.ayobject.main_vbox.set_size_request(this.orig_w_main_vbox,orig_h_main_vbox);
+			this.ayobject.tasks_notebook.set_size_request(orig_w_tasks_notebook,orig_h_tasks_notebook);
+			this.update_events();
+		}
+			
+		
+		debug("pull_up 0-%d  this.get_allocated_height=%d this.orig_h=%d",this.get_allocated_height()-this.pull_h, this.get_allocated_height(),this.pull_h);
 		debug("pull_up orig_h=%d orig_w=%d",this.pull_h,this.pull_w);
 		this.pull_step=0;
+		this.pull_animation_active=true;
 		GLib.Timeout.add(this.animation_speed,this.on_pull_up);
 	}
 
 	public void toogle_widnow(){
+		if(this.pull_animation_active) return;
 			if(this.current_state == WStates.HIDDEN)
 					this.pull_down();
 				else
@@ -285,22 +356,43 @@ public class VTMainWindow : Window{
 	}
 
 	public override bool window_state_event (Gdk.EventWindowState event){
+		debug("window_state_event %d mask=%d ev=%d",(int)event.new_window_state,(int)event.changed_mask,(int)this.get_events());
+		if(!this.pull_active && !this.pull_animation_active){
+				debug("window_state_event !!!!!!!!! this.maximized=%d",(int)this.maximized);
+			//ignore maximize event when pull active
+			if( (event.changed_mask & Gdk.WindowState.MAXIMIZED)==Gdk.WindowState.MAXIMIZED ){//maximize state change
+				if((Gdk.WindowState.MAXIMIZED & event.new_window_state)== Gdk.WindowState.MAXIMIZED){//maximize
+					if(!this.maximized){
+						this.maximized = true;
+						this.configure_position();
+						this.update_position_size();
+						this.update_maximized_size=true;
+					}
+					//this.maximized = true;
+				}else{//unmaximize
+					if(this.maximized){
+						this.maximized = false;
+						/*reset geometry hints
+						 * */
+						var gem=new Gdk.Geometry();
+						gem.base_height=0;
+						gem.base_width=0;
+						gem.height_inc=0;
+						gem.max_aspect=0;
+						gem.max_height=0;
+						gem.max_width=0;
+						gem.min_aspect=0;
+						gem.min_height=1;//allow resize from maximized size
+						gem.min_width=1;//allow resize from maximized size
+						gem.width_inc=0;
+						gem.win_gravity=Gdk.Gravity.NORTH_WEST;
+						this.set_geometry_hints(null,gem,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);						
 
-		if(this.pull_active)
-			return true;//ignore this events
-		//this.set_events(this.get_events() | Gdk.EventMask.STRUCTURE_MASK);
-		debug("window_state_event %d ev=%d",(int)event.new_window_state,(int)this.get_events());
-		if((Gdk.WindowState.MAXIMIZED & event.new_window_state)== Gdk.WindowState.MAXIMIZED){
-				this.maximized = true;
-				this.update_maximized_size=true;
-		}else{
-			if(this.maximized){
-				this.maximized = false;
-				this.maximized_h=-1;
-				this.update_maximized_size=true;
-				this.orig_maximized = false;
-				this.configure_position();
-				this.update_position_size();
+						this.configure_position();
+						this.update_position_size();
+						//this.update_maximized_size=true;
+					}			
+				}
 			}
 		}
 	base.window_state_event(event);
@@ -311,33 +403,41 @@ public class VTMainWindow : Window{
 
 	public override bool configure_event(Gdk.EventConfigure event){
 		debug("configure_event");
+		debug("event.type=%d window=%d x=%d y=%d width=%d height=%d",event.type,(int)event.window,event.x,event.y,event.width,event.height);
+//~		if(this.pull_animation_active || this.pull_active)//ignore event when pull active
+//~			return false;
 		var ret=base.configure_event(event);
-		if(this.pull_active)
-			return ret;
-		if(this.update_maximized_size || (this.maximized) ){
-			this.update_maximized_size=false;
-//~			if(this.maximized==true && this.update_maximized_size==false && this.config_maximized==false){
-//~				this.update_position_size();
-//~				//this.update_events();
-//~			}
 
-			this.maximized_w = event.width;
-			this.maximized_h = event.height;
-			debug("maximized event.type=%d window=%d x=%d y=%d width=%d height=%d",event.type,(int)event.window,event.x,event.y,event.width,event.height);
-		}
 		if(event.type==13 && this.current_state==WStates.VISIBLE){
-			//this.terminal_width=event.width;
 			this.orig_x=event.x;
 			this.orig_y=event.y;
-			debug("event.type=%d window=%d x=%d y=%d width=%d height=%d",event.type,(int)event.window,event.x,event.y,event.width,event.height);
+			if(update_maximized_size){
+				/* update hints, so first pull up ,after maximize, will be smooth
+				 * this size will be after unmaximize (pull_up call unmaximize)
+				 * */
+					this.update_maximized_size=false;
+					var gem=new Gdk.Geometry();
+					gem.base_height=event.height;
+					gem.base_width=event.width;
+					gem.height_inc=0;
+					gem.max_aspect=0;
+					gem.max_height=0;
+					gem.max_width=0;
+					gem.min_aspect=0;
+					gem.min_height=event.height;//this size will be after unmaximize
+					gem.min_width=event.width;//this size will be after unmaximize
+					gem.width_inc=0;
+					gem.win_gravity=Gdk.Gravity.NORTH_WEST;
+					this.set_geometry_hints(null,gem,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
+			}
 		}
 	return ret;
 	}
 
 	public override  bool draw (Cairo.Context cr){
-		if(pull_animation_active){
+		if(this.pull_animation_active || this.pull_active){
 			cr.save();
-//~			debug("draw 0-%d  this.get_allocated_height=%d this.orig_h=%d",this.get_allocated_height()-this.pull_h, this.get_allocated_height(),this.pull_h);
+			//debug("draw 0-%d  this.get_allocated_height=%d this.orig_h=%d",this.get_allocated_height()-this.pull_h, this.get_allocated_height(),this.pull_h);
 			cr.set_source_surface(this.pixwin.get_surface(),0,this.get_allocated_height()-this.pull_h);
 			cr.paint();
 			cr.stroke ();
@@ -361,21 +461,37 @@ public class VTMainWindow : Window{
 	}
 
 	public void update_position_size(){
-				if(this.orig_maximized){
-						this.maximized = true;
-						this.ayobject.tasks_notebook.set_size_request(orig_w_note,orig_h_note);
-						this.maximize();
-					}else{
+				debug ("update_position_size start");
+				/*update terminal align policy
+				 * */
+				this.ayobject.on_maximize(this.maximized);
+				/* update position only in unmaximized mode
+				 * */
+				if(!this.maximized){
+						var should_be_h = this.ayobject.terminal_height+this.ayobject.hvbox.get_allocated_height();
+						
+						if(this.get_allocated_height()>should_be_h+2||
+						this.ayobject.terminal_width!=this.get_allocated_width()){
+							//this.configure_position();//this needed to update position after unmaximize
+							this.ayobject.main_vbox.set_size_request(this.ayobject.terminal_width,0);
+							this.ayobject.tasks_notebook.set_size_request(this.ayobject.terminal_width,this.ayobject.terminal_height);
+							this.set_default_size(this.ayobject.terminal_width,should_be_h);
+							this.resize (this.ayobject.terminal_width,should_be_h);
+							this.queue_resize_no_redraw();
+							
+							//GLib.Timeout.add(10,()=>{debug("Update events");this.update_events(); return false;});
+							debug ("update_position_size should_be_h=%d terminal_width=%d",should_be_h,this.ayobject.terminal_width) ;
+						}						
 						this.move (this.orig_x,this.orig_y);
 						this.update_events();
-						this.ayobject.tasks_notebook.set_size_request(this.orig_w,this.orig_h);
-						this.set_default_size(this.orig_w,this.orig_h);
-						this.resize (this.orig_w,this.orig_h);
-						this.queue_resize_no_redraw();
-					}
+				}else{
+					this.ayobject.main_vbox.set_size_request(this.orig_w_main_vbox,this.orig_h_main_vbox);
+					this.ayobject.tasks_notebook.set_size_request(this.orig_w_tasks_notebook,this.orig_h_tasks_notebook);
+					this.maximize();
+				}
 	}
 	public void reconfigure(){
-		debug("reconfigure");
+		debug("reconfigure VTWindow");
 		var css_main = new CssProvider ();
 		string style_str= ""+
 					 "VTToggleButton,VTToggleButton GtkLabel  {font: Mono 10; -GtkWidget-focus-padding: 0px;  -GtkButton-default-border:0px; -GtkButton-default-outside-border:0px; -GtkButton-inner-border:0px; border-width: 0px; -outer-stroke-width: 0px; border-radius: 0px; border-style: solid;  background-image: none; margin:0px; padding:1px 1px 0px 1px; background-color: alpha(#000000,0.0); color: #AAAAAA; transition: 0ms ease-in-out;}"+
@@ -454,17 +570,10 @@ public class VTMainWindow : Window{
 			int h = conf.get_integer("terminal_height",50);//if less 101 then it persentage
 			if(h==100){//workaround for fullscreen, otherwise tabbutton will be out of screen
 				if(!this.config_maximized && !this.maximized){
-					this.orig_maximized=true;
+					this.maximize();
 				}
 				this.config_maximized=true;
 			}else{
-				if(this.config_maximized && this.maximized){
-					this.config_maximized=false;
-					this.unmaximize();
-					this.orig_maximized=false;
-					this.maximized = false;
-				}else
-					this.config_maximized=false;
 					
 				if(w<101){
 					this.ayobject.terminal_width=(int)(((float)rectangle.width/100.0)*(float)w);
@@ -477,9 +586,15 @@ public class VTMainWindow : Window{
 				}else{
 					this.ayobject.terminal_height=h;
 				}
+
+				if(this.config_maximized && this.maximized){
+					this.config_maximized=false;
+					debug("configure_position unmaximize");
+					this.unmaximize();
+					this.update_events();
+				}else
+					this.config_maximized=false;
 			}
-			this.orig_w=this.ayobject.terminal_width;
-			this.orig_h=this.ayobject.terminal_height;
 
 			if(this.position>3)this.position=1;
 
@@ -502,8 +617,6 @@ public class VTMainWindow : Window{
 			//we can't change height , otherwise vte will change
 			//this.tasks_notebook.set_size_request(terminal_width,this.terminal_height);
 			debug("new x=%d,y=%d",this.orig_x,this.orig_y);
-			debug("new h=%d,w=%d",this.orig_h,this.orig_w);
-			debug("x=%d,y=%d",this.orig_x,this.orig_y);
 	}//configure_position
 
 
@@ -656,21 +769,22 @@ public class AYObject :Object{
 	private bool aysettings_shown=false;
 
 	public AYObject(VTMainWindow _MW ,MySettings _conf) {
+		debug("AYObject new");
 		this.conf=_conf;
 		this.main_window=_MW;
 
 		this.main_vbox = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);//new VBox(false,0);
-//~		this.main_vbox.halign=Gtk.Align.START;
-//~		this.main_vbox.valign=Gtk.Align.START;
-//~		this.main_vbox.expand=false;
+		this.main_vbox.halign=Gtk.Align.FILL;
+		this.main_vbox.valign=Gtk.Align.FILL;
+		this.main_vbox.expand=false;
 		this.main_vbox.name="main_vbox";
 		this.main_vbox.show();
 
 		
 		this.terms_notebook = new Notebook() ;
-//~		this.terms_notebook.halign=Gtk.Align.START;
+//~		this.terms_notebook.halign=Gtk.Align.FILL;
 //~		this.terms_notebook.valign=Gtk.Align.START;
-//~		this.terms_notebook.expand=false;
+		this.terms_notebook.expand=false;
 
 		this.terms_notebook.name="terms_notebook";
 		this.terms_notebook.set_show_tabs(false);//HVBox will have tabs ;)
@@ -678,9 +792,9 @@ public class AYObject :Object{
 		//this.terms_notebook.set_show_border(false);
 
 		this.tasks_notebook = new Notebook();
-//~		this.tasks_notebook.halign=Gtk.Align.START;
+//~		this.tasks_notebook.halign=Gtk.Align.FILL;
 //~		this.tasks_notebook.valign=Gtk.Align.START;
-//~		this.tasks_notebook.expand=false;
+		this.tasks_notebook.expand=false;
 		this.tasks_notebook.name="tasks_notebook";
 		this.tasks_notebook.set_show_tabs(false);
 		this.tasks_notebook.insert_page(terms_notebook,null,TASKS.TERMINALS);
@@ -691,6 +805,10 @@ public class AYObject :Object{
 		this.tasks_notebook.set_size_request(terminal_width,this.terminal_height);
 
 		this.hvbox = new HVBox();
+		this.hvbox.halign=Gtk.Align.FILL;
+		this.hvbox.valign=Gtk.Align.START;
+		this.hvbox.expand=false;
+		
 		this.hvbox.child_reordered.connect(this.move_tab);
 		this.hvbox.size_changed.connect(this.hvbox_size_changed);
 
@@ -699,9 +817,9 @@ public class AYObject :Object{
 		this.hvbox.has_focus = false;
 
 		this.search_hbox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);//new HBox(false,0);
-//~		this.search_hbox.halign=Gtk.Align.START;
-//~		this.search_hbox.valign=Gtk.Align.START;
-//~		this.search_hbox.expand=false;
+		this.search_hbox.halign=Gtk.Align.FILL;
+		this.search_hbox.valign=Gtk.Align.START;
+		this.search_hbox.expand=false;
 		this.search_hbox.name="search_hbox";
 		this.search_hbox.draw.connect((cr)=>{
 			int width = this.search_hbox.get_allocated_width ();
@@ -738,11 +856,10 @@ public class AYObject :Object{
 
 
 		//this.main_vbox.pack_start(notebook,true,true,0);//maximum size
-		this.main_vbox.pack_start(this.search_hbox,true,true,0);//minimum size
-		this.main_vbox.pack_start(hvbox,false,false,0);//minimum size
+		this.main_vbox.pack_start(this.search_hbox,false,false,0);//minimum size
+		this.main_vbox.pack_end(hvbox,false,false,0);//minimum size
 
 		this.reconfigure();
-		this.main_window.configure_position();
 		this.main_vbox.show_all();
 
 		var restore_terminal_session=this.conf.get_string_list("terminal_session",null);
@@ -769,11 +886,12 @@ public class AYObject :Object{
 		this.conf.on_load.connect(()=>{
 			this.reconfigure();
 			});
-	}//CreateVTWindow
+
+	}//CreateAYObject
 
 
 	public void reconfigure(){
-		debug("reconfigure");
+		debug("reconfigure AYObject");
 
 		this.terminal_width = conf.get_integer("terminal_width",80,(ref new_val)=>{
 			if(new_val<1){new_val=this.terminal_width;return true;}
@@ -1420,20 +1538,20 @@ public class AYObject :Object{
 
 
 	public void hvbox_size_changed(int width, int height,bool on_size_request){
-
+			debug ("hvbox_size_changed start");
 			if(!this.main_window.maximized){
 				debug ("hvbox_size_changed w=%d h=%d  task_w=%d task_h=%d term_h=%d",width,height,this.tasks_notebook.get_allocated_width(),this.tasks_notebook.get_allocated_height(),this.terminal_height) ;
 
 				if(this.tasks_notebook.get_allocated_width() != width || this.tasks_notebook.get_allocated_height() > this.terminal_height+1){
 					this.tasks_notebook.set_size_request(this.terminal_width,this.terminal_height);
-					this.tasks_notebook.queue_resize_no_redraw();
+					//this.tasks_notebook.queue_resize_no_redraw();
 				}
 
 				var should_be_h = this.terminal_height+height + (this.search_hbox.get_visible()?this.search_hbox.get_allocated_height():0);
-				if(this.main_window.get_allocated_height()>should_be_h+2 && !this.main_window.maximized){
-					this.main_window.configure_position();//this needed to update position after unmaximize
-					this.main_window.set_default_size(this.main_window.orig_w,should_be_h);
-					this.main_window.resize (this.main_window.orig_w,should_be_h);
+				if(this.main_window.get_allocated_height()>should_be_h+2 /*&& !this.main_window.maximized*/){
+					//this.main_window.configure_position();//this needed to update position after unmaximize
+					this.main_window.set_default_size(this.terminal_width,should_be_h);
+					this.main_window.resize (this.terminal_width,should_be_h);
 					this.main_window.move (this.main_window.orig_x,this.main_window.orig_y);
 					this.main_window.queue_resize_no_redraw();
 					//GLib.Timeout.add(10,()=>{debug("Update events");this.update_events(); return false;});
@@ -1665,8 +1783,8 @@ public class AYObject :Object{
 		var should_be_h = this.terminal_height+this.hvbox.get_allocated_height();
 		if(this.main_window.get_allocated_height()>should_be_h+2){
 			//this.configure_position();//this needed to update position after unmaximize
-			this.main_window.set_default_size(this.main_window.orig_w,should_be_h);
-			this.main_window.resize (this.main_window.orig_w,should_be_h);
+			this.main_window.set_default_size(this.terminal_width,should_be_h);
+			this.main_window.resize (this.terminal_width,should_be_h);
 			this.main_window.queue_resize_no_redraw();
 			
 			//GLib.Timeout.add(10,()=>{debug("Update events");this.update_events(); return false;});
@@ -1759,5 +1877,22 @@ public class AYObject :Object{
 		page.set_size_request(-1,this.terminal_height);
 	}
 
-}//class VTWindow
+	public void on_maximize(bool new_maximize){
+		if(new_maximize && this.tasks_notebook.halign!=Gtk.Align.FILL){
+			this.tasks_notebook.halign=Gtk.Align.FILL;
+			this.tasks_notebook.valign=Gtk.Align.FILL;
+			this.tasks_notebook.expand=true;
+			this.tasks_notebook.queue_resize_no_redraw();
+			debug("maximize==FILL");
+		}else if(!new_maximize && this.tasks_notebook.halign!=Gtk.Align.START){
+			this.tasks_notebook.halign=Gtk.Align.START;
+			this.tasks_notebook.valign=Gtk.Align.START;
+			this.tasks_notebook.expand=false;
+			this.tasks_notebook.queue_resize_no_redraw();
+			debug("maximize==START");
+		}
+		
+	}
+
+}//class AYObject
 

@@ -940,5 +940,4 @@ public class VTTerminal : AYTab{
 		}*/
 	//tauth.unref();//not needed
 	}//run_command
-
 }

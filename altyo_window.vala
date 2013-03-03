@@ -177,7 +177,6 @@ public class VTMainWindow : Window{
 			}else{
 				this.update_events();
 				this.pull_active=false;
-				this.pull_animation_active=false;
 				this.current_state=WStates.VISIBLE;
 				if(this.pull_step==this.pull_steps){
 					debug("on_pull_down last step");
@@ -197,7 +196,8 @@ public class VTMainWindow : Window{
 				var ch=this.pixwin.get_child();//.reparent(this);//reparent from offscreen window
 				this.pixwin.remove(ch);
 				this.add(ch);
-
+				this.pull_animation_active=false;
+				
 				this.update_position_size();
 				this.window_set_active();
 				this.update_events();
@@ -214,7 +214,7 @@ public class VTMainWindow : Window{
 //~				this.update_position_size();
 //~				this.window_set_active();
 //~				this.update_events();
-							
+
 				return false;
 			}
 	}

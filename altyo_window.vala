@@ -1798,6 +1798,7 @@ public class AYObject :Object{
 		var should_be_h = this.terminal_height+this.hvbox.get_allocated_height();
 		if(this.main_window.get_allocated_height()>should_be_h+2){
 			//this.configure_position();//this needed to update position after unmaximize
+			this.main_vbox.set_size_request(this.terminal_width,should_be_h);
 			this.main_window.set_default_size(this.terminal_width,should_be_h);
 			this.main_window.resize (this.terminal_width,should_be_h);
 			this.main_window.queue_resize_no_redraw();

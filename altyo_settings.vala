@@ -1,15 +1,28 @@
 using Gtk;
 
+public class point_ActionGroup_store {
+	public unowned Gtk.ActionGroup action_group;
+	public unowned Gtk.ListStore store;
+	public unowned AYSettings yasettings;
+	public point_ActionGroup_store(Gtk.ActionGroup ag,Gtk.ListStore st,AYSettings yas) {
+		this.action_group=ag;
+		this.store=st;
+		this.yasettings=yas;
+	}
+}
+
 public class AYSettings : AYTab{
 	private Gtk.Builder builder;
-	public AYObject win_parent {get;set;default=null;}
-	public AYSettings(MySettings my_conf,Notebook notebook, int tab_index,AYObject wp) {
+	public AYObject ayobject {get;set;default=null;}
+	private Gtk.ListStore keybindings_store;
+	public AYSettings(MySettings my_conf,Notebook notebook, int tab_index,AYObject ayo) {
 		base(my_conf, notebook, tab_index);
 		this.tbutton.tab_format="AYSettings";
-		this.win_parent=wp;
+		this.ayobject=ayo;
 		this.builder = new Gtk.Builder ();
  			try {
 				this.builder.add_from_resource ("/org/gnome/altyo/preferences.ui");
+				this.keybindings_store = builder.get_object ("keybindings_store") as Gtk.ListStore;
 				this.builder.connect_signals(this);
 				var B = builder.get_object ("settings-notebook") as Gtk.Widget;
 				this.hbox.add(B);
@@ -64,10 +77,96 @@ public class AYSettings : AYTab{
 
 	[CCode (instance_pos = -1)]
 	public void on_close(Gtk.Button w) {
-		this.win_parent.action_group.get_action("open_settings").activate();
+		this.ayobject.action_group.set_sensitive(true);//activate
+		this.ayobject.action_group.get_action("open_settings").activate();
+	}
+
+	[CCode (instance_pos = -1)]
+	public void on_lock_keybindings_toggled  (Gtk.CheckButton w) {
+		this.ayobject.action_group.set_sensitive(!w.active);
 	}
 	
+	[CCode (instance_pos = -1)]
+    public void accel_edited_cb (Gtk.CellRendererAccel cell, string path_string, uint accel_key, Gdk.ModifierType accel_mods, uint hardware_keycode){
+		debug("accel_edited_cb start");
+        var path = new Gtk.TreePath.from_string (path_string);
+        if (path == null)
+            return;
+        Gtk.TreeIter iter;
+        if (!this.keybindings_store.get_iter (out iter, path))
+            return;
+        string? accel_path = null;
+        this.keybindings_store.get (iter, 0, out accel_path);
+        if (accel_path == null)
+            return;
+
+		if(Gtk.AccelMap.change_entry(accel_path,accel_key,accel_mods,false)){
+			debug("accel_edited_cb name:%s ",accel_path);
+			string? name = this.get_name_from_path(accel_path);
+			if(name!=null){
+				var parsed_name=Gtk.accelerator_name (accel_key, accel_mods);
+				this.my_conf.set_accel_string(name,parsed_name);				
+				this.keybindings_store.set (iter, 2, accel_key);
+				this.keybindings_store.set (iter, 3, accel_mods);
+				this.my_conf.save();
+			}
+			
+			if(name=="main_hotkey"){
+				this.ayobject.main_window.reconfigure();
+			}
+		}else{
+			debug("accel_edited_cb unable to change!");
+			string action_label="";
+			foreach(var action in this.ayobject.action_group.list_actions ()){
+				if(action.get_accel_path()==accel_path){
+					action_label=action.get_label();
+					break;
+					}
+			}
+			string s=_("Key binding \"%s\" already binded to \"%s\"").printf(Gtk.accelerator_name (accel_key, accel_mods),action_label);
+			this.ayobject.main_window.show_message_box("error",s);
+		}
+    }
+    
+    [CCode (instance_pos = -1)]
+     public void accel_cleared_cb (Gtk.CellRendererAccel cell,string path_string){
+		debug("accel_cleared_cb start");
+        var path = new Gtk.TreePath.from_string (path_string);
+        if (path == null)
+            return;
+        Gtk.TreeIter iter;
+        if (!this.keybindings_store.get_iter (out iter, path))
+            return;
+        string? accel_path = null;
+        this.keybindings_store.get (iter, 0, out accel_path);
+        if (accel_path == null)
+            return;
+		if(Gtk.AccelMap.change_entry(accel_path,0,0,false)){
+			string? name = get_name_from_path(accel_path);
+			if(name!=null){
+				this.my_conf.set_accel_string(name,"");//clear in config
+				this.keybindings_store.set (iter, 2, 0);
+				this.my_conf.save();
+			}
+		}
+//~         settings.set_int (key, 0);
+    }
+
+    private string? get_name_from_path(string accel_path){
+				string[] regs;
+				regs=GLib.Regex.split_simple("^.*/(.*)$",accel_path,RegexCompileFlags.CASELESS,0);
+					if(regs!=null && regs[1]!=null){
+						return regs[1];
+					}
+			return null;
+	}
+    	
 	public void get_from_conf() {
+
+		var chb = builder.get_object ("lock_keybindings_checkbutton") as Gtk.CheckButton;
+		if(chb!=null)
+			chb.active = !this.ayobject.action_group.sensitive;
+		
 		var keys = this.my_conf.get_profile_keys();
 		foreach(var key in keys){
 			switch(this.my_conf.get_key_type(key)){
@@ -138,6 +237,30 @@ public class AYSettings : AYTab{
 				break;
 			}
 		}
+		
+			AccelMap am2=Gtk.AccelMap.get();
+			var p2 = new point_ActionGroup_store(this.ayobject.action_group,this.keybindings_store,this);
+
+			am2.foreach(p2,(pvoid,accel_path,accel_key,accel_mods,ref changed)=>{
+				unowned Gtk.ListStore p_store=(Gtk.ListStore)((point_ActionGroup_store)pvoid).store;
+				unowned Gtk.ActionGroup ag=(Gtk.ActionGroup)((point_ActionGroup_store)pvoid).action_group;
+				unowned AYSettings yasettings=(AYSettings)((point_ActionGroup_store)pvoid).yasettings;
+					
+				string? s = yasettings.get_name_from_path(accel_path);
+				
+					if(s!=null && ag.get_action(s)!=null){
+						TreeIter? data_iter=null;
+						p_store.append (out data_iter);
+						p_store.set (data_iter,
+						0, accel_path,
+						1, ag.get_action(s).tooltip,
+						2, accel_key,
+						3, accel_mods,
+						4, true,/*editable*/
+						-1);
+					}
+				});		
+				
 	}//get_from_conf
 
 	public void apply() {

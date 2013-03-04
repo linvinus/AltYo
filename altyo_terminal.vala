@@ -359,7 +359,7 @@ public class VTTerminal : AYTab{
 			});
 		this.configure(my_conf);
 		this.hbox.show_all();
-		this.vte_term.show();
+//~ 		this.vte_term.show();
 	}
 
 	public void destroy() {

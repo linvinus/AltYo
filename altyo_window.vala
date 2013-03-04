@@ -748,6 +748,25 @@ public class VTMainWindow : Window{
 			dialog.run();
 			return accelerator_name;
 	}
+
+	public void show_message_box(string title,string message){
+			var dialog = new MessageDialog (null, (DialogFlags.DESTROY_WITH_PARENT | DialogFlags.MODAL), MessageType.QUESTION, ButtonsType.OK, title);
+			var aLabel = new Label(message);
+			var dialog_box = ((Gtk.Box)dialog.get_content_area ());
+			dialog_box.pack_start(aLabel,false,false,0);
+			aLabel.show();
+			dialog.response.connect ((response_id) => {
+				if(response_id == Gtk.ResponseType.OK){
+					dialog.destroy ();
+				}
+			});
+			dialog.set_transient_for(this);
+			dialog.show_all();
+			dialog.grab_focus();
+			this.hotkey.send_net_active_window(dialog.get_window ());			
+			dialog.run();
+	}//show_message_box
+	
 }//class VTMainWindow
 
 /*********************************************************************/
@@ -1261,7 +1280,7 @@ public class AYObject :Object{
 			dialog.authors={"Konstantinov Denis linvinus@gmail.com"};
 			dialog.website ="https://github.com/linvinus/AltYo";
 			dialog.version ="0.2";
-			dialog.translator_credits="Translation in English by willemw12@gmail.com";
+			dialog.translator_credits="English by willemw12@gmail.com";
 
 			AccelMap am=Gtk.AccelMap.get();
 

@@ -877,16 +877,26 @@ public class AYObject :Object{
 		this.reconfigure();
 		this.main_vbox.show_all();
 
+		var autostart_terminal_session=this.conf.get_string_list("terminal_autostart_session",null);
+		if(autostart_terminal_session != null && autostart_terminal_session.length>0){
+			foreach(var s in autostart_terminal_session){
+				if(s!="")
+					this.add_tab(s);
+			}
+		}
+
 		var restore_terminal_session=this.conf.get_string_list("terminal_session",null);
 		if(restore_terminal_session != null && restore_terminal_session.length>0){
 			foreach(var s in restore_terminal_session){
 				if(s!="")
 					this.add_tab(s);
-				else
-					this.add_tab();
 			}
-		}else
+		}
+		
+		if(this.children.length()==0)
 			this.add_tab();
+
+
 
 		this.search_hbox.hide();//search hidden by default
 		//this.overlay_notebook.hide();//this.overlay_notebook hidden by default

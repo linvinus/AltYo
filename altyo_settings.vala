@@ -24,7 +24,7 @@ public class AYSettings : AYTab{
 				this.builder.add_from_resource ("/org/gnome/altyo/preferences.ui");
 				this.keybindings_store = builder.get_object ("keybindings_store") as Gtk.ListStore;
 				this.builder.connect_signals(this);
-				var B = builder.get_object ("settings-notebook") as Gtk.Widget;
+				var B = builder.get_object ("settings-scrolledwindow") as Gtk.Widget;
 				this.hbox.add(B);
 				this.get_from_conf();
  			} catch (Error e) {

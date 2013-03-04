@@ -1357,13 +1357,18 @@
                                 </child>
                                 <child>
                                   <object class="GtkTreeViewColumn" id="treeviewcolumn1">
-                                    <property name="title" translatable="yes">column</property>
+                                    <property name="title" translatable="yes">Action</property>
                                     <child>
                                       <object class="GtkCellRendererText" id="cellrenderertext2"/>
                                       <attributes>
                                         <attribute name="text">1</attribute>
                                       </attributes>
                                     </child>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkTreeViewColumn" id="treeviewcolumn2">
+                                    <property name="title" translatable="yes">Key binding</property>
                                     <child>
                                       <object class="GtkCellRendererAccel" id="cellrenderertext3">
                                         <signal name="accel-cleared" handler="ay_settings_accel_cleared_cb" swapped="no"/>

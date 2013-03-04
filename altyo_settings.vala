@@ -253,7 +253,7 @@ public class AYSettings : AYTab{
 						p_store.append (out data_iter);
 						p_store.set (data_iter,
 						0, accel_path,
-						1, ag.get_action(s).tooltip,
+						1, ag.get_action(s).get_label(),
 						2, accel_key,
 						3, accel_mods,
 						4, true,/*editable*/

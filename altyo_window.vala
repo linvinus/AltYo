@@ -78,7 +78,7 @@ public class VTMainWindow : Window{
 	public bool temporary_maximized=false;
 	public bool allow_close=false;
 
-	
+	private uint32 last_focus_out_event_time;
 	
 	public VTMainWindow(WindowType type) {
 		Object(type:type);
@@ -358,6 +358,17 @@ public class VTMainWindow : Window{
 
 	public void toogle_widnow(){
 		if(this.pull_animation_active) return;
+		/* when hotkey is pressed, main window loose focus,
+		 * so impossible to check, is windows focused or not.
+		 * as workaround, remember last focus-out time, 
+		 * if it more than 100ms, then window was unfocused
+		 * */
+		//debug("toogle_widnow %d %d",(int)this.last_event_time,(int)this.hotkey.last_focus_out_event_time);
+		if(!this.keep_above && (this.current_state == WStates.VISIBLE) && ((int)this.hotkey.last_event_time-(int)this.last_focus_out_event_time)>100){
+			this.window_set_active();
+			this.update_events();			
+			return;
+		}
 			if(this.current_state == WStates.HIDDEN)
 					this.pull_down();
 				else
@@ -441,6 +452,11 @@ public class VTMainWindow : Window{
 			}
 		}
 	return ret;
+	}
+	
+	public override bool focus_out_event (Gdk.EventFocus event) {
+		this.last_focus_out_event_time=Gdk.x11_get_server_time(this.get_window());
+		return base.focus_out_event (event);
 	}
 
 	public override  bool draw (Cairo.Context cr){

@@ -41,7 +41,7 @@ public class KeyBinding {
 
 public class PanelHotkey {
     public signal void triggered (string combination);
-    private uint32 last_event_time {get;set;default =0;}
+    public uint32 last_event_time {get;set;default =0;}
     private unowned X.Display display;
     private Gdk.Window root_window;
     private X.ID x_id;

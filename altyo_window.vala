@@ -1280,68 +1280,8 @@ public class AYObject :Object{
 			dialog.authors={"Konstantinov Denis linvinus@gmail.com"};
 			dialog.website ="https://github.com/linvinus/AltYo";
 			dialog.version ="0.2";
-			dialog.translator_credits="English by willemw12@gmail.com";
+			dialog.translator_credits="in English by willemw12@gmail.com";
 
-			AccelMap am=Gtk.AccelMap.get();
-
-			var p = new point_a(this.action_group);
-
-
-			am.foreach(p,(pvoid,accel_path,accel_key,accel_mods,ref changed)=>{
-				unowned point_a pp=(point_a*) pvoid;
-				string[] regs;
-				regs=GLib.Regex.split_simple("^.*/(.*)$",accel_path,RegexCompileFlags.CASELESS,0);
-				string name;
-				if(regs!=null && regs[1]!=null && pp.ag.get_action(regs[1])!=null){
-					name="%30s \t %15s\n".printf (pp.ag.get_action(regs[1]).name, Gtk.accelerator_get_label(accel_key,accel_mods));
-					pp.sb.append(name);
-				}
-				});
-
-				TextTag		 tag_command,tag_key;
-				TextIter iter;
-				var sw=new ScrolledWindow(null,null);
-				sw.border_width=6;
-				sw.set_policy(Gtk.PolicyType.AUTOMATIC,Gtk.PolicyType.AUTOMATIC);
-
-
-				var tvbuf = new TextBuffer( new TextTagTable() );
-
-				tag_command = new TextTag ("command-name");
-				tag_command.justification_set=true;
-				tag_command.justification=Gtk.Justification.LEFT;
-                tag_command.set ("weight", Pango.Weight.NORMAL, "family", "Monospace");
-                tvbuf.tag_table.add (tag_command);
-
-				tag_key = new TextTag ("key");
-				tag_key.justification_set=true;
-				tag_key.justification=Gtk.Justification.RIGHT;
-                tag_key.set ("weight", Pango.Weight.BOLD, "family", "Monospace");
-                tvbuf.tag_table.add (tag_key);
-
-
-				var tv=new TextView.with_buffer( tvbuf);
-				tv.editable=false;
-				tv.cursor_visible=false;
-				sw.add(tv);
-
-				string[] lines = p.sb.str.split ("\n");
-
-				foreach (string line in lines) {
-					if(line==null || line=="")continue;
-					string[] tarr=line.split ("\t");
-					tvbuf.get_end_iter(out iter);
-					tvbuf.insert_with_tags(iter,tarr[0]+":",-1,tag_command);
-
-					tvbuf.get_end_iter(out iter);
-					tvbuf.insert_with_tags(iter,tarr[1]+"\n",-1,tag_key);
-
-				}
-
- 			var dialog_box = ((Gtk.Box)dialog.get_content_area ());
- 			dialog_box.pack_end(sw,false,false,0);
-			dialog_box.reorder_child(sw,0);
-			sw.set_size_request(500,200);
 			dialog.response.connect ((response_id) => {
 					this.main_window.window_set_active();
 					dialog.destroy ();
@@ -1568,7 +1508,7 @@ public class AYObject :Object{
 		});
 
 		/* Add New Tab on <Ctrl><Shift>t */
-		this.add_window_accel("altyo_help", _("About and key bindings"), _("About and key bindings"), Gtk.Stock.NEW,"F1",()=>{
+		this.add_window_accel("altyo_help", _("About"), _("About"), Gtk.Stock.NEW,"F1",()=>{
 			this.ShowHelp();
 		});
 

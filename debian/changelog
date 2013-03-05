@@ -1,3 +1,83 @@
+altyo (0.2~130305-linvinus1) quantal; urgency=low
+
+  [ denis ]
+  * update gitignore
+  * fix: window height in maximized mode, after search bar was shown
+  * fix:prevent resizing of the terminal after closing the search, fix: repaernt of the search bar
+  * new:AYTab class, new:AYSettings class new:gui settings dialog template
+
+  [ linvinus ]
+  * fix:terminal_opacity,hvbox - prevent X Window System error,fix background of search bar and hvbox in animation;new options:terminal_background_fake_transparent,terminal_tint_color,terminal_background_fake_transparent_scroll
+
+  [ denis ]
+  * update:Gtk3 css style,settings dialog,implemented loading settings in to gui.
+  * new: * apply new settings from gui dialog.      * new functions in gui class
+
+  [ linvinus ]
+  * fix:save from gui settings
+  * fix: more friendlier presentation of gtk3 style
+  * fix: more friendlier presentation of double in config file
+  * fix: drawing function of tab button update: Gtk CSS style update: design of preferences dialog
+
+  [ denis ]
+  * fix: prevent scroll in popup menu
+  * fix: regression, incorrect window resizing fix: en translation
+  * fix:small ui changes
+
+  [ linvinus ]
+  * new:option Tab box have background
+  * new: option Auto restart shell
+  * fix:ui changes, move Auto restart shell closer to Custom shell
+
+  [ denis ]
+  * update: port to Gdk.rgba
+  * new: class AYObject - first attempt to split dependencies of widgets fix: pull animation fix: resizing from gui settings
+
+  [ linvinus ]
+  * new: option prevent close update: english translation update: settings dialog appearance fix: some resizing issue, not finished
+
+  [ denis ]
+  * fix: restore search bar draw function
+  * fix: resizing, seems works
+  * fix: give feedback to the user, when shell is terminated
+  * fix: search_show(), prevent window resizing when maximized
+  * fix: hvbox_size_changed(), prevent window resizing when maximized
+  * update: English translation
+  * new: resizing algorithm 	
+  * tests in normal mode  		
+                -add tab is OK, text in the terminal does not break
+ 		-remove tab is OK, text in the terminal does not break
+ 		-show search bar is OK, text in the terminal does not break
+ 		-hide search bar is OK, text in the terminal does not break
+ 		-animation on pull up nad pull down is OK, text in the terminal does not break
+  * tests in maximize mode
+ 		-add tab is OK (increase tab row count), window size does not change, text breaks
+ 		-remove tab is OK (decrease tab row count), window size does not change, text breaks
+ 		-show search bar is OK, window size does not change,text breaks
+ 		-hide search bar is OK, window size does not change,text breaks
+ 		-animation on pull up nad pull down is OK, text in the terminal does not break
+  * size change from normal mode to maximize mode is OK
+  * size change from maximize mode to normal mode is OK
+  * size change from gui settings is OK
+  * fix: pull down, last step configures the correct window size fix: new startup sequence, correct window size when loading
+  * fix: draw background of pixwin only while animation enabled (prevent window flickering) fix: startup hidden
+  * fix: search_hide after pull-up/down
+
+  [ linvinus ]
+  * new: option terminal_autostart_session
+  * new: behaviour, when "Stay on top" is unchecked, and if window was visible but not focused, show it instead hide.
+
+  [ denis ]
+  * new: gui settings for key binding
+  * remove: key binding from "about" dialog
+  * fix: add column title in key binding table fix: use action label instead tooltip
+  * new: gui settings option "Double hotkey milliseconds" update: design of gui settings
+  * new: guru tab in gui settings, now all settings have gui representation
+  * fix: prevent Gtk error if start hidden enabled remove: action terminal_new_tab_in_current_directory new: option terminal_new_tab_in_current_directory
+  * new: option terminal_url_regexps, allow execute command for specified regexp
+
+ -- denis <linvinus@gmail.com>  Tue, 05 Mar 2013 23:31:10 +0400
+
 altyo (0.2~130223-linvinus1) quantal; urgency=low
 
   * fix building package

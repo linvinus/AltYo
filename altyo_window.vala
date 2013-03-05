@@ -194,8 +194,10 @@ public class VTMainWindow : Window{
 				}
 							
 				var ch=this.pixwin.get_child();//.reparent(this);//reparent from offscreen window
-				this.pixwin.remove(ch);
-				this.add(ch);
+				if(ch!=null){//prevent error if start hidden
+					this.pixwin.remove(ch);
+					this.add(ch);
+				}
 				this.pull_animation_active=false;
 				
 				this.update_position_size();
@@ -1366,15 +1368,16 @@ public class AYObject :Object{
 
 		/* Add New Tab on <Ctrl><Shift>t */
 		this.add_window_accel("terminal_add_tab", _("New tab"), _("Open new tab"), Gtk.Stock.NEW,"<Control><Shift>T",()=>{
-			this.add_tab();
-		});
-		this.add_window_accel("terminal_new_tab_in_current_directory", _("New tab in current directory"), _("Open new tab in current directory"), Gtk.Stock.NEW,"",()=>{
-			debug("terminal_new_tab_in_current_directory");
-			if(this.active_tab!=null){
-				VTTerminal vt =((VTTerminal)this.active_tab.object);
-				var tmp=vt.find_tty_pgrp(vt.pid,true);
-				debug("path: %s",tmp);
-				this.add_tab(null,tmp);
+			if(this.conf.get_boolean("terminal_new_tab_in_current_directory",true)){
+				debug("terminal_new_tab_in_current_directory");
+				if(this.active_tab!=null){
+					VTTerminal vt =((VTTerminal)this.active_tab.object);
+					var tmp=vt.find_tty_pgrp(vt.pid,true);
+					debug("path: %s",tmp);
+					this.add_tab(null,tmp);
+				}				
+			}else{
+				this.add_tab();
 			}
 		});
 

@@ -633,9 +633,6 @@ public class VTTerminal : AYTab{
 
 		menuitem = (Gtk.MenuItem)acg.get_action("terminal_add_tab").create_menu_item();
 		menu.append(menuitem);
-		menuitem = (Gtk.MenuItem)acg.get_action("terminal_new_tab_in_current_directory").create_menu_item();
-		menu.append(menuitem);
-
 		menuitem = (Gtk.MenuItem)acg.get_action("terminal_close_tab").create_menu_item();
 		menu.append(menuitem);
 		menuitem = (Gtk.MenuItem)acg.get_action("terminal_search_dialog").create_menu_item();

@@ -19,7 +19,7 @@ using Gtk;
 using Gee;
 
 public delegate bool check_string(ref string s);
-public delegate bool check_string_list(ref string[] sl);
+public delegate bool check_string_list(ref string[] sl);//todo return shuld be int. 0-ok 1-change 2-return default
 public delegate bool check_integer(ref int i);
 public delegate bool check_double(ref double d);
 public delegate bool check_boolean(ref bool b);

@@ -17,6 +17,7 @@
 
 using Gtk;
 using Vte;
+using Gee;
 #if HAVE_QLIST
 using GnomeKeyring;
 #endif
@@ -271,7 +272,10 @@ public class AYTab : Object{
 		this.tbutton = new VTToggleButton();
 		this.tbutton.tab_format = my_conf.get_string("tab_format","[ _INDEX_ ]");
 		this.tbutton.tab_title_format = my_conf.get_string("tab_title_format","<span foreground='#FFF000'>_INDEX_</span>/_TITLE_");
-		this.tbutton.tab_title_regex = my_conf.get_string_list("tab_title_format_regex",{"^(mc) \\[","<span>_REPLACE_ </span>","([\\w\\.]+)@","<span font_weight='bold' foreground='#EEEEEE'>_USER_</span>","([\\w\\.\\-]+)\\]?:","@<span font_weight='bold' foreground='#FFF000'>_HOSTNAME_</span>:","([^:]*)$","<span>_PATH_</span>"});
+		this.tbutton.tab_title_regex = my_conf.get_string_list("tab_title_format_regex",{"^(mc) \\[","<span>_REPLACE_ </span>","([\\w\\.]+)@","<span font_weight='bold' foreground='#EEEEEE'>_USER_</span>","([\\w\\.\\-]+)\\]?:","@<span font_weight='bold' foreground='#FFF000'>_HOSTNAME_</span>:","([^:]*)$","<span>_PATH_</span>"},(ref new_val)=>{
+			if(new_val!=null && (new_val.length % 2)!=0){new_val={"^(mc) \\[","<span>_REPLACE_ </span>","([\\w\\.]+)@","<span font_weight='bold' foreground='#EEEEEE'>_USER_</span>","([\\w\\.\\-]+)\\]?:","@<span font_weight='bold' foreground='#FFF000'>_HOSTNAME_</span>:","([^:]*)$","<span>_PATH_</span>"};return true;}
+			return false;
+			});
 		this.tbutton.set_title(tab_index,null);
 		this.tbutton.can_focus=false;//vte shoud have focus
 		this.tbutton.can_default = false; //encrease size
@@ -310,6 +314,7 @@ public class VTTerminal : AYTab{
 	public bool auto_restart {get; set; default = true;}
 	public bool match_case {get; set; default = false;}
 	private OnChildExitCallBack on_child_exit {get; set; default = null;}
+	private HashMap<int, string> match_tags;
 
 
 	public VTTerminal(MySettings my_conf,Notebook notebook, int tab_index,string? session_command=null,string? session_path=null,OnChildExitCallBack? on_child_exit=null) {
@@ -319,6 +324,7 @@ public class VTTerminal : AYTab{
 		if(on_child_exit!=null)
 			this.on_child_exit=on_child_exit;
 
+		this.match_tags = new HashMap<int, string> ();
 		this.vte_term = new Vte.Terminal();
 //~		this.vte_term.halign=Gtk.Align.START;
 //~		this.vte_term.valign=Gtk.Align.START;
@@ -598,10 +604,26 @@ public class VTTerminal : AYTab{
 			return false;
 			});
 		this.vte_term.set_delete_binding ((Vte.TerminalEraseBinding)delbinding);
+		
+		string[] url_regexps = my_conf.get_string_list("terminal_url_regexps",{"http://[a-z0-9%-+?\\./]*","xdg-open"});
+		if((url_regexps.length % 2) == 0){
+			this.vte_term.match_clear_all();
+			this.match_tags.clear();
+			debug("url_regexps=%d",url_regexps.length);
+			for(i=0;i<url_regexps.length-1;i+=2){
+				var key=this.vte_term.match_add_gregex((new Regex (url_regexps[i])),0);
+				debug("match_add_gregex %d",key);
+				if(!this.match_tags.has_key(key))
+					this.match_tags[key]=url_regexps[i+1];
+			}
+		}
 	}
 
 	public bool vte_button_press_event(Widget widget,Gdk.EventButton event) {
 		if(event.type==Gdk.EventType.BUTTON_PRESS){
+			if(event.button==1 && (event.state & Gdk.ModifierType.CONTROL_MASK)==Gdk.ModifierType.CONTROL_MASK){
+				this.check_match(event);
+			}else
 			if(event.button== 3){//right mouse button
 				this.popup_menu(event);
 				return true;
@@ -688,6 +710,21 @@ public class VTTerminal : AYTab{
 		menu.popup(null, null, null, event.button, event.time);
 		menu.ref();//no one own menu,emulate owners,uref will be on_deactivate
 		//debug("popup_menu ref_count=%d",(int)menu.ref_count);
+	}
+
+	private void check_match (Gdk.EventButton event){
+			int char_width=(int)this.vte_term.get_char_width();
+			int char_height=(int)this.vte_term.get_char_height();
+			unowned Gtk.Border? inner_border=null;
+			int? tag=null;
+			this.vte_term.style_get("inner-border", out inner_border, null);
+			int col = ((int)event.x - (inner_border!=null ? inner_border.left : 0)) / char_width;
+			int row = ((int)event.y - (inner_border!=null ? inner_border.top : 0)) / char_height;
+			var match = this.vte_term.match_check (col, row, out tag);
+			if(tag!=null && this.match_tags.has_key(tag) ){
+					debug("check_match run=%s params=%s",this.match_tags[tag],match);
+					Posix.system(((string)this.match_tags[tag])+" '"+match+"' &");
+			}
 	}
 
 	private void on_deactivate(Widget m) {

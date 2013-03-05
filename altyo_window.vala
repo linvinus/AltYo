@@ -548,6 +548,7 @@ public class VTMainWindow : Window{
 		}
 		this.position  = conf.get_integer("position",1,(ref new_val)=>{
 			if(new_val>3){new_val=this.position;return true;}
+			if(new_val<0){new_val=this.position;return true;}
 			return false;
 			});
 

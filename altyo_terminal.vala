@@ -358,6 +358,7 @@ public class VTTerminal : AYTab{
 			this.configure(this.my_conf);
 			});
 		this.configure(my_conf);
+		this.vte_term.button_press_event.connect(vte_button_press_event);
 		this.hbox.show_all();
 //~ 		this.vte_term.show();
 	}
@@ -576,18 +577,27 @@ public class VTTerminal : AYTab{
 			this.vte_term.set_background_transparent(true);//but only when changes
 			this.vte_term.set_background_transparent(false);//but only when changes
 		}
-		
-		/*Gdk.RGBA c = Gdk.RGBA();
-		c.parse(my_conf.get_string("tab_button_color_normal","#00FF00"));
-		//this.tbutton.override_color(StateFlags.NORMAL , c);
-		this.tbutton.label.override_color(StateFlags.NORMAL , c);
-		c.parse(my_conf.get_string("tab_button_color_prelight","#FFFF00"));
-		this.tbutton.label.override_color(StateFlags.PRELIGHT , c);
-		c.parse(my_conf.get_string("tab_button_color_active","#FFFF00"));
-		this.tbutton.label.override_color(StateFlags.ACTIVE , c);*/
-
-		this.vte_term.button_press_event.connect(vte_button_press_event);
-
+		/*0-BLOCK,1-IBEAM,2-UNDERLINE*/
+		var cursorshape  = my_conf.get_integer("terminal_cursorshape",0,(ref new_val)=>{
+			if(new_val>2){new_val=0;return true;}
+			if(new_val<0){new_val=0;return true;}
+			return false;
+			});
+		this.vte_term.set_cursor_shape((Vte.TerminalCursorShape)cursorshape);
+		/*0-SYSTEM,1-ON,2-OFF*/
+		var cursor_blinkmode  = my_conf.get_integer("terminal_cursor_blinkmode",0,(ref new_val)=>{
+			if(new_val>2){new_val=0;return true;}
+			if(new_val<0){new_val=0;return true;}
+			return false;
+			});
+		this.vte_term.set_cursor_blink_mode ((Vte.TerminalCursorBlinkMode)cursor_blinkmode);
+		/*0-AUTO,1-BACKSPACE,2-DELETE,3-SEQUENCE,4-TTY*/
+		var delbinding  = my_conf.get_integer("terminal_delete_binding",0,(ref new_val)=>{
+			if(new_val>4){new_val=0;return true;}
+			if(new_val<0){new_val=0;return true;}
+			return false;
+			});
+		this.vte_term.set_delete_binding ((Vte.TerminalEraseBinding)delbinding);
 	}
 
 	public bool vte_button_press_event(Widget widget,Gdk.EventButton event) {

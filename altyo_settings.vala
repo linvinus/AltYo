@@ -60,13 +60,9 @@ public class AYSettings : AYTab{
 	}
 
 	[CCode (instance_pos = -1)]
-	public void reset_terminal_background_image_file  (Gtk.Button w,Gtk.FileChooserButton F) {
+	public void on_reset_terminal_background_image_file  (Gtk.Button w,Gtk.FileChooserButton F) {
 		if(F!=null){
 			F.unselect_all();
-//~			string? S = this.my_conf.get_string("terminal_background_image_file","");
-//~			if(S!=null && S!=""){
-//~				F.set_filename(S);
-//~			}
 		}
 	}
 	
@@ -108,11 +104,21 @@ public class AYSettings : AYTab{
 				this.my_conf.set_accel_string(name,parsed_name);				
 				this.keybindings_store.set (iter, 2, accel_key);
 				this.keybindings_store.set (iter, 3, accel_mods);
-				this.my_conf.save();
-			}
-			
-			if(name=="main_hotkey"){
-				this.ayobject.main_window.reconfigure();
+				if(name=="main_hotkey"){
+					this.ayobject.main_window.reconfigure();//check is it was correct, and not busy
+					var saved_key = this.my_conf.get_accel_string(name,"");
+					if(parsed_name != saved_key){
+						//some thing was wrong,update key value
+						unowned uint accelerator_key;
+						unowned Gdk.ModifierType accelerator_mods;						
+						Gtk.accelerator_parse(saved_key,out accelerator_key,out accelerator_mods);
+						accel_key=accelerator_key;
+						accel_mods=accelerator_mods;
+					}
+				}
+			this.keybindings_store.set (iter, 2, accel_key);
+			this.keybindings_store.set (iter, 3, accel_mods);
+			this.my_conf.save();	
 			}
 		}else{
 			debug("accel_edited_cb unable to change!");
@@ -151,7 +157,199 @@ public class AYSettings : AYTab{
 		}
 //~         settings.set_int (key, 0);
     }
+    
+    [CCode (instance_pos = -1)]
+    public bool on_command_list_button_press_event(Gtk.Widget w,Gdk.EventButton event){
+		debug("command_list_button_press_event %s",w.name);
+			if((int)event.button == 3){//right mouse button
+					if(((Gtk.Buildable)w).get_name()=="terminal_autostart_session_treeview")
+						this.create_popup_command_list(event);
+					else 
+					if(((Gtk.Buildable)w).get_name()=="tab_title_format_regex_treeview")
+						this.create_popup_tab_title_format_regex(event);
+					return true;
+			}
+		return false;
+	}
+		
+    private void create_popup_command_list(Gdk.EventButton event){
+		debug("popup_command_list");
+		Gtk.MenuItem menuitem;
+    	
+    	var popup_menu = new Gtk.Menu();
+		
+		menuitem = new Gtk.MenuItem.with_label("Add");
+		menuitem.activate.connect(on_popup_command_list_add);
+		popup_menu.append(menuitem);		
+		
+		menuitem = new Gtk.MenuItem.with_label("remove");
+		menuitem.activate.connect(on_popup_command_list_remove);
+		popup_menu.append(menuitem);		
+		
+		popup_menu.deactivate.connect (this.on_popup_deactivate);
+		popup_menu.show_all();
+        //menu.attach_to_widget (this.vte_term, null);
+		popup_menu.popup(null, null, null, event.button, event.time);
+		popup_menu.ref();//no one own menu,emulate owners,uref will be on_deactivate		
+	}
+   
+    private void create_popup_tab_title_format_regex(Gdk.EventButton event){
+		debug("popup_tab_title_format_regex");
+		Gtk.MenuItem menuitem;
+    	
+    	var popup_menu = new Gtk.Menu();
+		
+		menuitem = new Gtk.MenuItem.with_label("Add");
+		menuitem.activate.connect(on_popup_tab_title_format_regex_add);
+		popup_menu.append(menuitem);		
+		
+		menuitem = new Gtk.MenuItem.with_label("remove");
+		menuitem.activate.connect(on_popup_tab_title_format_regex_remove);
+		popup_menu.append(menuitem);		
+		
+		popup_menu.deactivate.connect (this.on_popup_deactivate);
+		popup_menu.show_all();
+        //menu.attach_to_widget (this.vte_term, null);
+		popup_menu.popup(null, null, null, event.button, event.time);
+		popup_menu.ref();//no one own menu,emulate owners,uref will be on_deactivate		
+	}
+	
+	private void on_popup_deactivate(Widget m) {
+			((Gtk.Menu)m).deactivate.disconnect(on_popup_deactivate);
+			m.unref();//menu will be destroyed after end of deactivate event
+			//debug("popup_menu ref_count=%d",(int)m.ref_count);//normal count 4
+		}	
 
+	private void on_popup_command_list_add(){
+		var store = builder.get_object ("terminal_autostart_session") as Gtk.ListStore;
+		if(store!=null){
+			TreeIter? data_iter=null;
+			store.append (out data_iter);
+			store.set (data_iter,
+			0, "/bin/sh",
+			-1);
+		}
+	}
+	
+	private void on_popup_command_list_remove(){
+		var store = builder.get_object ("terminal_autostart_session") as Gtk.ListStore;
+		var view = builder.get_object ("terminal_autostart_session_treeview") as Gtk.TreeView;
+		if(store!=null && view!=null){
+				TreePath path;
+				TreeViewColumn s_column;
+				TreeIter? iter=null;
+				view.get_cursor(out path,out s_column);
+				if(store.get_iter(out iter,path))
+				if(!store.iter_has_child(iter)){
+					store.remove(iter);
+					if(store.get_iter(out iter,path))
+						view.set_cursor(path,null,false);
+					else if(path.prev())
+						view.set_cursor(path,null,false);
+					else if(path.up())
+						view.set_cursor(path,null,false);
+				}
+		}
+	}
+	private void on_popup_tab_title_format_regex_add(){
+		var store = builder.get_object ("tab_title_format_regex") as Gtk.ListStore;
+		if(store!=null){
+			TreeIter? data_iter=null;
+			store.append (out data_iter);
+			store.set (data_iter,
+			0, "",
+			1, "",
+			-1);
+		}
+	}
+	
+	private void on_popup_tab_title_format_regex_remove(){
+		var store = builder.get_object ("tab_title_format_regex") as Gtk.ListStore;
+		var view = builder.get_object ("tab_title_format_regex_treeview") as Gtk.TreeView;
+		if(store!=null && view!=null){
+				TreePath path;
+				TreeViewColumn s_column;
+				TreeIter? iter=null;
+				view.get_cursor(out path,out s_column);
+				if(store.get_iter(out iter,path))
+				if(!store.iter_has_child(iter)){
+					store.remove(iter);
+					if(store.get_iter(out iter,path))
+						view.set_cursor(path,null,false);
+					else if(path.prev())
+						view.set_cursor(path,null,false);
+					else if(path.up())
+						view.set_cursor(path,null,false);
+				}
+		}
+	}
+	
+	[CCode (instance_pos = -1)]
+	public void on_terminal_autostart_session_cellrenderertext_edited (Gtk.CellRendererText renderer, string path_string, string new_text){
+		debug("on_terminal_autostart_session_cellrenderertext_edited start %s",path_string);
+		
+		Gtk.ListStore? store=null;
+
+		store = builder.get_object("terminal_autostart_session") as Gtk.ListStore;
+
+		if(store == null) return;
+		
+        var path = new Gtk.TreePath.from_string (path_string);
+        
+        if (path == null) return;
+        
+        Gtk.TreeIter iter;
+        if (!store.get_iter (out iter, path)) return;	
+		
+		store.set (iter,
+			0, new_text,
+			-1);        
+	}
+	
+	[CCode (instance_pos = -1)]
+	public void on_tab_title_format_regex_cellrenderertext_pattern_edited (Gtk.CellRendererText renderer, string path_string, string new_text){
+		debug("on_tab_title_format_regex_cellrenderertext_pattern_edited start %s",path_string);
+		
+		Gtk.ListStore? store=null;
+
+		store = builder.get_object ("tab_title_format_regex") as Gtk.ListStore;
+		
+		if(store == null) return;
+		
+        var path = new Gtk.TreePath.from_string (path_string);
+        
+        if (path == null) return;
+        
+        Gtk.TreeIter iter;
+        if (!store.get_iter (out iter, path)) return;	
+		
+		store.set (iter,
+			0, new_text,
+			-1);        
+	}
+	
+	[CCode (instance_pos = -1)]
+	public void on_tab_title_format_regex_cellrenderertext_replace_edited (Gtk.CellRendererText renderer, string path_string, string new_text){
+		debug("on_tab_title_format_regex_cellrenderertext_replace_edited start %s",path_string);
+		
+		Gtk.ListStore? store=null;
+		
+		store = builder.get_object ("tab_title_format_regex") as Gtk.ListStore;
+
+		if(store == null) return;
+		
+        var path = new Gtk.TreePath.from_string (path_string);
+        
+        if (path == null) return;
+        
+        Gtk.TreeIter iter;
+        if (!store.get_iter (out iter, path)) return;	
+		
+		store.set (iter,
+			1, new_text,
+			-1);        
+	}
+	
     private string? get_name_from_path(string accel_path){
 				string[] regs;
 				regs=GLib.Regex.split_simple("^.*/(.*)$",accel_path,RegexCompileFlags.CASELESS,0);
@@ -186,7 +384,10 @@ public class AYSettings : AYTab{
 					}else debug(" no gui for key %s",key);
 				break;
 				case CFG_TYPE.TYPE_INTEGER:
-				if(key=="position"){
+				if(key=="position" ||
+				   key=="terminal_cursorshape" ||
+				   key=="terminal_cursor_blinkmode" ||
+				   key=="terminal_delete_binding"){
 					var B = builder.get_object (key) as Gtk.ComboBox;
 						B.active=this.my_conf.get_integer(key,0);
 				}else{
@@ -232,6 +433,43 @@ public class AYSettings : AYTab{
 						}
 				break;
 				case CFG_TYPE.TYPE_STRING_LIST:
+						var store = builder.get_object (key) as Gtk.ListStore;
+						if(store!=null){
+							string[] sl=this.my_conf.get_string_list(key,null);
+							if(key=="tab_title_format_regex"){
+								for(int i=0; i<sl.length-1;i+=2){
+									TreeIter? data_iter=null;
+									store.append (out data_iter);
+									store.set (data_iter,
+									0, sl[i],
+									1, sl[i+1],
+									-1);
+								}
+							}else
+							if(key=="terminal_autostart_session"){
+								for(int i=0; i<sl.length;i++){
+									TreeIter? data_iter=null;
+									store.append (out data_iter);
+									store.set (data_iter,
+									0, sl[i],
+									-1);
+								}
+							}
+						}else
+						if(key=="terminal_palette"){
+							string[] sl=this.my_conf.get_string_list(key,null);
+							if(sl.length==16){
+								for(int i=1; i<17;i++){
+									var B = builder.get_object ("terminal_palette_colorbutton"+i.to_string()) as Gtk.ColorButton;
+									if(B!=null){
+										var color=new Gdk.RGBA();
+										if(color.parse(sl[i-1]))
+											B.set_rgba(color);
+									}
+								}
+							}
+						}else
+							debug(" no gui for key %s",key);
 				break;
 				case CFG_TYPE.TYPE_ACCEL_STRING:
 				break;
@@ -285,7 +523,10 @@ public class AYSettings : AYTab{
 					}else debug(" no gui for key %s",key);
 				break;
 				case CFG_TYPE.TYPE_INTEGER:
-				if(key=="position"){
+				if(key=="position" ||
+				   key=="terminal_cursorshape" ||
+				   key=="terminal_cursor_blinkmode" ||
+				   key=="terminal_delete_binding"){
 					var B = builder.get_object (key) as Gtk.ComboBox;
 						if(B.active!=this.my_conf.get_integer(key,0))
 							this.my_conf.set_integer(key,B.active);
@@ -339,6 +580,52 @@ public class AYSettings : AYTab{
 						}
 				break;
 				case CFG_TYPE.TYPE_STRING_LIST:
+						var store = builder.get_object (key) as Gtk.ListStore;
+						if(store!=null){
+							
+							if(key=="tab_title_format_regex"){
+								string[] sl = {};
+								store.foreach((model,  path,  iter) =>{
+										string? s1=null,s2=null;
+										store.get (iter,
+										0, out s1,
+										1, out s2,
+										-1);
+										if(s1!=null)
+											sl+=s1;
+										if(s2!=null)
+											sl+=s2;
+										debug("s1=%s s2=%s",s1,s2);
+										return false;//continue
+									});
+								this.my_conf.set_string_list(key,sl);
+							}else
+							if(key=="terminal_autostart_session"){
+								string[] sl = {};
+								store.foreach((model,  path,  iter) =>{
+										string? s1=null;
+										store.get (iter,
+										0, out s1,
+										-1);
+										if(s1!=null)
+											sl+=s1;
+										debug("s1=%s",s1);
+										return false;//continue
+									});
+								this.my_conf.set_string_list(key,sl);
+							}
+						}else
+						if(key=="terminal_palette"){
+							string[] sl = {};
+								for(int i=1; i<17;i++){
+									var B = builder.get_object ("terminal_palette_colorbutton"+i.to_string()) as Gtk.ColorButton;
+									if(B!=null){
+										sl+=B.rgba.to_string();
+									}
+								}
+								this.my_conf.set_string_list(key,sl);
+						}else
+							debug(" no gui for key %s",key);				
 				break;
 				case CFG_TYPE.TYPE_ACCEL_STRING:
 				break;

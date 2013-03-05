@@ -18,6 +18,8 @@ ifeq ($(LINUX.DISTRIB.ID),Ubuntu)
 LINUX.DISTRIB.ID=debian
 endif
 
+DEBIAN.CHANGELOG=$(shell grep -m 1 "^altyo" ./debian/changelog | sed 's/.*(//' | sed 's/).*$//')
+
 VALA_FLAGS = -v
 VALA_FLAGS += --disable-warnings
 #VALA_FLAGS += -g --save-temps
@@ -77,13 +79,17 @@ source-package:
 	rm ./altyo || true
 	git-buildpackage --git-upstream-tree=branch --git-upstream-branch=master -rfakeroot -S -sa
 
-#gen_changes:
-#	git-dch --ignore-branch --debian-branch=master --verbose
-#	git add .
-#	git commit -m "debian/0.2_130222-linvinus1"
-#	git tag "debian/0.2_130222-linvinus1"
-#	git push
-#	git push origin --tags
+gen_changes:
+	git-dch --ignore-branch --debian-branch=master --verbose -a -R
+	git add .
+	git commit -m
+	$(MAKE) gen_changes_stage2
+
+gen_changes_stage2:
+	git commit -m "new: debian release $(DEBIAN.CHANGELOG)"
+	git tag "$(DEBIAN.CHANGELOG)"
+	git push
+	git push origin --tags
 
 #git tag "debian/0.2_121003-linvinus1" ~ -> _ , : -> %
 #git-dch --ignore-branch --debian-branch=master --verbose

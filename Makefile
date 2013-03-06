@@ -85,7 +85,6 @@ source-package:
 gen_changes:
 	git-dch --ignore-branch --debian-branch=master --verbose -a -R
 	git add .
-	git commit -m
 	$(MAKE) gen_changes_stage2
 
 gen_changes_stage2:

@@ -186,7 +186,7 @@ public class VTMainWindow : Window{
 					if(this.pull_maximized){
 						this.maximize();
 					}else{
-						this.set_default_size(this.pull_w,pull_h);
+						//this.set_default_size(this.pull_w,pull_h);
 						this.resize (this.pull_w,pull_h);
 					}
 					this.update_events();
@@ -260,20 +260,9 @@ public class VTMainWindow : Window{
 				return true;//continue animation
 			else{
 				//look at source of gtk_window_reshow_with_initial_size (GtkWindow *window)
-				var gem=new Gdk.Geometry();
-				gem.base_height=0;//this.pull_h;
-				gem.base_width=this.pull_w;
-				gem.height_inc=0;
-				gem.max_aspect=0;
-				gem.max_height=0;
-				gem.max_width=0;
-				gem.min_aspect=0;
-				gem.min_height=1;//allow min height
-				gem.min_width=this.pull_w;
-				gem.width_inc=0;
-				gem.win_gravity=Gdk.Gravity.NORTH_WEST;
-				this.set_geometry_hints(null,gem,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);				
-
+				if(this.pull_maximized){
+					this.update_geometry_hints(0,this.pull_w,1,this.pull_w,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
+				}
 				this.hide();
 				this.unrealize();//important!
 				this.current_state=WStates.HIDDEN;
@@ -327,20 +316,7 @@ public class VTMainWindow : Window{
 
 			/*reset geometry hints, allow min height =1
 			 * */
-			var gem=new Gdk.Geometry();
-			gem.base_height=0;//this.pull_h;
-			gem.base_width=this.pull_w;
-			gem.height_inc=0;
-			gem.max_aspect=0;
-			gem.max_height=0;
-			gem.max_width=0;
-			gem.min_aspect=0;
-			gem.min_height=1;//allow min height
-			gem.min_width=this.pull_w;
-			gem.width_inc=0;
-			gem.win_gravity=Gdk.Gravity.NORTH_WEST;
-			this.set_geometry_hints(null,gem,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);			
-
+			this.update_geometry_hints(0,this.pull_w,1,this.pull_w,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
 			this.unmaximize();
 			this.update_events();
 		}else{
@@ -395,21 +371,9 @@ public class VTMainWindow : Window{
 					if(this.maximized){
 						this.maximized = false;
 						/*reset geometry hints
+						 * allow resize from maximized size
 						 * */
-						var gem=new Gdk.Geometry();
-						gem.base_height=0;
-						gem.base_width=0;
-						gem.height_inc=0;
-						gem.max_aspect=0;
-						gem.max_height=0;
-						gem.max_width=0;
-						gem.min_aspect=0;
-						gem.min_height=1;//allow resize from maximized size
-						gem.min_width=1;//allow resize from maximized size
-						gem.width_inc=0;
-						gem.win_gravity=Gdk.Gravity.NORTH_WEST;
-						this.set_geometry_hints(null,gem,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);						
-
+						this.update_geometry_hints(0,0,1,1,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
 						this.configure_position();
 						this.update_position_size();
 						//this.update_maximized_size=true;
@@ -437,22 +401,26 @@ public class VTMainWindow : Window{
 				 * this size will be after unmaximize (pull_up call unmaximize)
 				 * */
 					this.update_maximized_size=false;
+					this.update_geometry_hints(event.height,event.width,event.height,event.width,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
+			}
+		}
+	return ret;
+	}
+	
+	private void update_geometry_hints(int base_height,int base_width,int min_height,int min_width,Gdk.WindowHints mask){
 					var gem=new Gdk.Geometry();
-					gem.base_height=event.height;
-					gem.base_width=event.width;
+					gem.base_height=base_height;
+					gem.base_width=base_width;
 					gem.height_inc=0;
 					gem.max_aspect=0;
 					gem.max_height=0;
 					gem.max_width=0;
 					gem.min_aspect=0;
-					gem.min_height=event.height;//this size will be after unmaximize
-					gem.min_width=event.width;//this size will be after unmaximize
+					gem.min_height=min_height;
+					gem.min_width=min_width;
 					gem.width_inc=0;
 					gem.win_gravity=Gdk.Gravity.NORTH_WEST;
-					this.set_geometry_hints(null,gem,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
-			}
-		}
-	return ret;
+					this.set_geometry_hints(null,gem,mask);		
 	}
 	
 	public override bool focus_out_event (Gdk.EventFocus event) {
@@ -1553,10 +1521,13 @@ public class AYObject :Object{
 				var should_be_h = this.terminal_height+height + (this.search_hbox.get_visible()?this.search_hbox.get_allocated_height():0);
 				if(this.main_window.get_allocated_height()>should_be_h+2 /*&& !this.main_window.maximized*/){
 					//this.main_window.configure_position();//this needed to update position after unmaximize
-					this.main_window.set_default_size(this.terminal_width,should_be_h);
+					this.main_vbox.set_size_request(this.terminal_width,should_be_h);
+					this.tasks_notebook.set_size_request(this.terminal_width,this.terminal_height);
+//~ 					this.main_window.set_default_size(this.terminal_width,should_be_h);
 					this.main_window.resize (this.terminal_width,should_be_h);
 					this.main_window.move (this.main_window.orig_x,this.main_window.orig_y);
 					this.main_window.queue_resize_no_redraw();
+				
 					//GLib.Timeout.add(10,()=>{debug("Update events");this.update_events(); return false;});
 					debug ("hvbox_size_changed terminal_width=%d should_be_h=%d",terminal_width,should_be_h) ;
 				}

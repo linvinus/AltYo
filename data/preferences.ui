@@ -67,6 +67,12 @@
       </row>
     </data>
   </object>
+  <object class="GtkAdjustment" id="terminal_height_adjustment">
+    <property name="lower">1</property>
+    <property name="upper">10000</property>
+    <property name="step_increment">10</property>
+    <property name="page_increment">100</property>
+  </object>
   <object class="GtkScrolledWindow" id="settings-scrolledwindow">
     <property name="visible">True</property>
     <property name="can_focus">True</property>
@@ -1912,6 +1918,64 @@
                         <property name="position">2</property>
                       </packing>
                     </child>
+                    <child>
+                      <object class="GtkExpander" id="expander2">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <child>
+                          <object class="GtkTreeView" id="terminal_url_regexps_treeview">
+                            <property name="height_request">100</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="model">terminal_url_regexps</property>
+                            <signal name="button-press-event" handler="ay_settings_on_command_list_button_press_event" swapped="no"/>
+                            <child internal-child="selection">
+                              <object class="GtkTreeSelection" id="treeview-selection4"/>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="treeviewcolumn6">
+                                <property name="title" translatable="yes">Match</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="terminal_url_regexps_match_cellrenderertext">
+                                    <property name="editable">True</property>
+                                    <signal name="edited" handler="ay_settings_on_terminal_url_regexps_match_cellrenderertext_pattern_edited" swapped="no"/>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">0</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="treeviewcolumn7">
+                                <property name="title" translatable="yes">Run</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="terminal_url_regexps_run_cellrenderertext">
+                                    <property name="editable">True</property>
+                                    <signal name="edited" handler="ay_settings_on_terminal_url_regexps_run_cellrenderertext_pattern_edited" swapped="no"/>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">1</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child type="label">
+                          <object class="GtkLabel" id="label38">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Terminal regexps</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">3</property>
+                      </packing>
+                    </child>
                   </object>
                   <packing>
                     <property name="position">2</property>
@@ -2042,12 +2106,6 @@
       </row>
     </data>
   </object>
-  <object class="GtkAdjustment" id="terminal_height_adjustment">
-    <property name="lower">1</property>
-    <property name="upper">10000</property>
-    <property name="step_increment">10</property>
-    <property name="page_increment">100</property>
-  </object>
   <object class="GtkAdjustment" id="terminal_opacity_adjustment">
     <property name="upper">1</property>
     <property name="step_increment">0.10000000000000001</property>
@@ -2057,6 +2115,14 @@
     <property name="upper">100000</property>
     <property name="step_increment">10</property>
     <property name="page_increment">100</property>
+  </object>
+  <object class="GtkListStore" id="terminal_url_regexps">
+    <columns>
+      <!-- column-name match -->
+      <column type="gchararray"/>
+      <!-- column-name run -->
+      <column type="gchararray"/>
+    </columns>
   </object>
   <object class="GtkAdjustment" id="terminal_width_adjustment">
     <property name="lower">1</property>

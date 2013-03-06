@@ -508,10 +508,10 @@ public class HVBox : Container {
 
 	}
 
-	public override void get_preferred_height_for_width (int width,out int minimum_height, out int natural_height) {
-//~		hvbox_get_preferred_height_for_width (width,out minimum_height, out natural_height);
-//~	}
-//~	public void hvbox_get_preferred_height_for_width (int width,out int minimum_height, out int natural_height) {
+ 	public override void get_preferred_height_for_width (int width,out int minimum_height, out int natural_height) {
+		hvbox_get_preferred_height_for_width (width,out minimum_height, out natural_height);
+	}
+	public void hvbox_get_preferred_height_for_width (int width,out int minimum_height, out int natural_height) {
 
 		/*workaround for min_height, if actual available width more than self minimum width*/
 		if(this.self_minimum_width == width && initial_size <10){
@@ -644,23 +644,11 @@ public class HVBox : Container {
 		debug("remove\n");
 		foreach(unowned HVBoxItem item in this.children){
 			if(item.widget == widget){
-				item.widget.unparent ();
+				item.widget.unparent();
 				children.remove(item);
-				this.queue_resize();
-//~				children.remove(item);
-//~				//this.queue_resize();
-//~				//this.set_size_request(-1,-1);
-//~				int minimum_height,natural_height;
-//~				hvbox_get_preferred_height_for_width(this.get_allocated_width(),out minimum_height, out natural_height);
-//~				debug("minimum_height=%d,natural_height=%d",minimum_height,natural_height);
-//~				
-//~				while (Gtk.events_pending ()){
-//~					Gtk.main_iteration ();
-//~					}
-//~				Gdk.flush();
-//~				item.widget.unparent();
-//~				debug("remove get_preferred_height_for_width\n");
-//~				//this.queue_resize_no_redraw();
+				int minimum_height,natural_height;
+				hvbox_get_preferred_height_for_width(this.get_allocated_width(),out minimum_height, out natural_height);
+				this.queue_resize();//and redraw
 				return;
 				//possible problem not optimized exit
 //~ 				item.destroy();

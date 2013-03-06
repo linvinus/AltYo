@@ -167,6 +167,9 @@ public class AYSettings : AYTab{
 					else 
 					if(((Gtk.Buildable)w).get_name()=="tab_title_format_regex_treeview")
 						this.create_popup_tab_title_format_regex(event);
+					else
+					if(((Gtk.Buildable)w).get_name()=="terminal_url_regexps_treeview")
+						this.create_popup_terminal_url_regexps(event);
 					return true;
 			}
 		return false;
@@ -213,7 +216,28 @@ public class AYSettings : AYTab{
 		popup_menu.popup(null, null, null, event.button, event.time);
 		popup_menu.ref();//no one own menu,emulate owners,uref will be on_deactivate		
 	}
-	
+
+    private void create_popup_terminal_url_regexps(Gdk.EventButton event){
+		debug("popup_terminal_url_regexps");
+		Gtk.MenuItem menuitem;
+    	
+    	var popup_menu = new Gtk.Menu();
+		
+		menuitem = new Gtk.MenuItem.with_label(_("Add"));
+		menuitem.activate.connect(on_popup_terminal_url_regexps_add);
+		popup_menu.append(menuitem);		
+		
+		menuitem = new Gtk.MenuItem.with_label(_("Remove"));
+		menuitem.activate.connect(on_popup_terminal_url_regexps_remove);
+		popup_menu.append(menuitem);		
+		
+		popup_menu.deactivate.connect (this.on_popup_deactivate);
+		popup_menu.show_all();
+        //menu.attach_to_widget (this.vte_term, null);
+		popup_menu.popup(null, null, null, event.button, event.time);
+		popup_menu.ref();//no one own menu,emulate owners,uref will be on_deactivate		
+	}
+		
 	private void on_popup_deactivate(Widget m) {
 			((Gtk.Menu)m).deactivate.disconnect(on_popup_deactivate);
 			m.unref();//menu will be destroyed after end of deactivate event
@@ -251,6 +275,7 @@ public class AYSettings : AYTab{
 				}
 		}
 	}
+	
 	private void on_popup_tab_title_format_regex_add(){
 		var store = builder.get_object ("tab_title_format_regex") as Gtk.ListStore;
 		if(store!=null){
@@ -283,6 +308,39 @@ public class AYSettings : AYTab{
 				}
 		}
 	}
+
+	private void on_popup_terminal_url_regexps_add(){
+		var store = builder.get_object ("terminal_url_regexps") as Gtk.ListStore;
+		if(store!=null){
+			TreeIter? data_iter=null;
+			store.append (out data_iter);
+			store.set (data_iter,
+			0, "",
+			1, "",
+			-1);
+		}
+	}
+	
+	private void on_popup_terminal_url_regexps_remove(){
+		var store = builder.get_object ("terminal_url_regexps") as Gtk.ListStore;
+		var view = builder.get_object ("terminal_url_regexps_treeview") as Gtk.TreeView;
+		if(store!=null && view!=null){
+				TreePath path;
+				TreeViewColumn s_column;
+				TreeIter? iter=null;
+				view.get_cursor(out path,out s_column);
+				if(store.get_iter(out iter,path))
+				if(!store.iter_has_child(iter)){
+					store.remove(iter);
+					if(store.get_iter(out iter,path))
+						view.set_cursor(path,null,false);
+					else if(path.prev())
+						view.set_cursor(path,null,false);
+					else if(path.up())
+						view.set_cursor(path,null,false);
+				}
+		}
+	}	
 	
 	[CCode (instance_pos = -1)]
 	public void on_terminal_autostart_session_cellrenderertext_edited (Gtk.CellRendererText renderer, string path_string, string new_text){
@@ -336,6 +394,49 @@ public class AYSettings : AYTab{
 		
 		store = builder.get_object ("tab_title_format_regex") as Gtk.ListStore;
 
+		if(store == null) return;
+		
+        var path = new Gtk.TreePath.from_string (path_string);
+        
+        if (path == null) return;
+        
+        Gtk.TreeIter iter;
+        if (!store.get_iter (out iter, path)) return;	
+		
+		store.set (iter,
+			1, new_text,
+			-1);        
+	}
+	
+	[CCode (instance_pos = -1)]
+	public void on_terminal_url_regexps_match_cellrenderertext_pattern_edited (Gtk.CellRendererText renderer, string path_string, string new_text){
+		debug("on_terminal_url_regexps_match_cellrenderertext_pattern_edited start %s",path_string);
+		
+		Gtk.ListStore? store=null;
+
+		store = builder.get_object ("terminal_url_regexps") as Gtk.ListStore;
+		
+		if(store == null) return;
+		
+        var path = new Gtk.TreePath.from_string (path_string);
+        
+        if (path == null) return;
+        
+        Gtk.TreeIter iter;
+        if (!store.get_iter (out iter, path)) return;	
+		
+		store.set (iter,
+			0, new_text,
+			-1);        
+	}
+	[CCode (instance_pos = -1)]
+	public void on_terminal_url_regexps_run_cellrenderertext_pattern_edited (Gtk.CellRendererText renderer, string path_string, string new_text){
+		debug("on_terminal_url_regexps_run_cellrenderertext_pattern_edited start %s",path_string);
+		
+		Gtk.ListStore? store=null;
+
+		store = builder.get_object ("terminal_url_regexps") as Gtk.ListStore;
+		
 		if(store == null) return;
 		
         var path = new Gtk.TreePath.from_string (path_string);
@@ -436,7 +537,7 @@ public class AYSettings : AYTab{
 						var store = builder.get_object (key) as Gtk.ListStore;
 						if(store!=null){
 							string[] sl=this.my_conf.get_string_list(key,null);
-							if(key=="tab_title_format_regex"){
+							if(key=="tab_title_format_regex" || key=="terminal_url_regexps"){
 								for(int i=0; i<sl.length-1;i+=2){
 									TreeIter? data_iter=null;
 									store.append (out data_iter);
@@ -584,7 +685,7 @@ public class AYSettings : AYTab{
 						var store = builder.get_object (key) as Gtk.ListStore;
 						if(store!=null){
 							
-							if(key=="tab_title_format_regex"){
+							if(key=="tab_title_format_regex" || key=="terminal_url_regexps"){
 								string[] sl = {};
 								store.foreach((model,  path,  iter) =>{
 										string? s1=null,s2=null;

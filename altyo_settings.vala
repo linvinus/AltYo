@@ -178,11 +178,11 @@ public class AYSettings : AYTab{
     	
     	var popup_menu = new Gtk.Menu();
 		
-		menuitem = new Gtk.MenuItem.with_label("Add");
+		menuitem = new Gtk.MenuItem.with_label(_("Add"));
 		menuitem.activate.connect(on_popup_command_list_add);
 		popup_menu.append(menuitem);		
 		
-		menuitem = new Gtk.MenuItem.with_label("remove");
+		menuitem = new Gtk.MenuItem.with_label(_("Remove"));
 		menuitem.activate.connect(on_popup_command_list_remove);
 		popup_menu.append(menuitem);		
 		
@@ -199,11 +199,11 @@ public class AYSettings : AYTab{
     	
     	var popup_menu = new Gtk.Menu();
 		
-		menuitem = new Gtk.MenuItem.with_label("Add");
+		menuitem = new Gtk.MenuItem.with_label(_("Add"));
 		menuitem.activate.connect(on_popup_tab_title_format_regex_add);
 		popup_menu.append(menuitem);		
 		
-		menuitem = new Gtk.MenuItem.with_label("remove");
+		menuitem = new Gtk.MenuItem.with_label(_("Remove"));
 		menuitem.activate.connect(on_popup_tab_title_format_regex_remove);
 		popup_menu.append(menuitem);		
 		
@@ -495,10 +495,11 @@ public class AYSettings : AYTab{
 						2, accel_key,
 						3, accel_mods,
 						4, true,/*editable*/
+						5, ag.get_action(s).get_tooltip(),
 						-1);
 					}
-				});		
-				
+				});
+				this.keybindings_store.set_sort_column_id(0,Gtk.SortType.ASCENDING);
 	}//get_from_conf
 
 	public void apply() {

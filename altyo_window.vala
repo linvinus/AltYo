@@ -194,10 +194,8 @@ public class VTMainWindow : Window{
 				}
 							
 				var ch=this.pixwin.get_child();//.reparent(this);//reparent from offscreen window
-				if(ch!=null){//prevent error if start hidden
-					this.pixwin.remove(ch);
-					this.add(ch);
-				}
+				this.pixwin.remove(ch);
+				this.add(ch);
 				this.pull_animation_active=false;
 				
 				this.update_position_size();
@@ -224,7 +222,8 @@ public class VTMainWindow : Window{
 	public void pull_down(){
 		if(this.pull_animation_active)
 			return;		
-		if(!this.animation_enabled){
+		if(!this.animation_enabled ||
+			this.pixwin.get_child()==null){//prevent error if start hidden
 			this.configure_position();
 			this.show();
 			this.move (this.orig_x ,this.orig_y);

@@ -1,3 +1,16 @@
+altyo (0.2~130306-linvinus1) quantal; urgency=low
+
+  * update: makefile
+  * fix: more accurate Gtk error correction, when used option "Start hidden"
+  * update: English translation new: in settings GUI, key binding sort function
+  * fix: window size after hvbox size changed new: gui for option terminal_url_regexps
+  * update: redesign gui settings update: Russian translation
+  * fix:makefile gen_changes
+  * fix:makefile gen_changes
+  * fix:makefile gen_changes
+
+ -- denis <linvinus@gmail.com>  Wed, 06 Mar 2013 23:18:33 +0400
+
 altyo (0.2~130305-linvinus1) quantal; urgency=low
 
   [ denis ]

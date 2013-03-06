@@ -18,7 +18,7 @@ ifeq ($(LINUX.DISTRIB.ID),Ubuntu)
 LINUX.DISTRIB.ID=debian
 endif
 
-DEBIAN.CHANGELOG=${shell grep -m 1 "^altyo" ./debian/changelog | sed 's/.*(//' | sed 's/).*$$//'}
+CHANGELOG_TAG=${shell grep -m 1 "^altyo" ./debian/changelog | sed 's/.*(//' | sed 's/).*$$//'| sed 's/~/_/' | sed 's/:/%/'}
 
 VALA_FLAGS = -v
 VALA_FLAGS += --disable-warnings
@@ -88,8 +88,8 @@ gen_changes:
 	$(MAKE) gen_changes_stage2
 
 gen_changes_stage2:
-	git commit -m "new: debian release $(DEBIAN.CHANGELOG)"
-	git tag "debian/$(DEBIAN.CHANGELOG)"
+	git commit -m "new: debian release $(CHANGELOG_TAG)"
+	git tag "debian/$(CHANGELOG_TAG)"
 	git push
 	git push origin --tags
 

@@ -3,6 +3,6 @@
   <gresource prefix="/org/gnome/altyo">
     <!--file alias="altyo.png" preprocess="to-pixdata">altyo.png</file-->
     <file alias="altyo.svg">altyo.svg</file>
-    <file alias="preferences.ui" preprocess="xml-stripblanks">preferences.ui</file>
+    <file alias="preferences.glade" preprocess="xml-stripblanks">preferences.glade</file>
   </gresource>
 </gresources>

@@ -653,11 +653,11 @@ public class VTMainWindow : Window{
 
 	public string ShowGrabKeyDialog(string? prev_bind=null){
 
-			var title="Please select key combination, to show/hide AltYo.";
+			var title=_("Please select key combination, to show/hide AltYo.");
 			if(prev_bind!=null)
-				title+="\nprevious key '%s' incorrect or busy".printf(prev_bind);
+				title+="\n"+_("previous key '%s' incorrect or busy").printf(prev_bind);
 			var dialog = new MessageDialog (null, (DialogFlags.DESTROY_WITH_PARENT | DialogFlags.MODAL), MessageType.QUESTION, ButtonsType.OK, title);
-			var aLabel = new Label("Press any key");
+			var aLabel = new Label(_("Press any key"));
 			var dialog_box = ((Gtk.Box)dialog.get_content_area ());
 			dialog_box.pack_start(aLabel,false,false,0);
 			aLabel.show();
@@ -670,7 +670,7 @@ public class VTMainWindow : Window{
 				}
 			});
 
-			var grab_another_key = new Button.with_label("Grab another key.");
+			var grab_another_key = new Button.with_label(_("Grab another key."));
 			grab_another_key.clicked.connect(()=>{
 				grab_another_key.sensitive=false;
 				dialog.set_response_sensitive(Gtk.ResponseType.OK,false);

@@ -47,6 +47,9 @@ VALA_FILES  = vapi/config.vapi \
 #VALA_FLAGS += --pkg gnome-keyring-1 -D HAVE_QLIST
 #VALA_FILES += 	altyo_quick_connectios.vala
 
+GLADE_FILES = data/preferences.glade
+
+
 default:
 	#test -e ./altyo && rm ./altyo
 	glib-compile-resources --sourcedir=./data --generate-source ./data/altyo.gresource.xml
@@ -71,7 +74,7 @@ install: gen_po
 	cp -a ./data/altyo.png $(DESTDIR)$(PREFIX)/share/icons
 
 gen_po:
-	xgettext -o ./po/altyo.po --from-code=UTF-8 -language=C -k_ $(VALA_FILES)
+	xgettext -o ./po/altyo.po --from-code=UTF-8 -language=C -k_ $(VALA_FILES) $(GLADE_FILES)
 	msgmerge -s -U ./po/ru/LC_MESSAGES/$(PRG_NAME).po  ./po/$(PRG_NAME).po
 	msgfmt -c -v -o ./po/ru/LC_MESSAGES/$(PRG_NAME).mo ./po/ru/LC_MESSAGES/$(PRG_NAME).po
 

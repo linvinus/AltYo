@@ -1,3 +1,21 @@
+altyo (0.2~130307-linvinus1) quantal; urgency=low
+
+  [ linvinus ]
+  * fix: finaly, correct position after unmaximize
+  * fix: resize is also important
+  * fix: finally, correct position after unmaximize, another solution
+
+  [ denis ]
+  * new: option window_default_monitor update: translations
+  * fix: finally, correct position after unmaximize, another solution2,oh tired 
+  * update: program logic on multi-monitor systems 
+  * new: label in gui settings, current monitor
+  * update: translation
+  * new: option terminal_backspace_binding update: translations
+  * update: Russian translation
+
+ -- denis <linvinus@gmail.com>  Thu, 07 Mar 2013 23:49:30 +0400
+
 altyo (0.2~130306-linvinus1) quantal; urgency=low
 
   * update: makefile

@@ -490,6 +490,7 @@ public class VTMainWindow : Window{
 							this.ayobject.main_vbox.set_size_request(this.ayobject.terminal_width,0);
 							this.ayobject.tasks_notebook.set_size_request(this.ayobject.terminal_width,this.ayobject.terminal_height);
 							this.set_default_size(this.ayobject.terminal_width,should_be_h);
+							this.resize(this.ayobject.terminal_width,should_be_h);
 							debug ("update_position_size should_be_h=%d terminal_width=%d",should_be_h,this.ayobject.terminal_width) ;
 						}						
 						this.move (this.orig_x,this.orig_y);

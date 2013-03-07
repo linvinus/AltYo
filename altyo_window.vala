@@ -68,6 +68,8 @@ public class VTMainWindow : Window{
 	public int orig_y = 0;
 	private int pull_w = 0;
 	private int pull_h = 0;
+	private int pull_x = 0;
+	private int pull_y = 0;
 	private int orig_h_tasks_notebook=0;
 	private int orig_w_tasks_notebook=0;
 	private int orig_h_main_vbox=0;
@@ -276,6 +278,7 @@ public class VTMainWindow : Window{
 			return;		
 		this.pull_h=this.get_allocated_height();
 		this.pull_w=this.get_allocated_width();
+		this.get_position (out this.pull_x, out this.pull_y); 
 		this.prev_focus=this.get_focus();
 		debug("pull_up orig_h=%d orig_w=%d",this.pull_h,this.pull_w);
 		this.orig_h_main_vbox = this.ayobject.main_vbox.get_allocated_height();
@@ -317,7 +320,8 @@ public class VTMainWindow : Window{
 			/*reset geometry hints, allow min height =1
 			 * */
 			this.update_geometry_hints(0,this.pull_w,1,this.pull_w,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
-			this.unmaximize();
+			this.unmaximize();/*not working in metacity on secondary monitor, seems metacity bug*/
+			this.move(this.pull_x,this.pull_y);
 			this.update_events();
 		}else{
 			this.ayobject.main_vbox.set_size_request(this.orig_w_main_vbox,orig_h_main_vbox);
@@ -370,30 +374,15 @@ public class VTMainWindow : Window{
 				}else{//unmaximize
 					if(this.maximized){
 						this.maximized = false;
-						/*reset geometry hints
+						/* reset geometry hints
 						 * allow resize from maximized size
 						 * */
 						this.configure_position();
-						var gem=new Gdk.Geometry();
-						gem.base_height=1;
-						gem.base_width=1;
-						gem.height_inc=0;
-						gem.max_aspect=0;
-						gem.max_height=0;
-						gem.max_width=0;
-						gem.min_aspect=0;
-						gem.min_height=1;
-						gem.min_width=1;
-						gem.width_inc=0;
-						/*inform manager where window should be placed*/
-						if(this.position==0)
-							gem.win_gravity=Gdk.Gravity.NORTH_WEST;
-						else if(this.position==1)
-							gem.win_gravity=Gdk.Gravity.NORTH;
-						else if(this.position==2)
-							gem.win_gravity=Gdk.Gravity.NORTH_EAST;
-						
-						this.set_geometry_hints(null,gem,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE|Gdk.WindowHints.WIN_GRAVITY);
+						this.update_geometry_hints(1,1,1,1,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
+						/* inform window manager where window should be placed*/
+						/* gem.win_gravity=Gdk.Gravity.NORTH; not working for multi-seat systems =( , 
+						 * use move_resize instead */
+						this.get_window().move_resize(this.orig_x,this.orig_y,this.ayobject.terminal_width,this.ayobject.terminal_height);
 						this.update_position_size();
 						//this.update_maximized_size=true;
 					}			

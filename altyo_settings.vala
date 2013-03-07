@@ -499,6 +499,20 @@ public class AYSettings : AYTab{
 				}
 				break;
 				case CFG_TYPE.TYPE_STRING:
+						if(key=="window_default_monitor"){
+							var store = builder.get_object (key+"_liststore") as Gtk.ListStore;
+							unowned Gdk.Screen gscreen = this.ayobject.main_window.get_screen ();
+							for(var i=0;i<gscreen.get_n_monitors ();i++){
+								TreeIter? data_iter=null;
+								store.append (out data_iter);
+								store.set (data_iter,
+								0,gscreen.get_monitor_plug_name(i),
+								-1);
+							}
+							var combo = builder.get_object (key) as Gtk.ComboBox;
+							var entry = combo.get_child() as Gtk.Entry;
+							entry.text=this.my_conf.get_string(key,"");
+						}else
 						if(key=="terminal_font"){
 							var B = builder.get_object (key) as Gtk.FontButton;
 							B.font_name=this.my_conf.get_string(key,"");
@@ -641,6 +655,13 @@ public class AYSettings : AYTab{
 				}
 				break;
 				case CFG_TYPE.TYPE_STRING:
+						if(key=="window_default_monitor"){
+							var combo = builder.get_object (key) as Gtk.ComboBox;
+							var entry = combo.get_child() as Gtk.Entry;
+							if(entry.text!=this.my_conf.get_string(key,"")){
+								this.my_conf.set_string(key,entry.text);
+							}
+						}else				
 						if(key=="terminal_font"){
 							var B = builder.get_object (key) as Gtk.FontButton;
 							if(B.font_name!=this.my_conf.get_string(key,""))

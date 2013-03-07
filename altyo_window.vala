@@ -165,8 +165,42 @@ public class VTMainWindow : Window{
 				this.update_events();
 			}
 			});
-		this.configure_position();
+		this.check_monitor_and_configure_position();
 		this.update_position_size();
+	}
+	
+	public void check_monitor_and_configure_position(){
+			/* move window to appropriate monitor
+			 * */
+			string? cfg_monitor = this.conf.get_string("window_default_monitor","");
+			if(cfg_monitor!=null && cfg_monitor!=""){
+				int x,y;
+				this.get_position (out x, out y); 		
+				unowned Gdk.Screen gscreen = this.get_screen ();
+
+				var current_monitor = gscreen.get_monitor_at_point (this.orig_x,this.orig_y);
+				var current_monitor_name = gscreen.get_monitor_plug_name (current_monitor);
+				if(current_monitor_name!=cfg_monitor){
+					for(var i=0;i<gscreen.get_n_monitors ();i++){
+						if(gscreen.get_monitor_plug_name(i)==cfg_monitor){
+							debug("found monitor name %s",gscreen.get_monitor_plug_name (i));
+							Gdk.Rectangle rectangle;
+							rectangle=gscreen.get_monitor_workarea(i);
+							this.orig_x=rectangle.x+10;
+							var tmp=this.mouse_follow;
+							this.mouse_follow=false;
+							this.configure_position();
+							this.mouse_follow=tmp;
+							this.move(this.orig_x,this.orig_y);
+							return;//configured
+						}
+					}
+				}
+				
+			}
+		/* mointor not found,
+		 * use primary*/
+		this.configure_position();
 	}
 	
 	public bool on_pull_down(){
@@ -395,7 +429,7 @@ public class VTMainWindow : Window{
 	}
 
 	public override bool configure_event(Gdk.EventConfigure event){
-		debug("configure_event");
+//~ 		debug("configure_event");
 		debug("event.type=%d window=%d x=%d y=%d width=%d height=%d",event.type,(int)event.window,event.x,event.y,event.width,event.height);
 //~		if(this.pull_animation_active || this.pull_active)//ignore event when pull active
 //~			return false;
@@ -564,7 +598,7 @@ public class VTMainWindow : Window{
 				current_monitor = gscreen.get_monitor_at_point (event.xbutton.x,event.xbutton.y);
 			}else
 			    current_monitor = gscreen.get_monitor_at_point (this.orig_x,this.orig_y);
-
+			debug("monitor name %s",gscreen.get_monitor_plug_name (current_monitor));
 			Gdk.Rectangle rectangle;
 			rectangle=gscreen.get_monitor_workarea(current_monitor);
 
@@ -921,6 +955,8 @@ public class AYObject :Object{
 			this.reconfigure();
 			});
 
+		//add type totype array
+		this.conf.get_boolean("terminal_new_tab_in_current_directory",true);
 	}//CreateAYObject
 
 
@@ -1248,12 +1284,12 @@ public class AYObject :Object{
 
 	
 
-	public void ShowHelp(){
+	public void ShowAbout(){
 			var dialog = new AboutDialog();
 			dialog.license_type = Gtk.License.GPL_3_0;
 			dialog.authors={"Konstantinov Denis linvinus@gmail.com"};
 			dialog.website ="https://github.com/linvinus/AltYo";
-			dialog.version ="0.2";
+			dialog.version ="0.3";
 			dialog.translator_credits="in English by willemw12@gmail.com";
 
 			dialog.response.connect ((response_id) => {
@@ -1484,7 +1520,7 @@ public class AYObject :Object{
 
 		/* Add New Tab on <Ctrl><Shift>t */
 		this.add_window_accel("altyo_help", _("About"), _("About"), Gtk.Stock.NEW,"F1",()=>{
-			this.ShowHelp();
+			this.ShowAbout();
 		});
 
 		this.add_window_toggle_accel("disable_sort_tab", _("Disable sort tab"), _("Disable sort tab"), Gtk.Stock.EDIT,"",()=> {

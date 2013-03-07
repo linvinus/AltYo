@@ -488,7 +488,8 @@ public class AYSettings : AYTab{
 				if(key=="position" ||
 				   key=="terminal_cursorshape" ||
 				   key=="terminal_cursor_blinkmode" ||
-				   key=="terminal_delete_binding"){
+				   key=="terminal_delete_binding" ||
+				   key=="terminal_backspace_binding" ){
 					var B = builder.get_object (key) as Gtk.ComboBox;
 						B.active=this.my_conf.get_integer(key,0);
 				}else{
@@ -646,7 +647,8 @@ public class AYSettings : AYTab{
 				if(key=="position" ||
 				   key=="terminal_cursorshape" ||
 				   key=="terminal_cursor_blinkmode" ||
-				   key=="terminal_delete_binding"){
+				   key=="terminal_delete_binding" ||
+				   key=="terminal_backspace_binding"){
 					var B = builder.get_object (key) as Gtk.ComboBox;
 						if(B.active!=this.my_conf.get_integer(key,0))
 							this.my_conf.set_integer(key,B.active);

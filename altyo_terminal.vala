@@ -604,6 +604,13 @@ public class VTTerminal : AYTab{
 			return false;
 			});
 		this.vte_term.set_delete_binding ((Vte.TerminalEraseBinding)delbinding);
+		/*0-AUTO,1-BACKSPACE,2-DELETE,3-SEQUENCE,4-TTY*/
+		var backspace  = my_conf.get_integer("terminal_backspace_binding",0,(ref new_val)=>{
+			if(new_val>4){new_val=0;return true;}
+			if(new_val<0){new_val=0;return true;}
+			return false;
+			});
+		this.vte_term.set_backspace_binding ((Vte.TerminalEraseBinding)delbinding);
 		
 		string[] url_regexps = my_conf.get_string_list("terminal_url_regexps",{"http://[a-z0-9%-+?\\./]*","xdg-open"});
 		if((url_regexps.length % 2) == 0){

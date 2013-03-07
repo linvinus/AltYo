@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-07 21:59+0400\n"
+"POT-Creation-Date: 2013-03-07 23:40+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "Shell terminated."
 msgstr ""
 
-#: altyo_terminal.vala:669
+#: altyo_terminal.vala:676
 msgid "Additional settings"
 msgstr ""
 
@@ -176,6 +176,30 @@ msgstr ""
 msgid "Remove"
 msgstr ""
 
+#: data/preferences.glade:17
+msgid "Block"
+msgstr ""
+
+#: data/preferences.glade:20
+msgid "Ibeam"
+msgstr ""
+
+#: data/preferences.glade:23
+msgid "Underline"
+msgstr ""
+
+#: data/preferences.glade:60
+msgid "Left"
+msgstr ""
+
+#: data/preferences.glade:63
+msgid "Center"
+msgstr ""
+
+#: data/preferences.glade:66
+msgid "Right"
+msgstr ""
+
 #: data/preferences.glade:143
 msgid "Enable"
 msgstr ""
@@ -328,94 +352,130 @@ msgstr ""
 msgid "Delete key binding"
 msgstr ""
 
-#: data/preferences.glade:1258
+#: data/preferences.glade:1255
+msgid "Backspace key binding"
+msgstr ""
+
+#: data/preferences.glade:1291
 msgid "<b>Terminal</b>"
 msgstr ""
 
-#: data/preferences.glade:1277
+#: data/preferences.glade:1310
 msgid "Look and feel"
 msgstr ""
 
-#: data/preferences.glade:1310
+#: data/preferences.glade:1343
 msgid "Temporary lock key bindings"
 msgstr ""
 
-#: data/preferences.glade:1330
+#: data/preferences.glade:1363
 msgid "Double hotkey milliseconds"
 msgstr ""
 
-#: data/preferences.glade:1379
+#: data/preferences.glade:1412
 msgid "Action"
 msgstr ""
 
-#: data/preferences.glade:1392
+#: data/preferences.glade:1425
 msgid "Key binding"
 msgstr ""
 
-#: data/preferences.glade:1423
+#: data/preferences.glade:1456
 msgid "<b>Key bindings</b>"
 msgstr ""
 
-#: data/preferences.glade:1438
+#: data/preferences.glade:1471
 msgid "Key bindings"
 msgstr ""
 
-#: data/preferences.glade:1487
+#: data/preferences.glade:1520
 msgid "Base title"
 msgstr ""
 
-#: data/preferences.glade:1516
+#: data/preferences.glade:1549
 msgid "Terminal header"
 msgstr ""
 
-#: data/preferences.glade:1548
+#: data/preferences.glade:1581
 msgid "<b>Tab format</b>"
 msgstr ""
 
-#: data/preferences.glade:1584
+#: data/preferences.glade:1617
 msgid "Pattern"
 msgstr ""
 
-#: data/preferences.glade:1598
+#: data/preferences.glade:1631
 msgid "Replace"
 msgstr ""
 
-#: data/preferences.glade:1618
+#: data/preferences.glade:1651
 msgid "<b>Pattern</b>"
 msgstr ""
 
-#: data/preferences.glade:1635
+#: data/preferences.glade:1668
 msgid "Tab: title format"
 msgstr ""
 
-#: data/preferences.glade:1662
+#: data/preferences.glade:1695
 msgid "Command"
 msgstr ""
 
-#: data/preferences.glade:1680
+#: data/preferences.glade:1713
 msgid "Auto run commands"
 msgstr ""
 
-#: data/preferences.glade:1912
+#: data/preferences.glade:1945
 msgid "Color palette"
 msgstr ""
 
-#: data/preferences.glade:1938
+#: data/preferences.glade:1971
 msgid "Match"
 msgstr ""
 
-#: data/preferences.glade:1952
+#: data/preferences.glade:1985
 msgid "Run"
 msgstr ""
 
-#: data/preferences.glade:1970
+#: data/preferences.glade:2003
 msgid "Terminal regexps"
 msgstr ""
 
-#: data/preferences.glade:2005
+#: data/preferences.glade:2038
 msgid "Application style"
 msgstr ""
 
-#: data/preferences.glade:2024
+#: data/preferences.glade:2057
 msgid "Advanced"
+msgstr ""
+
+#: data/preferences.glade:2145
+msgid "System"
+msgstr ""
+
+#: data/preferences.glade:2148
+msgid "On"
+msgstr ""
+
+#: data/preferences.glade:2151
+msgid "Off"
+msgstr ""
+
+#: data/preferences.glade:2162
+msgid "Auto"
+msgstr ""
+
+#: data/preferences.glade:2165
+msgid "ASCII Backspace"
+msgstr ""
+
+#: data/preferences.glade:2168
+msgid "ASCII Delete"
+msgstr ""
+
+#: data/preferences.glade:2171
+msgid "Delete sequence"
+msgstr ""
+
+#: data/preferences.glade:2174
+msgid "TTY \"erase\""
 msgstr ""

@@ -373,8 +373,27 @@ public class VTMainWindow : Window{
 						/*reset geometry hints
 						 * allow resize from maximized size
 						 * */
-						this.update_geometry_hints(0,0,1,1,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
 						this.configure_position();
+						var gem=new Gdk.Geometry();
+						gem.base_height=1;
+						gem.base_width=1;
+						gem.height_inc=0;
+						gem.max_aspect=0;
+						gem.max_height=0;
+						gem.max_width=0;
+						gem.min_aspect=0;
+						gem.min_height=1;
+						gem.min_width=1;
+						gem.width_inc=0;
+						/*inform manager where window should be placed*/
+						if(this.position==0)
+							gem.win_gravity=Gdk.Gravity.NORTH_WEST;
+						else if(this.position==1)
+							gem.win_gravity=Gdk.Gravity.NORTH;
+						else if(this.position==2)
+							gem.win_gravity=Gdk.Gravity.NORTH_EAST;
+						
+						this.set_geometry_hints(null,gem,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE|Gdk.WindowHints.WIN_GRAVITY);
 						this.update_position_size();
 						//this.update_maximized_size=true;
 					}			
@@ -471,14 +490,9 @@ public class VTMainWindow : Window{
 							this.ayobject.main_vbox.set_size_request(this.ayobject.terminal_width,0);
 							this.ayobject.tasks_notebook.set_size_request(this.ayobject.terminal_width,this.ayobject.terminal_height);
 							this.set_default_size(this.ayobject.terminal_width,should_be_h);
-							this.resize (this.ayobject.terminal_width,should_be_h);
-							this.queue_resize_no_redraw();
-							
-							//GLib.Timeout.add(10,()=>{debug("Update events");this.update_events(); return false;});
 							debug ("update_position_size should_be_h=%d terminal_width=%d",should_be_h,this.ayobject.terminal_width) ;
 						}						
 						this.move (this.orig_x,this.orig_y);
-						this.update_events();
 				}else{
 					if(this.orig_w_main_vbox!=0 && this.orig_h_main_vbox!=0 &&
 						this.orig_w_tasks_notebook!=0 && this.orig_h_tasks_notebook!=0){

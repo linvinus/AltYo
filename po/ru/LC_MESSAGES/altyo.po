@@ -134,7 +134,7 @@ msgstr "Блок"
 
 #: data/preferences.glade:63
 msgid "Center"
-msgstr "Центр"
+msgstr "В центре"
 
 #: altyo_window.vala:1409
 msgid "Close current tab"

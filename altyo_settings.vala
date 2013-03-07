@@ -512,6 +512,10 @@ public class AYSettings : AYTab{
 							var combo = builder.get_object (key) as Gtk.ComboBox;
 							var entry = combo.get_child() as Gtk.Entry;
 							entry.text=this.my_conf.get_string(key,"");
+							int x,y;
+							this.ayobject.main_window.get_position (out x, out y);
+							var curr_monitor = builder.get_object (key+"_label") as Gtk.Label;
+							curr_monitor.label = gscreen.get_monitor_plug_name(gscreen.get_monitor_at_point (x,y));
 						}else
 						if(key=="terminal_font"){
 							var B = builder.get_object (key) as Gtk.FontButton;

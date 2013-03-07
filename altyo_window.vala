@@ -74,6 +74,7 @@ public class VTMainWindow : Window{
 	private int orig_w_tasks_notebook=0;
 	private int orig_h_main_vbox=0;
 	private int orig_w_main_vbox=0;
+	private int orig_monitor=-1;
 	public int position = 1;
 	public bool config_maximized=false;
 	public bool pull_maximized=false;
@@ -169,7 +170,7 @@ public class VTMainWindow : Window{
 		this.update_position_size();
 	}
 	
-	public void check_monitor_and_configure_position(){
+	private void check_monitor_and_configure_position(){
 			/* move window to appropriate monitor
 			 * */
 			string? cfg_monitor = this.conf.get_string("window_default_monitor","");
@@ -185,6 +186,7 @@ public class VTMainWindow : Window{
 						if(gscreen.get_monitor_plug_name(i)==cfg_monitor){
 							debug("found monitor name %s",gscreen.get_monitor_plug_name (i));
 							Gdk.Rectangle rectangle;
+							this.orig_monitor=i;
 							rectangle=gscreen.get_monitor_workarea(i);
 							this.orig_x=rectangle.x+10;
 							var tmp=this.mouse_follow;
@@ -201,6 +203,19 @@ public class VTMainWindow : Window{
 		/* mointor not found,
 		 * use primary*/
 		this.configure_position();
+	}
+
+	private void save_current_monitor(int x,int y){
+			/* save position for current monitor
+			 * */
+				unowned Gdk.Screen gscreen = this.get_screen ();
+				var current_monitor = gscreen.get_monitor_at_point (x,y);
+				if(this.orig_monitor!=current_monitor){
+					this.orig_monitor=current_monitor;
+					this.orig_x=x;
+					this.orig_y=y;
+					this.configure_position();
+				}
 	}
 	
 	public bool on_pull_down(){
@@ -278,7 +293,10 @@ public class VTMainWindow : Window{
 		this.realize();
 		this.update_events();
 		this.resize (this.pull_w,2);//start height
-		this.move (this.orig_x,this.orig_y);
+		if(this.mouse_follow && !this.pull_maximized){
+			this.move (this.orig_x,this.orig_y);//new position
+		}else
+			this.move (this.pull_x,this.pull_y);
 		this.update_events();
 		if (this.pull_w != 0 && this.pull_h != 0)
 			this.pull_step=0;
@@ -321,6 +339,7 @@ public class VTMainWindow : Window{
 		this.orig_w_tasks_notebook = this.ayobject.tasks_notebook.get_allocated_width();
 		debug("pull_up orig_h_note=%d orig_w_note=%d",orig_h_main_vbox,orig_w_main_vbox);
 		this.pull_maximized=this.maximized;
+		this.save_current_monitor(this.pull_x,this.pull_y);
 		if(!this.animation_enabled){
 			this.prev_focus=this.get_focus();
 			this.hide();
@@ -413,10 +432,6 @@ public class VTMainWindow : Window{
 						 * */
 						this.configure_position();
 						this.update_geometry_hints(1,1,1,1,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
-						/* inform window manager where window should be placed*/
-						/* gem.win_gravity=Gdk.Gravity.NORTH; not working for multi-seat systems =( , 
-						 * use move_resize instead */
-						this.get_window().move_resize(this.orig_x,this.orig_y,this.ayobject.terminal_width,this.ayobject.terminal_height);
 						this.update_position_size();
 						//this.update_maximized_size=true;
 					}			
@@ -430,14 +445,9 @@ public class VTMainWindow : Window{
 
 	public override bool configure_event(Gdk.EventConfigure event){
 //~ 		debug("configure_event");
-		debug("event.type=%d window=%d x=%d y=%d width=%d height=%d",event.type,(int)event.window,event.x,event.y,event.width,event.height);
-//~		if(this.pull_animation_active || this.pull_active)//ignore event when pull active
-//~			return false;
+		//debug("event.type=%d window=%d x=%d y=%d width=%d height=%d",event.type,(int)event.window,event.x,event.y,event.width,event.height);
 		var ret=base.configure_event(event);
-
 		if(event.type==13 && this.current_state==WStates.VISIBLE){
-			this.orig_x=event.x;
-			this.orig_y=event.y;
 			if(update_maximized_size){
 				/* update hints, so first pull up ,after maximize, will be smooth
 				 * this size will be after unmaximize (pull_up call unmaximize)
@@ -514,9 +524,16 @@ public class VTMainWindow : Window{
 							this.ayobject.tasks_notebook.set_size_request(this.ayobject.terminal_width,this.ayobject.terminal_height);
 							this.set_default_size(this.ayobject.terminal_width,should_be_h);
 							this.resize(this.ayobject.terminal_width,should_be_h);
-							debug ("update_position_size should_be_h=%d terminal_width=%d",should_be_h,this.ayobject.terminal_width) ;
-						}						
-						this.move (this.orig_x,this.orig_y);
+							this.update_events();
+							this.move (this.orig_x,this.orig_y);
+							/* inform window manager where window should be placed*/
+							/* gem.win_gravity=Gdk.Gravity.NORTH; not working for multi-seat systems =( , 
+							 * use move_resize instead */						
+							this.get_window().move_resize(this.orig_x,this.orig_y,this.ayobject.terminal_width,should_be_h);
+							debug ("update_position_size should_be_h=%d terminal_width=%d x=%d y=%d",should_be_h,this.ayobject.terminal_width,this.orig_x,this.orig_y) ;
+						}else
+							this.move (this.orig_x,this.orig_y);
+						
 				}else{
 					if(this.orig_w_main_vbox!=0 && this.orig_h_main_vbox!=0 &&
 						this.orig_w_tasks_notebook!=0 && this.orig_h_tasks_notebook!=0){

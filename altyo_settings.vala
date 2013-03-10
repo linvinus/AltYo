@@ -15,10 +15,12 @@ public class AYSettings : AYTab{
 	private Gtk.Builder builder;
 	public AYObject ayobject {get;set;default=null;}
 	private Gtk.ListStore keybindings_store;
+	private string autorun_file;
 	public AYSettings(MySettings my_conf,Notebook notebook, int tab_index,AYObject ayo) {
 		base(my_conf, notebook, tab_index);
 		this.tbutton.tab_format="AYSettings";
 		this.ayobject=ayo;
+		this.autorun_file = GLib.Environment.get_user_config_dir()+"/autostart"+"/altyo.desktop";
 		this.builder = new Gtk.Builder ();
  			try {
 				this.builder.add_from_resource ("/org/gnome/altyo/preferences.glade");
@@ -31,7 +33,7 @@ public class AYSettings : AYTab{
  				error ("loading menu builder file: %s", e.message);
  			}
 	}
-	
+
 	[CCode (instance_pos = -1)]
 	public void on_font_set  (Gtk.FontButton w) {
 		debug("New font is: %s",w.get_font_name());
@@ -65,11 +67,11 @@ public class AYSettings : AYTab{
 			F.unselect_all();
 		}
 	}
-	
+
 	[CCode (instance_pos = -1)]
 	public void on_apply(Gtk.Button w) {
 		this.apply();
-	}	
+	}
 
 	[CCode (instance_pos = -1)]
 	public void on_close(Gtk.Button w) {
@@ -81,7 +83,7 @@ public class AYSettings : AYTab{
 	public void on_lock_keybindings_toggled  (Gtk.CheckButton w) {
 		this.ayobject.action_group.set_sensitive(!w.active);
 	}
-	
+
 	[CCode (instance_pos = -1)]
     public void accel_edited_cb (Gtk.CellRendererAccel cell, string path_string, uint accel_key, Gdk.ModifierType accel_mods, uint hardware_keycode){
 		debug("accel_edited_cb start");
@@ -101,7 +103,7 @@ public class AYSettings : AYTab{
 			string? name = this.get_name_from_path(accel_path);
 			if(name!=null){
 				var parsed_name=Gtk.accelerator_name (accel_key, accel_mods);
-				this.my_conf.set_accel_string(name,parsed_name);				
+				this.my_conf.set_accel_string(name,parsed_name);
 				this.keybindings_store.set (iter, 2, accel_key);
 				this.keybindings_store.set (iter, 3, accel_mods);
 				if(name=="main_hotkey"){
@@ -110,7 +112,7 @@ public class AYSettings : AYTab{
 					if(parsed_name != saved_key){
 						//some thing was wrong,update key value
 						unowned uint accelerator_key;
-						unowned Gdk.ModifierType accelerator_mods;						
+						unowned Gdk.ModifierType accelerator_mods;
 						Gtk.accelerator_parse(saved_key,out accelerator_key,out accelerator_mods);
 						accel_key=accelerator_key;
 						accel_mods=accelerator_mods;
@@ -118,7 +120,7 @@ public class AYSettings : AYTab{
 				}
 			this.keybindings_store.set (iter, 2, accel_key);
 			this.keybindings_store.set (iter, 3, accel_mods);
-			this.my_conf.save();	
+			this.my_conf.save();
 			}
 		}else{
 			debug("accel_edited_cb unable to change!");
@@ -133,7 +135,7 @@ public class AYSettings : AYTab{
 			this.ayobject.main_window.show_message_box("error",s);
 		}
     }
-    
+
     [CCode (instance_pos = -1)]
      public void accel_cleared_cb (Gtk.CellRendererAccel cell,string path_string){
 		debug("accel_cleared_cb start");
@@ -157,14 +159,14 @@ public class AYSettings : AYTab{
 		}
 //~         settings.set_int (key, 0);
     }
-    
+
     [CCode (instance_pos = -1)]
     public bool on_command_list_button_press_event(Gtk.Widget w,Gdk.EventButton event){
 		debug("command_list_button_press_event %s",w.name);
 			if((int)event.button == 3){//right mouse button
 					if(((Gtk.Buildable)w).get_name()=="terminal_autostart_session_treeview")
 						this.create_popup_command_list(event);
-					else 
+					else
 					if(((Gtk.Buildable)w).get_name()=="tab_title_format_regex_treeview")
 						this.create_popup_tab_title_format_regex(event);
 					else
@@ -174,75 +176,75 @@ public class AYSettings : AYTab{
 			}
 		return false;
 	}
-		
+
     private void create_popup_command_list(Gdk.EventButton event){
 		debug("popup_command_list");
 		Gtk.MenuItem menuitem;
-    	
+
     	var popup_menu = new Gtk.Menu();
-		
+
 		menuitem = new Gtk.MenuItem.with_label(_("Add"));
 		menuitem.activate.connect(on_popup_command_list_add);
-		popup_menu.append(menuitem);		
-		
+		popup_menu.append(menuitem);
+
 		menuitem = new Gtk.MenuItem.with_label(_("Remove"));
 		menuitem.activate.connect(on_popup_command_list_remove);
-		popup_menu.append(menuitem);		
-		
+		popup_menu.append(menuitem);
+
 		popup_menu.deactivate.connect (this.on_popup_deactivate);
 		popup_menu.show_all();
         //menu.attach_to_widget (this.vte_term, null);
 		popup_menu.popup(null, null, null, event.button, event.time);
-		popup_menu.ref();//no one own menu,emulate owners,uref will be on_deactivate		
+		popup_menu.ref();//no one own menu,emulate owners,uref will be on_deactivate
 	}
-   
+
     private void create_popup_tab_title_format_regex(Gdk.EventButton event){
 		debug("popup_tab_title_format_regex");
 		Gtk.MenuItem menuitem;
-    	
+
     	var popup_menu = new Gtk.Menu();
-		
+
 		menuitem = new Gtk.MenuItem.with_label(_("Add"));
 		menuitem.activate.connect(on_popup_tab_title_format_regex_add);
-		popup_menu.append(menuitem);		
-		
+		popup_menu.append(menuitem);
+
 		menuitem = new Gtk.MenuItem.with_label(_("Remove"));
 		menuitem.activate.connect(on_popup_tab_title_format_regex_remove);
-		popup_menu.append(menuitem);		
-		
+		popup_menu.append(menuitem);
+
 		popup_menu.deactivate.connect (this.on_popup_deactivate);
 		popup_menu.show_all();
         //menu.attach_to_widget (this.vte_term, null);
 		popup_menu.popup(null, null, null, event.button, event.time);
-		popup_menu.ref();//no one own menu,emulate owners,uref will be on_deactivate		
+		popup_menu.ref();//no one own menu,emulate owners,uref will be on_deactivate
 	}
 
     private void create_popup_terminal_url_regexps(Gdk.EventButton event){
 		debug("popup_terminal_url_regexps");
 		Gtk.MenuItem menuitem;
-    	
+
     	var popup_menu = new Gtk.Menu();
-		
+
 		menuitem = new Gtk.MenuItem.with_label(_("Add"));
 		menuitem.activate.connect(on_popup_terminal_url_regexps_add);
-		popup_menu.append(menuitem);		
-		
+		popup_menu.append(menuitem);
+
 		menuitem = new Gtk.MenuItem.with_label(_("Remove"));
 		menuitem.activate.connect(on_popup_terminal_url_regexps_remove);
-		popup_menu.append(menuitem);		
-		
+		popup_menu.append(menuitem);
+
 		popup_menu.deactivate.connect (this.on_popup_deactivate);
 		popup_menu.show_all();
         //menu.attach_to_widget (this.vte_term, null);
 		popup_menu.popup(null, null, null, event.button, event.time);
-		popup_menu.ref();//no one own menu,emulate owners,uref will be on_deactivate		
+		popup_menu.ref();//no one own menu,emulate owners,uref will be on_deactivate
 	}
-		
+
 	private void on_popup_deactivate(Widget m) {
 			((Gtk.Menu)m).deactivate.disconnect(on_popup_deactivate);
 			m.unref();//menu will be destroyed after end of deactivate event
 			//debug("popup_menu ref_count=%d",(int)m.ref_count);//normal count 4
-		}	
+		}
 
 	private void on_popup_command_list_add(){
 		var store = builder.get_object ("terminal_autostart_session") as Gtk.ListStore;
@@ -254,7 +256,7 @@ public class AYSettings : AYTab{
 			-1);
 		}
 	}
-	
+
 	private void on_popup_command_list_remove(){
 		var store = builder.get_object ("terminal_autostart_session") as Gtk.ListStore;
 		var view = builder.get_object ("terminal_autostart_session_treeview") as Gtk.TreeView;
@@ -275,7 +277,7 @@ public class AYSettings : AYTab{
 				}
 		}
 	}
-	
+
 	private void on_popup_tab_title_format_regex_add(){
 		var store = builder.get_object ("tab_title_format_regex") as Gtk.ListStore;
 		if(store!=null){
@@ -287,7 +289,7 @@ public class AYSettings : AYTab{
 			-1);
 		}
 	}
-	
+
 	private void on_popup_tab_title_format_regex_remove(){
 		var store = builder.get_object ("tab_title_format_regex") as Gtk.ListStore;
 		var view = builder.get_object ("tab_title_format_regex_treeview") as Gtk.TreeView;
@@ -320,7 +322,7 @@ public class AYSettings : AYTab{
 			-1);
 		}
 	}
-	
+
 	private void on_popup_terminal_url_regexps_remove(){
 		var store = builder.get_object ("terminal_url_regexps") as Gtk.ListStore;
 		var view = builder.get_object ("terminal_url_regexps_treeview") as Gtk.TreeView;
@@ -340,117 +342,117 @@ public class AYSettings : AYTab{
 						view.set_cursor(path,null,false);
 				}
 		}
-	}	
-	
+	}
+
 	[CCode (instance_pos = -1)]
 	public void on_terminal_autostart_session_cellrenderertext_edited (Gtk.CellRendererText renderer, string path_string, string new_text){
 		debug("on_terminal_autostart_session_cellrenderertext_edited start %s",path_string);
-		
+
 		Gtk.ListStore? store=null;
 
 		store = builder.get_object("terminal_autostart_session") as Gtk.ListStore;
 
 		if(store == null) return;
-		
+
         var path = new Gtk.TreePath.from_string (path_string);
-        
+
         if (path == null) return;
-        
+
         Gtk.TreeIter iter;
-        if (!store.get_iter (out iter, path)) return;	
-		
+        if (!store.get_iter (out iter, path)) return;
+
 		store.set (iter,
 			0, new_text,
-			-1);        
+			-1);
 	}
-	
+
 	[CCode (instance_pos = -1)]
 	public void on_tab_title_format_regex_cellrenderertext_pattern_edited (Gtk.CellRendererText renderer, string path_string, string new_text){
 		debug("on_tab_title_format_regex_cellrenderertext_pattern_edited start %s",path_string);
-		
+
 		Gtk.ListStore? store=null;
 
 		store = builder.get_object ("tab_title_format_regex") as Gtk.ListStore;
-		
+
 		if(store == null) return;
-		
+
         var path = new Gtk.TreePath.from_string (path_string);
-        
+
         if (path == null) return;
-        
+
         Gtk.TreeIter iter;
-        if (!store.get_iter (out iter, path)) return;	
-		
+        if (!store.get_iter (out iter, path)) return;
+
 		store.set (iter,
 			0, new_text,
-			-1);        
+			-1);
 	}
-	
+
 	[CCode (instance_pos = -1)]
 	public void on_tab_title_format_regex_cellrenderertext_replace_edited (Gtk.CellRendererText renderer, string path_string, string new_text){
 		debug("on_tab_title_format_regex_cellrenderertext_replace_edited start %s",path_string);
-		
+
 		Gtk.ListStore? store=null;
-		
+
 		store = builder.get_object ("tab_title_format_regex") as Gtk.ListStore;
 
 		if(store == null) return;
-		
+
         var path = new Gtk.TreePath.from_string (path_string);
-        
+
         if (path == null) return;
-        
+
         Gtk.TreeIter iter;
-        if (!store.get_iter (out iter, path)) return;	
-		
+        if (!store.get_iter (out iter, path)) return;
+
 		store.set (iter,
 			1, new_text,
-			-1);        
+			-1);
 	}
-	
+
 	[CCode (instance_pos = -1)]
 	public void on_terminal_url_regexps_match_cellrenderertext_pattern_edited (Gtk.CellRendererText renderer, string path_string, string new_text){
 		debug("on_terminal_url_regexps_match_cellrenderertext_pattern_edited start %s",path_string);
-		
+
 		Gtk.ListStore? store=null;
 
 		store = builder.get_object ("terminal_url_regexps") as Gtk.ListStore;
-		
+
 		if(store == null) return;
-		
+
         var path = new Gtk.TreePath.from_string (path_string);
-        
+
         if (path == null) return;
-        
+
         Gtk.TreeIter iter;
-        if (!store.get_iter (out iter, path)) return;	
-		
+        if (!store.get_iter (out iter, path)) return;
+
 		store.set (iter,
 			0, new_text,
-			-1);        
+			-1);
 	}
 	[CCode (instance_pos = -1)]
 	public void on_terminal_url_regexps_run_cellrenderertext_pattern_edited (Gtk.CellRendererText renderer, string path_string, string new_text){
 		debug("on_terminal_url_regexps_run_cellrenderertext_pattern_edited start %s",path_string);
-		
+
 		Gtk.ListStore? store=null;
 
 		store = builder.get_object ("terminal_url_regexps") as Gtk.ListStore;
-		
+
 		if(store == null) return;
-		
+
         var path = new Gtk.TreePath.from_string (path_string);
-        
+
         if (path == null) return;
-        
+
         Gtk.TreeIter iter;
-        if (!store.get_iter (out iter, path)) return;	
-		
+        if (!store.get_iter (out iter, path)) return;
+
 		store.set (iter,
 			1, new_text,
-			-1);        
+			-1);
 	}
-	
+
     private string? get_name_from_path(string accel_path){
 				string[] regs;
 				regs=GLib.Regex.split_simple("^.*/(.*)$",accel_path,RegexCompileFlags.CASELESS,0);
@@ -459,13 +461,13 @@ public class AYSettings : AYTab{
 					}
 			return null;
 	}
-    	
+
 	public void get_from_conf() {
 
 		var chb = builder.get_object ("lock_keybindings_checkbutton") as Gtk.CheckButton;
 		if(chb!=null)
 			chb.active = !this.ayobject.action_group.sensitive;
-		
+
 		var keys = this.my_conf.get_profile_keys();
 		foreach(var key in keys){
 			switch(this.my_conf.get_key_type(key)){
@@ -534,13 +536,13 @@ public class AYSettings : AYTab{
 								var B = builder.get_object (key) as Gtk.FileChooserButton;
 								B.set_filename(S);
 							}
-						}else						
+						}else
 						if(key=="program_style"){
 							var B = builder.get_object (key) as Gtk.TextView;
 							var s=this.my_conf.get_string(key,"");
 							Regex regex = new Regex ("[{};]");
 							string result = regex.replace_eval(s, s.length,0,0, (match_info, result)=>{
-							result.append(match_info.fetch(match_info.get_match_count()-1)+"\n");	
+							result.append(match_info.fetch(match_info.get_match_count()-1)+"\n");
 							return false;//continue
 							});
 							B.buffer.text=result;
@@ -595,7 +597,7 @@ public class AYSettings : AYTab{
 				break;
 			}
 		}
-		
+
 			AccelMap am2=Gtk.AccelMap.get();
 			var p2 = new point_ActionGroup_store(this.ayobject.action_group,this.keybindings_store,this);
 
@@ -603,9 +605,9 @@ public class AYSettings : AYTab{
 				unowned Gtk.ListStore p_store=(Gtk.ListStore)((point_ActionGroup_store)pvoid).store;
 				unowned Gtk.ActionGroup ag=(Gtk.ActionGroup)((point_ActionGroup_store)pvoid).action_group;
 				unowned AYSettings yasettings=(AYSettings)((point_ActionGroup_store)pvoid).yasettings;
-					
+
 				string? s = yasettings.get_name_from_path(accel_path);
-				
+
 					if(s!=null && ag.get_action(s)!=null){
 						TreeIter? data_iter=null;
 						p_store.append (out data_iter);
@@ -620,6 +622,13 @@ public class AYSettings : AYTab{
 					}
 				});
 				this.keybindings_store.set_sort_column_id(0,Gtk.SortType.ASCENDING);
+
+				if(GLib.FileUtils.test(this.autorun_file,GLib.FileTest.EXISTS)){
+				var B = builder.get_object ("window_autostart_with_desktop") as Gtk.CheckButton;
+					if(B!=null){
+						B.active=true;
+					}else debug(" no gui for window_autostart_with_desktop");
+				}
 	}//get_from_conf
 
 	public void apply() {
@@ -667,7 +676,7 @@ public class AYSettings : AYTab{
 							if(entry.text!=this.my_conf.get_string(key,"")){
 								this.my_conf.set_string(key,entry.text);
 							}
-						}else				
+						}else
 						if(key=="terminal_font"){
 							var B = builder.get_object (key) as Gtk.FontButton;
 							if(B.font_name!=this.my_conf.get_string(key,""))
@@ -680,7 +689,7 @@ public class AYSettings : AYTab{
 							if(S!=null && S != this.my_conf.get_string(key,"")){
 								this.my_conf.set_string(key,S);
 							}
-								
+
 						}else
 						if(key=="terminal_background_image_file"){
 							string? S=null;
@@ -690,7 +699,7 @@ public class AYSettings : AYTab{
 								debug("terminal_background_image_file=%s",S);
 								this.my_conf.set_string(key,S);
 							}
-						}else						
+						}else
 						if(key=="program_style"){
 							var B = builder.get_object (key) as Gtk.TextView;
 							var s=B.buffer.text;
@@ -711,7 +720,7 @@ public class AYSettings : AYTab{
 				case CFG_TYPE.TYPE_STRING_LIST:
 						var store = builder.get_object (key) as Gtk.ListStore;
 						if(store!=null){
-							
+
 							if(key=="tab_title_format_regex" || key=="terminal_url_regexps"){
 								string[] sl = {};
 								store.foreach((model,  path,  iter) =>{
@@ -754,12 +763,43 @@ public class AYSettings : AYTab{
 								}
 								this.my_conf.set_string_list(key,sl);
 						}else
-							debug(" no gui for key %s",key);				
+							debug(" no gui for key %s",key);
 				break;
 				case CFG_TYPE.TYPE_ACCEL_STRING:
 				break;
 			}
 		}
+
+		var B = builder.get_object ("window_autostart_with_desktop") as Gtk.CheckButton;
+		if(B!=null){
+			if(B.active){
+				if(!GLib.FileUtils.test(this.autorun_file,GLib.FileTest.EXISTS)){
+					try{
+						string autorun_content = """
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Version=1.0
+Name=altyo
+Name[ru_RU]=АльтЁ
+Comment[ru_RU]=АльтЁ терминал
+Comment=AltYo terminal
+Exec=altyo
+						""";
+						if(!GLib.FileUtils.set_contents (this.autorun_file, autorun_content)){
+							debug(" unable to save altyo.desktop file");
+							}
+					} catch (GLib.FileError err) {
+						warning (err.message);
+					}
+				}
+			}else{
+				if(GLib.FileUtils.test(this.autorun_file,GLib.FileTest.EXISTS)){
+					GLib.FileUtils.remove(this.autorun_file);
+				}
+			}
+		}
+
 		this.my_conf.reload_config();
 		this.my_conf.save();
 	}//apply

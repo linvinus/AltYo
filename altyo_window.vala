@@ -1884,12 +1884,23 @@ public class AYObject :Object{
 
 		this.conf.set_string_list("search_history",search_s);
 
+			var autostart_terminal_session=this.conf.get_string_list("terminal_autostart_session",null);
+
 			string[] terminal_session = {};
 			var grx_exclude = new GLib.Regex(this.conf.get_string("terminal_session_exclude_regex","/?zsh\\ ?|/?mc\\ ?|/?bash\\ ?"));
 			foreach (var vt in this.children) {
 				if(vt is VTTerminal){
+					bool cont=false;
 					var tmp=((VTTerminal)vt).find_tty_pgrp(((VTTerminal)vt).pid);
-					if(tmp!="" && !grx_exclude.match_all(tmp,0,null) && this.save_session)
+					if(autostart_terminal_session != null && autostart_terminal_session.length>0){
+						foreach(var s in autostart_terminal_session){
+							if(s==tmp){
+								cont=true;//exclude terminal_autostart_session commands
+								break;
+							}
+						}
+					}
+					if(!cont && tmp!="" && !grx_exclude.match_all(tmp,0,null) && this.save_session)
 						terminal_session+=tmp;
 					((VTTerminal)vt).destroy();
 				}

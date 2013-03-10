@@ -142,10 +142,8 @@ public class VTMainWindow : Window{
 		this.add(this.ayobject.main_vbox);
 
 
-		conf.get_boolean("prevent_close_window",true);//just read value
 		this.delete_event.connect (()=>{
-			var b=conf.get_boolean("prevent_close_window",true);
-			if(b==true && this.allow_close==false){
+			if(this.allow_close==false){
 				this.ayobject.ShowQuitDialog();
 				return true;//prevent close
 			}

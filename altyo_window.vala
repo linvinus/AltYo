@@ -47,7 +47,7 @@ public delegate void MyCallBack(Gtk.Action a);
 public class VTMainWindow : Window{
 	public OffscreenWindow pixwin;
 	public AYObject ayobject;
-	
+
 	public bool maximized=false;
 	private bool update_maximized_size=false;
 	public bool animation_enabled = true;
@@ -62,7 +62,7 @@ public class VTMainWindow : Window{
 	public PanelHotkey hotkey;
 	public bool mouse_follow=false;
 	private unowned Widget prev_focus=null;
-	
+
 	private int pull_step = 0;
 	public int orig_x = 0;
 	public int orig_y = 0;
@@ -82,7 +82,7 @@ public class VTMainWindow : Window{
 	public bool allow_close=false;
 
 	private uint32 last_focus_out_event_time;
-	
+
 	public VTMainWindow(WindowType type) {
 		Object(type:type);
 		}
@@ -136,11 +136,11 @@ public class VTMainWindow : Window{
 
 		this.hotkey = new PanelHotkey ();
 		this.reconfigure();//window
-	
+
 		this.ayobject= new AYObject(this,conf);
 
 		this.add(this.ayobject.main_vbox);
-		
+
 
 		conf.get_boolean("prevent_close_window",true);//just read value
 		this.delete_event.connect (()=>{
@@ -151,13 +151,13 @@ public class VTMainWindow : Window{
 			}
 			return false;//default is allow
 			});
-		
+
 		this.destroy.connect (()=>{
 			this.ayobject.save_configuration();
 			this.conf.save();
 			Gtk.main_quit();
 			});
-			
+
 		this.conf.on_load.connect(()=>{
 			this.reconfigure();
 			if(this.current_state==WStates.VISIBLE){
@@ -169,14 +169,14 @@ public class VTMainWindow : Window{
 		this.check_monitor_and_configure_position();
 		this.update_position_size();
 	}
-	
+
 	private void check_monitor_and_configure_position(){
 			/* move window to appropriate monitor
 			 * */
 			string? cfg_monitor = this.conf.get_string("window_default_monitor","");
 			if(cfg_monitor!=null && cfg_monitor!=""){
 				int x,y;
-				this.get_position (out x, out y); 		
+				this.get_position (out x, out y);
 				unowned Gdk.Screen gscreen = this.get_screen ();
 
 				var current_monitor = gscreen.get_monitor_at_point (this.orig_x,this.orig_y);
@@ -198,7 +198,7 @@ public class VTMainWindow : Window{
 						}
 					}
 				}
-				
+
 			}
 		/* mointor not found,
 		 * use primary*/
@@ -217,7 +217,7 @@ public class VTMainWindow : Window{
 					this.configure_position();
 				}
 	}
-	
+
 	public bool on_pull_down(){
 
 			this.pull_step++;
@@ -243,16 +243,16 @@ public class VTMainWindow : Window{
 					this.update_events();
 					return true;//continue animation
 				}
-							
+
 				var ch=this.pixwin.get_child();//.reparent(this);//reparent from offscreen window
 				this.pixwin.remove(ch);
 				this.add(ch);
 				this.pull_animation_active=false;
-				
+
 				this.update_position_size();
 				this.window_set_active();
 				this.update_events();
-				
+
 //~				if(this.pull_maximized){
 //~					this.maximize();
 //~					this.update_events();
@@ -261,7 +261,7 @@ public class VTMainWindow : Window{
 //~				var ch=this.pixwin.get_child();//.reparent(this);//reparent from offscreen window
 //~				this.pixwin.remove(ch);
 //~				this.add(ch);
-//~				
+//~
 //~				this.update_position_size();
 //~				this.window_set_active();
 //~				this.update_events();
@@ -272,7 +272,7 @@ public class VTMainWindow : Window{
 
 	public void pull_down(){
 		if(this.pull_animation_active)
-			return;		
+			return;
 		if(!this.animation_enabled ||
 			this.pixwin.get_child()==null){//prevent error if start hidden
 			this.configure_position();
@@ -291,8 +291,8 @@ public class VTMainWindow : Window{
 			this.configure_position();
 		this.show();
 		this.realize();
-		this.update_events();
 		this.resize (this.pull_w,2);//start height
+		this.update_events();
 		if(this.mouse_follow && !this.pull_maximized){
 			this.move (this.orig_x,this.orig_y);//new position
 		}else
@@ -327,10 +327,10 @@ public class VTMainWindow : Window{
 
 	public void pull_up(){
 		if(this.pull_animation_active)
-			return;		
+			return;
 		this.pull_h=this.get_allocated_height();
 		this.pull_w=this.get_allocated_width();
-		this.get_position (out this.pull_x, out this.pull_y); 
+		this.get_position (out this.pull_x, out this.pull_y);
 		this.prev_focus=this.get_focus();
 		debug("pull_up orig_h=%d orig_w=%d",this.pull_h,this.pull_w);
 		this.orig_h_main_vbox = this.ayobject.main_vbox.get_allocated_height();
@@ -361,11 +361,11 @@ public class VTMainWindow : Window{
 		//this.get_child().reparent(this.pixwin);//reparent to offscreen window
 			var ch=this.get_child();//.reparent(this);//reparent from offscreen window
 				this.remove(ch);
-				this.pixwin.add(ch);		
+				this.pixwin.add(ch);
 		debug("end reparent to offscreen window");
 		//correct size after unmaximize
 		//just to be shure that terminal will not change size
-		
+
 		if(this.maximized){
 			this.ayobject.main_vbox.set_size_request(orig_w_main_vbox,orig_h_main_vbox);
 			this.update_events();
@@ -381,8 +381,8 @@ public class VTMainWindow : Window{
 			this.ayobject.tasks_notebook.set_size_request(orig_w_tasks_notebook,orig_h_tasks_notebook);
 			this.update_events();
 		}
-			
-		
+
+
 		debug("pull_up 0-%d  this.get_allocated_height=%d this.orig_h=%d",this.get_allocated_height()-this.pull_h, this.get_allocated_height(),this.pull_h);
 		debug("pull_up orig_h=%d orig_w=%d",this.pull_h,this.pull_w);
 		this.pull_step=0;
@@ -394,13 +394,13 @@ public class VTMainWindow : Window{
 		if(this.pull_animation_active) return;
 		/* when hotkey is pressed, main window loose focus,
 		 * so impossible to check, is windows focused or not.
-		 * as workaround, remember last focus-out time, 
+		 * as workaround, remember last focus-out time,
 		 * if it more than 100ms, then window was unfocused
 		 * */
 		//debug("toogle_widnow %d %d",(int)this.last_event_time,(int)this.hotkey.last_focus_out_event_time);
 		if(!this.keep_above && (this.current_state == WStates.VISIBLE) && ((int)this.hotkey.last_event_time-(int)this.last_focus_out_event_time)>100){
 			this.window_set_active();
-			this.update_events();			
+			this.update_events();
 			return;
 		}
 			if(this.current_state == WStates.HIDDEN)
@@ -434,7 +434,7 @@ public class VTMainWindow : Window{
 						this.update_geometry_hints(1,1,1,1,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
 						this.update_position_size();
 						//this.update_maximized_size=true;
-					}			
+					}
 				}
 			}
 		}
@@ -458,7 +458,7 @@ public class VTMainWindow : Window{
 		}
 	return ret;
 	}
-	
+
 	private void update_geometry_hints(int base_height,int base_width,int min_height,int min_width,Gdk.WindowHints mask){
 					var gem=new Gdk.Geometry();
 					gem.base_height=base_height;
@@ -472,9 +472,9 @@ public class VTMainWindow : Window{
 					gem.min_width=min_width;
 					gem.width_inc=0;
 					gem.win_gravity=Gdk.Gravity.NORTH_WEST;
-					this.set_geometry_hints(null,gem,mask);		
+					this.set_geometry_hints(null,gem,mask);
 	}
-	
+
 	public override bool focus_out_event (Gdk.EventFocus event) {
 		this.last_focus_out_event_time=Gdk.x11_get_server_time(this.get_window());
 		return base.focus_out_event (event);
@@ -516,24 +516,24 @@ public class VTMainWindow : Window{
 				 * */
 				if(!this.maximized && !this.config_maximized){
 						var should_be_h = this.ayobject.terminal_height+this.ayobject.hvbox.get_allocated_height();
-						
+
 						if(this.get_allocated_height()>should_be_h+2||
 						this.ayobject.terminal_width!=this.get_allocated_width()){
 							//this.configure_position();//this needed to update position after unmaximize
 							this.ayobject.main_vbox.set_size_request(this.ayobject.terminal_width,0);
 							this.ayobject.tasks_notebook.set_size_request(this.ayobject.terminal_width,this.ayobject.terminal_height);
 							this.set_default_size(this.ayobject.terminal_width,should_be_h);
-							this.resize(this.ayobject.terminal_width,should_be_h);
+//~							this.resize(this.ayobject.terminal_width,should_be_h);
 							this.update_events();
 							this.move (this.orig_x,this.orig_y);
 							/* inform window manager where window should be placed*/
-							/* gem.win_gravity=Gdk.Gravity.NORTH; not working for multi-seat systems =( , 
-							 * use move_resize instead */						
-							this.get_window().move_resize(this.orig_x,this.orig_y,this.ayobject.terminal_width,should_be_h);
+							/* gem.win_gravity=Gdk.Gravity.NORTH; not working for multi-seat systems =( ,
+							 * use move_resize instead */
+							//this.get_window().move_resize(this.orig_x,this.orig_y,this.ayobject.terminal_width,should_be_h);
 							debug ("update_position_size should_be_h=%d terminal_width=%d x=%d y=%d",should_be_h,this.ayobject.terminal_width,this.orig_x,this.orig_y) ;
 						}else
 							this.move (this.orig_x,this.orig_y);
-						
+
 				}else{
 					if(this.orig_w_main_vbox!=0 && this.orig_h_main_vbox!=0 &&
 						this.orig_w_tasks_notebook!=0 && this.orig_h_tasks_notebook!=0){
@@ -630,7 +630,7 @@ public class VTMainWindow : Window{
 				this.ayobject.terminal_width=(int)rectangle.width;
 				this.ayobject.terminal_height=(int)rectangle.height-rectangle.height/3;
 			}else{
-					
+
 				if(w<101){
 					this.ayobject.terminal_width=(int)(((float)rectangle.width/100.0)*(float)w);
 				}else{
@@ -788,10 +788,10 @@ public class VTMainWindow : Window{
 			dialog.set_transient_for(this);
 			dialog.show_all();
 			dialog.grab_focus();
-			this.hotkey.send_net_active_window(dialog.get_window ());			
+			this.hotkey.send_net_active_window(dialog.get_window ());
 			dialog.run();
 	}//show_message_box
-	
+
 }//class VTMainWindow
 
 /*********************************************************************/
@@ -850,12 +850,12 @@ public class AYObject :Object{
 
 		this.main_vbox = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);//new VBox(false,0);
 		this.main_vbox.halign=Gtk.Align.FILL;
-		this.main_vbox.valign=Gtk.Align.FILL;
+		this.main_vbox.valign=Gtk.Align.START;
 		this.main_vbox.expand=false;
 		this.main_vbox.name="main_vbox";
 		this.main_vbox.show();
 
-		
+
 		this.terms_notebook = new Notebook() ;
 //~		this.terms_notebook.halign=Gtk.Align.FILL;
 //~		this.terms_notebook.valign=Gtk.Align.START;
@@ -883,7 +883,7 @@ public class AYObject :Object{
 		this.hvbox.halign=Gtk.Align.FILL;
 		this.hvbox.valign=Gtk.Align.START;
 		this.hvbox.expand=false;
-		
+
 		this.hvbox.child_reordered.connect(this.move_tab);
 		this.hvbox.size_changed.connect(this.hvbox_size_changed);
 
@@ -932,7 +932,7 @@ public class AYObject :Object{
 
 		//this.main_vbox.pack_start(notebook,true,true,0);//maximum size
 		this.main_vbox.pack_start(this.search_hbox,false,false,0);//minimum size
-		this.main_vbox.pack_end(hvbox,false,false,0);//minimum size
+		this.main_vbox.pack_start(hvbox,false,false,0);//minimum size
 
 		this.reconfigure();
 		this.main_vbox.show_all();
@@ -952,7 +952,7 @@ public class AYObject :Object{
 					this.add_tab(s);
 			}
 		}
-		
+
 		if(this.children.length()==0)
 			this.add_tab();
 
@@ -1101,7 +1101,7 @@ public class AYObject :Object{
 		if(this.active_tab==null || this.active_tab!=tab_button){
 			foreach (AYTab vt in this.children) {
 				if (vt.tbutton == tab_button){
-					
+
 					this.terms_notebook.set_current_page(this.terms_notebook.page_num(vt.hbox));
 
 					if (this.active_tab!=null){
@@ -1299,7 +1299,7 @@ public class AYObject :Object{
 			dialog.run();
 	}
 
-	
+
 
 	public void ShowAbout(){
 			var dialog = new AboutDialog();
@@ -1399,7 +1399,7 @@ public class AYObject :Object{
 					var tmp=vt.find_tty_pgrp(vt.pid,true);
 					debug("path: %s",tmp);
 					this.add_tab(null,tmp);
-				}				
+				}
 			}else{
 				this.add_tab();
 			}
@@ -1582,9 +1582,9 @@ public class AYObject :Object{
 					this.tasks_notebook.set_size_request(this.terminal_width,this.terminal_height);
 //~ 					this.main_window.set_default_size(this.terminal_width,should_be_h);
 					this.main_window.resize (this.terminal_width,should_be_h);
-					this.main_window.move (this.main_window.orig_x,this.main_window.orig_y);
+					//this.main_window.move (this.main_window.orig_x,this.main_window.orig_y);
 					this.main_window.queue_resize_no_redraw();
-				
+
 					//GLib.Timeout.add(10,()=>{debug("Update events");this.update_events(); return false;});
 					debug ("hvbox_size_changed terminal_width=%d should_be_h=%d",terminal_width,should_be_h) ;
 				}
@@ -1595,9 +1595,9 @@ public class AYObject :Object{
 				this.tasks_notebook.set_size_request(was_wn,-1);
 
 				this.main_window.set_default_size(was_w,was_h);
-				this.main_window.resize (was_w,was_h);							
+				this.main_window.resize (was_w,was_h);
 				this.main_window.queue_resize_no_redraw();
-				
+
 			}
 
 //example (gdk_window_get_state (gtk_widget_get_window (widget)) & (GDK_WINDOW_STATE_MAXIMIZED | GDK_WINDOW_STATE_FULLSCREEN)) != 0)
@@ -1754,7 +1754,7 @@ public class AYObject :Object{
 		unowned AYTab vtt = ((AYTab)this.active_tab.object);
 		if(!(vtt is VTTerminal)) return;
 		if(!((Entry)this.search_text_combo.get_child()).has_focus){
-			
+
 			if(this.main_window.maximized){
 				var was_h=this.main_window.get_allocated_height();
 				var was_w=this.main_window.get_allocated_width();
@@ -1763,11 +1763,11 @@ public class AYObject :Object{
 				this.search_hbox.show();
 
 				this.main_window.set_default_size(was_w,was_h);
-				this.main_window.resize (was_w,was_h);							
+				this.main_window.resize (was_w,was_h);
 				this.main_window.queue_resize_no_redraw();
 			}else
 				this.search_hbox.show();
-					
+
 			var term = ((VTTerminal)this.active_tab.object).vte_term;
 			if( term.get_has_selection()){
 				term.copy_clipboard();
@@ -1792,7 +1792,7 @@ public class AYObject :Object{
 				this.search_hide();
 				return;
 			}
-			
+
 			this.search_wrap_around.active=((VTTerminal)vtt).vte_term.search_get_wrap_around();
 			this.search_match_case.active=((VTTerminal)vtt).match_case;
 		}
@@ -1818,10 +1818,10 @@ public class AYObject :Object{
 			this.main_window.set_default_size(this.terminal_width,should_be_h);
 			this.main_window.resize (this.terminal_width,should_be_h);
 			this.main_window.queue_resize_no_redraw();
-			
+
 			//GLib.Timeout.add(10,()=>{debug("Update events");this.update_events(); return false;});
 			debug ("search_hide terminal_width=%d should_be_h=%d",terminal_width,should_be_h) ;
-		}				
+		}
 		this.search_hbox.hide();
 
 		unowned AYTab vtt = ((AYTab)this.active_tab.object);
@@ -1898,7 +1898,7 @@ public class AYObject :Object{
 				this.action_group.sensitive=true;
 			//this.overlay_notebook.hide();
 			unowned AYTab vtt = ((AYTab)this.active_tab.object);
-			if((vtt is VTTerminal)) 
+			if((vtt is VTTerminal))
 				((VTTerminal) vtt).vte_term.grab_focus();
 		}else if(page_num==TASKS.QLIST){
 			if(this.action_group!=null) //ignore if not configured
@@ -1913,17 +1913,21 @@ public class AYObject :Object{
 		if(new_maximize && this.tasks_notebook.halign!=Gtk.Align.FILL){
 			this.tasks_notebook.halign=Gtk.Align.FILL;
 			this.tasks_notebook.valign=Gtk.Align.FILL;
+			this.main_vbox.halign=Gtk.Align.FILL;
+			this.main_vbox.valign=Gtk.Align.FILL;
 			this.tasks_notebook.expand=true;
 			this.tasks_notebook.queue_resize_no_redraw();
 			debug("maximize==FILL");
 		}else if(!new_maximize && this.tasks_notebook.halign!=Gtk.Align.START){
 			this.tasks_notebook.halign=Gtk.Align.START;
 			this.tasks_notebook.valign=Gtk.Align.START;
+			this.main_vbox.halign=Gtk.Align.START;
+			this.main_vbox.valign=Gtk.Align.START;
 			this.tasks_notebook.expand=false;
 			this.tasks_notebook.queue_resize_no_redraw();
 			debug("maximize==START");
 		}
-		
+
 	}
 
 }//class AYObject

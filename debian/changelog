@@ -1,3 +1,18 @@
+altyo (0.2~130310-linvinus1) quantal; urgency=low
+
+  * fix: window flicker in some conditions(on hvbox resize,on pull down) 
+  * fix: more ideal window size changes
+  * new: GUI option, Auto start with desktop session
+  * update: remove unnecessary whitespaces
+  * update: "Auto start with desktop session", use key Hidden to disable, instead remove file
+  * update: remove option prevent_close_window, now altyo always prevent accidental closure.
+  * update: exclude terminal_autostart_session commands from terminal_session
+  * update: set title for autorun commands, and "saved session" commands
+  * update: remove unnecessary calls of show/hide window
+  * update: if start hidden, pull-up with animation if animation is enabled
+
+ -- denis <linvinus@gmail.com>  Sun, 10 Mar 2013 23:12:58 +0400
+
 altyo (0.2~130307-linvinus1) quantal; urgency=low
 
   [ linvinus ]

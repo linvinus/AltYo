@@ -63,7 +63,7 @@ clean:
 	rm ./altyo || true
 	rm ./data/*.c *.h || true
 
-install: gen_po
+install:
 	test -z "$(DESTDIR)$(PREFIX)/bin" || mkdir -p "$(DESTDIR)$(PREFIX)/bin";
 	cp -a ./$(PRG_NAME) $(DESTDIR)$(PREFIX)/bin
 	test -z "$(DESTDIR)$(PREFIX)/share/applications" || mkdir -p "$(DESTDIR)$(PREFIX)/share/applications";

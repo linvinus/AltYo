@@ -947,16 +947,22 @@ public class AYObject :Object{
 		var autostart_terminal_session=this.conf.get_string_list("terminal_autostart_session",null);
 		if(autostart_terminal_session != null && autostart_terminal_session.length>0){
 			foreach(var s in autostart_terminal_session){
-				if(s!="")
-					this.add_tab(s);
+				if(s!=""){
+					var vt=this.add_tab(s);
+					var tab_index =  this.children.index(vt)+1;
+					vt.tbutton.set_title(tab_index,s);
+				}
 			}
 		}
 
 		var restore_terminal_session=this.conf.get_string_list("terminal_session",null);
 		if(restore_terminal_session != null && restore_terminal_session.length>0){
 			foreach(var s in restore_terminal_session){
-				if(s!="")
-					this.add_tab(s);
+				if(s!=""){
+					var vt=this.add_tab(s);
+					var tab_index =  this.children.index(vt)+1;
+					vt.tbutton.set_title(tab_index,s);
+				}
 			}
 		}
 

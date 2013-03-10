@@ -175,9 +175,7 @@ int main (string[] args) {
 
 				win.CreateVTWindow(conf);
 
-				win.show();
 				if ( conf.get_boolean("start_hidden",false) ){
-					win.hide();
 					var tmp = win.animation_enabled;
 					win.animation_enabled=false;
 					win.pull_down();//just show, without animation

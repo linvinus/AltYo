@@ -3,12 +3,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
@@ -90,7 +90,7 @@ public class PanelHotkey {
                 if (binding.relesed == true && xevent->xkey.keycode == binding.key_code &&
                     (xevent->xkey.state & ~ (lock_modifiers[7]))  == binding.modifiers) {
 					binding.relesed=false;
-					binding.on_trigged();			
+					binding.on_trigged();
                 }
             }
         }else if (xevent->type == X.EventType.KeyRelease ){
@@ -140,7 +140,7 @@ public class PanelHotkey {
     debug ("Binding '%s' failed!\n", combination);
     return null;
     }
-    
+
     public void unbind(){
 		foreach(var bind in bindings){
 			foreach (var mod in lock_modifiers){
@@ -182,7 +182,7 @@ public class PanelHotkey {
 //~ 	        event.data.l [3]    = 0;
 //~ 	        event.data.l [4]    = 0;
 //~ 	        X.Event e = (X.Event) event;
-//~ 
+//~
 //~ 	        display.send_event (Gdk.x11_get_default_root_xwindow(), false, X.EventMask.SubstructureRedirectMask|X.EventMask.StructureNotifyMask, ref e);
 
 	}

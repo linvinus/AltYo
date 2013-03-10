@@ -3,18 +3,18 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  */
- 
+
 
 using Gtk;
 using Cairo;
@@ -56,7 +56,7 @@ public class HVBox : Container {
     private string[]? drop_uris { get; set; default = null; }
     private Window dnd_window { get; set; default = null; }
     private bool dnd_inprocess { get; set; default = false; }
-	
+
 	public bool background_only_behind_widgets { get; set; default = true; }
 	public bool minimize_size { get; set; default = true; }
     public signal void child_reordered(Widget child, uint new_index);
@@ -214,7 +214,7 @@ public class HVBox : Container {
 		var width = this.get_allocated_width();
 		Gtk.StyleContext style_context = this.get_style_context();
 		Gtk.Border border=style_context.get_border(StateFlags.NORMAL);
-		
+
 		allocation.x=0;
 		allocation.y=0;
 		allocation.height=0;
@@ -749,7 +749,7 @@ public class HVBox : Container {
 		int[] arr_h = {};
 		var color = context.get_background_color(StateFlags.NORMAL);
 		cr.set_source_rgba (color.red,color.green,color.blue,color.alpha);//background
-		
+
 		if(!background_only_behind_widgets)
 			render_background(context,cr, 0, 0,width+border.left+border.right, height+border.top+border.bottom);
 

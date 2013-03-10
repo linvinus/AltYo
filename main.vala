@@ -3,18 +3,18 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  */
- 
+
 /*
  * Yet another terminal =)
  *
@@ -160,7 +160,7 @@ int main (string[] args) {
 				var conf = new MySettings(cmd_conf_file);
 
 				configure_debug(conf);
-				
+
 				conf.on_load.connect(()=>{
 					configure_debug(conf);
 				});
@@ -182,7 +182,7 @@ int main (string[] args) {
 					win.animation_enabled=false;
 					win.pull_down();//just show, without animation
 					win.pull_up();
-					win.animation_enabled=tmp;					
+					win.animation_enabled=tmp;
 				}else{
 					var tmp = win.animation_enabled;
 					win.animation_enabled=false;

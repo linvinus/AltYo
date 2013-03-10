@@ -97,7 +97,7 @@ public class VTToggleButton : Gtk.ToggleButton {
 		//cr.save();
 		//base.draw(cr);
 		//cr.restore();
-		
+
 		int width = this.get_allocated_width ();
 		int height = this.get_allocated_height ();
 		//cr.save();
@@ -286,7 +286,7 @@ public class AYTab : Object{
 		this.tbutton.set_has_window (false);
 		this.tbutton.show();
 
-		this.hbox = new HBox(false, 0);				
+		this.hbox = new HBox(false, 0);
 		//this.hbox.pack_start(this.vte_term,true,true,0);
 		//this.vte_term.grab_focus();
 		//this.vte_term.can_default=true;
@@ -305,7 +305,7 @@ public class AYTab : Object{
 		//this.vte_term.destroy();
 		this.hbox.destroy();//destroy all widgets and unref self
 	}
-	
+
 }
 
 public class VTTerminal : AYTab{
@@ -328,7 +328,7 @@ public class VTTerminal : AYTab{
 		this.vte_term = new Vte.Terminal();
 //~		this.vte_term.halign=Gtk.Align.START;
 //~		this.vte_term.valign=Gtk.Align.START;
-//~		this.vte_term.expand=false;		
+//~		this.vte_term.expand=false;
 		/*this.vte_term.size_allocate.connect((allocation)=>{
 			debug("[screen %p] size-alloc   %d : %d at (%d, %d)\n",
                          this.vte_term, allocation.width, allocation.height, allocation.x, allocation.y);
@@ -563,13 +563,13 @@ public class VTTerminal : AYTab{
 			this.vte_term.set_background_image_file (bg_img_file);
 		}else
 			this.vte_term.set_background_image_file ("/dev/null");
-		
-		var bg_faket = my_conf.get_boolean("terminal_background_fake_transparent",false);	
+
+		var bg_faket = my_conf.get_boolean("terminal_background_fake_transparent",false);
 		this.vte_term.set_scroll_background(my_conf.get_boolean("terminal_background_fake_transparent_scroll",false));
 		Gdk.Color? tint;//currently libvte don't support rgba tint
 		if(Gdk.Color.parse(my_conf.get_string("terminal_tint_color","#000000"),out tint))
 			this.vte_term.set_background_tint_color(tint);
-			
+
 		var sat = my_conf.get_double("terminal_background_saturation",0.5,(ref new_val)=>{
 			if(new_val>1){ new_val=1; return true;}
 			if(new_val<0){ new_val=0; return true;}
@@ -611,7 +611,7 @@ public class VTTerminal : AYTab{
 			return false;
 			});
 		this.vte_term.set_backspace_binding ((Vte.TerminalEraseBinding)delbinding);
-		
+
 		string[] url_regexps = my_conf.get_string_list("terminal_url_regexps",{"http://[a-z0-9%-+?\\./]*","xdg-open"});
 		if((url_regexps.length % 2) == 0){
 			this.vte_term.match_clear_all();

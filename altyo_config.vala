@@ -3,18 +3,18 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  */
- 
+
 using Gtk;
 using Gee;
 
@@ -43,7 +43,7 @@ public class MySettings : Object {
 	private bool opened {get;set; default = false;}
 	private bool changed {get;set; default = false;}
 	private HashMap<string, CFG_TYPE> typemap;
-	
+
 	public signal void on_load();
 
 	public MySettings(string? cmd_conf_file=null){
@@ -73,7 +73,7 @@ public class MySettings : Object {
 				} catch (KeyFileError err) {
 						debug("Filed: kf.load_from_file");
 						warning (err.message);
-						this.opened = false;					
+						this.opened = false;
 				} catch (FileError err) {
 						//create default settings
 						kf.set_string  (this.profile, "custom_command", "");
@@ -134,7 +134,7 @@ public class MySettings : Object {
 			this.typemap[key]=CFG_TYPE.TYPE_INTEGER;
 		else if(this.typemap[key]!=CFG_TYPE.TYPE_INTEGER)
 			assert(this.typemap[key]==CFG_TYPE.TYPE_INTEGER);
-			
+
 		int ret = def;
 			try {
 				ret = kf.get_integer(this.profile,key);
@@ -180,7 +180,7 @@ public class MySettings : Object {
 			this.typemap[key]=CFG_TYPE.TYPE_STRING_LIST;
 		else if(this.typemap[key]!=CFG_TYPE.TYPE_STRING_LIST)
 			assert(this.typemap[key]==CFG_TYPE.TYPE_STRING_LIST);
-			
+
 		string[] ret = def;
 			try {
 				ret = kf.get_string_list(this.profile,key);
@@ -188,7 +188,7 @@ public class MySettings : Object {
 					if(check_cb(ref ret)){
 						this.changed=true;
 						kf.set_string_list(this.profile,key,ret);
-						}				
+						}
 			} catch (KeyFileError err) {
 				warning (err.message);
 				this.changed=true;
@@ -203,7 +203,7 @@ public class MySettings : Object {
 			this.typemap[key]=CFG_TYPE.TYPE_STRING;
 		else if(this.typemap[key]!=CFG_TYPE.TYPE_STRING)
 			assert(this.typemap[key]==CFG_TYPE.TYPE_STRING);
-			
+
 		string ret = def;
 			try {
 				ret = kf.get_string(this.profile,key);
@@ -227,7 +227,7 @@ public class MySettings : Object {
 			this.typemap[key]=CFG_TYPE.TYPE_STRING_LIST;
 		else if(this.typemap[key]!=CFG_TYPE.TYPE_STRING_LIST)
 			assert(this.typemap[key]==CFG_TYPE.TYPE_STRING_LIST);
-					
+
 		bool ret = true;
 			try {
 				this.changed=true;
@@ -244,7 +244,7 @@ public class MySettings : Object {
 			this.typemap[key]=CFG_TYPE.TYPE_STRING;
 		else if(this.typemap[key]!=CFG_TYPE.TYPE_STRING)
 			assert(this.typemap[key]==CFG_TYPE.TYPE_STRING);
-					
+
 		bool ret = true;
 			try {
 				this.changed=true;
@@ -258,13 +258,13 @@ public class MySettings : Object {
 			}
 		return ret;
 		}
-	
+
 	public bool set_integer (string key,int def){
 		if(!this.typemap.has_key(key))
 			this.typemap[key]=CFG_TYPE.TYPE_INTEGER;
 		else if(this.typemap[key]!=CFG_TYPE.TYPE_INTEGER)
 			assert(this.typemap[key]==CFG_TYPE.TYPE_INTEGER);
-					
+
 		bool ret = true;
 			try {
 				this.changed=true;
@@ -281,7 +281,7 @@ public class MySettings : Object {
 			this.typemap[key]=CFG_TYPE.TYPE_BOOLEAN;
 		else if(this.typemap[key]!=CFG_TYPE.TYPE_BOOLEAN)
 			assert(this.typemap[key]==CFG_TYPE.TYPE_BOOLEAN);
-					
+
 		bool ret = true;
 			try {
 				this.changed=true;
@@ -298,7 +298,7 @@ public class MySettings : Object {
 			this.typemap[key]=CFG_TYPE.TYPE_DOUBLE;
 		else if(this.typemap[key]!=CFG_TYPE.TYPE_DOUBLE)
 			assert(this.typemap[key]==CFG_TYPE.TYPE_DOUBLE);
-					
+
 		bool ret = true;
 			try {
 				this.changed=true;
@@ -326,13 +326,13 @@ public class MySettings : Object {
 			}
 		return ret;
 		}
-		
+
 	public string get_accel_string(string key, string def,check_string? check_cb=null) {
 		if(!this.typemap.has_key(key))
 			this.typemap[key]=CFG_TYPE.TYPE_ACCEL_STRING;
 		else if(this.typemap[key]!=CFG_TYPE.TYPE_ACCEL_STRING)
 			assert(this.typemap[key]==CFG_TYPE.TYPE_ACCEL_STRING);
-					
+
 		string ret = def;
 			try {
 				ret = kf.get_string(this.accel_section,key);
@@ -350,7 +350,7 @@ public class MySettings : Object {
 			this.typemap[key]=CFG_TYPE.TYPE_ACCEL_STRING;
 		else if(this.typemap[key]!=CFG_TYPE.TYPE_ACCEL_STRING)
 			assert(this.typemap[key]==CFG_TYPE.TYPE_ACCEL_STRING);
-		
+
 		bool ret = true;
 			try {
 				this.changed=true;

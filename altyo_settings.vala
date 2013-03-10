@@ -624,10 +624,13 @@ public class AYSettings : AYTab{
 				this.keybindings_store.set_sort_column_id(0,Gtk.SortType.ASCENDING);
 
 				if(GLib.FileUtils.test(this.autorun_file,GLib.FileTest.EXISTS)){
-				var B = builder.get_object ("window_autostart_with_desktop") as Gtk.CheckButton;
-					if(B!=null){
-						B.active=true;
-					}else debug(" no gui for window_autostart_with_desktop");
+
+						if(!this.get_autostart_hidden()){
+							var B = builder.get_object ("window_autostart_with_desktop") as Gtk.CheckButton;
+								if(B!=null){
+									B.active=true;
+								}else debug(" no gui for window_autostart_with_desktop");
+						}
 				}
 	}//get_from_conf
 
@@ -792,10 +795,13 @@ Exec=altyo
 					} catch (GLib.FileError err) {
 						warning (err.message);
 					}
+				}else{//file exist, set hidden false
+					this.set_autostart_hidden(false);
 				}
-			}else{
+			}else{//disable autrun
 				if(GLib.FileUtils.test(this.autorun_file,GLib.FileTest.EXISTS)){
-					GLib.FileUtils.remove(this.autorun_file);
+					//GLib.FileUtils.remove(this.autorun_file);
+					this.set_autostart_hidden(true);
 				}
 			}
 		}
@@ -803,5 +809,45 @@ Exec=altyo
 		this.my_conf.reload_config();
 		this.my_conf.save();
 	}//apply
+
+
+	private void set_autostart_hidden(bool newstate){
+		var kf = new KeyFile();
+		try {
+			kf.load_from_file(this.autorun_file, KeyFileFlags.KEEP_COMMENTS);
+		} catch (GLib.KeyFileError err) {
+			warning (err.message);
+			return;
+		}
+		bool ret=false;
+		try{
+			ret=kf.get_boolean(GLib.KeyFileDesktop.GROUP,GLib.KeyFileDesktop.KEY_HIDDEN);
+		} catch (GLib.KeyFileError err) {
+		}
+		if(ret!=newstate){
+			kf.set_boolean(GLib.KeyFileDesktop.GROUP,GLib.KeyFileDesktop.KEY_HIDDEN,newstate);//enable
+			var str = kf.to_data (null);
+			try{
+				FileUtils.set_contents (this.autorun_file, str, str.length);
+			} catch (FileError err) {
+				warning (err.message);
+			}
+		}
+	}//set_autostart_hidden
+
+	private bool get_autostart_hidden(){
+		bool ret=false;
+		var kf = new KeyFile();
+		try {
+			kf.load_from_file(this.autorun_file, KeyFileFlags.KEEP_COMMENTS);
+		} catch (GLib.KeyFileError err) {
+			warning (err.message);
+		}
+		try{
+			ret=kf.get_boolean(GLib.KeyFileDesktop.GROUP,GLib.KeyFileDesktop.KEY_HIDDEN);
+		} catch (GLib.KeyFileError err) {
+		}
+		return ret;
+	}//get_autostart_hidden
 
 }//class AYSettings

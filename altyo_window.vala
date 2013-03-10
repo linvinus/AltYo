@@ -390,6 +390,15 @@ public class VTMainWindow : Window{
 		GLib.Timeout.add(this.animation_speed,this.on_pull_up);
 	}
 
+	/*public void fake_pullup(){
+		 * according to user settings
+		 * setup pixwin size,
+		 * setup main_vbox size,
+		 * setup tasks_notebook,
+		 * setup all nesessary variables for pull down
+		 * reparent to pix win
+		 * Think, is it worth it? }*/
+
 	public void toogle_widnow(){
 		if(this.pull_animation_active) return;
 		/* when hotkey is pressed, main window loose focus,

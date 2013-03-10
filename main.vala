@@ -179,8 +179,8 @@ int main (string[] args) {
 					var tmp = win.animation_enabled;
 					win.animation_enabled=false;
 					win.pull_down();//just show, without animation
-					win.pull_up();
 					win.animation_enabled=tmp;
+					win.pull_up();
 				}else{
 					var tmp = win.animation_enabled;
 					win.animation_enabled=false;

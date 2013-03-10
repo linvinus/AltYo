@@ -63,7 +63,7 @@ clean:
 	rm ./altyo || true
 	rm ./data/*.c *.h || true
 
-install:
+install: gen_mo
 	test -z "$(DESTDIR)$(PREFIX)/bin" || mkdir -p "$(DESTDIR)$(PREFIX)/bin";
 	cp -a ./$(PRG_NAME) $(DESTDIR)$(PREFIX)/bin
 	test -z "$(DESTDIR)$(PREFIX)/share/applications" || mkdir -p "$(DESTDIR)$(PREFIX)/share/applications";
@@ -76,6 +76,8 @@ install:
 gen_po:
 	xgettext -o ./po/altyo.po --from-code=UTF-8 -language=C -k_ $(VALA_FILES) $(GLADE_FILES)
 	msgmerge -s -U ./po/ru/LC_MESSAGES/$(PRG_NAME).po  ./po/$(PRG_NAME).po
+
+gen_mo:
 	msgfmt -c -v -o ./po/ru/LC_MESSAGES/$(PRG_NAME).mo ./po/ru/LC_MESSAGES/$(PRG_NAME).po
 
 source-package:

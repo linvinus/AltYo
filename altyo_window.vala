@@ -536,7 +536,7 @@ public class VTMainWindow : Window{
 							/* inform window manager where window should be placed*/
 							/* gem.win_gravity=Gdk.Gravity.NORTH; not working for multi-seat systems =( ,
 							 * use move_resize instead */
-							//this.get_window().move_resize(this.orig_x,this.orig_y,this.ayobject.terminal_width,should_be_h);
+							this.get_window().move_resize(this.orig_x,this.orig_y,this.ayobject.terminal_width,should_be_h);
 							debug ("update_position_size should_be_h=%d terminal_width=%d x=%d y=%d",should_be_h,this.ayobject.terminal_width,this.orig_x,this.orig_y) ;
 						}else
 							this.move (this.orig_x,this.orig_y);

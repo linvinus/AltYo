@@ -1093,8 +1093,11 @@ public class AYObject :Object{
 			this.activate_tab(new_active_tbutton);
 			this.update_tabs_title();
 			this.search_update();
-		}else
-			this.add_tab();
+		}else{
+			var vt_new=this.add_tab();
+			string S=_("Shell terminated.")+"\n\r\n\r";
+			vt_new.vte_term.feed(S,S.length);
+		}
 	}
 
 	public bool tab_button_press_event(Widget widget,Gdk.EventButton event) {

@@ -1032,8 +1032,11 @@ public class AYObject :Object{
 				//close tab if autorestart=false
 				if(this.children.length()>1)//don't close last tab
 					this.close_tab(this.hvbox.children_index(terminal.tbutton));
-				else
+				else{
+					string S=_("Shell terminated.")+"\n\r\n\r";
+					terminal.vte_term.feed(S,S.length);
 					terminal.start_command();
+				}
 			});
 		}else{
 			vt = new VTTerminal(this.conf,this.terms_notebook,(int)(this.children.length()+1),session_command,session_path,on_exit );

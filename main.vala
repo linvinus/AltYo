@@ -33,6 +33,7 @@
  * pool replace, In C, you can put your buttons and widgets in a GtkOffscreenWindow using gtk_widget_reparent() and then use gtk_offscreen_window_get_pixbuf() to render it onto a GdkPixbuf, which you can then save to a file. Sorry I don't have any Python code, but I don't think the offscreen window is available in PyGTK yet.
  * http://developer.gnome.org/gtk3/3.0/GtkStyleContext.html#gtk-render-frame
  * http://developer.gnome.org/gtk3/3.0/gtk-migrating-GtkApplication.html
+ * https://gitorious.org/gnome-boxes/gnome-boxes/blobs/master/src/app.vala
  * http://live.gnome.org/Vala/GSettingsSample
  * http://code.valaide.org/content/example-program-using-keyfile-glib-class-readwrite-ini-files
  * http://developer.gnome.org/pango/stable/PangoMarkupFormat.html
@@ -47,16 +48,26 @@
 using Gtk;
 using Posix;
 
-bool reload = false;
-string? cmd_conf_file = null;
+struct Globals{
+	static bool reload = false;
+	static bool opt_help = false;
+	static string? cmd_conf_file = null;
 
-static const OptionEntry[] options = {
-                { "reload", 'r', 0, OptionArg.NONE, ref reload,
-                        "Reload configuration", null },
-                { "cfg", 'c', 0, OptionArg.FILENAME, ref cmd_conf_file,
-                        "Read configuration from file", null },
-                { null }
-        };
+	[CCode (array_length = false, array_null_terminated = true)]
+	public static string[]? exec_file_with_args = null;
+
+	public static const OptionEntry[] options = {
+					{ "help", 'h', OptionFlags.HIDDEN, OptionArg.NONE, ref Globals.opt_help, null, null },
+					{ "reload", 'r', 0, OptionArg.NONE, ref Globals.reload,
+							"Reload configuration", null },
+					{ "cfg", 'c', 0, OptionArg.FILENAME, ref Globals.cmd_conf_file,
+							"Read configuration from file", null },
+					{ "exec", 'e', 0, OptionArg.STRING_ARRAY, ref Globals.exec_file_with_args, /*The option takes a string argument, multiple uses of the option are collected into an array of strings. */
+							"run command in new tab", "command arg1 argN..." },
+					{ null }
+			};
+
+}//Globals
 
 unowned Gtk.Window main_win;
 
@@ -107,57 +118,83 @@ int main (string[] args) {
 	Intl.bindtextdomain (GETTEXT_PACKAGE, null);
 	Intl.bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	Intl.textdomain (GETTEXT_PACKAGE);
-
+	unowned string[] save_exec_file_with_args=Globals.exec_file_with_args;
 	Gtk.init (ref args);
 	string[] args2=args;//copy args for local usage
 
     var app = new Gtk.Application("org.gtk.altyo", ApplicationFlags.HANDLES_COMMAND_LINE);
 
-	OptionContext ctx = new OptionContext("AltYo");
+       if(args2.length>1 ){//show local help if needed
+               try {
+					   OptionContext ctx2 = new OptionContext("AltYo");
+					   ctx2.add_main_entries(Globals.options, null);
+                       unowned string[] pargs2=args2;
+                       ctx2.parse(ref pargs2);
+               } catch (Error e) {
+                               GLib.stderr.printf("Error initializing: %s\n", e.message);
+               }
+       }
 
-	ctx.add_main_entries(options, null);
-
-	if(args2.length>1 ){//show local help if needed
-		try {
-			unowned string[] pargs2=args2;
-			ctx.parse(ref pargs2);
-		} catch (Error e) {
-				GLib.stderr.printf("Error initializing: %s\n", e.message);
-		}
-	}
 
 	//remote args usage
     app.command_line.connect((command_line)=>{//ApplicationCommandLine
 			string[] argv = command_line.get_arguments();
 			debug("app.command_line.connect argv.length=%d",argv.length);
 
+			OptionContext ctx = new OptionContext("AltYo");
+			ctx.add_main_entries(Globals.options, null);
+
 			if(argv.length==1 ){//no parameters
 				unowned List<weak Window> list = app.get_windows();
 				if(list!=null)
 					((VTMainWindow)list.data).pull_down(); //another altyo already running, show it
-			}
+				return 0;//ok
+			}else{
+				ctx.set_help_enabled (false);//disable exit from application if wrong parameters
+				unowned string[] pargv=argv;
+				Globals.exec_file_with_args=null;//clear array
 
-			ctx.set_help_enabled (false);//disable exit from application if wrong parameters
-			unowned string[] pargv=argv;
-			try {
-				ctx.parse(ref pargv);
-			} catch (Error e) {
-					GLib.stderr.printf("Error initializing: %s\n", e.message);
+				//exec_file_with_args=null;
+				try {
+					if(!ctx.parse(ref pargv))return 3;
+				} catch (Error e) {
+						GLib.stderr.printf("Error initializing: %s\n", e.message);
+				}
+				debug("app.command_line.connect reload=%d",(int)Globals.reload);
+				debug("app.command_line.exec_file_with_args=%d",(int)Globals.exec_file_with_args);
+				debug("app.command_line.exec_file_with_args=%d",(int)Globals.exec_file_with_args.length);
+				if(Globals.reload){
+					unowned List<weak Window> list = app.get_windows();
+					if(list!=null)
+						((VTMainWindow)list.data).conf.load_config();
+				}else
+				if(Globals.exec_file_with_args!=null){
+					unowned List<weak Window> list = app.get_windows();
+					if(list!=null){
+						//var S = string.joinv (" ", Globals.exec_file_with_args);
+						string S ="";
+						foreach(var s in Globals.exec_file_with_args){
+							debug("exec %s",s);
+							S+=" "+s;
+						}
+						((VTMainWindow)list.data).ayobject.add_tab(S);
+					}
+				}else
+				if (Globals.opt_help) {
+					command_line.printerr (ctx.get_help (true, null));
+					Globals.opt_help=false;
+				}
+
+				Globals.reload=false;
+
+				return 2;//exit status
 			}
-			debug("app.command_line.connect reload=%d",(int)reload);
-			if(reload){
-				unowned List<weak Window> list = app.get_windows();
-				if(list!=null)
-					((VTMainWindow)list.data).conf.load_config();
-			}
-			reload=false;
-			return 2;//exit status
 		});//app.command_line.connect
 
 	app.startup.connect(()=>{//first run
 				debug("app.startup.connect");
 
-				var conf = new MySettings(cmd_conf_file);
+				var conf = new MySettings(Globals.cmd_conf_file);
 
 				configure_debug(conf);
 
@@ -200,7 +237,6 @@ int main (string[] args) {
 				Gtk.main ();
 
 		});//app.startup.connect
-
 	var status = app.run(args);
 
     return status;

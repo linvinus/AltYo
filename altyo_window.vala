@@ -61,7 +61,7 @@ public class VTMainWindow : Window{
 
 	public PanelHotkey hotkey;
 	public bool mouse_follow=false;
-	private unowned Widget prev_focus=null;
+	public unowned Widget prev_focus=null;
 
 	private int pull_step = 0;
 	public int orig_x = 0;
@@ -519,6 +519,7 @@ public class VTMainWindow : Window{
 				/*update terminal align policy
 				 * */
 				this.ayobject.on_maximize(this.maximized);
+				if(!this.visible)return;
 				/* update position only in unmaximized mode
 				 * */
 				if(!this.maximized && !this.config_maximized){
@@ -1137,6 +1138,7 @@ public class AYObject :Object{
 						//this.set_default(vt.vte_term);
 					}
 					this.search_update();
+					this.main_window.prev_focus=((VTTerminal)tab_button.object).vte_term;//update focus, helps if window was hidden
 					break;
 					}
 			}
@@ -1144,6 +1146,7 @@ public class AYObject :Object{
 			if(this.active_tab.object is VTTerminal){
 			((VTTerminal)this.active_tab.object).vte_term.grab_focus();
 			((VTTerminal)this.active_tab.object).vte_term.show () ;
+			this.main_window.prev_focus=((VTTerminal)this.active_tab.object).vte_term;//update focus, helps if window was hidden
 			}
 			this.search_update();
 		}

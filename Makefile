@@ -20,9 +20,9 @@ endif
 
 CHANGELOG_TAG=${shell grep -m 1 "^altyo" ./debian/changelog | sed 's/.*(//' | sed 's/).*$$//'| sed 's/~/_/' | sed 's/:/%/'}
 
-VALA_FLAGS = -v
+VALA_FLAGS += -v
 VALA_FLAGS += --disable-warnings
-#VALA_FLAGS += -g --save-temps
+#VALA_FLAGS += -g --save-temps -X -O0
 VALA_FLAGS += -X -DGETTEXT_PACKAGE=\"$(PRG_NAME)\" -X -DVERSION=\"0.2\"
 #\ -I.\ -include\ "./config.h" -v
 ifeq ($(LINUX.DISTRIB.ID),debian)

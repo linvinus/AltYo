@@ -715,7 +715,7 @@ public class AYSettings : AYTab{
 							var B = builder.get_object (key) as Gtk.Entry;
 							if(B!=null){
 								if(B.text!=this.my_conf.get_string(key,""))
-									this.my_conf.get_string(key,B.text);
+									this.my_conf.set_string(key,B.text);
 							}else
 								debug(" no gui for key %s",key);
 						}

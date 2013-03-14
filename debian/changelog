@@ -1,3 +1,23 @@
+altyo (0.2~130314-linvinus1) quantal; urgency=low
+
+  * update: debian  include-binaries po/ru/LC_MESSAGES/altyo.mo
+  * update: makefile, gen_mo before install 
+  * update: debian, remove po/ru/LC_MESSAGES/altyo.mo from include-binaries
+  * update: gdk move_resize is also important
+  * update: inform user about closed tab, when was closed last one tab
+  * update: inform user about closed tab, when was closed last one tab, by ctrl+d
+  * new: command line option --exec update: makefile, allow override VALA_FLAGS
+  * fix: save setting custom_command
+  * update: command line handling 
+  * fix: start hidden
+  * improve: start hidden, now it ideal 
+  * fix: activate_tab, check tab.object is VTTerminal
+  * improve: start hidden, fix maximized mode
+  * update: translations 
+  * add: tooltips in gui settings
+
+ -- denis <linvinus@gmail.com>  Thu, 14 Mar 2013 21:38:44 +0400
+
 altyo (0.2~130310-linvinus1) quantal; urgency=low
 
   * fix: window flicker in some conditions(on hvbox resize,on pull down) 

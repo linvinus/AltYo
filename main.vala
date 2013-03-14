@@ -57,13 +57,12 @@ struct Globals{
 	public static string[]? exec_file_with_args = null;
 
 	public static const OptionEntry[] options = {
+					/*allow show help from remote call*/
 					{ "help", 'h', OptionFlags.HIDDEN, OptionArg.NONE, ref Globals.opt_help, null, null },
-					{ "reload", 'r', 0, OptionArg.NONE, ref Globals.reload,
-							"Reload configuration", null },
-					{ "cfg", 'c', 0, OptionArg.FILENAME, ref Globals.cmd_conf_file,
-							"Read configuration from file", null },
-					{ "exec", 'e', 0, OptionArg.STRING_ARRAY, ref Globals.exec_file_with_args, /*The option takes a string argument, multiple uses of the option are collected into an array of strings. */
-							"run command in new tab", "command arg1 argN..." },
+					{ "reload", 'r', 0, OptionArg.NONE, ref Globals.reload,N_("Reload configuration"), null },
+					{ "cfg", 'c', 0, OptionArg.FILENAME, ref Globals.cmd_conf_file,N_("Read configuration from file"), N_("/path/to/config.ini") },
+					/*The option takes a string argument, multiple uses of the option are collected into an array of strings. */
+					{ "exec", 'e', 0, OptionArg.STRING_ARRAY, ref Globals.exec_file_with_args,N_("run command in new tab"), N_("\"command arg1 argN...\"") },
 					{ null }
 			};
 
@@ -118,26 +117,17 @@ int main (string[] args) {
 	Intl.bindtextdomain (GETTEXT_PACKAGE, null);
 	Intl.bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	Intl.textdomain (GETTEXT_PACKAGE);
-	unowned string[] save_exec_file_with_args=Globals.exec_file_with_args;
+
 	Gtk.init (ref args);
-	string[] args2=args;//copy args for local usage
 
     var app = new Gtk.Application("org.gtk.altyo", ApplicationFlags.HANDLES_COMMAND_LINE);
 
-       if(args2.length>1 ){//show local help if needed
-               try {
-					   OptionContext ctx2 = new OptionContext("AltYo");
-					   ctx2.add_main_entries(Globals.options, null);
-                       unowned string[] pargs2=args2;
-                       ctx2.parse(ref pargs2);
-               } catch (Error e) {
-                               GLib.stderr.printf("Error initializing: %s\n", e.message);
-               }
-       }
-
-
 	//remote args usage
     app.command_line.connect((command_line)=>{//ApplicationCommandLine
+    
+			if(!command_line.get_is_remote() )//local command line was handled in app.startup
+					return 0;//just ignore it
+					
 			string[] argv = command_line.get_arguments();
 			debug("app.command_line.connect argv.length=%d",argv.length);
 
@@ -153,16 +143,16 @@ int main (string[] args) {
 				ctx.set_help_enabled (false);//disable exit from application if wrong parameters
 				unowned string[] pargv=argv;
 				Globals.exec_file_with_args=null;//clear array
+				Globals.cmd_conf_file=null;
+				Globals.reload=false;
+				Globals.opt_help=false;
 
-				//exec_file_with_args=null;
 				try {
 					if(!ctx.parse(ref pargv))return 3;
 				} catch (Error e) {
 						GLib.stderr.printf("Error initializing: %s\n", e.message);
 				}
 				debug("app.command_line.connect reload=%d",(int)Globals.reload);
-				debug("app.command_line.exec_file_with_args=%d",(int)Globals.exec_file_with_args);
-				debug("app.command_line.exec_file_with_args=%d",(int)Globals.exec_file_with_args.length);
 				if(Globals.reload){
 					unowned List<weak Window> list = app.get_windows();
 					if(list!=null)
@@ -193,7 +183,15 @@ int main (string[] args) {
 
 	app.startup.connect(()=>{//first run
 				debug("app.startup.connect");
-
+				if(args.length>1 ){//show local help if needed
+					   try {
+							   OptionContext ctx2 = new OptionContext("AltYo");
+							   ctx2.add_main_entries(Globals.options, null);
+							   ctx2.parse(ref args);
+					   } catch (Error e) {
+									   GLib.stderr.printf("Error initializing: %s\n", e.message);
+					   }
+				}
 				var conf = new MySettings(Globals.cmd_conf_file);
 
 				configure_debug(conf);
@@ -215,9 +213,8 @@ int main (string[] args) {
 				if ( conf.get_boolean("start_hidden",false) ){
 					var tmp = win.animation_enabled;
 					win.animation_enabled=false;
-					win.pull_down();//just show, without animation
-					win.animation_enabled=tmp;
 					win.pull_up();
+					win.animation_enabled=tmp;
 				}else{
 					var tmp = win.animation_enabled;
 					win.animation_enabled=false;

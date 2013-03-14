@@ -164,6 +164,7 @@ public class VTMainWindow : Window{
 				this.update_events();
 			}
 			});
+			
 		this.check_monitor_and_configure_position();
 		this.update_position_size();
 	}
@@ -272,7 +273,9 @@ public class VTMainWindow : Window{
 		if(this.pull_animation_active)
 			return;
 		if(!this.animation_enabled ||
-			this.pixwin.get_child()==null){//prevent error if start hidden
+			this.pixwin.get_child()==null||
+			this.pull_w<2||
+			this.pull_h<2){//prevent error if start hidden
 			this.configure_position();
 			this.show();
 			this.move (this.orig_x ,this.orig_y);

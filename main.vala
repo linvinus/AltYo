@@ -211,10 +211,7 @@ int main (string[] args) {
 				win.CreateVTWindow(conf);
 
 				if ( conf.get_boolean("start_hidden",false) ){
-					var tmp = win.animation_enabled;
-					win.animation_enabled=false;
-					win.pull_up();
-					win.animation_enabled=tmp;
+					win.pull_up();//all workarounds is inside pull_up,pull_down,update_position_size
 				}else{
 					var tmp = win.animation_enabled;
 					win.animation_enabled=false;

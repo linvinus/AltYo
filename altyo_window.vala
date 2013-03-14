@@ -273,9 +273,7 @@ public class VTMainWindow : Window{
 		if(this.pull_animation_active)
 			return;
 		if(!this.animation_enabled ||
-			this.pixwin.get_child()==null||
-			this.pull_w<2||
-			this.pull_h<2){//prevent error if start hidden
+			this.pixwin.get_child()==null){//prevent error if start hidden
 			this.configure_position();
 			this.show();
 			this.move (this.orig_x ,this.orig_y);
@@ -299,7 +297,7 @@ public class VTMainWindow : Window{
 		}else
 			this.move (this.pull_x,this.pull_y);
 		this.update_events();
-		if (this.pull_w != 0 && this.pull_h != 0)
+		if (this.pull_w >1 && this.pull_h >1)
 			this.pull_step=0;
 		else
 			this.pull_step=this.pull_steps;//skip animation
@@ -522,7 +520,7 @@ public class VTMainWindow : Window{
 				/*update terminal align policy
 				 * */
 				this.ayobject.on_maximize(this.maximized);
-				if(!this.visible)return;
+				
 				/* update position only in unmaximized mode
 				 * */
 				if(!this.maximized && !this.config_maximized){
@@ -540,7 +538,8 @@ public class VTMainWindow : Window{
 							/* inform window manager where window should be placed*/
 							/* gem.win_gravity=Gdk.Gravity.NORTH; not working for multi-seat systems =( ,
 							 * use move_resize instead */
-							this.get_window().move_resize(this.orig_x,this.orig_y,this.ayobject.terminal_width,should_be_h);
+							if(this.visible)
+								this.get_window().move_resize(this.orig_x,this.orig_y,this.ayobject.terminal_width,should_be_h);
 							debug ("update_position_size should_be_h=%d terminal_width=%d x=%d y=%d",should_be_h,this.ayobject.terminal_width,this.orig_x,this.orig_y) ;
 						}else
 							this.move (this.orig_x,this.orig_y);
@@ -1141,7 +1140,8 @@ public class AYObject :Object{
 						//this.set_default(vt.vte_term);
 					}
 					this.search_update();
-					this.main_window.prev_focus=((VTTerminal)tab_button.object).vte_term;//update focus, helps if window was hidden
+					if(tab_button.object is VTTerminal)
+						this.main_window.prev_focus=((VTTerminal)tab_button.object).vte_term;//update focus, helps if window was hidden
 					break;
 					}
 			}
@@ -1149,7 +1149,8 @@ public class AYObject :Object{
 			if(this.active_tab.object is VTTerminal){
 			((VTTerminal)this.active_tab.object).vte_term.grab_focus();
 			((VTTerminal)this.active_tab.object).vte_term.show () ;
-			this.main_window.prev_focus=((VTTerminal)this.active_tab.object).vte_term;//update focus, helps if window was hidden
+			if(this.active_tab.object is VTTerminal)
+				this.main_window.prev_focus=((VTTerminal)this.active_tab.object).vte_term;//update focus, helps if window was hidden
 			}
 			this.search_update();
 		}

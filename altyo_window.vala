@@ -164,9 +164,9 @@ public class VTMainWindow : Window{
 				this.update_events();
 			}
 			});
-			
+
 		this.check_monitor_and_configure_position();
-		
+
 		if(this.config_maximized && conf.get_boolean("start_hidden",false)){
 				this.ayobject.on_maximize(false);
 				this.maximized=true;
@@ -346,7 +346,7 @@ public class VTMainWindow : Window{
 			//we don't know size , guess
 			orig_w_main_vbox=this.pull_w=this.ayobject.terminal_width;
 			orig_h_main_vbox=this.pull_h=this.ayobject.terminal_height;
-		}		
+		}
 		this.save_current_monitor(this.pull_x,this.pull_y);
 		if(!this.animation_enabled){
 			this.prev_focus=this.get_focus();
@@ -527,7 +527,7 @@ public class VTMainWindow : Window{
 				/*update terminal align policy
 				 * */
 				this.ayobject.on_maximize(this.maximized);
-				
+
 				/* update position only in unmaximized mode
 				 * */
 				if(!this.maximized && !this.config_maximized){
@@ -1455,7 +1455,7 @@ public class AYObject :Object{
 
 		/* Change page 1..9 0 */
         for(var i=1;i<11;i++){
-			this.add_window_accel("terminal_switch_tab%d".printf(i), _("Switch to tab %d").printf(i), _("Switch to tab %d").printf(i), null,"<Alt>%d".printf((i==10?0:i)),(a)=> {
+			this.add_window_accel("terminal_switch_tab%d".printf(i), _("Switch to tab %d").printf(i), _("Switch to tab %d,double press switch to tab %d").printf(i,i+10), null,"<Alt>%d".printf((i==10?0:i)),(a)=> {
 					//"a" - is action, get index from action name,
 					//because "i" is unavailable in action callback
 					var s=a.name.replace("terminal_switch_tab","");

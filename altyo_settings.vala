@@ -632,6 +632,12 @@ public class AYSettings : AYTab{
 								}else debug(" no gui for window_autostart_with_desktop");
 						}
 				}
+		#if !ALTERNATE_SCREEN_SCROLL
+		//debian patch vte_terminal_set_alternate_screen_scroll
+		var ASS = builder.get_object ("terminal_set_alternate_screen_scroll") as Gtk.CheckButton;
+		ASS.sensitive=false;
+		#endif
+
 	}//get_from_conf
 
 	public void apply() {

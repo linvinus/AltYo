@@ -67,19 +67,6 @@
       </row>
     </data>
   </object>
-  <object class="GtkListStore" id="tab_title_format_regex">
-    <columns>
-      <!-- column-name patern -->
-      <column type="gchararray"/>
-      <!-- column-name replace -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
-  <object class="GtkAdjustment" id="terminal_opacity_adjustment">
-    <property name="upper">1</property>
-    <property name="step_increment">0.10000000000000001</property>
-    <property name="page_increment">10</property>
-  </object>
   <object class="GtkScrolledWindow" id="settings-scrolledwindow">
     <property name="visible">True</property>
     <property name="can_focus">True</property>
@@ -188,6 +175,8 @@
                                                       <object class="GtkSpinButton" id="animation_pull_steps">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
+                                                        <property name="has_tooltip">True</property>
+                                                        <property name="tooltip_text" translatable="yes">Number of animation steps,less is faster.</property>
                                                         <property name="invisible_char">•</property>
                                                         <property name="invisible_char_set">True</property>
                                                         <property name="adjustment">animation_pull_steps_adjustment</property>
@@ -326,6 +315,8 @@
                                                       <object class="GtkSpinButton" id="terminal_height">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
+                                                        <property name="has_tooltip">True</property>
+                                                        <property name="tooltip_text" translatable="yes">When height equal 100, maximize window.</property>
                                                         <property name="invisible_char">•</property>
                                                         <property name="invisible_char_set">True</property>
                                                         <property name="input_purpose">digits</property>
@@ -405,6 +396,8 @@
                                                       <object class="GtkComboBox" id="window_default_monitor">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
+                                                        <property name="has_tooltip">True</property>
+                                                        <property name="tooltip_text" translatable="yes">Default monitor on which altyo will be shown at start up.</property>
                                                         <property name="model">window_default_monitor_liststore</property>
                                                         <property name="has_entry">True</property>
                                                         <property name="entry_text_column">0</property>
@@ -432,6 +425,7 @@
                                                       <object class="GtkLabel" id="window_default_monitor_label">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">False</property>
+                                                        <property name="has_tooltip">True</property>
                                                         <property name="tooltip_text" translatable="yes">Current monitor</property>
                                                       </object>
                                                       <packing>
@@ -443,6 +437,28 @@
                                                     </child>
                                                     <child>
                                                       <placeholder/>
+                                                    </child>
+                                                    <child>
+                                                      <placeholder/>
+                                                    </child>
+                                                    <child>
+                                                      <placeholder/>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkCheckButton" id="follow_the_white_rabbit">
+                                                        <property name="label" translatable="yes">Follow mouse cursor</property>
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">True</property>
+                                                        <property name="receives_default">False</property>
+                                                        <property name="xalign">0</property>
+                                                        <property name="draw_indicator">True</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="left_attach">1</property>
+                                                        <property name="top_attach">4</property>
+                                                        <property name="width">1</property>
+                                                        <property name="height">1</property>
+                                                      </packing>
                                                     </child>
                                                   </object>
                                                   <packing>
@@ -491,8 +507,8 @@
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkCheckButton" id="follow_the_white_rabbit">
-                                            <property name="label" translatable="yes">Follow mouse cursor</property>
+                                          <object class="GtkCheckButton" id="window_autostart_with_desktop">
+                                            <property name="label" translatable="yes">Auto start with desktop session</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
@@ -503,21 +519,6 @@
                                             <property name="expand">False</property>
                                             <property name="fill">True</property>
                                             <property name="position">1</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkCheckButton" id="debug">
-                                            <property name="label" translatable="yes">Debug</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">False</property>
-                                            <property name="xalign">0</property>
-                                            <property name="draw_indicator">True</property>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">2</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -532,22 +533,7 @@
                                           <packing>
                                             <property name="expand">False</property>
                                             <property name="fill">True</property>
-                                            <property name="position">3</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkCheckButton" id="tab_box_have_background">
-                                            <property name="label" translatable="yes">Tab box have background</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">False</property>
-                                            <property name="xalign">0</property>
-                                            <property name="draw_indicator">True</property>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">4</property>
+                                            <property name="position">2</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -562,7 +548,33 @@
                                           <packing>
                                             <property name="expand">False</property>
                                             <property name="fill">True</property>
-                                            <property name="position">6</property>
+                                            <property name="position">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSeparator" id="separator3">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">4</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="tab_box_have_background">
+                                            <property name="label" translatable="yes">Tab box have background</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="xalign">0</property>
+                                            <property name="draw_indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">5</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -577,12 +589,12 @@
                                           <packing>
                                             <property name="expand">False</property>
                                             <property name="fill">True</property>
-                                            <property name="position">7</property>
+                                            <property name="position">8</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkCheckButton" id="window_autostart_with_desktop">
-                                            <property name="label" translatable="yes">Auto start with desktop session</property>
+                                          <object class="GtkCheckButton" id="debug">
+                                            <property name="label" translatable="yes">Debug</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
@@ -776,6 +788,8 @@
                                       <object class="GtkSpinButton" id="terminal_scrollback_lines">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="has_tooltip">True</property>
+                                        <property name="tooltip_text" translatable="yes">lines count</property>
                                         <property name="invisible_char">•</property>
                                         <property name="invisible_char_set">True</property>
                                         <property name="progress_pulse_step">1</property>
@@ -1069,6 +1083,8 @@
                                       <object class="GtkEntry" id="custom_command">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="has_tooltip">True</property>
+                                        <property name="tooltip_text" translatable="yes">Run this command instead user shell</property>
                                         <property name="invisible_char">•</property>
                                         <property name="invisible_char_set">True</property>
                                       </object>
@@ -1122,6 +1138,9 @@
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="has_tooltip">True</property>
+                                        <property name="tooltip_text" translatable="yes">Available only on debian based systems.
+Allow use mouse scroll in some programs,for example in less</property>
                                         <property name="xalign">0</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
@@ -1385,6 +1404,7 @@
                                       <object class="GtkSpinButton" id="double_hotkey_milliseconds">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">The time during which respond to the double pressing.</property>
                                         <property name="invisible_char">•</property>
                                         <property name="invisible_char_set">True</property>
                                         <property name="adjustment">double_hotkey_milliseconds_adjustment</property>
@@ -2129,6 +2149,14 @@
       </object>
     </child>
   </object>
+  <object class="GtkListStore" id="tab_title_format_regex">
+    <columns>
+      <!-- column-name patern -->
+      <column type="gchararray"/>
+      <!-- column-name replace -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
   <object class="GtkListStore" id="terminal_autostart_session">
     <columns>
       <!-- column-name command -->
@@ -2139,23 +2167,6 @@
     <property name="upper">1</property>
     <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">10</property>
-  </object>
-  <object class="GtkListStore" id="terminal_cursor_blinkmode_liststore">
-    <columns>
-      <!-- column-name gchararray1 -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">System</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">On</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Off</col>
-      </row>
-    </data>
   </object>
   <object class="GtkListStore" id="terminal_delete_binding_liststore">
     <columns>
@@ -2180,11 +2191,33 @@
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="terminal_cursor_blinkmode_liststore">
+    <columns>
+      <!-- column-name gchararray1 -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">System</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">On</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Off</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkAdjustment" id="terminal_height_adjustment">
     <property name="lower">1</property>
     <property name="upper">10000</property>
     <property name="step_increment">10</property>
     <property name="page_increment">100</property>
+  </object>
+  <object class="GtkAdjustment" id="terminal_opacity_adjustment">
+    <property name="upper">1</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="terminal_scrollback_lines_adjustment">
     <property name="upper">100000</property>

@@ -166,7 +166,14 @@ public class VTMainWindow : Window{
 			});
 			
 		this.check_monitor_and_configure_position();
-		this.update_position_size();
+		
+		if(this.config_maximized && conf.get_boolean("start_hidden",false)){
+				this.ayobject.on_maximize(false);
+				this.maximized=true;
+				this.update_position_size();
+		}else{
+			this.update_position_size();
+		}
 	}
 
 	private void check_monitor_and_configure_position(){
@@ -276,11 +283,8 @@ public class VTMainWindow : Window{
 			this.pixwin.get_child()==null){//prevent error if start hidden
 			this.configure_position();
 			this.show();
-			this.move (this.orig_x ,this.orig_y);
 			this.current_state=WStates.VISIBLE;
-			this.update_events();
 			this.update_position_size();
-			this.update_events();
 			this.window_set_active();
 			this.update_events();
 			return;
@@ -338,6 +342,11 @@ public class VTMainWindow : Window{
 		this.orig_w_tasks_notebook = this.ayobject.tasks_notebook.get_allocated_width();
 		debug("pull_up orig_h_note=%d orig_w_note=%d",orig_h_main_vbox,orig_w_main_vbox);
 		this.pull_maximized=this.maximized;
+		if(this.pull_w<2 || this.pull_h<2){//if start hidden
+			//we don't know size , guess
+			orig_w_main_vbox=this.pull_w=this.ayobject.terminal_width;
+			orig_h_main_vbox=this.pull_h=this.ayobject.terminal_height;
+		}		
 		this.save_current_monitor(this.pull_x,this.pull_y);
 		if(!this.animation_enabled){
 			this.prev_focus=this.get_focus();
@@ -349,8 +358,6 @@ public class VTMainWindow : Window{
 
 		this.pull_active=true;
 		this.pull_animation_active=false;
-		if(this.pull_w<=0 || this.pull_h<=0)
-			return;
 
 		this.pixwin.set_default_size(pull_w,pull_h);//important
 		this.pixwin.set_size_request (pull_w,pull_h);//important
@@ -547,8 +554,8 @@ public class VTMainWindow : Window{
 				}else{
 					if(this.orig_w_main_vbox!=0 && this.orig_h_main_vbox!=0 &&
 						this.orig_w_tasks_notebook!=0 && this.orig_h_tasks_notebook!=0){
-					this.ayobject.main_vbox.set_size_request(this.orig_w_main_vbox,this.orig_h_main_vbox);
-					this.ayobject.tasks_notebook.set_size_request(this.orig_w_tasks_notebook,this.orig_h_tasks_notebook);
+						this.ayobject.main_vbox.set_size_request(this.orig_w_main_vbox,this.orig_h_main_vbox);
+						this.ayobject.tasks_notebook.set_size_request(this.orig_w_tasks_notebook,this.orig_h_tasks_notebook);
 					}
 					this.maximize();
 				}
@@ -877,8 +884,8 @@ public class AYObject :Object{
 		//this.terms_notebook.set_show_border(false);
 
 		this.tasks_notebook = new Notebook();
-//~		this.tasks_notebook.halign=Gtk.Align.FILL;
-//~		this.tasks_notebook.valign=Gtk.Align.START;
+//~ 		this.tasks_notebook.halign=Gtk.Align.START;
+//~ 		this.tasks_notebook.valign=Gtk.Align.START;
 		this.tasks_notebook.expand=false;
 		this.tasks_notebook.name="tasks_notebook";
 		this.tasks_notebook.set_show_tabs(false);

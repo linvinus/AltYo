@@ -235,7 +235,7 @@ public class VTToggleButton : Gtk.ToggleButton {
 		/*"background='#"+"%I02x".printf(((int)(color_b.red*255)))+"%I02x".printf(((int)(color_b.green*255)))+"%I02x".printf(((int)(color_b.blue*255)))+"' "+*/
 		">"+result2+"</span>";
 		//this.label.set_markup(this.markup_normal);
-
+		this.tooltip_markup=this.markup_normal;
 		//var grx_prelight = new GLib.Regex(GLib.Regex.escape_string("foreground"));
 		//result = grx_prelight.replace_literal(result,(ssize_t) result.size(), 0, "background" );
         color_f = context.get_color(StateFlags.ACTIVE);
@@ -264,22 +264,25 @@ public class VTToggleButton : Gtk.ToggleButton {
 		var tmp = this.label.ellipsize;
 		this.label.ellipsize = Pango.EllipsizeMode.NONE;
 		base.get_preferred_width (out minimum_width, out natural_width);//get NORMAL size
-		
+
 		//use this.width_request as limiting size variable from hvbox
 		if(this.width_request>0&&
 		( (this.max_width>0 && this.width_request<this.max_width)||
-		  (this.max_width<1) ) 
+		  (this.max_width<1) )
 		){
 			this.max_width=this.width_request;
 		}
 		if(this.max_width>0 && minimum_width>this.max_width){
 			minimum_width=this.max_width;
 			this.label.ellipsize = Pango.EllipsizeMode.MIDDLE;//limit label size
-		}else
+			this.has_tooltip=true;
+		}else{
+			this.has_tooltip=false;
 			this.width_request=-1;//reset it if size is ok
-			
+		}
+
 	}
-	
+
 	public override void get_preferred_height (out int minimum_height, out int natural_height) {
 		var tmp = this.label.ellipsize;
 		this.label.ellipsize = Pango.EllipsizeMode.NONE;
@@ -325,7 +328,7 @@ public class AYTab : Object{
 		this.tbutton.object = this;
 		this.my_conf.on_load.connect(()=>{
 			this.configure(this.my_conf);
-			});		
+			});
 	}
 	public void destroy(){
 		this.hbox.hide();
@@ -335,15 +338,15 @@ public class AYTab : Object{
 		//this.vte_term.destroy();
 		this.hbox.destroy();//destroy all widgets and unref self
 	}
-	
-	public void configure(MySettings my_conf){	
+
+	public void configure(MySettings my_conf){
 		this.tbutton.tab_format = my_conf.get_string("tab_format","[ _INDEX_ ]");
 		this.tbutton.tab_title_format = my_conf.get_string("tab_title_format","<span foreground='#FFF000'>_INDEX_</span>/_TITLE_");
 		this.tbutton.tab_title_regex = my_conf.get_string_list("tab_title_format_regex",{"^(mc) \\[","<span>_REPLACE_ </span>","([\\w\\.]+)@","<span font_weight='bold' foreground='#EEEEEE'>_USER_</span>","([\\w\\.\\-]+)\\]?:","@<span font_weight='bold' foreground='#FFF000'>_HOSTNAME_</span>:","([^:]*)$","<span>_PATH_</span>"},(ref new_val)=>{
 			if(new_val!=null && (new_val.length % 2)!=0){new_val={"^(mc) \\[","<span>_REPLACE_ </span>","([\\w\\.]+)@","<span font_weight='bold' foreground='#EEEEEE'>_USER_</span>","([\\w\\.\\-]+)\\]?:","@<span font_weight='bold' foreground='#FFF000'>_HOSTNAME_</span>:","([^:]*)$","<span>_PATH_</span>"};return true;}
 			return false;
 			});
-			
+
 		this.tbutton.max_width=my_conf.get_integer("tab_max_width",-1,(ref new_val)=>{
 			if(new_val<-1){new_val=-1;return true;}
 			return false;

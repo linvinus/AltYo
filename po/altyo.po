@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-14 21:33+0400\n"
+"POT-Creation-Date: 2013-03-15 20:45+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: altyo_terminal.vala:422 altyo_window.vala:1046 altyo_window.vala:1111
+#: altyo_terminal.vala:466 altyo_window.vala:1046 altyo_window.vala:1111
 msgid "Shell terminated."
 msgstr ""
 
-#: altyo_terminal.vala:676
+#: altyo_terminal.vala:720
 msgid "Additional settings"
 msgstr ""
 
@@ -116,7 +116,7 @@ msgstr ""
 msgid "Show/Hide Quick list"
 msgstr ""
 
-#: altyo_window.vala:1505 data/preferences.glade:449
+#: altyo_window.vala:1505 data/preferences.glade:440
 msgid "Follow mouse cursor"
 msgstr ""
 
@@ -278,7 +278,7 @@ msgid "Save session on quit"
 msgstr ""
 
 #: data/preferences.glade:567
-msgid "Tab box have background"
+msgid "Tab bar background"
 msgstr ""
 
 #: data/preferences.glade:582
@@ -423,94 +423,104 @@ msgstr ""
 msgid "Key bindings"
 msgstr ""
 
-#: data/preferences.glade:1553
+#: data/preferences.glade:1534
+msgid "Max tab width"
+msgstr ""
+
+#: data/preferences.glade:1547
+msgid ""
+"size in pixels\n"
+"-1 - max width is window width\n"
+msgstr ""
+
+#: data/preferences.glade:1593
 msgid "Base title"
 msgstr ""
 
-#: data/preferences.glade:1582
+#: data/preferences.glade:1622
 msgid "Terminal header"
 msgstr ""
 
-#: data/preferences.glade:1614
+#: data/preferences.glade:1654
 msgid "<b>Tab format</b>"
 msgstr ""
 
-#: data/preferences.glade:1650
+#: data/preferences.glade:1690
 msgid "Pattern"
 msgstr ""
 
-#: data/preferences.glade:1664
+#: data/preferences.glade:1704
 msgid "Replace"
 msgstr ""
 
-#: data/preferences.glade:1684
+#: data/preferences.glade:1724
 msgid "<b>Pattern</b>"
 msgstr ""
 
-#: data/preferences.glade:1701
+#: data/preferences.glade:1741
 msgid "Tab: title format"
 msgstr ""
 
-#: data/preferences.glade:1728
+#: data/preferences.glade:1768
 msgid "Command"
 msgstr ""
 
-#: data/preferences.glade:1746
+#: data/preferences.glade:1786
 msgid "Auto run commands"
 msgstr ""
 
-#: data/preferences.glade:1978
+#: data/preferences.glade:2018
 msgid "Color palette"
 msgstr ""
 
-#: data/preferences.glade:2004
+#: data/preferences.glade:2044
 msgid "Match"
 msgstr ""
 
-#: data/preferences.glade:2018
+#: data/preferences.glade:2058
 msgid "Run"
 msgstr ""
 
-#: data/preferences.glade:2036
+#: data/preferences.glade:2076
 msgid "Terminal regexps"
 msgstr ""
 
-#: data/preferences.glade:2071
+#: data/preferences.glade:2111
 msgid "Application style"
 msgstr ""
 
-#: data/preferences.glade:2090
+#: data/preferences.glade:2130
 msgid "Advanced"
 msgstr ""
 
-#: data/preferences.glade:2178
-msgid "Auto"
-msgstr ""
-
-#: data/preferences.glade:2181
-msgid "ASCII Backspace"
-msgstr ""
-
-#: data/preferences.glade:2184
-msgid "ASCII Delete"
-msgstr ""
-
-#: data/preferences.glade:2187
-msgid "Delete sequence"
-msgstr ""
-
-#: data/preferences.glade:2190
-msgid "TTY \"erase\""
-msgstr ""
-
-#: data/preferences.glade:2201
+#: data/preferences.glade:2225
 msgid "System"
 msgstr ""
 
-#: data/preferences.glade:2204
+#: data/preferences.glade:2228
 msgid "On"
 msgstr ""
 
-#: data/preferences.glade:2207
+#: data/preferences.glade:2231
 msgid "Off"
+msgstr ""
+
+#: data/preferences.glade:2242
+msgid "Auto"
+msgstr ""
+
+#: data/preferences.glade:2245
+msgid "ASCII Backspace"
+msgstr ""
+
+#: data/preferences.glade:2248
+msgid "ASCII Delete"
+msgstr ""
+
+#: data/preferences.glade:2251
+msgid "Delete sequence"
+msgstr ""
+
+#: data/preferences.glade:2254
+msgid "TTY \"erase\""
 msgstr ""

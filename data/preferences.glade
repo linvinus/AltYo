@@ -564,7 +564,7 @@
                                         </child>
                                         <child>
                                           <object class="GtkCheckButton" id="tab_box_have_background">
-                                            <property name="label" translatable="yes">Tab box have background</property>
+                                            <property name="label" translatable="yes">Tab bar background</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
@@ -578,8 +578,8 @@
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkCheckButton" id="debug">
-                                            <property name="label" translatable="yes">Debug</property>
+                                          <object class="GtkCheckButton" id="terminal_new_tab_in_current_directory">
+                                            <property name="label" translatable="yes">New tab in current directory</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
@@ -593,8 +593,8 @@
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkCheckButton" id="terminal_new_tab_in_current_directory">
-                                            <property name="label" translatable="yes">New tab in current directory</property>
+                                          <object class="GtkCheckButton" id="debug">
+                                            <property name="label" translatable="yes">Debug</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
@@ -1531,7 +1531,7 @@ Allow use mouse scroll in some programs,for example in less</property>
                                   <object class="GtkLabel" id="label43">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">Tab max width</property>
+                                    <property name="label" translatable="yes">Max tab width</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>

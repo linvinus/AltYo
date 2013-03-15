@@ -436,15 +436,6 @@
                                                       </packing>
                                                     </child>
                                                     <child>
-                                                      <placeholder/>
-                                                    </child>
-                                                    <child>
-                                                      <placeholder/>
-                                                    </child>
-                                                    <child>
-                                                      <placeholder/>
-                                                    </child>
-                                                    <child>
                                                       <object class="GtkCheckButton" id="follow_the_white_rabbit">
                                                         <property name="label" translatable="yes">Follow mouse cursor</property>
                                                         <property name="visible">True</property>
@@ -459,6 +450,15 @@
                                                         <property name="width">1</property>
                                                         <property name="height">1</property>
                                                       </packing>
+                                                    </child>
+                                                    <child>
+                                                      <placeholder/>
+                                                    </child>
+                                                    <child>
+                                                      <placeholder/>
+                                                    </child>
+                                                    <child>
+                                                      <placeholder/>
                                                     </child>
                                                   </object>
                                                   <packing>
@@ -578,8 +578,8 @@
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkCheckButton" id="terminal_new_tab_in_current_directory">
-                                            <property name="label" translatable="yes">New tab in current directory</property>
+                                          <object class="GtkCheckButton" id="debug">
+                                            <property name="label" translatable="yes">Debug</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
@@ -593,8 +593,8 @@
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkCheckButton" id="debug">
-                                            <property name="label" translatable="yes">Debug</property>
+                                          <object class="GtkCheckButton" id="terminal_new_tab_in_current_directory">
+                                            <property name="label" translatable="yes">New tab in current directory</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
@@ -1524,6 +1524,46 @@ Allow use mouse scroll in some programs,for example in less</property>
                             <property name="can_focus">False</property>
                             <property name="orientation">vertical</property>
                             <child>
+                              <object class="GtkBox" id="box10">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <child>
+                                  <object class="GtkLabel" id="label43">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">Tab max width</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkSpinButton" id="tab_max_width">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="has_tooltip">True</property>
+                                    <property name="tooltip_text" translatable="yes">size in pixels
+-1 - max width is window width
+</property>
+                                    <property name="invisible_char">•</property>
+                                    <property name="adjustment">tab_max_width_adjustment</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
                               <object class="GtkFrame" id="frame8">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
@@ -1619,7 +1659,7 @@ Allow use mouse scroll in some programs,for example in less</property>
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
-                                <property name="position">0</property>
+                                <property name="position">1</property>
                               </packing>
                             </child>
                             <child>
@@ -1689,7 +1729,7 @@ Allow use mouse scroll in some programs,for example in less</property>
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
-                                <property name="position">1</property>
+                                <property name="position">2</property>
                               </packing>
                             </child>
                           </object>
@@ -2149,6 +2189,13 @@ Allow use mouse scroll in some programs,for example in less</property>
       </object>
     </child>
   </object>
+  <object class="GtkAdjustment" id="tab_max_width_adjustment">
+    <property name="lower">-1</property>
+    <property name="upper">10000</property>
+    <property name="value">-1</property>
+    <property name="step_increment">10</property>
+    <property name="page_increment">100</property>
+  </object>
   <object class="GtkListStore" id="tab_title_format_regex">
     <columns>
       <!-- column-name patern -->
@@ -2167,6 +2214,23 @@ Allow use mouse scroll in some programs,for example in less</property>
     <property name="upper">1</property>
     <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">10</property>
+  </object>
+  <object class="GtkListStore" id="terminal_cursor_blinkmode_liststore">
+    <columns>
+      <!-- column-name gchararray1 -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">System</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">On</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Off</col>
+      </row>
+    </data>
   </object>
   <object class="GtkListStore" id="terminal_delete_binding_liststore">
     <columns>
@@ -2188,23 +2252,6 @@ Allow use mouse scroll in some programs,for example in less</property>
       </row>
       <row>
         <col id="0" translatable="yes">TTY "erase"</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="terminal_cursor_blinkmode_liststore">
-    <columns>
-      <!-- column-name gchararray1 -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">System</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">On</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Off</col>
       </row>
     </data>
   </object>

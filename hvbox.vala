@@ -379,11 +379,11 @@ public class HVBox : Container {
 				widget.get_preferred_width (out allocation.width, out natural_width);
 				widget.get_preferred_height(out m_h,out n_h);
 
-				if( (sum_w + allocation.width) > width)
-					break;//normal out
-
 				minimum_height=int.max(minimum_height,m_h);
 				natural_height=int.max(natural_height,n_h);
+
+				if( (sum_w + allocation.width) > width)
+					break;//normal out
 
 				sum_w += allocation.width;
 				last_item=item_it;
@@ -407,6 +407,7 @@ public class HVBox : Container {
         var orig_pos_y = allocation.y;
         var orig_pos_h = allocation.height;
         var orig_pos_w = allocation.width;
+        var orig_pos_w_max = orig_pos_w-border.left-border.right;
         var sum_w=0;
         var line_h=0;
 
@@ -416,7 +417,7 @@ public class HVBox : Container {
 		for (item_it = this.children; item_it != null; item_it = item_it.next) {
 
 			end_of_line=item_it;
-			line_h = get_line_height(ref end_of_line,orig_pos_w-border.left-border.right,false);
+			line_h = get_line_height(ref end_of_line,orig_pos_w_max,false);
 			if(line_h<0){
 				debug("Something wrong!");
 				break;
@@ -436,9 +437,13 @@ public class HVBox : Container {
 				var ingnore_h = 0;
 				widget.get_preferred_width (out allocation.width, out ingnore_h);
 
-				//StyleContext style = widget.get_style_context ();//new StyleContext ();//
-				//debug("StyleContext color=%s", style.get_background_color(StateFlags.ACTIVE).to_string () );
-
+				if(allocation.width>orig_pos_w_max){
+					widget.width_request=orig_pos_w_max;//set width_request for VTToggleButton
+					widget.get_preferred_width (out allocation.width, out ingnore_h);//now width shuld be limited to the maximum
+					if(allocation.width>orig_pos_w_max)
+						allocation.width=orig_pos_w_max;//just ensure that width is limited
+				}
+					
 				if(!item.ignore)//skip but remember size
 					widget.size_allocate(allocation);
 				allocation.x+=allocation.width;
@@ -486,6 +491,9 @@ public class HVBox : Container {
 		if (max_w == 0){
 			max_w =sum_w= 80;
 		}
+		if(sum_w>this.self_natural_width){//limit max child widget size
+			sum_w=max_w=this.self_natural_width;
+			}
 		this.self_minimum_width=o_minimum_width=this.self_width=max_w;
 		o_natural_width=sum_w;
  		//debug("get_preferred_width self_nat=%d self_min=%d  minimum=%d natural=%d\n",this.self_natural_width,this.self_minimum_width,o_minimum_width,o_natural_width);

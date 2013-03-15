@@ -55,6 +55,7 @@ public class VTToggleButton : Gtk.ToggleButton {
 	public string[] tab_title_regex  {get;set;}
 	public string host_name {get;set;default = null;}
 	public bool do_not_sort  {get;set;default = false;}
+	public int  max_width {get;set;default = -1;}
 
 	private string tab_title {get;set;default = null;}
 	private int    tab_index {get;set;default = -1;}
@@ -257,6 +258,35 @@ public class VTToggleButton : Gtk.ToggleButton {
 
 		this.label.show();
 	}
+
+	public override void get_preferred_width (out int minimum_width, out int natural_width) {
+
+		var tmp = this.label.ellipsize;
+		this.label.ellipsize = Pango.EllipsizeMode.NONE;
+		base.get_preferred_width (out minimum_width, out natural_width);//get NORMAL size
+		
+		//use this.width_request as limiting size variable from hvbox
+		if(this.width_request>0&&
+		( (this.max_width>0 && this.width_request<this.max_width)||
+		  (this.max_width<1) ) 
+		){
+			this.max_width=this.width_request;
+		}
+		if(this.max_width>0 && minimum_width>this.max_width){
+			minimum_width=this.max_width;
+			this.label.ellipsize = Pango.EllipsizeMode.MIDDLE;//limit label size
+		}else
+			this.width_request=-1;//reset it if size is ok
+			
+	}
+	
+	public override void get_preferred_height (out int minimum_height, out int natural_height) {
+		var tmp = this.label.ellipsize;
+		this.label.ellipsize = Pango.EllipsizeMode.NONE;
+		base.get_preferred_height (out minimum_height, out natural_height);
+		this.label.ellipsize = tmp;
+	}
+
 }//private class VTToggleButton
 
 public class AYTab : Object{
@@ -270,13 +300,8 @@ public class AYTab : Object{
 		this.my_conf=my_conf;
 		this.notebook=notebook;
 		this.tbutton = new VTToggleButton();
-		this.tbutton.tab_format = my_conf.get_string("tab_format","[ _INDEX_ ]");
-		this.tbutton.tab_title_format = my_conf.get_string("tab_title_format","<span foreground='#FFF000'>_INDEX_</span>/_TITLE_");
-		this.tbutton.tab_title_regex = my_conf.get_string_list("tab_title_format_regex",{"^(mc) \\[","<span>_REPLACE_ </span>","([\\w\\.]+)@","<span font_weight='bold' foreground='#EEEEEE'>_USER_</span>","([\\w\\.\\-]+)\\]?:","@<span font_weight='bold' foreground='#FFF000'>_HOSTNAME_</span>:","([^:]*)$","<span>_PATH_</span>"},(ref new_val)=>{
-			if(new_val!=null && (new_val.length % 2)!=0){new_val={"^(mc) \\[","<span>_REPLACE_ </span>","([\\w\\.]+)@","<span font_weight='bold' foreground='#EEEEEE'>_USER_</span>","([\\w\\.\\-]+)\\]?:","@<span font_weight='bold' foreground='#FFF000'>_HOSTNAME_</span>:","([^:]*)$","<span>_PATH_</span>"};return true;}
-			return false;
-			});
-		this.tbutton.set_title(tab_index,null);
+
+
 		this.tbutton.can_focus=false;//vte shoud have focus
 		this.tbutton.can_default = false; //encrease size
 		this.tbutton.has_focus = false; //encrease size
@@ -284,6 +309,8 @@ public class AYTab : Object{
 		this.tbutton.set_focus_on_click(false);
 		this.tbutton.set_relief(ReliefStyle.NONE); //подумать как улучшить вид
 		this.tbutton.set_has_window (false);
+		this.configure(my_conf);
+		this.tbutton.set_title(tab_index,null);
 		this.tbutton.show();
 
 		this.hbox = new HBox(false, 0);
@@ -296,6 +323,9 @@ public class AYTab : Object{
 		page_index = this.notebook.prepend_page (hbox,null);
 
 		this.tbutton.object = this;
+		this.my_conf.on_load.connect(()=>{
+			this.configure(this.my_conf);
+			});		
 	}
 	public void destroy(){
 		this.hbox.hide();
@@ -304,6 +334,20 @@ public class AYTab : Object{
 		//this.tbutton.destroy();
 		//this.vte_term.destroy();
 		this.hbox.destroy();//destroy all widgets and unref self
+	}
+	
+	public void configure(MySettings my_conf){	
+		this.tbutton.tab_format = my_conf.get_string("tab_format","[ _INDEX_ ]");
+		this.tbutton.tab_title_format = my_conf.get_string("tab_title_format","<span foreground='#FFF000'>_INDEX_</span>/_TITLE_");
+		this.tbutton.tab_title_regex = my_conf.get_string_list("tab_title_format_regex",{"^(mc) \\[","<span>_REPLACE_ </span>","([\\w\\.]+)@","<span font_weight='bold' foreground='#EEEEEE'>_USER_</span>","([\\w\\.\\-]+)\\]?:","@<span font_weight='bold' foreground='#FFF000'>_HOSTNAME_</span>:","([^:]*)$","<span>_PATH_</span>"},(ref new_val)=>{
+			if(new_val!=null && (new_val.length % 2)!=0){new_val={"^(mc) \\[","<span>_REPLACE_ </span>","([\\w\\.]+)@","<span font_weight='bold' foreground='#EEEEEE'>_USER_</span>","([\\w\\.\\-]+)\\]?:","@<span font_weight='bold' foreground='#FFF000'>_HOSTNAME_</span>:","([^:]*)$","<span>_PATH_</span>"};return true;}
+			return false;
+			});
+			
+		this.tbutton.max_width=my_conf.get_integer("tab_max_width",-1,(ref new_val)=>{
+			if(new_val<-1){new_val=-1;return true;}
+			return false;
+			});
 	}
 
 }

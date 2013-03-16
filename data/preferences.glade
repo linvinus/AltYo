@@ -67,6 +67,13 @@
       </row>
     </data>
   </object>
+  <object class="GtkAdjustment" id="tab_max_width_adjustment">
+    <property name="lower">-1</property>
+    <property name="upper">10000</property>
+    <property name="value">-1</property>
+    <property name="step_increment">10</property>
+    <property name="page_increment">100</property>
+  </object>
   <object class="GtkScrolledWindow" id="settings-scrolledwindow">
     <property name="visible">True</property>
     <property name="can_focus">True</property>
@@ -234,6 +241,47 @@
                                                 <property name="can_focus">False</property>
                                                 <property name="orientation">vertical</property>
                                                 <child>
+                                                  <object class="GtkCheckButton" id="window_start_maximized">
+                                                    <property name="label" translatable="yes">Start maximized</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="xalign">0</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="expand">False</property>
+                                                    <property name="fill">True</property>
+                                                    <property name="position">0</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="follow_the_white_rabbit">
+                                                    <property name="label" translatable="yes">Follow mouse cursor</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="xalign">0</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="expand">False</property>
+                                                    <property name="fill">True</property>
+                                                    <property name="position">1</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkSeparator" id="separator4">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">False</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="expand">False</property>
+                                                    <property name="fill">True</property>
+                                                    <property name="position">2</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
                                                   <object class="GtkLabel" id="label37">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
@@ -244,7 +292,7 @@
                                                   <packing>
                                                     <property name="expand">False</property>
                                                     <property name="fill">True</property>
-                                                    <property name="position">0</property>
+                                                    <property name="position">3</property>
                                                   </packing>
                                                 </child>
                                                 <child>
@@ -387,7 +435,7 @@
                                                       </object>
                                                       <packing>
                                                         <property name="left_attach">0</property>
-                                                        <property name="top_attach">3</property>
+                                                        <property name="top_attach">4</property>
                                                         <property name="width">1</property>
                                                         <property name="height">1</property>
                                                       </packing>
@@ -416,36 +464,6 @@
                                                       </object>
                                                       <packing>
                                                         <property name="left_attach">1</property>
-                                                        <property name="top_attach">3</property>
-                                                        <property name="width">1</property>
-                                                        <property name="height">1</property>
-                                                      </packing>
-                                                    </child>
-                                                    <child>
-                                                      <object class="GtkLabel" id="window_default_monitor_label">
-                                                        <property name="visible">True</property>
-                                                        <property name="can_focus">False</property>
-                                                        <property name="has_tooltip">True</property>
-                                                        <property name="tooltip_text" translatable="yes">Current monitor</property>
-                                                      </object>
-                                                      <packing>
-                                                        <property name="left_attach">2</property>
-                                                        <property name="top_attach">3</property>
-                                                        <property name="width">1</property>
-                                                        <property name="height">1</property>
-                                                      </packing>
-                                                    </child>
-                                                    <child>
-                                                      <object class="GtkCheckButton" id="follow_the_white_rabbit">
-                                                        <property name="label" translatable="yes">Follow mouse cursor</property>
-                                                        <property name="visible">True</property>
-                                                        <property name="can_focus">True</property>
-                                                        <property name="receives_default">False</property>
-                                                        <property name="xalign">0</property>
-                                                        <property name="draw_indicator">True</property>
-                                                      </object>
-                                                      <packing>
-                                                        <property name="left_attach">1</property>
                                                         <property name="top_attach">4</property>
                                                         <property name="width">1</property>
                                                         <property name="height">1</property>
@@ -460,11 +478,39 @@
                                                     <child>
                                                       <placeholder/>
                                                     </child>
+                                                    <child>
+                                                      <object class="GtkLabel" id="window_default_monitor_label">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="has_tooltip">True</property>
+                                                        <property name="tooltip_markup" translatable="yes">Current monitor</property>
+                                                        <property name="tooltip_text" translatable="yes">Current monitor</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="left_attach">1</property>
+                                                        <property name="top_attach">3</property>
+                                                        <property name="width">1</property>
+                                                        <property name="height">1</property>
+                                                      </packing>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkLabel" id="label44">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="label" translatable="yes">Current monitor</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="left_attach">0</property>
+                                                        <property name="top_attach">3</property>
+                                                        <property name="width">1</property>
+                                                        <property name="height">1</property>
+                                                      </packing>
+                                                    </child>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">False</property>
                                                     <property name="fill">True</property>
-                                                    <property name="position">1</property>
+                                                    <property name="position">4</property>
                                                   </packing>
                                                 </child>
                                               </object>
@@ -2188,13 +2234,6 @@ Allow use mouse scroll in some programs,for example in less</property>
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkAdjustment" id="tab_max_width_adjustment">
-    <property name="lower">-1</property>
-    <property name="upper">10000</property>
-    <property name="value">-1</property>
-    <property name="step_increment">10</property>
-    <property name="page_increment">100</property>
   </object>
   <object class="GtkListStore" id="tab_title_format_regex">
     <columns>

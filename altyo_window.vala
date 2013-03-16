@@ -77,6 +77,7 @@ public class VTMainWindow : Window{
 	private int orig_monitor=-1;
 	public int position = 1;
 	public bool config_maximized=false;
+	public bool start_maximized=false;
 	public bool pull_maximized=false;
 	public bool temporary_maximized=false;
 	public bool allow_close=false;
@@ -405,7 +406,7 @@ public class VTMainWindow : Window{
 		 * reparent to pix win
 		 * Think, is it worth it? }*/
 
-	public void toogle_widnow(){
+	public void toggle_widnow(){
 		if(this.pull_animation_active) return;
 		/* when hotkey is pressed, main window loose focus,
 		 * so impossible to check, is windows focused or not.
@@ -434,6 +435,7 @@ public class VTMainWindow : Window{
 				if((Gdk.WindowState.MAXIMIZED & event.new_window_state)== Gdk.WindowState.MAXIMIZED){//maximize
 					if(!this.maximized){
 						this.maximized = true;
+						this.config_maximized=true;
 						this.configure_position();
 						this.update_position_size();
 						this.update_maximized_size=true;
@@ -442,6 +444,7 @@ public class VTMainWindow : Window{
 				}else{//unmaximize
 					if(this.maximized){
 						this.maximized = false;
+						this.config_maximized=false;
 						/* reset geometry hints
 						 * allow resize from maximized size
 						 * */
@@ -602,7 +605,7 @@ public class VTMainWindow : Window{
 		this.hotkey.unbind();
 		KeyBinding grave=this.hotkey.bind (this.conf.get_accel_string("main_hotkey","<Alt>grave"));
 		if(grave!=null)
-			grave.on_trigged.connect(this.toogle_widnow);
+			grave.on_trigged.connect(this.toggle_widnow);
 		else{
 			var new_key = this.conf.get_accel_string("main_hotkey","<Alt>grave");
 			do{
@@ -610,7 +613,7 @@ public class VTMainWindow : Window{
 				grave=this.hotkey.bind (new_key);
 			}while(grave==null);
 			this.conf.set_accel_string("main_hotkey",new_key);
-			grave.on_trigged.connect(this.toogle_widnow);
+			grave.on_trigged.connect(this.toggle_widnow);
 		}
 
 		this.mouse_follow  = conf.get_boolean("follow_the_white_rabbit",false);
@@ -639,11 +642,18 @@ public class VTMainWindow : Window{
 
 			int w = conf.get_integer("terminal_width",80);//if less 101 then it persentage
 			int h = conf.get_integer("terminal_height",50);//if less 101 then it persentage
-			if(h==100){//workaround for fullscreen, otherwise tabbutton will be out of screen
-				if(!this.config_maximized && !this.maximized){
-					this.maximize();
-				}
+
+			var max_tmp = conf.get_boolean("window_start_maximized",false);
+
+			if(this.start_maximized!=max_tmp){
+				this.start_maximized=max_tmp;//start_maximized store previous state of max_tmp
+				this.config_maximized=max_tmp;//config_maximized store window state, which is should be
+			}
+			if(h==100)
 				this.config_maximized=true;
+
+			/*calculate window size according to config_maximized*/
+			if(this.config_maximized){
 				this.ayobject.terminal_width=(int)rectangle.width;
 				this.ayobject.terminal_height=(int)rectangle.height-rectangle.height/3;
 			}else{
@@ -659,15 +669,18 @@ public class VTMainWindow : Window{
 				}else{
 					this.ayobject.terminal_height=h;
 				}
-
-				if(this.config_maximized && this.maximized){
-					this.config_maximized=false;
-					debug("configure_position unmaximize");
-					this.unmaximize();
-					this.update_events();
-				}else
-					this.config_maximized=false;
 			}
+
+			/*update maximize state according to config_maximized*/
+			if(!this.config_maximized && this.maximized){
+				this.unmaximize();
+				this.update_events();
+			}else
+			if(this.config_maximized && !this.maximized){
+				this.maximize();
+				this.update_events();
+			}
+
 
 			if(this.position>3)this.position=1;
 
@@ -1565,7 +1578,7 @@ public class AYObject :Object{
    		/* Show/hide main window on <Alt>grave
    		 * add main_hotkey just to be able show it in popup menu*/
 		this.add_window_accel("main_hotkey", _("Show/Hide"), _("Show/Hide"), Gtk.Stock.GO_UP,"<Alt>grave",()=>{
-			this.main_window.toogle_widnow();
+			this.main_window.toggle_widnow();
 		});
 
 		/* Add New Tab on <Ctrl><Shift>t */
@@ -1590,6 +1603,20 @@ public class AYObject :Object{
 			}else{
 				this.main_window.skip_taskbar_hint = false;
 				this.main_window.set_keep_above(false);
+			}
+        });
+
+		this.add_window_toggle_accel("toggle_maximize", _("Maximize - restore"), _("Maximize window, or restore to normal size"), Gtk.Stock.EDIT,"",()=> {
+			if(conf.get_integer("terminal_height",50)==100){
+				var s = _("Sorry, your default height is 100%, window size cannot be reduced, please change default window height in preferences.");
+				this.main_window.show_message_box(_("error"),s);
+				return;
+			}
+
+			if(this.main_window.maximized){
+				this.main_window.unmaximize();
+			}else{
+				this.main_window.maximize();
 			}
         });
 

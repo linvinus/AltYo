@@ -132,7 +132,7 @@ public class AYSettings : AYTab{
 					}
 			}
 			string s=_("Key binding \"%s\" already binded to \"%s\"").printf(Gtk.accelerator_name (accel_key, accel_mods),action_label);
-			this.ayobject.main_window.show_message_box("error",s);
+			this.ayobject.main_window.show_message_box(_("error"),s);
 		}
     }
 

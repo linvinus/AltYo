@@ -67,13 +67,6 @@
       </row>
     </data>
   </object>
-  <object class="GtkAdjustment" id="tab_max_width_adjustment">
-    <property name="lower">-1</property>
-    <property name="upper">10000</property>
-    <property name="value">-1</property>
-    <property name="step_increment">10</property>
-    <property name="page_increment">100</property>
-  </object>
   <object class="GtkScrolledWindow" id="settings-scrolledwindow">
     <property name="visible">True</property>
     <property name="can_focus">True</property>
@@ -470,15 +463,6 @@
                                                       </packing>
                                                     </child>
                                                     <child>
-                                                      <placeholder/>
-                                                    </child>
-                                                    <child>
-                                                      <placeholder/>
-                                                    </child>
-                                                    <child>
-                                                      <placeholder/>
-                                                    </child>
-                                                    <child>
                                                       <object class="GtkLabel" id="window_default_monitor_label">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">False</property>
@@ -505,6 +489,15 @@
                                                         <property name="width">1</property>
                                                         <property name="height">1</property>
                                                       </packing>
+                                                    </child>
+                                                    <child>
+                                                      <placeholder/>
+                                                    </child>
+                                                    <child>
+                                                      <placeholder/>
+                                                    </child>
+                                                    <child>
+                                                      <placeholder/>
                                                     </child>
                                                   </object>
                                                   <packing>
@@ -624,8 +617,8 @@
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkCheckButton" id="terminal_new_tab_in_current_directory">
-                                            <property name="label" translatable="yes">New tab in current directory</property>
+                                          <object class="GtkCheckButton" id="debug">
+                                            <property name="label" translatable="yes">Debug</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
@@ -639,8 +632,8 @@
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkCheckButton" id="debug">
-                                            <property name="label" translatable="yes">Debug</property>
+                                          <object class="GtkCheckButton" id="terminal_new_tab_in_current_directory">
+                                            <property name="label" translatable="yes">New tab in current directory</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
@@ -2075,42 +2068,146 @@ Allow use mouse scroll in some programs,for example in less</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <child>
-                          <object class="GtkTreeView" id="terminal_url_regexps_treeview">
-                            <property name="height_request">100</property>
+                          <object class="GtkBox" id="box14">
                             <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="model">terminal_url_regexps</property>
-                            <signal name="button-press-event" handler="ay_settings_on_command_list_button_press_event" swapped="no"/>
-                            <child internal-child="selection">
-                              <object class="GtkTreeSelection" id="treeview-selection4"/>
-                            </child>
+                            <property name="can_focus">False</property>
+                            <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkTreeViewColumn" id="treeviewcolumn6">
-                                <property name="title" translatable="yes">Match</property>
+                              <object class="GtkGrid" id="grid5">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <child>
-                                  <object class="GtkCellRendererText" id="terminal_url_regexps_match_cellrenderertext">
-                                    <property name="editable">True</property>
-                                    <signal name="edited" handler="ay_settings_on_terminal_url_regexps_match_cellrenderertext_pattern_edited" swapped="no"/>
+                                  <object class="GtkLabel" id="label46">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="xalign">0</property>
+                                    <property name="label" translatable="yes">Prevent close</property>
                                   </object>
-                                  <attributes>
-                                    <attribute name="text">0</attribute>
-                                  </attributes>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">0</property>
+                                    <property name="width">1</property>
+                                    <property name="height">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEntry" id="terminal_prevent_close_regex">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="hexpand">True</property>
+                                    <property name="invisible_char">•</property>
+                                    <property name="invisible_char_set">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">0</property>
+                                    <property name="width">1</property>
+                                    <property name="height">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="label48">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="xalign">0</property>
+                                    <property name="label" translatable="yes">Exclude from saving session</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">1</property>
+                                    <property name="width">1</property>
+                                    <property name="height">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEntry" id="terminal_session_exclude_regex">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="invisible_char">•</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">1</property>
+                                    <property name="width">1</property>
+                                    <property name="height">1</property>
+                                  </packing>
                                 </child>
                               </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
                             </child>
                             <child>
-                              <object class="GtkTreeViewColumn" id="treeviewcolumn7">
-                                <property name="title" translatable="yes">Run</property>
+                              <object class="GtkFrame" id="frame4">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label_xalign">0</property>
+                                <property name="shadow_type">in</property>
                                 <child>
-                                  <object class="GtkCellRendererText" id="terminal_url_regexps_run_cellrenderertext">
-                                    <property name="editable">True</property>
-                                    <signal name="edited" handler="ay_settings_on_terminal_url_regexps_run_cellrenderertext_pattern_edited" swapped="no"/>
+                                  <object class="GtkAlignment" id="alignment4">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="left_padding">12</property>
+                                    <child>
+                                      <object class="GtkTreeView" id="terminal_url_regexps_treeview">
+                                        <property name="height_request">100</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="model">terminal_url_regexps</property>
+                                        <property name="headers_clickable">False</property>
+                                        <property name="search_column">0</property>
+                                        <signal name="button-press-event" handler="ay_settings_on_command_list_button_press_event" swapped="no"/>
+                                        <child internal-child="selection">
+                                          <object class="GtkTreeSelection" id="treeview-selection4"/>
+                                        </child>
+                                        <child>
+                                          <object class="GtkTreeViewColumn" id="treeviewcolumn6">
+                                            <property name="title" translatable="yes">Match</property>
+                                            <child>
+                                              <object class="GtkCellRendererText" id="terminal_url_regexps_match_cellrenderertext">
+                                                <property name="editable">True</property>
+                                                <signal name="edited" handler="ay_settings_on_terminal_url_regexps_match_cellrenderertext_pattern_edited" swapped="no"/>
+                                              </object>
+                                              <attributes>
+                                                <attribute name="text">0</attribute>
+                                              </attributes>
+                                            </child>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkTreeViewColumn" id="treeviewcolumn7">
+                                            <property name="title" translatable="yes">Run</property>
+                                            <child>
+                                              <object class="GtkCellRendererText" id="terminal_url_regexps_run_cellrenderertext">
+                                                <property name="editable">True</property>
+                                                <signal name="edited" handler="ay_settings_on_terminal_url_regexps_run_cellrenderertext_pattern_edited" swapped="no"/>
+                                              </object>
+                                              <attributes>
+                                                <attribute name="text">1</attribute>
+                                              </attributes>
+                                            </child>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
                                   </object>
-                                  <attributes>
-                                    <attribute name="text">1</attribute>
-                                  </attributes>
+                                </child>
+                                <child type="label">
+                                  <object class="GtkLabel" id="label47">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">&lt;b&gt;URL regexps&lt;/b&gt;</property>
+                                    <property name="use_markup">True</property>
+                                  </object>
                                 </child>
                               </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">2</property>
+                              </packing>
                             </child>
                           </object>
                         </child>
@@ -2233,6 +2330,13 @@ Allow use mouse scroll in some programs,for example in less</property>
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkAdjustment" id="tab_max_width_adjustment">
+    <property name="lower">-1</property>
+    <property name="upper">10000</property>
+    <property name="value">-1</property>
+    <property name="step_increment">10</property>
+    <property name="page_increment">100</property>
   </object>
   <object class="GtkListStore" id="tab_title_format_regex">
     <columns>

@@ -1006,6 +1006,8 @@ public class AYObject :Object{
 
 		//add type totype array
 		this.conf.get_boolean("terminal_new_tab_in_current_directory",true);
+		this.conf.get_string("terminal_prevent_close_regex","/?ssh\\ ?|/?scp\\ ?|/?wget\\ ?");
+		this.conf.get_string("terminal_session_exclude_regex","/?zsh\\ ?|/?mc\\ ?|/?bash\\ ?");
 	}//CreateAYObject
 
 
@@ -1081,11 +1083,58 @@ public class AYObject :Object{
 	public void close_tab (int tab_position){
 		unowned VTToggleButton tab_button=(VTToggleButton)this.hvbox.children_nth(tab_position);
 		if(tab_button==null) return;
+
+		//unowned
+		AYTab vtt = ((AYTab)tab_button.object);
+		if(vtt is VTTerminal){
+			bool close=true;
+			VTTerminal vt=(VTTerminal)vtt;
+			var grx_exclude = new GLib.Regex(this.conf.get_string("terminal_prevent_close_regex",""));
+			string[] childs = {};
+			childs+=vt.find_tty_pgrp(vt.pid,FIND_TTY.CMDLINE);
+			var tmp_spid=vt.find_tty_pgrp(vt.pid,FIND_TTY.PID);
+			if(tmp_spid!=null && tmp_spid!=""){
+				foreach(string s in vt.find_all_suspended_pgrp(int.parse(tmp_spid))){
+					childs+=s;
+				}
+			}
+			foreach(string ch in childs){
+				debug("checking %s",ch);
+				if(grx_exclude.match_all(ch,0,null)){
+					var q=_("Found important task \"%s\"").printf(ch);
+					q+="\n"+_("Close tab anyway?");
+					var dialog = new MessageDialog (null, (DialogFlags.DESTROY_WITH_PARENT | DialogFlags.MODAL), MessageType.QUESTION, ButtonsType.YES_NO, q);
+					dialog.response.connect ((response_id) => {
+						if(response_id == Gtk.ResponseType.YES){
+							close=true;
+							dialog.destroy ();
+						}else{
+							close=false;
+							dialog.destroy ();
+						}
+					});
+
+					dialog.close.connect ((response_id) => {
+						this.main_window.window_set_active();
+						dialog.destroy ();
+					});
+					dialog.focus_out_event.connect (() => {
+						return true; //same bug as discribed in this.focus_out_event
+						});
+					dialog.set_transient_for(this.main_window);
+					dialog.show ();
+					dialog.grab_focus();
+					this.main_window.hotkey.send_net_active_window(dialog.get_window ());
+					dialog.run();
+				}
+				if(!close)
+					return;//prevent close
+			}
+		}
+
 		this.hvbox.remove(tab_button);
 		if(tab_button==this.active_tab)
 			this.active_tab=null;
-		//unowned
-		AYTab vtt = ((AYTab)tab_button.object);
 
 		this.children.remove(vtt);
 
@@ -1438,7 +1487,7 @@ public class AYObject :Object{
 				debug("terminal_new_tab_in_current_directory");
 				if(this.active_tab!=null){
 					VTTerminal vt =((VTTerminal)this.active_tab.object);
-					var tmp=vt.find_tty_pgrp(vt.pid,true);
+					var tmp=vt.find_tty_pgrp(vt.pid,FIND_TTY.CWD);
 					debug("path: %s",tmp);
 					this.add_tab(null,tmp);
 				}
@@ -1916,7 +1965,7 @@ public class AYObject :Object{
 			var autostart_terminal_session=this.conf.get_string_list("terminal_autostart_session",null);
 
 			string[] terminal_session = {};
-			var grx_exclude = new GLib.Regex(this.conf.get_string("terminal_session_exclude_regex","/?zsh\\ ?|/?mc\\ ?|/?bash\\ ?"));
+			var grx_exclude = new GLib.Regex(this.conf.get_string("terminal_session_exclude_regex",""));
 			foreach (var vt in this.children) {
 				if(vt is VTTerminal){
 					bool cont=false;

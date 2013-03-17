@@ -22,6 +22,12 @@ using Gee;
 using GnomeKeyring;
 #endif
 
+public enum FIND_TTY{
+	CMDLINE,
+	CWD,
+	PID
+	}
+
 public delegate void OnChildExitCallBack(VTTerminal vt);
 
 public class TildaAuth:Object{
@@ -823,7 +829,50 @@ public class VTTerminal : AYTab{
 	return -1;
 	}
 
-	public string find_tty_pgrp(int pid,bool find_cwd=false){
+	public string?[] find_all_suspended_pgrp(int pid){
+	GLib.Dir dir = GLib.Dir.open("/proc/");
+	unowned string filename;
+	string?[] result=null;
+	/* scan whole proc, for another last-child
+	 * there is no other way to do that, ps do the same
+	 * * * * * * * * * * * * * * * * * * * * * * * * */
+		while ( (filename = dir.read_name())!=null  )
+		if(int.parse(filename)>0){  //is it pid number? =)
+
+			var parent_stat = "/proc/"+filename+"/stat";
+
+			if(GLib.FileUtils.test(parent_stat,GLib.FileTest.EXISTS) ){
+				string contents = "";
+				size_t length = -1;
+				if(GLib.FileUtils.get_contents (parent_stat,out contents,out length) ){
+					//<  skip    > [ 0 ] [ 1 ] [ 2 ] [ 3 ] [ 4 ] < skip  ... >
+					//31266 (mc) S 31253 31266 31253 34817 31266 4202496 ...
+					contents=contents.substring(contents.last_index_of(")")+4,-1);
+					var stat_cont=contents.split(" ");
+					//debug("pid=%d parse=%d stat_cont0=%s",pid,int.parse(stat_cont[1]),stat_cont[0]);
+					//we found another last child, probably from subshell
+					if(pid==int.parse(stat_cont[0]) ){
+
+						//return int.parse(stat_cont[4]);
+						//"/proc/"+stat_cont[4]+"/cmdline";
+						var tty_pgrp="/proc/"+filename+"/cmdline";
+						if(GLib.FileUtils.test(tty_pgrp,GLib.FileTest.EXISTS) ){
+							uint8[] data;
+							if(GLib.FileUtils.get_data(tty_pgrp,out data) ){
+								for(var i=0;i<data.length-1;i++){
+									if(data[i]==0)
+										data[i]=' ';
+									}
+							}
+								result +=(string)data;
+						}
+					}
+				}
+			}
+		}
+	return result;
+	}
+	public string find_tty_pgrp(int pid,FIND_TTY f_type=FIND_TTY.CMDLINE){
 		//for more info look at kernel/Documentation/filesystems/proc.txt
 		var parent_stat = "/proc/"+((int)pid).to_string()+"/stat";
 
@@ -833,12 +882,17 @@ public class VTTerminal : AYTab{
 			if(GLib.FileUtils.get_contents (parent_stat,out contents,out length) ){
 				contents=contents.substring(contents.last_index_of(")")+4,-1);
 				var stat_cont=contents.split(" ");
-				var tty_pgrp = "/proc/"+stat_cont[4];
+				string s_pid=stat_cont[4];
+				var tty_pgrp = "/proc/"+s_pid;
 
 				int other=find_other_pgrp(int.parse(stat_cont[4]));
-				if(other>0)	tty_pgrp="/proc/"+((int)other).to_string();
+				if(other>0){
+					s_pid=((int)other).to_string();
+					tty_pgrp="/proc/"+s_pid;
+				}
 				//debug("find_others_pgrp=%s",other);
-				if(!find_cwd){
+				switch(f_type){
+				case FIND_TTY.CMDLINE:
 					tty_pgrp+="/cmdline";
 					if(GLib.FileUtils.test(tty_pgrp,GLib.FileTest.EXISTS) ){
 						uint8[] data;
@@ -850,12 +904,16 @@ public class VTTerminal : AYTab{
 						}
 							return (string)data;
 					}
-				}else{
+				break;
+				case FIND_TTY.CWD:
 					tty_pgrp+="/cwd";
 					if(GLib.FileUtils.test(tty_pgrp,GLib.FileTest.EXISTS|GLib.FileTest.IS_SYMLINK) ){
 						return (string)GLib.FileUtils.read_link(tty_pgrp);
 					}
-
+				break;
+				case FIND_TTY.PID:
+					return s_pid;
+				break;
 				}
 			}
 		}

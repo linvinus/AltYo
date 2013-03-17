@@ -22,7 +22,7 @@ CHANGELOG_TAG=${shell grep -m 1 "^altyo" ./debian/changelog | sed 's/.*(//' | se
 
 VALA_FLAGS += -v
 VALA_FLAGS += --disable-warnings
-VALA_FLAGS += -g --save-temps -X -O0
+#VALA_FLAGS += -g --save-temps -X -O0
 VALA_FLAGS += -X -DGETTEXT_PACKAGE=\"$(PRG_NAME)\" -X -DVERSION=\"0.2\"
 #\ -I.\ -include\ "./config.h" -v
 ifeq ($(LINUX.DISTRIB.ID),debian)
@@ -82,6 +82,7 @@ gen_mo:
 
 source-package:
 	rm ./altyo || true
+	rm ./po/ru/LC_MESSAGES/$(PRG_NAME).mo || true
 	git-buildpackage --git-upstream-tree=branch --git-upstream-branch=master -rfakeroot -S -sa
 
 gen_changes:

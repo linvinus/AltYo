@@ -198,8 +198,8 @@ public class HVBox : Container {
 		if(data!=null){
 			debug ("data data= %d",(int)((ulong)data[0]));
 
-			HVBoxItem** pitem=(HVBoxItem**)data[0];
-			if(pitem==null)return;
+			unowned HVBoxItem** pitem=(HVBoxItem**)data[0];
+			if(pitem==null || !(*pitem is HVBoxItem) )return;
 			HVBoxItem dnd_item=*pitem;
 
 		debug ("data = %d %s",(int)(pitem),dnd_item.widget.get_type().name());
@@ -335,7 +335,7 @@ public class HVBox : Container {
 			this.set_size_request (1,1);
 			this.set_property("width-request",2);
 			this.set_property("height-request",2);
-			this.get_requisition();
+			//this.get_requisition();
 			//return;
 	//~ 		Gtk.Window HVBParent = this.get_window ();
 			/*HVBParent.set_size_request (1,1);
@@ -566,8 +566,8 @@ public class HVBox : Container {
 		if(this.children != null)
 		for (item_it = this.children; this.children !=null && item_it != null; item_it = item_it.next) {
 			unowned HVBoxItem item = item_it.data;
-			if(item.widget!=null){
-				Widget widget = item.widget;
+			if(item.widget!=null && (item.widget is Gtk.Widget)){
+				unowned Widget widget = item.widget;
 				if(item!=null && !item.ignore && widget!=null) //ignore dnd window
 					callback(widget);
 			}
@@ -646,9 +646,11 @@ public class HVBox : Container {
 			if(item.widget == widget){
 				item.widget.unparent();
 				children.remove(item);
-				int minimum_height,natural_height;
-				hvbox_get_preferred_height_for_width(this.get_allocated_width(),out minimum_height, out natural_height);
-				this.queue_resize();//and redraw
+				if(children.length()>0 && this.visible){
+					int minimum_height,natural_height;
+					hvbox_get_preferred_height_for_width(this.get_allocated_width(),out minimum_height, out natural_height);
+					this.queue_resize();//and redraw
+				}
 				return;
 				//possible problem not optimized exit
 //~ 				item.destroy();

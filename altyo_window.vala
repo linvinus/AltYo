@@ -560,12 +560,10 @@ public class VTMainWindow : Window{
 							this.move (this.orig_x,this.orig_y);
 
 				}else{
-					if(this.orig_w_main_vbox!=0 && this.orig_h_main_vbox!=0 &&
-						this.orig_w_tasks_notebook!=0 && this.orig_h_tasks_notebook!=0){
-						this.ayobject.main_vbox.set_size_request(this.orig_w_main_vbox,this.orig_h_main_vbox);
-						this.ayobject.tasks_notebook.set_size_request(this.orig_w_tasks_notebook,this.orig_h_tasks_notebook);
-					}
-					this.maximize();
+					this.ayobject.tasks_notebook.set_size_request(-1,-1);//reset size
+					this.ayobject.main_vbox.set_size_request(-1,-1);//reset size
+					if(!this.maximized && this.config_maximized)
+						this.maximize();
 				}
 	}
 	public void reconfigure(){

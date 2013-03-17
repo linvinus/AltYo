@@ -345,8 +345,9 @@ public class VTMainWindow : Window{
 		this.pull_maximized=this.maximized;
 		if(this.pull_w<2 || this.pull_h<2){//if start hidden
 			//we don't know size , guess
-			orig_w_main_vbox=this.pull_w=this.ayobject.terminal_width;
-			orig_h_main_vbox=this.pull_h=this.ayobject.terminal_height;
+			this.orig_w_tasks_notebook=orig_w_main_vbox=this.pull_w=this.ayobject.terminal_width;
+			this.orig_h_tasks_notebook=orig_h_main_vbox=this.pull_h=this.ayobject.terminal_height;
+
 		}
 		this.save_current_monitor(this.pull_x,this.pull_y);
 		if(!this.animation_enabled){
@@ -534,13 +535,17 @@ public class VTMainWindow : Window{
 				/* update position only in unmaximized mode
 				 * */
 				if(!this.maximized && !this.config_maximized){
-						var should_be_h = this.ayobject.terminal_height+this.ayobject.hvbox.get_allocated_height();
+						int hvbox_h=this.ayobject.hvbox.get_allocated_height();
+						var should_be_h = this.ayobject.terminal_height+hvbox_h;
 
 						if(this.get_allocated_height()>should_be_h+2||
 						this.ayobject.terminal_width!=this.get_allocated_width()){
-							//this.configure_position();//this needed to update position after unmaximize
-							this.ayobject.main_vbox.set_size_request(this.ayobject.terminal_width,0);
 							this.ayobject.tasks_notebook.set_size_request(this.ayobject.terminal_width,this.ayobject.terminal_height);
+
+							this.ayobject.hvbox.set_default_width(this.ayobject.terminal_width);
+							this.ayobject.hvbox.set_size_request(this.ayobject.terminal_width,hvbox_h);
+
+							this.ayobject.main_vbox.set_size_request(this.ayobject.terminal_width,should_be_h);
 							this.set_default_size(this.ayobject.terminal_width,should_be_h);
 //~							this.resize(this.ayobject.terminal_width,should_be_h);
 							this.update_events();
@@ -709,14 +714,7 @@ public class VTMainWindow : Window{
 		public void window_set_active(){
 
 		if(this.current_state==WStates.VISIBLE){
-			if(!this.maximized){
-				this.ayobject.tasks_notebook.set_size_request(this.ayobject.terminal_width,this.ayobject.terminal_height);
 
-				if(this.get_allocated_height()>this.ayobject.terminal_height+this.ayobject.hvbox.get_allocated_height ()){
-					this.set_default_size (this.ayobject.terminal_width,this.ayobject.terminal_height+this.ayobject.hvbox.get_allocated_height ());
-					this.resize (this.ayobject.terminal_width,this.ayobject.terminal_height+this.ayobject.hvbox.get_allocated_height ());
-				}
-			}
 			if(this.keep_above){
 				this.skip_taskbar_hint = true;
 				this.set_keep_above(true);
@@ -1626,41 +1624,21 @@ public class AYObject :Object{
 
 
 	public void hvbox_size_changed(int width, int height,bool on_size_request){
-			debug ("hvbox_size_changed start");
+			//debug ("hvbox_size_changed start");
 			if(!this.main_window.maximized){
-				debug ("hvbox_size_changed w=%d h=%d  task_w=%d task_h=%d term_h=%d",width,height,this.tasks_notebook.get_allocated_width(),this.tasks_notebook.get_allocated_height(),this.terminal_height) ;
-
-				if(this.tasks_notebook.get_allocated_width() != width || this.tasks_notebook.get_allocated_height() > this.terminal_height+1){
-					this.tasks_notebook.set_size_request(this.terminal_width,this.terminal_height);
-					//this.tasks_notebook.queue_resize_no_redraw();
-				}
-
+				//debug ("hvbox_size_changed w=%d h=%d  task_w=%d task_h=%d term_h=%d",width,height,this.tasks_notebook.get_allocated_width(),this.tasks_notebook.get_allocated_height(),this.terminal_height) ;
 				var should_be_h = this.terminal_height+height + (this.search_hbox.get_visible()?this.search_hbox.get_allocated_height():0);
-				if(this.main_window.get_allocated_height()>should_be_h+2 /*&& !this.main_window.maximized*/){
-					//this.main_window.configure_position();//this needed to update position after unmaximize
-					this.main_vbox.set_size_request(this.terminal_width,should_be_h);
+				if(this.main_window.get_allocated_height()>should_be_h+2){
+					this.hvbox.set_default_width(this.terminal_width);
 					this.tasks_notebook.set_size_request(this.terminal_width,this.terminal_height);
+					//this.terms_notebook.set_size_request(this.terminal_width,this.terminal_height);
+					this.main_vbox.set_size_request(this.terminal_width,should_be_h);
 //~ 					this.main_window.set_default_size(this.terminal_width,should_be_h);
 					this.main_window.resize (this.terminal_width,should_be_h);
-					//this.main_window.move (this.main_window.orig_x,this.main_window.orig_y);
 					this.main_window.queue_resize_no_redraw();
-
-					//GLib.Timeout.add(10,()=>{debug("Update events");this.update_events(); return false;});
 					debug ("hvbox_size_changed terminal_width=%d should_be_h=%d",terminal_width,should_be_h) ;
 				}
-			}else{
-				var was_h=this.main_window.get_allocated_height();
-				var was_w=this.main_window.get_allocated_width();
-				var was_wn=this.tasks_notebook.get_allocated_width();
-				this.tasks_notebook.set_size_request(was_wn,-1);
-
-				this.main_window.set_default_size(was_w,was_h);
-				this.main_window.resize (was_w,was_h);
-				this.main_window.queue_resize_no_redraw();
-
 			}
-
-//example (gdk_window_get_state (gtk_widget_get_window (widget)) & (GDK_WINDOW_STATE_MAXIMIZED | GDK_WINDOW_STATE_FULLSCREEN)) != 0)
 	}
 
 	public void ccopy() {

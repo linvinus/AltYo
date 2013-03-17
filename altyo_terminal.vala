@@ -55,7 +55,7 @@ public class VTToggleButton : Gtk.ToggleButton {
 	public string[] tab_title_regex  {get;set;}
 	public string host_name {get;set;default = null;}
 	public bool do_not_sort  {get;set;default = false;}
-	public int  max_width {get;set;default = -1;}
+	public int  conf_max_width {get;set;default = -1;}
 
 	private string tab_title {get;set;default = null;}
 	private int    tab_index {get;set;default = -1;}
@@ -260,20 +260,25 @@ public class VTToggleButton : Gtk.ToggleButton {
 	}
 
 	public override void get_preferred_width (out int minimum_width, out int natural_width) {
+		int max_width=-1;
 
 		var tmp = this.label.ellipsize;
 		this.label.ellipsize = Pango.EllipsizeMode.NONE;
 		base.get_preferred_width (out minimum_width, out natural_width);//get NORMAL size
 
-		//use this.width_request as limiting size variable from hvbox
-		if(this.width_request>0&&
-		( (this.max_width>0 && this.width_request<this.max_width)||
-		  (this.max_width<1) )
-		){
-			this.max_width=this.width_request;
+		//set limit if configured
+		if(this.conf_max_width>0)
+			max_width=this.conf_max_width;
+		//use this.width_request as limiting size from hvbox
+		if( (this.width_request>0 &&
+			 this.conf_max_width>0 &&
+			 this.width_request<this.conf_max_width ) ||
+			(this.width_request>0 && this.conf_max_width<1) ){
+				max_width=this.width_request;
 		}
-		if(this.max_width>0 && minimum_width>this.max_width){
-			minimum_width=this.max_width;
+
+		if(max_width>0 && minimum_width>max_width){
+			minimum_width=max_width;
 			this.label.ellipsize = Pango.EllipsizeMode.MIDDLE;//limit label size
 			this.has_tooltip=true;
 		}else{
@@ -347,7 +352,7 @@ public class AYTab : Object{
 			return false;
 			});
 
-		this.tbutton.max_width=my_conf.get_integer("tab_max_width",-1,(ref new_val)=>{
+		this.tbutton.conf_max_width=my_conf.get_integer("tab_max_width",-1,(ref new_val)=>{
 			if(new_val<-1){new_val=-1;return true;}
 			return false;
 			});

@@ -42,9 +42,6 @@ public class HVBox : Container {
     private int initial_size = 0;
     private int cur_level = 0;
 
-    private int old_width = 0;
-    private int old_heigth = 0;
-
     private Gtk.SizeRequestMode mode = Gtk.SizeRequestMode.HEIGHT_FOR_WIDTH;
 
     private List<HVBoxItem> children;
@@ -61,6 +58,7 @@ public class HVBox : Container {
 	public bool minimize_size { get; set; default = true; }
     public signal void child_reordered(Widget child, uint new_index);
     public signal void size_changed(int width, int height,bool on_size_request);
+    private bool size_changed_send { get; set; default = false; }
 //~ 	public static enum DragInfo {
 //~ 	TEXT_URI_LIST
 //~ 	}
@@ -443,7 +441,7 @@ public class HVBox : Container {
 					if(allocation.width>orig_pos_w_max)
 						allocation.width=orig_pos_w_max;//just ensure that width is limited
 				}
-					
+
 				if(!item.ignore)//skip but remember size
 					widget.size_allocate(allocation);
 				allocation.x+=allocation.width;
@@ -460,18 +458,6 @@ public class HVBox : Container {
         allocation.y = orig_pos_y;
         allocation.width  = orig_pos_w;
 		base.size_allocate (allocation);//allocate container it self
-		if (old_width != allocation.width || old_heigth != allocation.height){
-				size_changed(allocation.width, allocation.height,false);
-			old_width = allocation.width;
-			old_heigth = allocation.height;
-			//this.set_size_request (allocation.width,allocation.height);
-			//this.set_property("width-request",2);
-			//this.queue_resize_no_redraw();
-			//this.get_requisition();
-			//this.update_size();
-			//this.queue_resize();
-		}
-
     }
 
 	public override SizeRequestMode get_request_mode () {
@@ -537,9 +523,15 @@ public class HVBox : Container {
 		Gtk.Border border=context.get_border(StateFlags.NORMAL);
 		minimum_height+=border.bottom;
 		natural_height+=border.bottom;
-		size_changed(width, minimum_height,true);//important!
+
+		if(!this.size_changed_send){
+			this.size_changed_send=true;
+			size_changed(width, minimum_height,true);//important!
+			this.size_changed_send=false;
+		}
 		this.self_natural_height = natural_height;
- 		debug("get_preferred_height_for_width=%d != %d self_min=%d  minimum=%d natural=%d\n",width,this.self_natural_width,this.self_minimum_width,minimum_height,natural_height);
+		debug("get_preferred_height_for width=%d min=%d natural=%d",width,minimum_height,natural_height);
+ 		//debug("get_preferred_height_for_width=%d != %d self_min=%d  minimum=%d natural=%d\n",width,this.self_natural_width,this.self_minimum_width,minimum_height,natural_height);
 	}
 
 
@@ -737,6 +729,9 @@ public class HVBox : Container {
 			debug("draw invisible\n");
 			return false;//prevent X Window System error
 		}
+		if(this.children.length()<1){
+			return base.draw(cr);
+		}
 		int width = this.get_allocated_width ();
 		int height = this.get_allocated_height ();
 		debug("draw\n");
@@ -862,6 +857,13 @@ public class HVBox : Container {
 			//cr.restore();
 		}
 		return false;
+	}
+
+	public void set_default_width(int new_width){
+		this.initial_size=0;
+		this.self_minimum_width=new_width;
+		this.self_natural_width=new_width;
+		this.update_size();
 	}
 
 }

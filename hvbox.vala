@@ -84,7 +84,7 @@ public class HVBox : Container {
 
 		/* set the view as a drag destination for these targets */
 		drag_dest_set (this, 0, target_entries, Gdk.DragAction.MOVE);
-		this.set_reallocate_redraws(true);//redraw all elements, needed for redraw HVBox border
+		//this.set_reallocate_redraws(true);//redraw all elements, needed for redraw HVBox border
 		//this.resize_mode=ResizeMode.QUEUE; //this break window size
 
     }

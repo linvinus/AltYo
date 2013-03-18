@@ -1238,7 +1238,10 @@ public class AYObject :Object{
 	public void update_tabs_title(){
 		foreach (var vt in this.children) {
 			//reindex all tabs
-			vt.tbutton.set_title((int)(this.children.index(vt)+1),null);
+			if(vt.tbutton.set_title((int)(this.children.index(vt)+1),null)){
+				this.hvbox.queue_draw();
+				this.main_window.update_events();
+			}
 		}
 	}
 
@@ -1288,7 +1291,10 @@ public class AYObject :Object{
 		foreach (var vt in this.children) {
 			if (vt is VTTerminal && ((VTTerminal)vt).vte_term == term){
 				var tab_index =  this.children.index(vt)+1;
-				vt.tbutton.set_title(tab_index, s );
+				if(vt.tbutton.set_title(tab_index, s )){
+					this.hvbox.queue_draw();
+					this.main_window.update_events();
+				}
 				if(this.tab_sort_order==TAB_SORT_ORDER.HOSTNAME)
 					this.tab_sort(((VTTerminal)vt));
 				break;

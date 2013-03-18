@@ -179,10 +179,15 @@ public class VTToggleButton : Gtk.ToggleButton {
 	}
 
 
-	public void set_title(int tab_index,string? title){
+	public bool set_title(int tab_index,string? title){
 		debug("set_title(%d,%s)",tab_index,title);
+		if((this.tab_title != null && this.tab_title == title && this.tab_index == tab_index )||
+		   (title == null && this.tab_index == tab_index ))
+			return false; //prevent unneccesary redraw
+			
 		if(title!=null && title!="")
 			this.tab_title = title;
+		
 		this.tab_index = tab_index;
 		string result2="";
 		if((this.tab_title!=null && this.tab_title!="") ){
@@ -263,6 +268,7 @@ public class VTToggleButton : Gtk.ToggleButton {
 			this.label.set_markup(this.markup_normal);
 
 		this.label.show();
+		return true;
 	}
 
 	public override void get_preferred_width (out int minimum_width, out int natural_width) {

@@ -18,7 +18,7 @@ public class AYSettings : AYTab{
 	private string autorun_file;
 	public AYSettings(MySettings my_conf,Notebook notebook, int tab_index,AYObject ayo) {
 		base(my_conf, notebook, tab_index);
-		this.tbutton.tab_format="AYSettings";
+		this.tbutton.set_title(tab_index, _("AYsettings") );
 		this.ayobject=ayo;
 		this.autorun_file = GLib.Environment.get_user_config_dir()+"/autostart"+"/altyo.desktop";
 		this.builder = new Gtk.Builder ();

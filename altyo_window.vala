@@ -283,9 +283,15 @@ public class VTMainWindow : Window{
 		if(!this.animation_enabled ||
 			this.pixwin.get_child()==null){//prevent error if start hidden
 			this.configure_position();
+			this.resize (this.pull_w,this.pull_h);//start height
 			this.show();
+			if(this.mouse_follow && !this.pull_maximized){
+				this.move (this.orig_x,this.orig_y);//new position
+			}else
+				this.move (this.pull_x,this.pull_y);
+			this.update_events();
 			this.current_state=WStates.VISIBLE;
-			this.update_position_size();
+			this.update_position_size();//reset size to -1
 			this.window_set_active();
 			this.pull_active=false;
 			return;
@@ -322,7 +328,7 @@ public class VTMainWindow : Window{
 					this.update_geometry_hints(0,this.pull_w,1,this.pull_w,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
 				}
 				this.hide();
-				this.unrealize();//important!
+				this.unrealize();//important for window focus on_pull_down!
 				this.current_state=WStates.HIDDEN;
 				this.pull_animation_active=false;
 				return false;
@@ -341,7 +347,7 @@ public class VTMainWindow : Window{
 		this.orig_w_main_vbox = this.ayobject.main_vbox.get_allocated_width();
 		this.orig_h_tasks_notebook = this.ayobject.tasks_notebook.get_allocated_height();
 		this.orig_w_tasks_notebook = this.ayobject.tasks_notebook.get_allocated_width();
-		debug("pull_up orig_h_note=%d orig_w_note=%d",orig_h_main_vbox,orig_w_main_vbox);
+		debug("pull_up orig_h_tasks_notebook=%d orig_w_tasks_notebook=%d",orig_h_tasks_notebook,orig_w_tasks_notebook);
 		this.pull_maximized=this.maximized;
 		if(this.pull_w<2 || this.pull_h<2){//if start hidden
 			//we don't know size , guess
@@ -353,7 +359,6 @@ public class VTMainWindow : Window{
 		if(!this.animation_enabled){
 			this.pull_active=true;
 			this.prev_focus=this.get_focus();
-			this.ayobject.main_vbox.set_size_request(orig_w_main_vbox,orig_h_main_vbox);//save size, prevent terminal resizing
 			this.hide();
 			this.unrealize();//important!
 			this.current_state=WStates.HIDDEN;
@@ -426,6 +431,7 @@ public class VTMainWindow : Window{
 					this.pull_down();
 				else
 					this.pull_up();
+		debug("toogle_widnow");
 	}
 
 	public override bool window_state_event (Gdk.EventWindowState event){
@@ -440,10 +446,10 @@ public class VTMainWindow : Window{
 						this.maximized = true;
 						this.config_maximized=true;
 						this.configure_position();
+						this.ayobject.hvbox.update_size();
 						this.update_position_size();
 						this.update_maximized_size=true;
 					}
-					//this.maximized = true;
 				}else{//unmaximize
 					if(this.maximized){
 						this.maximized = false;
@@ -529,7 +535,7 @@ public class VTMainWindow : Window{
 	}
 
 	public void update_position_size(){
-				debug ("update_position_size start");
+				debug ("update_position_size start maximized=%d config_maximized=%d",(int)this.maximized ,(int)this.config_maximized);
 				/*update terminal align policy
 				 * */
 				this.ayobject.on_maximize(this.maximized);
@@ -537,11 +543,14 @@ public class VTMainWindow : Window{
 				/* update position only in unmaximized mode
 				 * */
 				if(!this.maximized && !this.config_maximized){
-						int hvbox_h=this.ayobject.hvbox.get_allocated_height();
+						int hvbox_h,hvbox_h_ignore;
+						this.ayobject.hvbox.get_preferred_height_for_width(this.ayobject.terminal_width,out hvbox_h,out hvbox_h_ignore);
+						//int hvbox_h=this.ayobject.hvbox.get_allocated_height();
 						var should_be_h = this.ayobject.terminal_height+hvbox_h;
 
 						if(this.get_allocated_height()>should_be_h+2||
-						this.ayobject.terminal_width!=this.get_allocated_width()){
+						this.ayobject.terminal_width!=this.get_allocated_width()||
+						this.ayobject.tasks_notebook.get_allocated_height()!=this.ayobject.terminal_width){
 							this.ayobject.tasks_notebook.set_size_request(this.ayobject.terminal_width,this.ayobject.terminal_height);
 
 							this.ayobject.hvbox.set_default_width(this.ayobject.terminal_width);
@@ -549,7 +558,7 @@ public class VTMainWindow : Window{
 
 							this.ayobject.main_vbox.set_size_request(this.ayobject.terminal_width,should_be_h);
 							this.set_default_size(this.ayobject.terminal_width,should_be_h);
-//~							this.resize(this.ayobject.terminal_width,should_be_h);
+							this.resize(this.ayobject.terminal_width,should_be_h);
 							this.update_events();
 							this.move (this.orig_x,this.orig_y);
 							/* inform window manager where window should be placed*/
@@ -562,8 +571,10 @@ public class VTMainWindow : Window{
 							this.move (this.orig_x,this.orig_y);
 
 				}else{
+					this.ayobject.hvbox.set_size_request(-1,-1);//reset size
 					this.ayobject.tasks_notebook.set_size_request(-1,-1);//reset size
 					this.ayobject.main_vbox.set_size_request(-1,-1);//reset size
+					this.set_size_request(-1,-1);//reset size
 					if(this.animation_enabled && !this.maximized && this.config_maximized)
 						this.maximize();
 				}

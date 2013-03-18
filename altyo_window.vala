@@ -287,7 +287,7 @@ public class VTMainWindow : Window{
 			this.current_state=WStates.VISIBLE;
 			this.update_position_size();
 			this.window_set_active();
-			this.update_events();
+			this.pull_active=false;
 			return;
 		}
 		this.pull_animation_active=true;
@@ -351,7 +351,9 @@ public class VTMainWindow : Window{
 		}
 		this.save_current_monitor(this.pull_x,this.pull_y);
 		if(!this.animation_enabled){
+			this.pull_active=true;
 			this.prev_focus=this.get_focus();
+			this.ayobject.main_vbox.set_size_request(orig_w_main_vbox,orig_h_main_vbox);//save size, prevent terminal resizing
 			this.hide();
 			this.unrealize();//important!
 			this.current_state=WStates.HIDDEN;
@@ -562,7 +564,7 @@ public class VTMainWindow : Window{
 				}else{
 					this.ayobject.tasks_notebook.set_size_request(-1,-1);//reset size
 					this.ayobject.main_vbox.set_size_request(-1,-1);//reset size
-					if(!this.maximized && this.config_maximized)
+					if(this.animation_enabled && !this.maximized && this.config_maximized)
 						this.maximize();
 				}
 	}

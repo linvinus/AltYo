@@ -52,6 +52,7 @@ struct Globals{
 	static bool reload = false;
 	static bool opt_help = false;
 	static string? cmd_conf_file = null;
+	static bool toggle = false;
 
 	[CCode (array_length = false, array_null_terminated = true)]
 	public static string[]? exec_file_with_args = null;
@@ -63,6 +64,7 @@ struct Globals{
 					{ "cfg", 'c', 0, OptionArg.FILENAME, ref Globals.cmd_conf_file,N_("Read configuration from file"), N_("/path/to/config.ini") },
 					/*The option takes a string argument, multiple uses of the option are collected into an array of strings. */
 					{ "exec", 'e', 0, OptionArg.STRING_ARRAY, ref Globals.exec_file_with_args,N_("run command in new tab"), N_("\"command arg1 argN...\"") },
+					{ "toggle", 0, 0, OptionArg.NONE, ref Globals.toggle,N_("show/hide window"), null },
 					{ null }
 			};
 
@@ -146,6 +148,7 @@ int main (string[] args) {
 				Globals.cmd_conf_file=null;
 				Globals.reload=false;
 				Globals.opt_help=false;
+				Globals.toggle=false;
 
 				try {
 					if(!ctx.parse(ref pargv))return 3;
@@ -173,6 +176,11 @@ int main (string[] args) {
 				if (Globals.opt_help) {
 					command_line.printerr (ctx.get_help (true, null));
 					Globals.opt_help=false;
+				}else
+				if(Globals.toggle){
+					unowned List<weak Window> list = app.get_windows();
+					if(list!=null)
+						((VTMainWindow)list.data).toggle_widnow();
 				}
 
 				Globals.reload=false;
@@ -213,10 +221,7 @@ int main (string[] args) {
 				if ( conf.get_boolean("start_hidden",false) ){
 					win.pull_up();//all workarounds is inside pull_up,pull_down,update_position_size
 				}else{
-					var tmp = win.animation_enabled;
-					win.animation_enabled=false;
-					win.pull_down();//just show, without animation
-					win.animation_enabled=tmp;
+					win.show();
 				}
 
 

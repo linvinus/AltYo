@@ -299,9 +299,8 @@ public class VTMainWindow : Window{
 		this.pull_animation_active=true;
 		if(!this.pull_maximized)
 			this.configure_position();
-		this.show();
-		this.realize();
 		this.resize (this.pull_w,2);//start height
+		this.show();
 		this.update_events();
 		if(this.mouse_follow && !this.pull_maximized){
 			this.move (this.orig_x,this.orig_y);//new position
@@ -458,7 +457,8 @@ public class VTMainWindow : Window{
 						 * allow resize from maximized size
 						 * */
 						this.configure_position();
-						this.update_geometry_hints(1,1,1,1,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
+						this.update_geometry_hints(0,0,0,0,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
+						this.unmaximize();//workaround for kwin (kwin like maximize horizontal)
 						this.update_position_size();
 						//this.update_maximized_size=true;
 					}
@@ -1694,7 +1694,10 @@ public class AYObject :Object{
 			if(!this.main_window.maximized){
 				//debug ("hvbox_size_changed w=%d h=%d  task_w=%d task_h=%d term_h=%d",width,height,this.tasks_notebook.get_allocated_width(),this.tasks_notebook.get_allocated_height(),this.terminal_height) ;
 				var should_be_h = this.terminal_height+height + (this.search_hbox.get_visible()?this.search_hbox.get_allocated_height():0);
-				if(this.main_window.get_allocated_height()>should_be_h+2){
+				if(this.main_window.get_allocated_height()>should_be_h+2||
+						this.terminal_width!=this.main_window.get_allocated_width()||
+						this.tasks_notebook.get_allocated_height()!=this.terminal_width){
+												
 					this.hvbox.set_default_width(this.terminal_width);
 					this.tasks_notebook.set_size_request(this.terminal_width,this.terminal_height);
 					//this.terms_notebook.set_size_request(this.terminal_width,this.terminal_height);

@@ -32,14 +32,6 @@ public class KeyBinding {
 	public bool relesed {get;set;default=true;}
 	public signal void on_trigged();
 
-	public void emit_on_trigged(){
-		GLib.Timeout.add(50,on_timeout);//async call
-	}
-	public bool on_timeout(){
-		this.on_trigged();
-		return false;//stop timer
-	}
-
 	public KeyBinding (string combination, uint key_code, uint modifiers) {
 		this.combination = combination;
 		this.key_code = key_code;
@@ -95,13 +87,10 @@ public class PanelHotkey {
 
         if (xevent->type == X.EventType.KeyPress) {
             foreach (var binding in bindings) {
-                if (xevent->xkey.keycode == binding.key_code &&
+                if (binding.relesed == true && xevent->xkey.keycode == binding.key_code &&
                     (xevent->xkey.state & ~ (lock_modifiers[7]))  == binding.modifiers) {
-					if(binding.relesed == true){
-						binding.relesed=false;
-						binding.emit_on_trigged();//binding.on_trigged();
-					}
-					filter=FilterReturn.REMOVE;
+					binding.relesed=false;
+					binding.on_trigged();
                 }
             }
         }else if (xevent->type == X.EventType.KeyRelease ){
@@ -109,7 +98,6 @@ public class PanelHotkey {
                 if (xevent->xkey.keycode == binding.key_code &&
                     (xevent->xkey.state & ~ (lock_modifiers[7]))  == binding.modifiers) {
                     binding.relesed=true;//to ignore AutoRepeat
-                    filter=FilterReturn.REMOVE;
                 }
             }
 		}

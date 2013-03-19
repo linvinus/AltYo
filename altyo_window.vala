@@ -1697,7 +1697,7 @@ public class AYObject :Object{
 				if(this.main_window.get_allocated_height()>should_be_h+2||
 						this.terminal_width!=this.main_window.get_allocated_width()||
 						this.tasks_notebook.get_allocated_height()!=this.terminal_width){
-												
+
 					this.hvbox.set_default_width(this.terminal_width);
 					this.tasks_notebook.set_size_request(this.terminal_width,this.terminal_height);
 					//this.terms_notebook.set_size_request(this.terminal_width,this.terminal_height);

@@ -184,10 +184,10 @@ public class VTToggleButton : Gtk.ToggleButton {
 		if((this.tab_title != null && this.tab_title == title && this.tab_index == tab_index )||
 		   (title == null && this.tab_index == tab_index ))
 			return false; //prevent unneccesary redraw
-			
+
 		if(title!=null && title!="")
 			this.tab_title = title;
-		
+
 		this.tab_index = tab_index;
 		string result2="";
 		if((this.tab_title!=null && this.tab_title!="") ){

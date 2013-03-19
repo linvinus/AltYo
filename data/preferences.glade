@@ -617,8 +617,8 @@
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkCheckButton" id="debug">
-                                            <property name="label" translatable="yes">Debug</property>
+                                          <object class="GtkCheckButton" id="terminal_new_tab_in_current_directory">
+                                            <property name="label" translatable="yes">New tab in current directory</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
@@ -632,8 +632,8 @@
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkCheckButton" id="terminal_new_tab_in_current_directory">
-                                            <property name="label" translatable="yes">New tab in current directory</property>
+                                          <object class="GtkCheckButton" id="debug">
+                                            <property name="label" translatable="yes">Debug</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
@@ -1540,7 +1540,7 @@ Allow use mouse scroll in some programs,for example in less</property>
                   <object class="GtkLabel" id="label2">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Key bindings</property>
+                    <property name="label" translatable="yes">Keybindings</property>
                     <property name="angle">90</property>
                   </object>
                   <packing>

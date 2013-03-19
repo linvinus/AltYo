@@ -727,7 +727,7 @@ public class HVBox : Container {
 		base.propagate_draw (child, cr);
 	}*/
 	public override  bool draw (Cairo.Context cr){
-		if(!this.visible){
+		if(!this.get_realized()){
 			debug("draw invisible\n");
 			return false;//prevent X Window System error
 		}

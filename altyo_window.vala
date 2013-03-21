@@ -525,9 +525,9 @@ public class VTMainWindow : Window{
 		return base.focus_out_event (event);
 	}
 	private bool check_focusout(){
-		if(this.hotkey.active_window_change){
+		if(this.hotkey.active_window_change && this.current_state==WStates.VISIBLE){
 			this.hotkey.processing_event = true;//skip one event, because main_hotkey also generate focus out.
-			this.toggle_widnow();
+			this.toggle_widnow();//hide
 		}
 		return false;//stop timer
 	}
@@ -1549,11 +1549,14 @@ public class AYObject :Object{
 			if(this.conf.get_boolean("terminal_new_tab_in_current_directory",true)){
 				debug("terminal_new_tab_in_current_directory");
 				if(this.active_tab!=null){
+					if(this.active_tab.object is VTTerminal){
 					VTTerminal vt =((VTTerminal)this.active_tab.object);
 					var tmp=vt.find_tty_pgrp(vt.pid,FIND_TTY.CWD);
 					//var tmp = vt.vte_term.get_current_directory_uri();//:TODO in vte 0.34
 					debug("path: %s",tmp);
 					this.add_tab(null,tmp);
+					}else
+					this.add_tab();
 				}
 			}else{
 				this.add_tab();

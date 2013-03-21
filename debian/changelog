@@ -1,3 +1,42 @@
+altyo (0.2~130321-linvinus1) quantal; urgency=low
+
+  [ linvinus ]
+  * new: limit tab size to window width by default 
+  * new: config option tab_max_width
+  * update: translation
+  * new: show tooltip if tab ellipsized
+  * new: separate setting to start in maximized mode 
+  * new: keybindig, Maximize - restore, by default not configured
+  * improve: tab width limiting 
+  * fix: update hvbox height after unmaimize 
+  * improve: window height calculation when hvbox height changed in normal mode 
+  * fix: segfault in hvbox draw(), when child count == 0
+  * fix: gtk erro in hvbox.update_size() 
+  * fix: glib errors on destroy()
+  * fix: disable debug in makefile
+  * fix: allow infinitely reducing terminal height in maximized mode
+  * new: prevent closing the tab if runned important program 
+  * new: options in GUI settings,on advanced tab
+  * improve: don't redraw tab if title or index not changed 
+  * improve: redraw whole tabbar only if size one of it's child changed
+  * fix: terminal resizing on toggle window when animation disabled
+  * improve: maximize-restore when animation disabled 
+  * fix: resizeing in normal mode 
+  * new: altyo_hotkey async KeyBinding (run on_trigged, when window have focus)
+  * new: --toggle option 
+  * fix: resizing for kwin
+  * update: translation 
+  * fix: hvbox draw when hidden
+  * new: window gravity option 
+  * new: auto hide option (experemental)
+  * improve: auto hide
+  * fix: update gravity when reconfigure
+  * fix: add new tab when settings is current tab 
+  * improve: auto hide
+  * update: English and Russian translation
+
+ -- denis <linvinus@gmail.com>  Thu, 21 Mar 2013 22:54:11 +0400
+
 altyo (0.2~130314-linvinus1) quantal; urgency=low
 
   * update: debian  include-binaries po/ru/LC_MESSAGES/altyo.mo

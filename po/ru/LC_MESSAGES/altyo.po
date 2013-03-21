@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-16 17:10+0400\n"
+"POT-Creation-Date: 2013-03-21 22:50+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,53 +20,61 @@ msgstr ""
 msgid "%"
 msgstr "%"
 
-#: data/preferences.glade:289
+#: data/preferences.glade:304
 msgid "100 or lower is in percentage"
 msgstr "значение 100 или менее означает проценты"
 
-#: data/preferences.glade:213
+#: data/preferences.glade:211
 msgid "<b>Animation</b>"
 msgstr "<b>Анимация</b>"
 
-#: data/preferences.glade:1535
+#: data/preferences.glade:1565
 msgid "<b>Key bindings</b>"
 msgstr "<b>Комбинации клавиш</b>"
 
-#: data/preferences.glade:1770
+#: data/preferences.glade:1799
 msgid "<b>Pattern</b>"
 msgstr ""
 "<b>Редактировать шаблон заголовка терминала используя регулярные выражения</"
 "b>"
 
-#: data/preferences.glade:524
+#: data/preferences.glade:539
 msgid "<b>Size and position</b>"
 msgstr "<b>Размер и положение</b>"
 
-#: data/preferences.glade:1700
+#: data/preferences.glade:1730
 msgid "<b>Tab format</b>"
 msgstr "<b>Формат закладок</b>"
 
-#: data/preferences.glade:1369
+#: data/preferences.glade:1399
 msgid "<b>Terminal</b>"
 msgstr "<b>Терминалъ</b>"
 
-#: data/preferences.glade:671
+#: data/preferences.glade:2238
+msgid "<b>URL regexps</b>"
+msgstr "<b>URL регулярные выражения</b>"
+
+#: data/preferences.glade:701
 msgid "<b>Window</b>"
 msgstr "<b>Окно программы</b>"
 
-#: data/preferences.glade:2284
+#: data/preferences.glade:2424
 msgid "ASCII Backspace"
 msgstr "ASCII Backspace"
 
-#: data/preferences.glade:2287
+#: data/preferences.glade:2427
 msgid "ASCII Delete"
 msgstr "ASCII Delete"
 
-#: altyo_window.vala:1585
+#: altyo_settings.vala:21
+msgid "AYsettings"
+msgstr "Настройки"
+
+#: altyo_window.vala:1697
 msgid "About"
 msgstr "О программе"
 
-#: data/preferences.glade:1491
+#: data/preferences.glade:1521
 msgid "Action"
 msgstr "Действия"
 
@@ -74,41 +82,45 @@ msgstr "Действия"
 msgid "Add"
 msgstr "Добавить"
 
-#: altyo_terminal.vala:723
+#: altyo_terminal.vala:740
 msgid "Additional settings"
 msgstr "Дополнительные настройки"
 
-#: data/preferences.glade:2176
+#: data/preferences.glade:2309
 msgid "Advanced"
 msgstr "Дополнительные"
 
-#: data/preferences.glade:1173
+#: data/preferences.glade:1203
 msgid "Alternate screen scroll"
 msgstr "Альтернативная прокрутка"
 
-#: data/preferences.glade:2157
+#: data/preferences.glade:2290
 msgid "Application style"
 msgstr "Стиль приложения"
 
-#: data/preferences.glade:2281
+#: data/preferences.glade:2421
 msgid "Auto"
 msgstr "Автоматически"
 
-#: data/preferences.glade:1205
+#: data/preferences.glade:602
+msgid "Auto hide on focus lost"
+msgstr "Скрывать автоматически"
+
+#: data/preferences.glade:1235
 msgid "Auto restart shell"
 msgstr ""
 "Автоматически перезапускать\n"
 "коммандную оболочку"
 
-#: data/preferences.glade:1832
+#: data/preferences.glade:1861
 msgid "Auto run commands"
 msgstr "Запускать команды при старте"
 
-#: data/preferences.glade:557
+#: data/preferences.glade:572
 msgid "Auto start with desktop session"
 msgstr "Запускать вместе с рабочим столом"
 
-#: data/preferences.glade:1188
+#: data/preferences.glade:1218
 msgid ""
 "Available only on debian based systems.\n"
 "Allow use mouse scroll in some programs,for example in less"
@@ -117,132 +129,145 @@ msgstr ""
 "Позволяет использовать колёсико мышки для прокрутки в некоторых приложениях\n"
 "Например в less"
 
-#: data/preferences.glade:886
+#: data/preferences.glade:916
 msgid "Background color"
 msgstr "Цвет заднего фона"
 
-#: data/preferences.glade:913
+#: data/preferences.glade:943
 msgid "Background image file"
 msgstr "Фоновое изображение"
 
-#: data/preferences.glade:960
+#: data/preferences.glade:990
 msgid "Background opacity"
 msgstr "Прозрачность терминала"
 
-#: data/preferences.glade:927
+#: data/preferences.glade:957
 msgid "Background saturation"
 msgstr "Затенение заднего фона"
 
-#: data/preferences.glade:1333
+#: data/preferences.glade:1363
 msgid "Backspace key binding"
 msgstr "Клавиша Backspace генерирует"
 
-#: data/preferences.glade:1639
+#: data/preferences.glade:1669
 msgid "Base title"
 msgstr "Основной шаблон закладки"
 
-#: data/preferences.glade:17
+#: data/preferences.glade:22
 msgid "Block"
 msgstr "Блок"
 
-#: data/preferences.glade:63
+#: data/preferences.glade:68
 msgid "Center"
 msgstr "В центре"
 
-#: altyo_window.vala:1455
+#: altyo_window.vala:1567
 msgid "Close current tab"
 msgstr "Закрыть текущий терминал"
 
-#: altyo_window.vala:1455
+#: altyo_window.vala:1567
 msgid "Close tab"
 msgstr "Закрыть терминал"
 
-#: data/preferences.glade:2064
+#: altyo_window.vala:1156
+msgid "Close tab anyway?"
+msgstr "Закрыть терминал в любом случае?"
+
+#: data/preferences.glade:2093
 msgid "Color palette"
 msgstr "Палитра"
 
-#: data/preferences.glade:1814
+#: data/preferences.glade:1843
 msgid "Command"
 msgstr "Команда"
 
-#: altyo_window.vala:1494
+#: altyo_window.vala:1606
 msgid "Copy"
 msgstr "Копировать"
 
-#: altyo_window.vala:1494
+#: altyo_window.vala:1606
 msgid "Copy selected text"
 msgstr "Копировать выделенный текст"
 
-#: data/preferences.glade:486 data/preferences.glade:487
-#: data/preferences.glade:500
+#: data/preferences.glade:492 data/preferences.glade:493
+#: data/preferences.glade:506
 msgid "Current monitor"
 msgstr "Текущий монтор"
 
-#: data/preferences.glade:1267
+#: data/preferences.glade:1297
 msgid "Cursor blink mode"
 msgstr "Режим мерцания курсора"
 
-#: data/preferences.glade:1234
+#: data/preferences.glade:1264
 msgid "Cursor shape"
 msgstr "Форма курсора"
 
-#: data/preferences.glade:1119
+#: data/preferences.glade:1149
 msgid "Custom shell"
 msgstr "Запускать эту оболочку"
 
-#: data/preferences.glade:643
+#: data/preferences.glade:673
 msgid "Debug"
 msgstr "Отладка"
 
-#: data/preferences.glade:448
+#: data/preferences.glade:463
 msgid "Default monitor on which altyo will be shown at start up."
 msgstr "Монитор по умолчанию, на котором будет запущена программа при старте."
 
-#: data/preferences.glade:1300
+#: data/preferences.glade:1330
 msgid "Delete key binding"
 msgstr "Клавиша Delete генерирует"
 
-#: data/preferences.glade:2290
+#: data/preferences.glade:2430
 msgid "Delete sequence"
 msgstr "Экранирующая последовательность"
 
-#: altyo_window.vala:1589
+#: altyo_window.vala:1701
 msgid "Disable sort tab"
 msgstr "Исключить из сортировки"
 
-#: data/preferences.glade:1441
+#: data/preferences.glade:1471
 msgid "Double hotkey milliseconds"
 msgstr "двойное нажатие мс."
 
-#: data/preferences.glade:150
+#: data/preferences.glade:148
 msgid "Enable"
 msgstr "Вкл."
 
-#: data/preferences.glade:1034
+#: data/preferences.glade:2150
+msgid "Exclude from saving session"
+msgstr "Исключить из сохранения сессии"
+
+#: data/preferences.glade:1064
 msgid "Fake transparency"
 msgstr "Ненастоящая прозрачность"
 
-#: altyo_window.vala:1518 data/preferences.glade:260
+#: altyo_window.vala:1630 data/preferences.glade:258
 msgid "Follow mouse cursor"
 msgstr "Следовать за мышью"
 
-#: data/preferences.glade:723
+#: data/preferences.glade:753
 msgid "Font"
 msgstr "Шрифт"
 
-#: altyo_window.vala:758
+#: altyo_window.vala:1155
+#, c-format
+msgid "Found important task \"%s\""
+msgstr "Запущена важная программа \"%s\""
+
+#: altyo_window.vala:801
 msgid "Grab another key."
 msgstr "Считать другую комбинацию клавиш"
 
-#: data/preferences.glade:321
+#: data/preferences.glade:336
 msgid "Height"
 msgstr "Высота"
 
-#: data/preferences.glade:20
+#: data/preferences.glade:25
 msgid "Ibeam"
 msgstr "I-образный"
 
-#: data/preferences.glade:1504
+#: data/preferences.glade:1534
 msgid "Key binding"
 msgstr "Горячие клавиши"
 
@@ -251,110 +276,114 @@ msgstr "Горячие клавиши"
 msgid "Key binding \"%s\" already binded to \"%s\""
 msgstr "Горячая клавиша \"%s\" уже используется в действии \"%s\""
 
-#: data/preferences.glade:1550
-msgid "Key bindings"
+#: data/preferences.glade:1580
+msgid "Keybindings"
 msgstr "Комбинации клавиш"
 
-#: data/preferences.glade:60
+#: data/preferences.glade:65
 msgid "Left"
 msgstr "Слева"
 
-#: data/preferences.glade:1388
+#: data/preferences.glade:1418
 msgid "Look and feel"
 msgstr "Внешний вид и поведение"
 
-#: data/preferences.glade:2090
+#: data/preferences.glade:2204
 msgid "Match"
 msgstr "Регулярное выражение"
 
-#: altyo_window.vala:1761
+#: altyo_window.vala:1856
 msgid "Match case-sensitive"
 msgstr "Учитывать регистр"
 
-#: data/preferences.glade:795
+#: data/preferences.glade:825
 msgid "Match case-sensitive by default"
 msgstr "Учитывать регистр по умолчанию"
 
-#: data/preferences.glade:1580
+#: data/preferences.glade:1610
 msgid "Max tab width"
 msgstr "Максимальная ширина"
 
-#: altyo_window.vala:1609
+#: altyo_window.vala:1721
 msgid "Maximize - restore"
 msgstr "Развернуть на весь экран"
 
-#: altyo_window.vala:1609
+#: altyo_window.vala:1721
 msgid "Maximize window, or restore to normal size"
 msgstr "Развернуть окно на весь экран, или восстановить прежний размер"
 
-#: data/preferences.glade:434
+#: data/preferences.glade:449
 msgid "Monitor"
 msgstr "Монитор"
 
-#: altyo_window.vala:1440
+#: altyo_window.vala:1548
 msgid "New tab"
 msgstr "Добавить терминал"
 
-#: data/preferences.glade:628
+#: data/preferences.glade:658
 msgid "New tab in current directory"
 msgstr ""
 "Открывать новый терминал\n"
 "в текущей директории"
 
-#: altyo_window.vala:1460
+#: altyo_window.vala:1572
 msgid "Next tab"
 msgstr "Следующий терминал"
 
-#: data/preferences.glade:186
+#: data/preferences.glade:184
 msgid "Number of animation steps,less is faster."
 msgstr "Количество щагов анимации, чем меньше тем быстрее"
 
-#: data/preferences.glade:2270
+#: data/preferences.glade:2410
 msgid "Off"
 msgstr "Не мерцает."
 
-#: data/preferences.glade:2267
+#: data/preferences.glade:2407
 msgid "On"
 msgstr "Мерцает."
 
-#: altyo_window.vala:1440
+#: altyo_window.vala:1548
 msgid "Open new tab"
 msgstr "Открыть новый терминал"
 
-#: altyo_window.vala:1499
+#: altyo_window.vala:1611
 msgid "Paste"
 msgstr "Вставить"
 
-#: altyo_window.vala:1499
+#: altyo_window.vala:1611
 msgid "Paste from primary clipboard"
 msgstr "Вставить из основного буфера обмена"
 
-#: data/preferences.glade:1736
+#: data/preferences.glade:1765
 msgid "Pattern"
 msgstr "Регулярное выражение"
 
-#: altyo_window.vala:741
+#: altyo_window.vala:784
 msgid "Please select key combination, to show/hide AltYo."
 msgstr ""
 "Пожалуйста укажите комбинацию клавиш для скрития/показа программы АльтЁ"
 
-#: data/preferences.glade:335
+#: data/preferences.glade:350
 msgid "Position"
 msgstr "Позиция"
 
-#: altyo_window.vala:745
+#: altyo_window.vala:788
 msgid "Press any key"
 msgstr "Нажмите любую кнопку"
 
-#: altyo_window.vala:1465
+#: data/preferences.glade:2121
+msgid "Prevent close"
+msgstr "Не закрывать если"
+
+#: altyo_window.vala:1577
 msgid "Previous tab"
 msgstr "Предыдущий терминал"
 
-#: altyo_window.vala:1574
+#: altyo_window.vala:1686
 msgid "Quit"
 msgstr "Выход"
 
-#: altyo_window.vala:1314
+#: altyo_window.vala:1418
 msgid "Really quit?"
 msgstr "Действительно выйти?"
 
@@ -362,183 +391,192 @@ msgstr "Действительно выйти?"
 msgid "Remove"
 msgstr "Удалить"
 
-#: data/preferences.glade:1750
+#: data/preferences.glade:1779
 msgid "Replace"
 msgstr "Заменить"
 
-#: data/preferences.glade:66
+#: data/preferences.glade:71
 msgid "Right"
 msgstr "Справа"
 
-#: data/preferences.glade:2104
+#: data/preferences.glade:2218
 msgid "Run"
 msgstr "Запустить"
 
-#: data/preferences.glade:1133
+#: data/preferences.glade:1163
 msgid "Run this command instead user shell"
 msgstr "Запускать эту команду вместо оболочки пользователя"
 
-#: altyo_window.vala:1315
+#: altyo_window.vala:1419
 msgid "Save session"
 msgstr "Сохранить сессию"
 
-#: data/preferences.glade:587
+#: data/preferences.glade:617
 msgid "Save session on quit"
 msgstr "Сохранять сессию при выходе"
 
-#: data/preferences.glade:1063
+#: data/preferences.glade:1093
 msgid "Scroll background"
 msgstr "Прокручивать задний фон"
 
-#: data/preferences.glade:824
+#: data/preferences.glade:854
 msgid "Scroll lines"
 msgstr "Обратная прокрутка"
 
-#: altyo_window.vala:1504
+#: altyo_window.vala:1616
 msgid "Search"
 msgstr "Поиск"
 
-#: altyo_window.vala:1521
+#: altyo_window.vala:1633
 msgid "Settings"
 msgstr "Настройки"
 
-#: altyo_window.vala:1521
+#: altyo_window.vala:1633
 msgid "Settings..."
 msgstr "Настройки"
 
-#: altyo_terminal.vala:469 altyo_window.vala:1059 altyo_window.vala:1124
+#: altyo_terminal.vala:486 altyo_window.vala:1108 altyo_window.vala:1222
 msgid "Shell terminated."
 msgstr "Оболочка была закрыта"
 
-#: data/preferences.glade:737
+#: data/preferences.glade:767
 msgid "Show scrollbar"
 msgstr "Показывать прокрутку"
 
-#: altyo_window.vala:1580
+#: altyo_window.vala:1692
 msgid "Show/Hide"
 msgstr "Показать/скрыть окно AltYo"
 
-#: altyo_window.vala:1510
+#: altyo_window.vala:1622
 msgid "Show/Hide Quick list"
 msgstr "Показать/скрыть быстрые команды"
 
-#: altyo_window.vala:1611
+#: altyo_window.vala:1723
 msgid ""
 "Sorry, your default height is 100%, window size cannot be reduced, please "
 "change default window height in preferences."
 msgstr ""
-"Извините, в настройках, высота поумолчанию равна 100%, поэтому размер окна не может быть изменён. "
+"Извините, в настройках, высота поумолчанию равна 100%, поэтому размер окна "
+"не может быть изменён. "
 
-#: data/preferences.glade:173
+#: data/preferences.glade:171
 msgid "Speed "
 msgstr "Скорость "
 
-#: data/preferences.glade:542
+#: data/preferences.glade:557
 msgid "Start hidden"
 msgstr "Запускать свёрнутым"
 
-#: data/preferences.glade:245
+#: data/preferences.glade:243
 msgid "Start maximized"
 msgstr "При старте окно во весь экран"
 
-#: data/preferences.glade:572
-msgid "Start on top"
-msgstr "Поверх всех окон"
-
-#: altyo_window.vala:1597
+#: altyo_window.vala:1709 data/preferences.glade:587
 msgid "Stay on top"
 msgstr "Поверх всех окон"
 
-#: altyo_window.vala:1460
+#: altyo_window.vala:1572
 msgid "Switch to next tab"
 msgstr "Следующий терминал"
 
-#: altyo_window.vala:1465
+#: altyo_window.vala:1577
 msgid "Switch to previous tab"
 msgstr "Предыдущий терминал"
 
-#: altyo_window.vala:1471
+#: altyo_window.vala:1583
 #, c-format
 msgid "Switch to tab %d"
 msgstr "Переключиться в терминал № %d"
 
-#: altyo_window.vala:1471
+#: altyo_window.vala:1583
 #, c-format
 msgid "Switch to tab %d,double press switch to tab %d"
 msgstr ""
 "Переключиться на закладку %d,нажмите дважды для переключения на закладку %d"
 
-#: data/preferences.glade:2264
+#: data/preferences.glade:2404
 msgid "System"
 msgstr "Системный"
 
-#: data/preferences.glade:2293
+#: data/preferences.glade:2433
 msgid "TTY \"erase\""
 msgstr "TTY \"erase\""
 
-#: data/preferences.glade:613
+#: data/preferences.glade:1816
+msgid "Tab"
+msgstr "Закладка"
+
+#: data/preferences.glade:643
 msgid "Tab bar background"
 msgstr "Рисовать задний фон в закладках"
 
-#: data/preferences.glade:1787
-msgid "Tab: title format"
-msgstr "Закладка: регулярные выражения для формирования заголовка терминала"
-
-#: data/preferences.glade:1421
+#: data/preferences.glade:1451
 msgid "Temporary lock key bindings"
 msgstr "Временно отключить все комбинации клавиш"
 
-#: data/preferences.glade:1668
+#: data/preferences.glade:1698
 msgid "Terminal header"
 msgstr "Шаблон для заголовка терминала"
 
-#: data/preferences.glade:2122
+#: data/preferences.glade:2255
 msgid "Terminal regexps"
 msgstr "Регулярные выражения терминала"
 
-#: data/preferences.glade:859
+#: data/preferences.glade:889
 msgid "Text color"
 msgstr "Цвет текста"
 
-#: data/preferences.glade:1453
+#: data/preferences.glade:1483
 msgid "The time during which respond to the double pressing."
 msgstr "Время, в течение которого реагировать на повторное нажатие."
 
-#: data/preferences.glade:1092
+#: data/preferences.glade:1122
 msgid "Tint color"
 msgstr "Цвет затенения"
 
-#: data/preferences.glade:23
+#: data/preferences.glade:28
 msgid "Underline"
 msgstr "Подчёркивание"
 
-#: data/preferences.glade:367
+#: data/preferences.glade:382
 msgid "When height equal 100, maximize window."
 msgstr ""
 "Если значение равно 100\n"
 "развернуть окно на весь экран"
 
-#: data/preferences.glade:307
+#: data/preferences.glade:322
 msgid "Width"
 msgstr "Ширина"
 
-#: altyo_window.vala:1751
+#: data/preferences.glade:273
+msgid "Window gravity north"
+msgstr "Окно вверху"
+
+#: altyo_window.vala:1846
 msgid "Wrap search"
 msgstr "Искать циклически"
 
-#: data/preferences.glade:766
+#: data/preferences.glade:796
 msgid "Wrap search by default"
 msgstr "Искать циклически по умолчанию"
 
-#: altyo_window.vala:1612 altyo_settings.vala:135
+#: altyo_window.vala:1724 altyo_settings.vala:135
 msgid "error"
 msgstr "Ошибка"
 
-#: data/preferences.glade:406 data/preferences.glade:420
+#: data/preferences.glade:277
+msgid ""
+"if checked - gravity north,\n"
+"otherwise - gravity south"
+msgstr ""
+"если включено - окно вверху,\n"
+"если выключено - окно внизу"
+
+#: data/preferences.glade:421 data/preferences.glade:435
 msgid "label"
 msgstr "ярлык"
 
-#: data/preferences.glade:838
+#: data/preferences.glade:868
 msgid "lines count"
 msgstr "количество линии"
 
@@ -549,7 +587,7 @@ msgstr ""
 "на весь\n"
 "экран"
 
-#: altyo_window.vala:743
+#: altyo_window.vala:786
 #, c-format
 msgid "previous key '%s' incorrect or busy"
 msgstr "предыдущая комбинация '%s' уже занята, или неправильнго формата"
@@ -558,7 +596,7 @@ msgstr "предыдущая комбинация '%s' уже занята, ил
 msgid "px"
 msgstr "px"
 
-#: data/preferences.glade:1593
+#: data/preferences.glade:1623
 msgid ""
 "size in pixels\n"
 "-1 - max width is window width\n"

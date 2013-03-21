@@ -45,7 +45,9 @@ public class PanelHotkey {
     private unowned X.Display display;
     private Gdk.Window root_window;
     private X.ID x_id;
+    private X.Atom active_window;
     public bool processing_event = false;
+    public bool active_window_change = false;
 
     static PanelHotkey _instance;
 
@@ -72,6 +74,7 @@ public class PanelHotkey {
         root_window = get_default_root_window ();
 
         this.display = Gdk.x11_get_default_xdisplay ();
+        this.active_window = this.display.intern_atom("_NET_ACTIVE_WINDOW",false);
         x_id = X11Window.get_xid (root_window);
         root_window.add_filter (event_filter);
 
@@ -101,6 +104,13 @@ public class PanelHotkey {
 						binding.relesed=true;//to ignore AutoRepeat
 					}
 				}
+			} else if (!this.active_window_change && xevent->type == X.EventType.PropertyNotify ) {
+				//_NET_ACTIVE_WINDOW usual come after focus change
+				X.PropertyEvent* pevent = (X.PropertyEvent*) p;
+				if(pevent->atom == this.active_window){
+					this.active_window_change=true;
+				}
+				//debug("event_filter type=%d state=%d window=%d atom=%s",(int)pevent->type,(int)pevent->state,(int)pevent->window,this.display.get_atom_name(pevent->atom));
 			}
 		}
         this.processing_event = false;

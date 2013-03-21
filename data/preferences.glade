@@ -586,7 +586,7 @@ otherwise - gravity south</property>
                                         </child>
                                         <child>
                                           <object class="GtkCheckButton" id="keep_above_at_startup">
-                                            <property name="label" translatable="yes">Start on top</property>
+                                            <property name="label" translatable="yes">Stay on top</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>

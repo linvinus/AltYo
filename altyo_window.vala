@@ -83,6 +83,7 @@ public class VTMainWindow : Window{
 	public bool allow_close=false;
 	public bool gravity_north_west=true;
 	public bool autohide=false;
+	public bool ignore_focus_lost=false;
 
 	private uint32 last_focus_out_event_time;
 
@@ -516,11 +517,19 @@ public class VTMainWindow : Window{
 
 	public override bool focus_out_event (Gdk.EventFocus event) {
 		this.last_focus_out_event_time=Gdk.x11_get_server_time(this.get_window());
-		if(event.window == this.get_window() && this.autohide){
+		debug("focus_out_event");
+		if(this.autohide && !this.ignore_focus_lost){
+			this.hotkey.active_window_change=false;//reset active window
+			GLib.Timeout.add(100,this.check_focusout);
+		}
+		return base.focus_out_event (event);
+	}
+	private bool check_focusout(){
+		if(this.hotkey.active_window_change){
 			this.hotkey.processing_event = true;//skip one event, because main_hotkey also generate focus out.
 			this.toggle_widnow();
 		}
-		return base.focus_out_event (event);
+		return false;//stop timer
 	}
 
 	public override  bool draw (Cairo.Context cr){
@@ -830,7 +839,9 @@ public class VTMainWindow : Window{
 					else
 						return true; //true == ignore event
 				});//tab_button_press_event
+			this.ignore_focus_lost=true;
 			dialog.run();
+			this.ignore_focus_lost=false;
 			return accelerator_name;
 	}
 
@@ -849,7 +860,9 @@ public class VTMainWindow : Window{
 			dialog.show_all();
 			dialog.grab_focus();
 			this.hotkey.send_net_active_window(dialog.get_window ());
+			this.ignore_focus_lost=true;
 			dialog.run();
+			this.ignore_focus_lost=false;
 	}//show_message_box
 
 }//class VTMainWindow
@@ -1159,7 +1172,9 @@ public class AYObject :Object{
 					dialog.show ();
 					dialog.grab_focus();
 					this.main_window.hotkey.send_net_active_window(dialog.get_window ());
+					this.main_window.ignore_focus_lost=true;
 					dialog.run();
+					this.main_window.ignore_focus_lost=false;
 				}
 				if(!close)
 					return;//prevent close
@@ -1427,7 +1442,9 @@ public class AYObject :Object{
 			dialog.show ();
 			dialog.grab_focus();
 			this.main_window.hotkey.send_net_active_window(dialog.get_window ());
+			this.main_window.ignore_focus_lost=true;
 			dialog.run();
+			this.main_window.ignore_focus_lost=false;
 	}
 
 
@@ -1456,7 +1473,9 @@ public class AYObject :Object{
 			dialog.show_all();
 			dialog.grab_focus();
 			this.main_window.hotkey.send_net_active_window(dialog.get_window ());
+			this.main_window.ignore_focus_lost=true;
 			dialog.run();
+			this.main_window.ignore_focus_lost=false;
 	}
 
 	private bool check_for_existing_action(string name,string default_accel){

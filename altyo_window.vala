@@ -81,6 +81,8 @@ public class VTMainWindow : Window{
 	public bool pull_maximized=false;
 	public bool temporary_maximized=false;
 	public bool allow_close=false;
+	public bool gravity_north_west=true;
+	public bool autohide=false;
 
 	private uint32 last_focus_out_event_time;
 
@@ -285,15 +287,19 @@ public class VTMainWindow : Window{
 			this.configure_position();
 			this.resize (this.pull_w,this.pull_h);//start height
 			this.show();
-			if(this.mouse_follow && !this.pull_maximized){
+			if((this.mouse_follow || !this.gravity_north_west) && !this.pull_maximized){
 				this.move (this.orig_x,this.orig_y);//new position
 			}else
-				this.move (this.pull_x,this.pull_y);
+				if(this.gravity_north_west)
+					this.move (this.pull_x,this.pull_y);
+				else
+					this.move (this.pull_x,this.orig_y);
 			this.update_events();
 			this.current_state=WStates.VISIBLE;
 			this.update_position_size();//reset size to -1
 			this.window_set_active();
 			this.pull_active=false;
+			this.queue_draw();//fix some draw problems (when mouse inside hvbox after show?).
 			return;
 		}
 		this.pull_animation_active=true;
@@ -302,10 +308,13 @@ public class VTMainWindow : Window{
 		this.resize (this.pull_w,2);//start height
 		this.show();
 		this.update_events();
-		if(this.mouse_follow && !this.pull_maximized){
+		if((this.mouse_follow || !this.gravity_north_west) && !this.pull_maximized){
 			this.move (this.orig_x,this.orig_y);//new position
 		}else
-			this.move (this.pull_x,this.pull_y);
+			if(this.gravity_north_west)
+				this.move (this.pull_x,this.pull_y);
+			else
+				this.move (this.pull_x,this.orig_y);
 		this.update_events();
 		if (this.pull_w >1 && this.pull_h >1)
 			this.pull_step=0;
@@ -498,12 +507,19 @@ public class VTMainWindow : Window{
 					gem.min_height=min_height;
 					gem.min_width=min_width;
 					gem.width_inc=0;
-					gem.win_gravity=Gdk.Gravity.NORTH_WEST;
-					this.set_geometry_hints(null,gem,mask);
+					if(this.gravity_north_west)
+						gem.win_gravity=Gdk.Gravity.NORTH_WEST;
+					else
+						gem.win_gravity=Gdk.Gravity.SOUTH_WEST;
+					this.set_geometry_hints(null,gem,mask|Gdk.WindowHints.WIN_GRAVITY);
 	}
 
 	public override bool focus_out_event (Gdk.EventFocus event) {
 		this.last_focus_out_event_time=Gdk.x11_get_server_time(this.get_window());
+		if(event.window == this.get_window() && this.autohide){
+			this.hotkey.processing_event = true;//skip one event, because main_hotkey also generate focus out.
+			this.toggle_widnow();
+		}
 		return base.focus_out_event (event);
 	}
 
@@ -586,7 +602,7 @@ public class VTMainWindow : Window{
 					 "VTToggleButton,VTToggleButton GtkLabel  {font: Mono 10; -GtkWidget-focus-padding: 0px;  -GtkButton-default-border:0px; -GtkButton-default-outside-border:0px; -GtkButton-inner-border:0px; border-width: 0px; -outer-stroke-width: 0px; border-radius: 0px; border-style: solid;  background-image: none; margin:0px; padding:1px 1px 0px 1px; background-color: alpha(#000000,0.0); color: #AAAAAA; transition: 0ms ease-in-out;}"+
 					 "VTToggleButton:active{background-color: #00AAAA; color: #000000; transition: 0ms ease-in-out;}"+
 					 "VTToggleButton:prelight {background-color: #AAAAAA; color: #000000; transition: 0ms ease-in-out;}"+
-					 "#tasks_notebook {border-width: 0px 2px 0px 2px;border-color: #3C3B37;border-style: solid;}"+
+					 "#tasks_notebook {border-width: 2px 2px 0px 2px;border-color: #3C3B37;border-style: solid;}"+
 					 "#search_hbox :active { border-color: @fg_color; color: #FF0000;}"+
 					 "#search_hbox :prelight { background-color: alpha(#000000,0.0); border-color: @fg_color; color: #FF0000;}"+
 					 "#search_hbox {border-width: 0px 0px 0px 0px; -outer-stroke-width: 0px; border-radius: 0px 0px 0px 0px; border-style: solid;  background-image: none; margin:0px; padding:0px 0px 1px 0px; background-color: #000000; border-color: @bg_color; color: #00FFAA;}"+
@@ -633,6 +649,8 @@ public class VTMainWindow : Window{
 		}
 
 		this.mouse_follow  = conf.get_boolean("follow_the_white_rabbit",false);
+		this.gravity_north_west  = conf.get_boolean("window_gravity_north_west",true);
+		this.autohide  = conf.get_boolean("window_autohide",false);
 	}//reconfigure
 
 	public void configure_position(){
@@ -713,12 +731,15 @@ public class VTMainWindow : Window{
 			}
 
 			//this.orig_x=rectangle.x;
-			this.orig_y=rectangle.y;
+			if(this.gravity_north_west)
+				this.orig_y=rectangle.y;
+			else
+				this.orig_y=rectangle.height;
 
 			//this.tasks_notebook.set_size_request(this.terminal_width,this.terminal_height);
 			//we can't change height , otherwise vte will change
 			//this.tasks_notebook.set_size_request(terminal_width,this.terminal_height);
-			debug("new x=%d,y=%d",this.orig_x,this.orig_y);
+			debug("new2 x=%d,y=%d",this.orig_x,this.orig_y);
 	}//configure_position
 
 
@@ -1507,6 +1528,7 @@ public class AYObject :Object{
 				if(this.active_tab!=null){
 					VTTerminal vt =((VTTerminal)this.active_tab.object);
 					var tmp=vt.find_tty_pgrp(vt.pid,FIND_TTY.CWD);
+					//var tmp = vt.vte_term.get_current_directory_uri();//:TODO in vte 0.34
 					debug("path: %s",tmp);
 					this.add_tab(null,tmp);
 				}

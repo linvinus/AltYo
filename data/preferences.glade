@@ -67,6 +67,13 @@
       </row>
     </data>
   </object>
+  <object class="GtkAdjustment" id="tab_max_width_adjustment">
+    <property name="lower">-1</property>
+    <property name="upper">10000</property>
+    <property name="value">-1</property>
+    <property name="step_increment">10</property>
+    <property name="page_increment">100</property>
+  </object>
   <object class="GtkScrolledWindow" id="settings-scrolledwindow">
     <property name="visible">True</property>
     <property name="can_focus">True</property>
@@ -264,6 +271,23 @@
                                                   </packing>
                                                 </child>
                                                 <child>
+                                                  <object class="GtkCheckButton" id="window_gravity_north_west">
+                                                    <property name="label" translatable="yes">Window gravity north</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="tooltip_text" translatable="yes">if checked - gravity north,
+otherwise - gravity south</property>
+                                                    <property name="xalign">0</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="expand">False</property>
+                                                    <property name="fill">True</property>
+                                                    <property name="position">2</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
                                                   <object class="GtkSeparator" id="separator4">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
@@ -271,7 +295,7 @@
                                                   <packing>
                                                     <property name="expand">False</property>
                                                     <property name="fill">True</property>
-                                                    <property name="position">2</property>
+                                                    <property name="position">3</property>
                                                   </packing>
                                                 </child>
                                                 <child>
@@ -285,7 +309,7 @@
                                                   <packing>
                                                     <property name="expand">False</property>
                                                     <property name="fill">True</property>
-                                                    <property name="position">3</property>
+                                                    <property name="position">4</property>
                                                   </packing>
                                                 </child>
                                                 <child>
@@ -503,7 +527,7 @@
                                                   <packing>
                                                     <property name="expand">False</property>
                                                     <property name="fill">True</property>
-                                                    <property name="position">4</property>
+                                                    <property name="position">5</property>
                                                   </packing>
                                                 </child>
                                               </object>
@@ -576,8 +600,8 @@
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkCheckButton" id="autosave_session">
-                                            <property name="label" translatable="yes">Save session on quit</property>
+                                          <object class="GtkCheckButton" id="window_autohide">
+                                            <property name="label" translatable="yes">Auto hide on focus lost</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
@@ -591,6 +615,21 @@
                                           </packing>
                                         </child>
                                         <child>
+                                          <object class="GtkCheckButton" id="autosave_session">
+                                            <property name="label" translatable="yes">Save session on quit</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="xalign">0</property>
+                                            <property name="draw_indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">4</property>
+                                          </packing>
+                                        </child>
+                                        <child>
                                           <object class="GtkSeparator" id="separator3">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
@@ -598,7 +637,7 @@
                                           <packing>
                                             <property name="expand">False</property>
                                             <property name="fill">True</property>
-                                            <property name="position">4</property>
+                                            <property name="position">5</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -613,7 +652,7 @@
                                           <packing>
                                             <property name="expand">False</property>
                                             <property name="fill">True</property>
-                                            <property name="position">5</property>
+                                            <property name="position">6</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -628,7 +667,7 @@
                                           <packing>
                                             <property name="expand">False</property>
                                             <property name="fill">True</property>
-                                            <property name="position">8</property>
+                                            <property name="position">7</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -643,7 +682,7 @@
                                           <packing>
                                             <property name="expand">False</property>
                                             <property name="fill">True</property>
-                                            <property name="position">8</property>
+                                            <property name="position">9</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -2330,13 +2369,6 @@ Allow use mouse scroll in some programs,for example in less</property>
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkAdjustment" id="tab_max_width_adjustment">
-    <property name="lower">-1</property>
-    <property name="upper">10000</property>
-    <property name="value">-1</property>
-    <property name="step_increment">10</property>
-    <property name="page_increment">100</property>
   </object>
   <object class="GtkListStore" id="tab_title_format_regex">
     <columns>

@@ -659,6 +659,10 @@ public class VTMainWindow : Window{
 
 		this.mouse_follow  = conf.get_boolean("follow_the_white_rabbit",false);
 		this.gravity_north_west  = conf.get_boolean("window_gravity_north_west",true);
+		if(this.gravity_north_west)
+			this.gravity=Gdk.Gravity.NORTH_WEST;
+		else
+			this.gravity=Gdk.Gravity.SOUTH_WEST;
 		this.autohide  = conf.get_boolean("window_autohide",false);
 	}//reconfigure
 

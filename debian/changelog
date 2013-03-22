@@ -1,3 +1,15 @@
+altyo (0.2~130322-linvinus1) quantal; urgency=low
+
+  * improve: auto hide function 
+  * update: readme
+  * update: readme
+  * update: readme
+  * fix: autohide, when animation disabled
+  * fix: size at start, and if animation disabled
+  * update: gtk3 style
+
+ -- denis <linvinus@gmail.com>  Fri, 22 Mar 2013 21:26:38 +0400
+
 altyo (0.2~130321-linvinus1) quantal; urgency=low
 
   [ linvinus ]

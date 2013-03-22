@@ -47,7 +47,7 @@ public class PanelHotkey {
     private X.ID x_id;
     private X.Atom active_window;
     public bool processing_event = false;
-    public bool active_window_change = false;
+    public signal void on_active_window_change();
 
     static PanelHotkey _instance;
 
@@ -104,11 +104,10 @@ public class PanelHotkey {
 						binding.relesed=true;//to ignore AutoRepeat
 					}
 				}
-			} else if (!this.active_window_change && xevent->type == X.EventType.PropertyNotify ) {
-				//_NET_ACTIVE_WINDOW usual come after focus change
+			} else if (xevent->type == X.EventType.PropertyNotify ) {
 				X.PropertyEvent* pevent = (X.PropertyEvent*) p;
-				if(pevent->atom == this.active_window){
-					this.active_window_change=true;
+				if(pevent->atom == this.active_window){//_NET_ACTIVE_WINDOW usual come after focus change
+					this.on_active_window_change();
 				}
 				//debug("event_filter type=%d state=%d window=%d atom=%s",(int)pevent->type,(int)pevent->state,(int)pevent->window,this.display.get_atom_name(pevent->atom));
 			}

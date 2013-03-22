@@ -139,6 +139,7 @@ public class VTMainWindow : Window{
 		}
 
 		this.hotkey = new PanelHotkey ();
+		this.hotkey.on_active_window_change.connect(this.check_focusout);
 		this.reconfigure();//window
 
 		this.ayobject= new AYObject(this,conf);
@@ -281,7 +282,7 @@ public class VTMainWindow : Window{
 	}
 
 	public void pull_down(){
-		if(this.pull_animation_active)
+		if(this.pull_animation_active || this.current_state!=WStates.HIDDEN)
 			return;
 		if(!this.animation_enabled ||
 			this.pixwin.get_child()==null){//prevent error if start hidden
@@ -345,7 +346,7 @@ public class VTMainWindow : Window{
 	}
 
 	public void pull_up(){
-		if(this.pull_animation_active)
+		if(this.pull_animation_active || this.current_state!=WStates.VISIBLE)
 			return;
 		this.pull_h=this.get_allocated_height();
 		this.pull_w=this.get_allocated_width();
@@ -517,19 +518,16 @@ public class VTMainWindow : Window{
 
 	public override bool focus_out_event (Gdk.EventFocus event) {
 		this.last_focus_out_event_time=Gdk.x11_get_server_time(this.get_window());
-		debug("focus_out_event");
-		if(this.autohide && !this.ignore_focus_lost){
-			this.hotkey.active_window_change=false;//reset active window
-			GLib.Timeout.add(100,this.check_focusout);
-		}
 		return base.focus_out_event (event);
 	}
-	private bool check_focusout(){
-		if(this.hotkey.active_window_change && this.current_state==WStates.VISIBLE){
+	private void check_focusout(){
+		debug("check_focusout focus=%d ignore=%d state=%d",(int)this.has_toplevel_focus,(int)this.ignore_focus_lost,(int)this.current_state);
+		if( !this.has_toplevel_focus && this.autohide &&
+			!this.pull_active &&
+		    !this.ignore_focus_lost && this.current_state==WStates.VISIBLE){
 			this.hotkey.processing_event = true;//skip one event, because main_hotkey also generate focus out.
 			this.toggle_widnow();//hide
 		}
-		return false;//stop timer
 	}
 
 	public override  bool draw (Cairo.Context cr){

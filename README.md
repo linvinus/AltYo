@@ -5,8 +5,8 @@ AltYo - drop-down console,like tilda (terminal emulator with first person shoote
 with many improvements, is written in vala, depends on libvte, gtk3.Supports multi-line tabs, support DnD tabs,
 fully customizable.
 
-![Main window](http://storage5.static.itmages.ru/i/13/0306/s_1362553192_8481235_e88c7350b2.png)
-![Preferences](http://storage6.static.itmages.ru/i/13/0306/s_1362553212_3021546_770183e9e7.png)
+[![Main window](http://storage5.static.itmages.ru/i/13/0306/s_1362553192_8481235_e88c7350b2.png)](http://itmages.ru/image/view/926657/e88c7350)
+[![Preferences](http://storage6.static.itmages.ru/i/13/0306/s_1362553212_3021546_770183e9e7.png)](http://itmages.ru/image/view/926658/770183e9)
 
 Source code available there https://github.com/linvinus/AltYoA
 

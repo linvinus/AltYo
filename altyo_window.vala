@@ -617,7 +617,8 @@ public class VTMainWindow : Window{
 					 "VTToggleButton,VTToggleButton GtkLabel  {font: Mono 10; -GtkWidget-focus-padding: 0px;  -GtkButton-default-border:0px; -GtkButton-default-outside-border:0px; -GtkButton-inner-border:0px; border-width: 0px; -outer-stroke-width: 0px; border-radius: 0px; border-style: solid;  background-image: none; margin:0px; padding:1px 1px 0px 1px; background-color: alpha(#000000,0.0); color: #AAAAAA; transition: 0ms ease-in-out;}"+
 					 "VTToggleButton:active{background-color: #00AAAA; color: #000000; transition: 0ms ease-in-out;}"+
 					 "VTToggleButton:prelight {background-color: #AAAAAA; color: #000000; transition: 0ms ease-in-out;}"+
-					 "#tasks_notebook {border-width: 2px 2px 0px 2px;border-color: #3C3B37;border-style: solid;}"+
+					 "#tasks_notebook {border-width: 2px 2px 0px 2px;border-color: #3C3B37;border-style: solid;padding:0px;margin:0;}"+
+					 "#terms_notebook {border-width: 0px;border-style: solid;padding:0px;margin:0;}"+
 					 "#search_hbox :active { border-color: @fg_color; color: #FF0000;}"+
 					 "#search_hbox :prelight { background-color: alpha(#000000,0.0); border-color: @fg_color; color: #FF0000;}"+
 					 "#search_hbox {border-width: 0px 0px 0px 0px; -outer-stroke-width: 0px; border-radius: 0px 0px 0px 0px; border-style: solid;  background-image: none; margin:0px; padding:0px 0px 1px 0px; background-color: #000000; border-color: @bg_color; color: #00FFAA;}"+

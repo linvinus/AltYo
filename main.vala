@@ -126,10 +126,10 @@ int main (string[] args) {
 
 	//remote args usage
     app.command_line.connect((command_line)=>{//ApplicationCommandLine
-    
+
 			if(!command_line.get_is_remote() )//local command line was handled in app.startup
 					return 0;//just ignore it
-					
+
 			string[] argv = command_line.get_arguments();
 			debug("app.command_line.connect argv.length=%d",argv.length);
 
@@ -222,6 +222,8 @@ int main (string[] args) {
 					win.pull_up();//all workarounds is inside pull_up,pull_down,update_position_size
 				}else{
 					win.show();
+					win.configure_position();
+					win.update_position_size();
 				}
 
 

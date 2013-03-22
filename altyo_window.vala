@@ -298,6 +298,9 @@ public class VTMainWindow : Window{
 					this.move (this.pull_x,this.pull_y);
 				else
 					this.move (this.pull_x,this.orig_y);
+			debug("pull_down pull_maximized=%d",(int)this.pull_maximized);
+			if(this.pull_maximized)
+				this.maximize();
 			this.update_events();
 			this.current_state=WStates.VISIBLE;
 			this.update_position_size();//reset size to -1
@@ -428,13 +431,14 @@ public class VTMainWindow : Window{
 		 * Think, is it worth it? }*/
 
 	public void toggle_widnow(){
+		debug("toggle_widnow start");
 		if(this.pull_animation_active) return;
 		/* when hotkey is pressed, main window loose focus,
 		 * so impossible to check, is windows focused or not.
 		 * as workaround, remember last focus-out time,
 		 * if it more than 100ms, then window was unfocused
 		 * */
-		//debug("toogle_widnow %d %d",(int)this.last_event_time,(int)this.hotkey.last_focus_out_event_time);
+		//debug("toggle_widnow %d %d",(int)this.last_event_time,(int)this.hotkey.last_focus_out_event_time);
 		if(!this.keep_above && (this.current_state == WStates.VISIBLE) && ((int)this.hotkey.last_key_event_time-(int)this.last_focus_out_event_time)>100){
 			this.window_set_active();
 			this.update_events();
@@ -444,7 +448,7 @@ public class VTMainWindow : Window{
 					this.pull_down();
 				else
 					this.pull_up();
-		debug("toogle_widnow");
+		debug("toggle_widnow end");
 	}
 
 	public override bool window_state_event (Gdk.EventWindowState event){
@@ -721,14 +725,14 @@ public class VTMainWindow : Window{
 			}
 
 			/*update maximize state according to config_maximized*/
-			if(this.current_state==WStates.VISIBLE){
+			if(this.visible){
 				if(!this.config_maximized && this.maximized){
 					this.unmaximize();
-					this.update_events();
+					//this.update_events();
 				}else
 				if(this.config_maximized && !this.maximized){
 					this.maximize();
-					this.update_events();
+					//this.update_events();
 				}
 			}
 
@@ -1623,7 +1627,7 @@ public class AYObject :Object{
 
 		/* QuickLIst <Ctrl><Shift>d */
 		#if HAVE_QLIST
-		this.add_window_accel("altyo_toogle_quick_list", _("Show/Hide Quick list"), _("Show/Hide Quick list"), Gtk.Stock.QUIT,"<Control><Shift>D",()=> {
+		this.add_window_accel("altyo_toggle_quick_list", _("Show/Hide Quick list"), _("Show/Hide Quick list"), Gtk.Stock.QUIT,"<Control><Shift>D",()=> {
 			if(this.tasks_notebook.get_current_page() == TASKS.TERMINALS)
 				this.tasks_notebook.set_current_page(TASKS.QLIST);
 			else

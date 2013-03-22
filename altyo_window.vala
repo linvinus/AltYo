@@ -86,6 +86,7 @@ public class VTMainWindow : Window{
 	public bool ignore_focus_lost=false;
 
 	private uint32 last_focus_out_event_time;
+	private uint32 last_pull_down_event_time;
 
 	public VTMainWindow(WindowType type) {
 		Object(type:type);
@@ -238,8 +239,7 @@ public class VTMainWindow : Window{
 				return true;//continue animation
 			}else{
 				this.update_events();
-				this.pull_active=false;
-				this.current_state=WStates.VISIBLE;
+
 				if(this.pull_step==this.pull_steps){
 					debug("on_pull_down last step");
 					/* update hints, so first pull up ,after maximize, will be smooth
@@ -259,7 +259,9 @@ public class VTMainWindow : Window{
 				this.pixwin.remove(ch);
 				this.add(ch);
 				this.pull_animation_active=false;
-
+				this.pull_active=false;
+				this.current_state=WStates.VISIBLE;
+				this.last_pull_down_event_time=Gdk.x11_get_server_time(this.get_window());
 				this.update_position_size();
 				this.window_set_active();
 				this.update_events();
@@ -300,8 +302,9 @@ public class VTMainWindow : Window{
 			this.current_state=WStates.VISIBLE;
 			this.update_position_size();//reset size to -1
 			this.window_set_active();
-			this.pull_active=false;
 			this.queue_draw();//fix some draw problems (when mouse inside hvbox after show?).
+			this.pull_active=false;
+			this.last_pull_down_event_time=Gdk.x11_get_server_time(this.get_window());
 			return;
 		}
 		this.pull_animation_active=true;
@@ -432,7 +435,7 @@ public class VTMainWindow : Window{
 		 * if it more than 100ms, then window was unfocused
 		 * */
 		//debug("toogle_widnow %d %d",(int)this.last_event_time,(int)this.hotkey.last_focus_out_event_time);
-		if(!this.keep_above && (this.current_state == WStates.VISIBLE) && ((int)this.hotkey.last_event_time-(int)this.last_focus_out_event_time)>100){
+		if(!this.keep_above && (this.current_state == WStates.VISIBLE) && ((int)this.hotkey.last_key_event_time-(int)this.last_focus_out_event_time)>100){
 			this.window_set_active();
 			this.update_events();
 			return;
@@ -521,10 +524,11 @@ public class VTMainWindow : Window{
 		return base.focus_out_event (event);
 	}
 	private void check_focusout(){
-		debug("check_focusout focus=%d ignore=%d state=%d",(int)this.has_toplevel_focus,(int)this.ignore_focus_lost,(int)this.current_state);
+		debug("check_focusout focus=%d ignore=%d state=%d dt=%d",(int)this.has_toplevel_focus,(int)this.ignore_focus_lost,(int)this.current_state,((int)this.hotkey.last_property_event_time-(int)this.last_pull_down_event_time));
 		if( !this.has_toplevel_focus && this.autohide &&
 			!this.pull_active &&
-		    !this.ignore_focus_lost && this.current_state==WStates.VISIBLE){
+		    !this.ignore_focus_lost && this.current_state==WStates.VISIBLE
+		    && ((int)this.hotkey.last_property_event_time-(int)this.last_pull_down_event_time)>500){
 			this.hotkey.processing_event = true;//skip one event, because main_hotkey also generate focus out.
 			this.toggle_widnow();//hide
 		}
@@ -717,13 +721,15 @@ public class VTMainWindow : Window{
 			}
 
 			/*update maximize state according to config_maximized*/
-			if(!this.config_maximized && this.maximized){
-				this.unmaximize();
-				this.update_events();
-			}else
-			if(this.config_maximized && !this.maximized){
-				this.maximize();
-				this.update_events();
+			if(this.current_state==WStates.VISIBLE){
+				if(!this.config_maximized && this.maximized){
+					this.unmaximize();
+					this.update_events();
+				}else
+				if(this.config_maximized && !this.maximized){
+					this.maximize();
+					this.update_events();
+				}
 			}
 
 

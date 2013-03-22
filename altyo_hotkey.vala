@@ -41,7 +41,8 @@ public class KeyBinding {
 
 public class PanelHotkey {
     public signal void triggered (string combination);
-    public uint32 last_event_time {get;set;default =0;}
+    public uint32 last_key_event_time {get;set;default =0;}
+    public uint32 last_property_event_time {get;set;default =0;}
     private unowned X.Display display;
     private Gdk.Window root_window;
     private X.ID x_id;
@@ -87,7 +88,7 @@ public class PanelHotkey {
 			this.processing_event = true;
 			void* p = gxevent;
 			X.Event* xevent = (X.Event*) p;
-			last_event_time = (uint32)xevent->xkey.time;
+			this.last_key_event_time = (uint32)xevent->xkey.time;
 
 			if (xevent->type == X.EventType.KeyPress) {
 				foreach (var binding in bindings) {
@@ -107,6 +108,7 @@ public class PanelHotkey {
 			} else if (xevent->type == X.EventType.PropertyNotify ) {
 				X.PropertyEvent* pevent = (X.PropertyEvent*) p;
 				if(pevent->atom == this.active_window){//_NET_ACTIVE_WINDOW usual come after focus change
+					this.last_property_event_time=(uint32)pevent->time;
 					this.on_active_window_change();
 				}
 				//debug("event_filter type=%d state=%d window=%d atom=%s",(int)pevent->type,(int)pevent->state,(int)pevent->window,this.display.get_atom_name(pevent->atom));

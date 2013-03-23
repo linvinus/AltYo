@@ -756,7 +756,7 @@ public class VTMainWindow : Window{
 			if(this.gravity_north_west)
 				this.orig_y=rectangle.y;
 			else
-				this.orig_y=rectangle.height;
+				this.orig_y=rectangle.y+rectangle.height;
 
 			//this.tasks_notebook.set_size_request(this.terminal_width,this.terminal_height);
 			//we can't change height , otherwise vte will change

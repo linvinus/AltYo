@@ -83,10 +83,11 @@ public class VTMainWindow : Window{
 	public bool allow_close=false;
 	public bool gravity_north_west=true;
 	public bool autohide=false;
-	public bool ignore_focus_lost=false;
 
 	private uint32 last_focus_out_event_time;
 	private uint32 last_pull_down_event_time;
+	private Gdk.Atom? atom_wm_transient_for = null;
+	private Gdk.Atom? atom_type_window = null;
 
 	public VTMainWindow(WindowType type) {
 		Object(type:type);
@@ -119,6 +120,8 @@ public class VTMainWindow : Window{
 //~ 		this.override_background_color(StateFlags.NORMAL, c);
 		//this.pixwin.set_visual (this.screen.get_rgba_visual ());//transparancy
 		//this.pixwin.set_app_paintable(true);//do not draw backgroud
+		this.atom_wm_transient_for = Gdk.Atom.intern("WM_TRANSIENT_FOR",false);
+		this.atom_type_window = Gdk.Atom.intern("WINDOW",false);
 	}
 
 	public void CreateVTWindow(MySettings conf) {
@@ -527,13 +530,31 @@ public class VTMainWindow : Window{
 		this.last_focus_out_event_time=Gdk.x11_get_server_time(this.get_window());
 		return base.focus_out_event (event);
 	}
+
 	private void check_focusout(){
-		debug("check_focusout focus=%d ignore=%d state=%d dt=%d",(int)this.has_toplevel_focus,(int)this.ignore_focus_lost,(int)this.current_state,((int)this.hotkey.last_property_event_time-(int)this.last_pull_down_event_time));
+		debug("check_focusout focus=%d state=%d dt=%d",(int)this.has_toplevel_focus,(int)this.current_state,((int)this.hotkey.last_property_event_time-(int)this.last_pull_down_event_time));
 		if( !this.has_toplevel_focus && this.autohide &&
 			!this.pull_active &&
-		    !this.ignore_focus_lost && this.current_state==WStates.VISIBLE
-		    && ((int)this.hotkey.last_property_event_time-(int)this.last_pull_down_event_time)>500){
-			this.pull_up();
+		    this.current_state==WStates.VISIBLE &&
+		    ((int)this.hotkey.last_property_event_time-(int)this.last_pull_down_event_time)>500 ){
+				unowned Gdk.Screen gscreen = this.get_screen ();
+				Gdk.Window active_window = gscreen.get_active_window();
+				Gdk.Window self_win = this.get_window();
+				if(active_window != self_win &&
+					self_win!=null &&
+					active_window!=null){
+
+					uint8[] data =new uint8[4];//vala bug uint8 data[8]; wrong length
+					//if exist,check property WM_TRANSIENT_FOR of new active window
+					if(Gdk.property_get(active_window,this.atom_wm_transient_for,this.atom_type_window,(ulong)0,(ulong)4,(int)0,null,null,out data) ){
+						void* p =data;
+						uint32 transient_for_xid=*((uint32*)p);
+						debug("FOUND active=%x this=%x == WM_TRANSIENT_FOR=%x",(int)Gdk.X11Window.get_xid(active_window),(int)Gdk.X11Window.get_xid(self_win),transient_for_xid);
+						if(transient_for_xid!=Gdk.X11Window.get_xid(self_win))
+							this.pull_up();//WM_TRANSIENT_FOR not our, pull_up
+					}else
+						this.pull_up();//not exist,hide
+				}
 		}
 	}
 
@@ -851,9 +872,7 @@ public class VTMainWindow : Window{
 					else
 						return true; //true == ignore event
 				});//tab_button_press_event
-			this.ignore_focus_lost=true;
 			dialog.run();
-			this.ignore_focus_lost=false;
 			return accelerator_name;
 	}
 
@@ -872,9 +891,7 @@ public class VTMainWindow : Window{
 			dialog.show_all();
 			dialog.grab_focus();
 			this.hotkey.send_net_active_window(dialog.get_window ());
-			this.ignore_focus_lost=true;
 			dialog.run();
-			this.ignore_focus_lost=false;
 	}//show_message_box
 
 }//class VTMainWindow
@@ -1184,9 +1201,7 @@ public class AYObject :Object{
 					dialog.show ();
 					dialog.grab_focus();
 					this.main_window.hotkey.send_net_active_window(dialog.get_window ());
-					this.main_window.ignore_focus_lost=true;
 					dialog.run();
-					this.main_window.ignore_focus_lost=false;
 				}
 				if(!close)
 					return;//prevent close
@@ -1454,9 +1469,7 @@ public class AYObject :Object{
 			dialog.show ();
 			dialog.grab_focus();
 			this.main_window.hotkey.send_net_active_window(dialog.get_window ());
-			this.main_window.ignore_focus_lost=true;
 			dialog.run();
-			this.main_window.ignore_focus_lost=false;
 	}
 
 
@@ -1485,9 +1498,7 @@ public class AYObject :Object{
 			dialog.show_all();
 			dialog.grab_focus();
 			this.main_window.hotkey.send_net_active_window(dialog.get_window ());
-			this.main_window.ignore_focus_lost=true;
 			dialog.run();
-			this.main_window.ignore_focus_lost=false;
 	}
 
 	private bool check_for_existing_action(string name,string default_accel){

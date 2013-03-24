@@ -688,7 +688,13 @@ public class VTTerminal : AYTab{
 					this.match_tags[key]=url_regexps[i+1];
 			}
 		}
-	}
+
+		var word_chars = my_conf.get_string("terminal_word_chars","-A-Za-z0-9,./?%&#:_=+@~");
+		if(word_chars!=null){
+			this.vte_term.set_word_chars(word_chars);
+		}
+
+	}//configure
 
 	public bool vte_button_press_event(Widget widget,Gdk.EventButton event) {
 		if(event.type==Gdk.EventType.BUTTON_PRESS){

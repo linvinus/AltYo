@@ -30,3 +30,6 @@ FAQ:
      you need to apply patch (https://bbs.archlinux.org/viewtopic.php?pid=1246865#p1246865).   
      to resolve that.   
      for ubuntu users, patched vte available in this ppa https://launchpad.net/~linvinus/+archive/vte   
+
+* Q) Window gravity south, not working under xfwm4
+* A) it is xfwm4 bug https://bugzilla.xfce.org/show_bug.cgi?id=3634

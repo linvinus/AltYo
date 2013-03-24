@@ -564,7 +564,10 @@ public class VTTerminal : AYTab{
 		this.vte_term.set_alternate_screen_scroll(my_conf.get_boolean("terminal_set_alternate_screen_scroll",true));
 		#endif
 
-		this.vte_term.set_scrollback_lines (my_conf.get_integer("terminal_scrollback_lines",512));
+		this.vte_term.set_scrollback_lines (my_conf.get_integer("terminal_scrollback_lines",512,(ref new_val)=>{
+			if(new_val<-1){new_val=-1;return true;}//infinite scrollback
+			return false;
+			}));
 
 		Gdk.RGBA? fg;
 		fg=new Gdk.RGBA();
@@ -693,6 +696,12 @@ public class VTTerminal : AYTab{
 		if(word_chars!=null){
 			this.vte_term.set_word_chars(word_chars);
 		}
+
+		this.vte_term.set_scroll_on_output(my_conf.get_boolean("terminal_scroll_on_output",false));
+		this.vte_term.set_scroll_on_keystroke(my_conf.get_boolean("terminal_scroll_on_keystroke",true));
+		this.vte_term.set_audible_bell(my_conf.get_boolean("terminal_audible_bell",true));
+		this.vte_term.set_visible_bell(my_conf.get_boolean("terminal_visible_bell",true));
+		this.vte_term.set_allow_bold(my_conf.get_boolean("terminal_allow_bold_text",true));
 
 	}//configure
 

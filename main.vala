@@ -203,6 +203,7 @@ int main (string[] args) {
 				var conf = new MySettings(Globals.cmd_conf_file);
 
 				configure_debug(conf);
+				debug("git_hash=%s",AY_GIT_HASH);
 
 				conf.on_load.connect(()=>{
 					configure_debug(conf);

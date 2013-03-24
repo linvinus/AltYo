@@ -534,7 +534,7 @@ public class VTMainWindow : Window{
 		    !this.ignore_focus_lost && this.current_state==WStates.VISIBLE
 		    && ((int)this.hotkey.last_property_event_time-(int)this.last_pull_down_event_time)>500){
 			this.hotkey.processing_event = true;//skip one event, because main_hotkey also generate focus out.
-			this.toggle_widnow();//hide
+			this.pull_up();
 		}
 	}
 

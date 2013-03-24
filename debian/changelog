@@ -1,3 +1,19 @@
+altyo (0.2~130324-linvinus1) quantal; urgency=low
+
+  * fix: more accurate window placement,when gravity is south_west
+  * add: print git hash on debug
+  * new: terminal_word_chars option,Select-by-word characters
+  * fix: hotkey filtering. ignore event was bad idea.
+  * update: terminal_scrollback_lines, value -1 means infinite scrollback 
+  * new: terminal_scroll_on_output 
+  * new: terminal_scroll_on_keystroke 
+  * new: terminal_audible_bell
+  * new: terminal_visible_bell
+  * new: terminal_allow_bold_text
+  * update: translation
+
+ -- denis <linvinus@gmail.com>  Sun, 24 Mar 2013 21:39:24 +0400
+
 altyo (0.2~130322-linvinus1) quantal; urgency=low
 
   * improve: auto hide function 

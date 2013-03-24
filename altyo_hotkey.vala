@@ -47,7 +47,7 @@ public class PanelHotkey {
     private Gdk.Window root_window;
     private X.ID x_id;
     private X.Atom active_window;
-    public bool processing_event = false;
+    private bool processing_event = false;
     public signal void on_active_window_change();
 
     static PanelHotkey _instance;
@@ -84,7 +84,6 @@ public class PanelHotkey {
     public Gdk.FilterReturn event_filter (Gdk.XEvent gxevent, Gdk.Event event) {
 
         FilterReturn filter = FilterReturn.CONTINUE;
-        if(!this.processing_event){
 			this.processing_event = true;
 			void* p = gxevent;
 			X.Event* xevent = (X.Event*) p;
@@ -113,7 +112,6 @@ public class PanelHotkey {
 				}
 				//debug("event_filter type=%d state=%d window=%d atom=%s",(int)pevent->type,(int)pevent->state,(int)pevent->window,this.display.get_atom_name(pevent->atom));
 			}
-		}
         this.processing_event = false;
         return filter;
     }

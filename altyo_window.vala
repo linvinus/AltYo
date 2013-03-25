@@ -86,9 +86,9 @@ public class VTMainWindow : Window{
 	public bool autohide=false;
 
 	private uint32 last_focus_out_event_time;
-	private uint32 last_pull_down_event_time;
 	private Gdk.Atom? atom_wm_transient_for = null;
 	private Gdk.Atom? atom_type_window = null;
+	private unowned Gdk.Window ignore_last_active_window = null;
 
 	public VTMainWindow(WindowType type) {
 		Object(type:type);
@@ -265,7 +265,6 @@ public class VTMainWindow : Window{
 				this.pull_animation_active=false;
 				this.pull_active=false;
 				this.current_state=WStates.VISIBLE;
-				this.last_pull_down_event_time=Gdk.x11_get_server_time(this.get_window());
 				this.update_position_size();
 				this.window_set_active();
 				this.update_events();
@@ -311,7 +310,6 @@ public class VTMainWindow : Window{
 			this.window_set_active();
 			this.queue_draw();//fix some draw problems (when mouse inside hvbox after show?).
 			this.pull_active=false;
-			this.last_pull_down_event_time=Gdk.x11_get_server_time(this.get_window());
 			return;
 		}
 		this.pull_animation_active=true;
@@ -482,7 +480,6 @@ public class VTMainWindow : Window{
 						 * */
 						this.configure_position();
 						this.update_geometry_hints(0,0,0,0,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
-						this.unmaximize();//workaround for kwin (kwin like maximize horizontal)
 						this.update_position_size();
 						//this.update_maximized_size=true;
 					}
@@ -535,28 +532,37 @@ public class VTMainWindow : Window{
 	}
 
 	private void check_focusout(){
-		debug("check_focusout focus=%d state=%d dt=%d",(int)this.has_toplevel_focus,(int)this.current_state,((int)this.hotkey.last_property_event_time-(int)this.last_pull_down_event_time));
-		if( !this.has_toplevel_focus && this.autohide &&
+		debug("check_focusout focus=%d state=%d",(int)this.has_toplevel_focus,(int)this.current_state);
+		if( !this.has_toplevel_focus &&
+			 this.autohide &&
 			!this.pull_active &&
-		    this.current_state==WStates.VISIBLE /*&&
-		    ((int)this.hotkey.last_property_event_time-(int)this.last_pull_down_event_time)>1000*/ ){//autohide allowed only after 1s
+		     this.current_state==WStates.VISIBLE ){
 				unowned Gdk.Screen gscreen = this.get_screen ();
 				Gdk.Window active_window = gscreen.get_active_window();
 				Gdk.Window self_win = this.get_window();
-				if(active_window != self_win &&
-					self_win!=null &&
-					active_window!=null){
+				if(self_win!=null && active_window!=null)
+					debug("active_window active_xid=%x this_xid=%x",(int)Gdk.X11Window.get_xid(active_window),(int)Gdk.X11Window.get_xid(self_win));
+				else
+					debug("active_window2 active=%x this=%x",(int)active_window,(int)self_win);
+
+				if( self_win      != null &&
+					active_window != null &&
+					active_window != this.ignore_last_active_window &&
+					active_window != self_win){
 
 					uint8[] data =new uint8[4];//vala bug uint8 data[8]; wrong length
 					//if exist,check property WM_TRANSIENT_FOR of new active window
 					if(Gdk.property_get(active_window,this.atom_wm_transient_for,this.atom_type_window,(ulong)0,(ulong)4,(int)0,null,null,out data) ){
 						void* p =data;
 						uint32 transient_for_xid=*((uint32*)p);
-						debug("FOUND active=%x this=%x == WM_TRANSIENT_FOR=%x",(int)Gdk.X11Window.get_xid(active_window),(int)Gdk.X11Window.get_xid(self_win),transient_for_xid);
+						debug("active_window3 active_xid=%x this_xid=%x == WM_TRANSIENT_FOR_xid=%x",(int)Gdk.X11Window.get_xid(active_window),(int)Gdk.X11Window.get_xid(self_win),transient_for_xid);
 						if(transient_for_xid!=Gdk.X11Window.get_xid(self_win))
 							this.pull_up();//WM_TRANSIENT_FOR not our, pull_up
-					}else
+						else
+							this.ignore_last_active_window=active_window;//remember it
+					}else{
 						this.pull_up();//not exist,hide
+					}
 				}
 		}
 	}
@@ -878,6 +884,7 @@ public class VTMainWindow : Window{
 						return true; //true == ignore event
 				});//tab_button_press_event
 			dialog.run();
+			this.window_set_active();
 			return accelerator_name;
 	}
 
@@ -897,6 +904,7 @@ public class VTMainWindow : Window{
 			dialog.grab_focus();
 			this.hotkey.send_net_active_window(dialog.get_window ());
 			dialog.run();
+			this.window_set_active();
 	}//show_message_box
 
 }//class VTMainWindow
@@ -1207,6 +1215,7 @@ public class AYObject :Object{
 					dialog.grab_focus();
 					this.main_window.hotkey.send_net_active_window(dialog.get_window ());
 					dialog.run();
+					this.main_window.window_set_active();
 				}
 				if(!close)
 					return;//prevent close
@@ -1504,6 +1513,8 @@ public class AYObject :Object{
 			dialog.grab_focus();
 			this.main_window.hotkey.send_net_active_window(dialog.get_window ());
 			dialog.run();
+			this.main_window.window_set_active();
+			debug("ShowAbout end");
 	}
 
 	private bool check_for_existing_action(string name,string default_accel){
@@ -1775,7 +1786,7 @@ public class AYObject :Object{
 
 	public void hvbox_size_changed(int width, int height,bool on_size_request){
 			//debug ("hvbox_size_changed start");
-			if(!this.main_window.maximized){
+			if(!this.main_window.maximized && this.main_window.get_realized()){
 				//debug ("hvbox_size_changed w=%d h=%d  task_w=%d task_h=%d term_h=%d",width,height,this.tasks_notebook.get_allocated_width(),this.tasks_notebook.get_allocated_height(),this.terminal_height) ;
 				var should_be_h = this.terminal_height+height + (this.search_hbox.get_visible()?this.search_hbox.get_allocated_height():0);
 				if(this.main_window.get_allocated_height()>should_be_h+2||

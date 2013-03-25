@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-24 21:22+0400\n"
+"POT-Creation-Date: 2013-03-25 11:27+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: altyo_terminal.vala:486 altyo_window.vala:1116 altyo_window.vala:1230
+#: altyo_terminal.vala:486 altyo_window.vala:1138 altyo_window.vala:1250
 msgid "Shell terminated."
 msgstr ""
 
@@ -25,161 +25,177 @@ msgstr ""
 msgid "Quick settings"
 msgstr ""
 
-#: altyo_window.vala:792
+#: altyo_window.vala:818
 msgid "Please select key combination, to show/hide AltYo."
 msgstr ""
 
-#: altyo_window.vala:794
+#: altyo_window.vala:820
 #, c-format
 msgid "previous key '%s' incorrect or busy"
 msgstr ""
 
-#: altyo_window.vala:796
+#: altyo_window.vala:822
 msgid "Press any key"
 msgstr ""
 
-#: altyo_window.vala:809
+#: altyo_window.vala:835
 msgid "Grab another key."
 msgstr ""
 
-#: altyo_window.vala:1163
+#: altyo_window.vala:1185
 #, c-format
 msgid "Found important task \"%s\""
 msgstr ""
 
-#: altyo_window.vala:1164
+#: altyo_window.vala:1186
 msgid "Close tab anyway?"
 msgstr ""
 
-#: altyo_window.vala:1426
+#: altyo_window.vala:1446
 msgid "Really quit?"
 msgstr ""
 
-#: altyo_window.vala:1427
+#: altyo_window.vala:1447
 msgid "Save session"
 msgstr ""
 
-#: altyo_window.vala:1556
+#: altyo_window.vala:1572
 msgid "New tab"
 msgstr ""
 
-#: altyo_window.vala:1556
+#: altyo_window.vala:1572
 msgid "Open new tab"
 msgstr ""
 
-#: altyo_window.vala:1575
+#: altyo_window.vala:1591
 msgid "Close tab"
 msgstr ""
 
-#: altyo_window.vala:1575
+#: altyo_window.vala:1591
 msgid "Close current tab"
 msgstr ""
 
-#: altyo_window.vala:1580
+#: altyo_window.vala:1596
 msgid "Next tab"
 msgstr ""
 
-#: altyo_window.vala:1580
+#: altyo_window.vala:1596
 msgid "Switch to next tab"
 msgstr ""
 
-#: altyo_window.vala:1585
+#: altyo_window.vala:1601
 msgid "Previous tab"
 msgstr ""
 
-#: altyo_window.vala:1585
+#: altyo_window.vala:1601
 msgid "Switch to previous tab"
 msgstr ""
 
-#: altyo_window.vala:1591
+#: altyo_window.vala:1607
 #, c-format
 msgid "Switch to tab %d"
 msgstr ""
 
-#: altyo_window.vala:1591
+#: altyo_window.vala:1607
 #, c-format
 msgid "Switch to tab %d,double press switch to tab %d"
 msgstr ""
 
-#: altyo_window.vala:1614
+#: altyo_window.vala:1630
 msgid "Copy"
 msgstr ""
 
-#: altyo_window.vala:1614
+#: altyo_window.vala:1630
 msgid "Copy selected text"
 msgstr ""
 
-#: altyo_window.vala:1619
+#: altyo_window.vala:1635
 msgid "Paste"
 msgstr ""
 
-#: altyo_window.vala:1619
+#: altyo_window.vala:1635
 msgid "Paste from primary clipboard"
 msgstr ""
 
-#: altyo_window.vala:1624
+#: altyo_window.vala:1640
 msgid "Search"
 msgstr ""
 
-#: altyo_window.vala:1630
+#: altyo_window.vala:1646
 msgid "Show/Hide Quick list"
 msgstr ""
 
-#: altyo_window.vala:1638 data/preferences.glade:325
+#: altyo_window.vala:1654 data/preferences.glade:325
 msgid "Follow mouse cursor"
 msgstr ""
 
-#: altyo_window.vala:1641
+#: altyo_window.vala:1657
 msgid "Settings..."
 msgstr ""
 
-#: altyo_window.vala:1641
+#: altyo_window.vala:1657
 msgid "Settings"
 msgstr ""
 
-#: altyo_window.vala:1694
+#: altyo_window.vala:1710
 msgid "Quit"
 msgstr ""
 
-#: altyo_window.vala:1700
+#: altyo_window.vala:1716
 msgid "Show/Hide"
 msgstr ""
 
-#: altyo_window.vala:1705
+#: altyo_window.vala:1721
 msgid "About"
 msgstr ""
 
-#: altyo_window.vala:1709
+#: altyo_window.vala:1725
 msgid "Disable sort tab"
 msgstr ""
 
-#: altyo_window.vala:1717
+#: altyo_window.vala:1733
 msgid "Stay on top"
 msgstr ""
 
-#: altyo_window.vala:1729
+#: altyo_window.vala:1744
+msgid "Stick"
+msgstr ""
+
+#: altyo_window.vala:1744
+msgid "Toggle stick"
+msgstr ""
+
+#: altyo_window.vala:1753
+msgid "Autohide"
+msgstr ""
+
+#: altyo_window.vala:1753
+msgid "Toggle autohide"
+msgstr ""
+
+#: altyo_window.vala:1757
 msgid "Maximize - restore"
 msgstr ""
 
-#: altyo_window.vala:1729
+#: altyo_window.vala:1757
 msgid "Maximize window, or restore to normal size"
 msgstr ""
 
-#: altyo_window.vala:1731
+#: altyo_window.vala:1759
 msgid ""
 "Sorry, your default height is 100%, window size cannot be reduced, please "
 "change default window height in preferences."
 msgstr ""
 
-#: altyo_window.vala:1732 altyo_settings.vala:135
+#: altyo_window.vala:1760 altyo_settings.vala:135
 msgid "error"
 msgstr ""
 
-#: altyo_window.vala:1854
+#: altyo_window.vala:1882
 msgid "Wrap search"
 msgstr ""
 
-#: altyo_window.vala:1864
+#: altyo_window.vala:1892
 msgid "Match case-sensitive"
 msgstr ""
 
@@ -210,62 +226,6 @@ msgstr ""
 
 #: altyo_settings.vala:190 altyo_settings.vala:211 altyo_settings.vala:232
 msgid "Remove"
-msgstr ""
-
-#: data/preferences.glade:17
-msgid "Block"
-msgstr ""
-
-#: data/preferences.glade:20
-msgid "Ibeam"
-msgstr ""
-
-#: data/preferences.glade:23
-msgid "Underline"
-msgstr ""
-
-#: data/preferences.glade:60
-msgid "Left"
-msgstr ""
-
-#: data/preferences.glade:63
-msgid "Center"
-msgstr ""
-
-#: data/preferences.glade:66
-msgid "Right"
-msgstr ""
-
-#: data/preferences.glade:92
-msgid "System"
-msgstr ""
-
-#: data/preferences.glade:95
-msgid "On"
-msgstr ""
-
-#: data/preferences.glade:98
-msgid "Off"
-msgstr ""
-
-#: data/preferences.glade:120
-msgid "Auto"
-msgstr ""
-
-#: data/preferences.glade:123
-msgid "ASCII Backspace"
-msgstr ""
-
-#: data/preferences.glade:126
-msgid "ASCII Delete"
-msgstr ""
-
-#: data/preferences.glade:129
-msgid "Delete sequence"
-msgstr ""
-
-#: data/preferences.glade:132
-msgid "TTY \"erase\""
 msgstr ""
 
 #: data/preferences.glade:215

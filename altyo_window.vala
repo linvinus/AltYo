@@ -538,8 +538,8 @@ public class VTMainWindow : Window{
 		debug("check_focusout focus=%d state=%d dt=%d",(int)this.has_toplevel_focus,(int)this.current_state,((int)this.hotkey.last_property_event_time-(int)this.last_pull_down_event_time));
 		if( !this.has_toplevel_focus && this.autohide &&
 			!this.pull_active &&
-		    this.current_state==WStates.VISIBLE &&
-		    ((int)this.hotkey.last_property_event_time-(int)this.last_pull_down_event_time)>1000 ){//autohide allowed only after 1s
+		    this.current_state==WStates.VISIBLE /*&&
+		    ((int)this.hotkey.last_property_event_time-(int)this.last_pull_down_event_time)>1000*/ ){//autohide allowed only after 1s
 				unowned Gdk.Screen gscreen = this.get_screen ();
 				Gdk.Window active_window = gscreen.get_active_window();
 				Gdk.Window self_win = this.get_window();

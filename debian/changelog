@@ -1,3 +1,15 @@
+altyo (0.2~130325-linvinus1) quantal; urgency=low
+
+  * update: readme
+  * improve: detection of change of active window
+  * new: Quick settings->stick 
+  * new: Quick settings->autohide 
+  * fix: pull_down after autohide 
+  * update: checking last pull down time  is not necessary anymore, we compare new active window with self.
+  * update: translation
+
+ -- denis <linvinus@gmail.com>  Mon, 25 Mar 2013 11:33:05 +0400
+
 altyo (0.2~130324-linvinus1) quantal; urgency=low
 
   * fix: more accurate window placement,when gravity is south_west

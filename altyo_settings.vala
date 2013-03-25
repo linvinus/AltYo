@@ -161,92 +161,28 @@ public class AYSettings : AYTab{
     }
 
     [CCode (instance_pos = -1)]
-    public bool on_command_list_button_press_event(Gtk.Widget w,Gdk.EventButton event){
+    public bool on_list_button_press_event(Gtk.Widget w,Gdk.EventButton event){
 		debug("command_list_button_press_event %s",w.name);
 			if((int)event.button == 3){//right mouse button
-					if(((Gtk.Buildable)w).get_name()=="terminal_autostart_session_treeview")
-						this.create_popup_command_list(event);
-					else
-					if(((Gtk.Buildable)w).get_name()=="tab_title_format_regex_treeview")
-						this.create_popup_tab_title_format_regex(event);
-					else
-					if(((Gtk.Buildable)w).get_name()=="terminal_url_regexps_treeview")
-						this.create_popup_terminal_url_regexps(event);
+					if(((Gtk.Buildable)w).get_name()=="terminal_autostart_session_treeview"){
+						var popup_menu = builder.get_object ("popup_command_list") as Gtk.Menu;
+						popup_menu.popup(null, null, null, event.button, event.time);
+					}else
+					if(((Gtk.Buildable)w).get_name()=="tab_title_format_regex_treeview"){
+						var popup_menu = builder.get_object ("popup_tab_title_format_regex") as Gtk.Menu;
+						popup_menu.popup(null, null, null, event.button, event.time);
+					}else
+					if(((Gtk.Buildable)w).get_name()=="terminal_url_regexps_treeview"){
+						var popup_menu = builder.get_object ("popup_terminal_url_regexps") as Gtk.Menu;
+						popup_menu.popup(null, null, null, event.button, event.time);
+					}
 					return true;
 			}
 		return false;
 	}
 
-    private void create_popup_command_list(Gdk.EventButton event){
-		debug("popup_command_list");
-		Gtk.MenuItem menuitem;
-
-    	var popup_menu = new Gtk.Menu();
-
-		menuitem = new Gtk.MenuItem.with_label(_("Add"));
-		menuitem.activate.connect(on_popup_command_list_add);
-		popup_menu.append(menuitem);
-
-		menuitem = new Gtk.MenuItem.with_label(_("Remove"));
-		menuitem.activate.connect(on_popup_command_list_remove);
-		popup_menu.append(menuitem);
-
-		popup_menu.deactivate.connect (this.on_popup_deactivate);
-		popup_menu.show_all();
-        //menu.attach_to_widget (this.vte_term, null);
-		popup_menu.popup(null, null, null, event.button, event.time);
-		popup_menu.ref();//no one own menu,emulate owners,uref will be on_deactivate
-	}
-
-    private void create_popup_tab_title_format_regex(Gdk.EventButton event){
-		debug("popup_tab_title_format_regex");
-		Gtk.MenuItem menuitem;
-
-    	var popup_menu = new Gtk.Menu();
-
-		menuitem = new Gtk.MenuItem.with_label(_("Add"));
-		menuitem.activate.connect(on_popup_tab_title_format_regex_add);
-		popup_menu.append(menuitem);
-
-		menuitem = new Gtk.MenuItem.with_label(_("Remove"));
-		menuitem.activate.connect(on_popup_tab_title_format_regex_remove);
-		popup_menu.append(menuitem);
-
-		popup_menu.deactivate.connect (this.on_popup_deactivate);
-		popup_menu.show_all();
-        //menu.attach_to_widget (this.vte_term, null);
-		popup_menu.popup(null, null, null, event.button, event.time);
-		popup_menu.ref();//no one own menu,emulate owners,uref will be on_deactivate
-	}
-
-    private void create_popup_terminal_url_regexps(Gdk.EventButton event){
-		debug("popup_terminal_url_regexps");
-		Gtk.MenuItem menuitem;
-
-    	var popup_menu = new Gtk.Menu();
-
-		menuitem = new Gtk.MenuItem.with_label(_("Add"));
-		menuitem.activate.connect(on_popup_terminal_url_regexps_add);
-		popup_menu.append(menuitem);
-
-		menuitem = new Gtk.MenuItem.with_label(_("Remove"));
-		menuitem.activate.connect(on_popup_terminal_url_regexps_remove);
-		popup_menu.append(menuitem);
-
-		popup_menu.deactivate.connect (this.on_popup_deactivate);
-		popup_menu.show_all();
-        //menu.attach_to_widget (this.vte_term, null);
-		popup_menu.popup(null, null, null, event.button, event.time);
-		popup_menu.ref();//no one own menu,emulate owners,uref will be on_deactivate
-	}
-
-	private void on_popup_deactivate(Widget m) {
-			((Gtk.Menu)m).deactivate.disconnect(on_popup_deactivate);
-			m.unref();//menu will be destroyed after end of deactivate event
-			//debug("popup_menu ref_count=%d",(int)m.ref_count);//normal count 4
-		}
-
-	private void on_popup_command_list_add(){
+	[CCode (instance_pos = -1)]
+	public void on_popup_command_list_add(Gtk.MenuItem item){
 		var store = builder.get_object ("terminal_autostart_session") as Gtk.ListStore;
 		if(store!=null){
 			TreeIter? data_iter=null;
@@ -257,7 +193,8 @@ public class AYSettings : AYTab{
 		}
 	}
 
-	private void on_popup_command_list_remove(){
+	[CCode (instance_pos = -1)]
+	public void on_popup_command_list_remove(Gtk.MenuItem item){
 		var store = builder.get_object ("terminal_autostart_session") as Gtk.ListStore;
 		var view = builder.get_object ("terminal_autostart_session_treeview") as Gtk.TreeView;
 		if(store!=null && view!=null){
@@ -278,7 +215,8 @@ public class AYSettings : AYTab{
 		}
 	}
 
-	private void on_popup_tab_title_format_regex_add(){
+	[CCode (instance_pos = -1)]
+	public void on_popup_tab_title_format_regex_add(Gtk.MenuItem item){
 		var store = builder.get_object ("tab_title_format_regex") as Gtk.ListStore;
 		if(store!=null){
 			TreeIter? data_iter=null;
@@ -290,7 +228,8 @@ public class AYSettings : AYTab{
 		}
 	}
 
-	private void on_popup_tab_title_format_regex_remove(){
+	[CCode (instance_pos = -1)]
+	public void on_popup_tab_title_format_regex_remove(Gtk.MenuItem item){
 		var store = builder.get_object ("tab_title_format_regex") as Gtk.ListStore;
 		var view = builder.get_object ("tab_title_format_regex_treeview") as Gtk.TreeView;
 		if(store!=null && view!=null){
@@ -311,7 +250,8 @@ public class AYSettings : AYTab{
 		}
 	}
 
-	private void on_popup_terminal_url_regexps_add(){
+	[CCode (instance_pos = -1)]
+	public void on_popup_terminal_url_regexps_add(Gtk.MenuItem item){
 		var store = builder.get_object ("terminal_url_regexps") as Gtk.ListStore;
 		if(store!=null){
 			TreeIter? data_iter=null;
@@ -323,7 +263,8 @@ public class AYSettings : AYTab{
 		}
 	}
 
-	private void on_popup_terminal_url_regexps_remove(){
+	[CCode (instance_pos = -1)]
+	public void on_popup_terminal_url_regexps_remove(Gtk.MenuItem item){
 		var store = builder.get_object ("terminal_url_regexps") as Gtk.ListStore;
 		var view = builder.get_object ("terminal_url_regexps_treeview") as Gtk.TreeView;
 		if(store!=null && view!=null){

@@ -225,6 +225,7 @@ int main (string[] args) {
 					win.show();
 					win.configure_position();
 					win.update_position_size();
+					win.window_set_active();
 				}
 
 

@@ -83,8 +83,8 @@ msgid "Add"
 msgstr "Добавить"
 
 #: altyo_terminal.vala:755
-msgid "Additional settings"
-msgstr "Дополнительные настройки"
+msgid "Quick settings"
+msgstr "Быстрые настройки"
 
 #: data/preferences.glade:2551
 msgid "Advanced"

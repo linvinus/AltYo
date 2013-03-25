@@ -22,7 +22,7 @@ msgid "Shell terminated."
 msgstr ""
 
 #: altyo_terminal.vala:755
-msgid "Additional settings"
+msgid "Quick settings"
 msgstr ""
 
 #: altyo_window.vala:792

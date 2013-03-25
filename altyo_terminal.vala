@@ -752,7 +752,7 @@ public class VTTerminal : AYTab{
 		menu.append(menuitem);
 
 		var submenu = new Gtk.Menu ();
-		menuitem = new Gtk.MenuItem.with_label (_("Additional settings"));
+		menuitem = new Gtk.MenuItem.with_label (_("Quick settings"));
 		menuitem.set_submenu(submenu);
 		menu.append(menuitem);
 
@@ -764,6 +764,20 @@ public class VTTerminal : AYTab{
 		if(action_keepabove.active!=vtw.keep_above){
 			vtw.keep_above=!vtw.keep_above;//invert value, becouse it will inverted after set_active
 			action_keepabove.set_active(!vtw.keep_above);
+		}
+		var action_stick = acg.get_action("window_toggle_stick") as ToggleAction;
+		menuitem = (Gtk.MenuItem)action_stick.create_menu_item();
+		submenu.append(menuitem);
+		if(action_stick.active!=vtw.orig_stick){
+			vtw.orig_stick=!vtw.orig_stick;//invert value, becouse it will inverted after set_active
+			action_stick.set_active(!vtw.orig_stick);
+		}
+		var action_autohide = acg.get_action("window_toggle_autohide") as ToggleAction;
+		menuitem = (Gtk.MenuItem)action_autohide.create_menu_item();
+		submenu.append(menuitem);
+		if(action_autohide.active!=vtw.autohide){
+			vtw.autohide=!vtw.autohide;//invert value, becouse it will inverted after set_active
+			action_autohide.set_active(!vtw.autohide);
 		}
 
 		if(vtw.ayobject.tab_sort_order==TAB_SORT_ORDER.HOSTNAME){

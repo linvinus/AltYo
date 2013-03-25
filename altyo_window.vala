@@ -58,6 +58,7 @@ public class VTMainWindow : Window{
 	public WStates current_state {get;set; default = WStates.VISIBLE;}
 	public unowned MySettings conf {get;set; default = null;}
 	public bool keep_above=true;
+	public bool orig_stick=true;
 
 	public PanelHotkey hotkey;
 	public bool mouse_follow=false;
@@ -103,8 +104,8 @@ public class VTMainWindow : Window{
 		this.set_has_resize_grip(false);//but hide grip
 		//this.set_focus_on_map (true);
 		//this.set_accept_focus (true);
-		this.set_keep_above(true);
-		this.stick ();
+		//this.set_keep_above(true);
+		//this.stick ();
 		this.pixwin = new OffscreenWindow ();
 		this.pixwin.name="OffscreenWindow";
 		this.pixwin.show();
@@ -319,6 +320,8 @@ public class VTMainWindow : Window{
 		this.resize (this.pull_w,2);//start height
 		this.show();
 		this.update_events();
+		this.current_state=WStates.VISIBLE;
+		this.window_set_active();//update keep_above stick and focus
 		if((this.mouse_follow || !this.gravity_north_west) && !this.pull_maximized){
 			this.move (this.orig_x,this.orig_y);//new position
 		}else
@@ -536,7 +539,7 @@ public class VTMainWindow : Window{
 		if( !this.has_toplevel_focus && this.autohide &&
 			!this.pull_active &&
 		    this.current_state==WStates.VISIBLE &&
-		    ((int)this.hotkey.last_property_event_time-(int)this.last_pull_down_event_time)>500 ){
+		    ((int)this.hotkey.last_property_event_time-(int)this.last_pull_down_event_time)>1000 ){//autohide allowed only after 1s
 				unowned Gdk.Screen gscreen = this.get_screen ();
 				Gdk.Window active_window = gscreen.get_active_window();
 				Gdk.Window self_win = this.get_window();
@@ -792,13 +795,15 @@ public class VTMainWindow : Window{
 			if(this.keep_above){
 				this.skip_taskbar_hint = true;
 				this.set_keep_above(true);
-				this.stick ();
 				//this.show ();//first show then send_net_active_window!
+				if(this.orig_stick)
+					this.stick();
 				this.present() ;
 			}else{
 				this.skip_taskbar_hint = false;
 				this.set_keep_above(false);
 			}
+
 			this.hotkey.send_net_active_window(this.get_window ());
 			if(this.prev_focus!=null)
 				this.prev_focus.grab_focus();
@@ -1735,6 +1740,18 @@ public class AYObject :Object{
 				this.main_window.skip_taskbar_hint = false;
 				this.main_window.set_keep_above(false);
 			}
+        });
+		this.add_window_toggle_accel("window_toggle_stick", _("Stick"), _("Toggle stick"), Gtk.Stock.EDIT,"",()=> {
+			this.main_window.orig_stick=!this.main_window.orig_stick;
+			//debug("action keep_above %d",(int)this.main_window.keep_above);
+			if(this.main_window.orig_stick){
+				this.main_window.stick();
+			}else{
+				this.main_window.unstick();
+			}
+        });
+		this.add_window_toggle_accel("window_toggle_autohide", _("Autohide"), _("Toggle autohide"), Gtk.Stock.EDIT,"",()=> {
+			this.main_window.autohide=!this.main_window.autohide;
         });
 
 		this.add_window_toggle_accel("toggle_maximize", _("Maximize - restore"), _("Maximize window, or restore to normal size"), Gtk.Stock.EDIT,"",()=> {

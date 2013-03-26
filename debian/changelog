@@ -1,3 +1,11 @@
+altyo (0.2~130326-linvinus1) quantal; urgency=low
+
+  * improve: auto hide fix: unpredictable resize on startup.
+  * update: use glade popups in settings
+  * update: translations
+
+ -- denis <linvinus@gmail.com>  Tue, 26 Mar 2013 23:33:53 +0400
+
 altyo (0.2~130325-linvinus1) quantal; urgency=low
 
   * update: readme

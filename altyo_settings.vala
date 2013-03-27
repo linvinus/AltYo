@@ -403,6 +403,52 @@ public class AYSettings : AYTab{
 			return null;
 	}
 
+	[CCode (instance_pos = -1)]
+	public void on_check_css_button_activate(Gtk.Button w) {
+		debug("on_check_css_button_activate");
+		var B = builder.get_object ("program_style") as Gtk.TextView;
+		var L = builder.get_object ("check_css_label") as Gtk.Label;
+		string S="";
+		string msg="";
+		uint line,pos;
+		if(!this.check_css(B.buffer.text,ref S,out line,out pos)){
+			msg=_("in line %d  at position %d error:%s").printf(line,pos,S);
+			debug("on_check_css_button_activate %s",msg);
+			TextIter where;
+			B.buffer.get_iter_at_line_offset(out where,(int)line,(int)pos);
+			B.buffer.place_cursor(where);
+			B.grab_focus();
+		}else
+			msg=_("Looks good");
+		L.label=msg;
+	}
+
+	private bool check_css(string css_text,ref string msg,out uint line,out uint pos){
+		bool ret=true;
+		string S="";
+		uint L=0,P=0;
+		var css_main = new CssProvider ();
+		css_main.parsing_error.connect((section,error)=>{
+			if(ret){
+				debug("css_main.parsing_error %s",error.message);
+				L=section.get_end_line();
+				P=section.get_end_position();
+				S=error.message;
+				ret=false;
+			}
+			});
+
+		try{
+			css_main.load_from_data (css_text,-1);
+		}catch (Error e) {
+			//debug("Theme error! loading default..");
+		}
+		msg=S;
+		line=L;
+		pos=P;
+		return ret;
+	}
+
 	public void get_from_conf() {
 
 		var chb = builder.get_object ("lock_keybindings_checkbutton") as Gtk.CheckButton;
@@ -653,10 +699,19 @@ public class AYSettings : AYTab{
 						if(key=="program_style"){
 							var B = builder.get_object (key) as Gtk.TextView;
 							var s=B.buffer.text;
-							Regex regex = new Regex ("\n");
-							string result = regex.replace (s, s.length, 0, "");
-							if(result!=this.my_conf.get_string(key,"")){
-								this.my_conf.set_string(key,result);
+
+							string S="";
+							uint line,pos;
+							if(!this.check_css(B.buffer.text,ref S,out line,out pos)){
+								string msg=_("New style will not saved!\nin line %d  at position %d\nerror:%s").printf(line,pos,S);
+								debug("on config apply css error %s",msg);
+								this.ayobject.main_window.show_message_box(_("AltYo CSS style error"),msg);
+							}else{//looks good
+								Regex regex = new Regex ("\n");
+								string result = regex.replace (s, s.length, 0, "");
+								if(result!=this.my_conf.get_string(key,"")){
+									this.my_conf.set_string(key,result);
+								}
 							}
 						}else{
 							var B = builder.get_object (key) as Gtk.Entry;

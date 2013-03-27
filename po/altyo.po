@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-25 23:57+0400\n"
+"POT-Creation-Date: 2013-03-27 22:47+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -218,6 +218,27 @@ msgstr ""
 #: altyo_settings.vala:134
 #, c-format
 msgid "Key binding \"%s\" already binded to \"%s\""
+msgstr ""
+
+#: altyo_settings.vala:415
+#, c-format
+msgid "in line %d  at position %d error:%s"
+msgstr ""
+
+#: altyo_settings.vala:422
+msgid "Looks good"
+msgstr ""
+
+#: altyo_settings.vala:706
+#, c-format
+msgid ""
+"New style will not saved!\n"
+"in line %d  at position %d\n"
+"error:%s"
+msgstr ""
+
+#: altyo_settings.vala:708
+msgid "AltYo CSS style error"
 msgstr ""
 
 #: data/preferences.glade:17
@@ -591,42 +612,50 @@ msgstr ""
 msgid "Terminal regexps"
 msgstr ""
 
-#: data/preferences.glade:2526
+#: data/preferences.glade:2516
+msgid "Check css"
+msgstr ""
+
+#: data/preferences.glade:2520
+msgid "if error occurred, cursor will be placed at corresponding position"
+msgstr ""
+
+#: data/preferences.glade:2575
 msgid "Application style"
 msgstr ""
 
-#: data/preferences.glade:2545
+#: data/preferences.glade:2594
 msgid "Advanced"
 msgstr ""
 
-#: data/preferences.glade:2640
-msgid "Auto"
-msgstr ""
-
-#: data/preferences.glade:2643
-msgid "ASCII Backspace"
-msgstr ""
-
-#: data/preferences.glade:2646
-msgid "ASCII Delete"
-msgstr ""
-
-#: data/preferences.glade:2649
-msgid "Delete sequence"
-msgstr ""
-
-#: data/preferences.glade:2652
-msgid "TTY \"erase\""
-msgstr ""
-
-#: data/preferences.glade:2663
+#: data/preferences.glade:2689
 msgid "System"
 msgstr ""
 
-#: data/preferences.glade:2666
+#: data/preferences.glade:2692
 msgid "On"
 msgstr ""
 
-#: data/preferences.glade:2669
+#: data/preferences.glade:2695
 msgid "Off"
+msgstr ""
+
+#: data/preferences.glade:2706
+msgid "Auto"
+msgstr ""
+
+#: data/preferences.glade:2709
+msgid "ASCII Backspace"
+msgstr ""
+
+#: data/preferences.glade:2712
+msgid "ASCII Delete"
+msgstr ""
+
+#: data/preferences.glade:2715
+msgid "Delete sequence"
+msgstr ""
+
+#: data/preferences.glade:2718
+msgid "TTY \"erase\""
 msgstr ""

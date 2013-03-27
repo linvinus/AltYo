@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-25 23:57+0400\n"
+"POT-Creation-Date: 2013-03-27 22:47+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -58,11 +58,11 @@ msgstr "<b>URL регулярные выражения</b>"
 msgid "<b>Window</b>"
 msgstr "<b>Окно программы</b>"
 
-#: data/preferences.glade:2643
+#: data/preferences.glade:2709
 msgid "ASCII Backspace"
 msgstr "ASCII Backspace"
 
-#: data/preferences.glade:2646
+#: data/preferences.glade:2712
 msgid "ASCII Delete"
 msgstr "ASCII Delete"
 
@@ -78,19 +78,23 @@ msgstr "О программе"
 msgid "Action"
 msgstr "Действия"
 
-#: data/preferences.glade:2545
+#: data/preferences.glade:2594
 msgid "Advanced"
 msgstr "Дополнительные"
+
+#: altyo_settings.vala:708
+msgid "AltYo CSS style error"
+msgstr "AltYo ошибка CSS стиля"
 
 #: data/preferences.glade:1455
 msgid "Alternate screen scroll"
 msgstr "Альтернативная прокрутка"
 
-#: data/preferences.glade:2526
+#: data/preferences.glade:2575
 msgid "Application style"
 msgstr "Стиль приложения"
 
-#: data/preferences.glade:2640
+#: data/preferences.glade:2706
 msgid "Auto"
 msgstr "Автоматически"
 
@@ -157,6 +161,10 @@ msgstr "Блок"
 msgid "Center"
 msgstr "В центре"
 
+#: data/preferences.glade:2516
+msgid "Check css"
+msgstr "Проверить css"
+
 #: altyo_window.vala:1602
 msgid "Close current tab"
 msgstr "Закрыть текущий терминал"
@@ -214,7 +222,7 @@ msgstr "Монитор по умолчанию, на котором будет �
 msgid "Delete key binding"
 msgstr "Клавиша Delete генерирует"
 
-#: data/preferences.glade:2649
+#: data/preferences.glade:2715
 msgid "Delete sequence"
 msgstr "Экранирующая последовательность"
 
@@ -284,6 +292,10 @@ msgstr "Слева"
 msgid "Look and feel"
 msgstr "Внешний вид и поведение"
 
+#: altyo_settings.vala:422
+msgid "Looks good"
+msgstr "Выглядит хорошо"
+
 #: data/preferences.glade:2440
 msgid "Match"
 msgstr "Регулярное выражение"
@@ -312,6 +324,17 @@ msgstr "Развернуть окно на весь экран, или восс�
 msgid "Monitor"
 msgstr "Монитор"
 
+#: altyo_settings.vala:706
+#, c-format
+msgid ""
+"New style will not saved!\n"
+"in line %d  at position %d\n"
+"error:%s"
+msgstr ""
+"Новый стиль не будет сохранён!\n"
+"в строке %d  в позиции %d\n"
+"ошибка:%s"
+
 #: altyo_window.vala:1583
 msgid "New tab"
 msgstr "Добавить терминал"
@@ -330,11 +353,11 @@ msgstr "Следующий терминал"
 msgid "Number of animation steps,less is faster."
 msgstr "Количество щагов анимации, чем меньше тем быстрее"
 
-#: data/preferences.glade:2669
+#: data/preferences.glade:2695
 msgid "Off"
 msgstr "Не мерцает."
 
-#: data/preferences.glade:2666
+#: data/preferences.glade:2692
 msgid "On"
 msgstr "Мерцает."
 
@@ -510,11 +533,11 @@ msgid "Switch to tab %d,double press switch to tab %d"
 msgstr ""
 "Переключиться на закладку %d,нажмите дважды для переключения на закладку %d"
 
-#: data/preferences.glade:2663
+#: data/preferences.glade:2689
 msgid "System"
 msgstr "Системный"
 
-#: data/preferences.glade:2652
+#: data/preferences.glade:2718
 msgid "TTY \"erase\""
 msgstr "TTY \"erase\""
 
@@ -612,6 +635,15 @@ msgid ""
 msgstr ""
 "если включено - окно вверху,\n"
 "если выключено - окно внизу"
+
+#: data/preferences.glade:2520
+msgid "if error occurred, cursor will be placed at corresponding position"
+msgstr "Если будет найдена ошибка, курсор будет установлен в соответстующее ошибке положение"
+
+#: altyo_settings.vala:415
+#, c-format
+msgid "in line %d  at position %d error:%s"
+msgstr "в строке %d  в позиции %d ошибка:%s"
 
 #: data/preferences.glade:482 data/preferences.glade:496
 msgid "label"

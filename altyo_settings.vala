@@ -254,8 +254,17 @@ public class AYSettings : AYTab{
 	public void on_popup_terminal_url_regexps_add(Gtk.MenuItem item){
 		var store = builder.get_object ("terminal_url_regexps") as Gtk.ListStore;
 		if(store!=null){
+			TreeModel model;
+			TreeIter selected_iter;
 			TreeIter? data_iter=null;
-			store.append (out data_iter);
+			var view = builder.get_object ("terminal_url_regexps_treeview") as Gtk.TreeView;
+			var selection = view.get_selection();
+			if(selection.get_selected(out model,out selected_iter)){
+				store.insert_after (out data_iter, selected_iter);
+			}else{
+				store.append (out data_iter);
+			}
+
 			store.set (data_iter,
 			0, "",
 			1, "",

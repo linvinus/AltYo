@@ -1964,7 +1964,9 @@ Allow use mouse scroll in some programs,for example in less</property>
                                         <property name="can_focus">True</property>
                                         <property name="model">tab_title_format_regex</property>
                                         <property name="headers_clickable">False</property>
+                                        <property name="reorderable">True</property>
                                         <property name="search_column">0</property>
+                                        <property name="enable_grid_lines">both</property>
                                         <signal name="button-press-event" handler="ay_settings_on_list_button_press_event" swapped="no"/>
                                         <child internal-child="selection">
                                           <object class="GtkTreeSelection" id="treeview-selection"/>
@@ -2043,6 +2045,7 @@ Allow use mouse scroll in some programs,for example in less</property>
                             <property name="can_focus">True</property>
                             <property name="model">terminal_autostart_session</property>
                             <property name="reorderable">True</property>
+                            <property name="enable_grid_lines">both</property>
                             <signal name="button-press-event" handler="ay_settings_on_list_button_press_event" swapped="no"/>
                             <child internal-child="selection">
                               <object class="GtkTreeSelection" id="treeview-selection2"/>
@@ -2430,7 +2433,9 @@ Allow use mouse scroll in some programs,for example in less</property>
                                         <property name="can_focus">True</property>
                                         <property name="model">terminal_url_regexps</property>
                                         <property name="headers_clickable">False</property>
+                                        <property name="reorderable">True</property>
                                         <property name="search_column">0</property>
+                                        <property name="enable_grid_lines">both</property>
                                         <signal name="button-press-event" handler="ay_settings_on_list_button_press_event" swapped="no"/>
                                         <child internal-child="selection">
                                           <object class="GtkTreeSelection" id="treeview-selection4"/>

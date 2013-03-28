@@ -184,9 +184,8 @@ public class AYSettings : AYTab{
 	[CCode (instance_pos = -1)]
 	public void on_popup_command_list_add(Gtk.MenuItem item){
 		var store = builder.get_object ("terminal_autostart_session") as Gtk.ListStore;
-		if(store!=null){
-			TreeIter? data_iter=null;
-			store.append (out data_iter);
+		TreeIter? data_iter = this.list_store_add_after_selected("terminal_autostart_session_treeview",store);
+		if(data_iter!=null){
 			store.set (data_iter,
 			0, "/bin/sh",
 			-1);
@@ -218,13 +217,12 @@ public class AYSettings : AYTab{
 	[CCode (instance_pos = -1)]
 	public void on_popup_tab_title_format_regex_add(Gtk.MenuItem item){
 		var store = builder.get_object ("tab_title_format_regex") as Gtk.ListStore;
-		if(store!=null){
-			TreeIter? data_iter=null;
-			store.append (out data_iter);
+		TreeIter? data_iter = this.list_store_add_after_selected("tab_title_format_regex_treeview",store);
+		if(data_iter!=null){
 			store.set (data_iter,
-			0, "",
-			1, "",
-			-1);
+				0, "",
+				1, "",
+				-1);
 		}
 	}
 
@@ -253,18 +251,8 @@ public class AYSettings : AYTab{
 	[CCode (instance_pos = -1)]
 	public void on_popup_terminal_url_regexps_add(Gtk.MenuItem item){
 		var store = builder.get_object ("terminal_url_regexps") as Gtk.ListStore;
-		if(store!=null){
-			TreeModel model;
-			TreeIter selected_iter;
-			TreeIter? data_iter=null;
-			var view = builder.get_object ("terminal_url_regexps_treeview") as Gtk.TreeView;
-			var selection = view.get_selection();
-			if(selection.get_selected(out model,out selected_iter)){
-				store.insert_after (out data_iter, selected_iter);
-			}else{
-				store.append (out data_iter);
-			}
-
+		TreeIter? data_iter = this.list_store_add_after_selected("terminal_url_regexps_treeview",store);
+		if(data_iter!=null){
 			store.set (data_iter,
 			0, "",
 			1, "",
@@ -333,9 +321,24 @@ public class AYSettings : AYTab{
         Gtk.TreeIter iter;
         if (!store.get_iter (out iter, path)) return;
 
-		store.set (iter,
+		string err="";
+		if(!this.check_regex(new_text,ref err)){
+			var bg=new Gdk.RGBA();
+			bg.parse("#FF0000");
+			store.set (iter,
 			0, new_text,
+			2, err, /*tooltip*/
+			3, bg,
+			5, true,/*strikethrough*/
 			-1);
+		}else{
+			store.set (iter,
+			0, new_text,
+			2, null,
+			3, null,
+			5, false,/*strikethrough*/
+			-1);
+		}
 	}
 
 	[CCode (instance_pos = -1)]
@@ -377,9 +380,25 @@ public class AYSettings : AYTab{
         Gtk.TreeIter iter;
         if (!store.get_iter (out iter, path)) return;
 
-		store.set (iter,
+		string err="";
+		if(!this.check_regex(new_text,ref err)){
+			var bg=new Gdk.RGBA();
+			bg.parse("#FF0000");
+			store.set (iter,
 			0, new_text,
+			2, err, /*tooltip*/
+			3, bg,
+			4, true,/*strikethrough*/
 			-1);
+		}else{
+			store.set (iter,
+			0, new_text,
+			2, null,
+			3, null,
+			4, false,/*strikethrough*/
+			-1);
+		}
+
 	}
 	[CCode (instance_pos = -1)]
 	public void on_terminal_url_regexps_run_cellrenderertext_pattern_edited (Gtk.CellRendererText renderer, string path_string, string new_text){
@@ -477,10 +496,10 @@ public class AYSettings : AYTab{
 				E.set_tooltip_text (err);
 				var bg=new Gdk.RGBA();
 				bg.parse("#FF0000");
-				E.override_color(Gtk.StateFlags.NORMAL | Gtk.StateFlags.FOCUSED,bg);
+				E.override_color(Gtk.StateFlags.NORMAL,bg);
 			}else{
 				E.set_tooltip_text (err);
-				E.override_color(Gtk.StateFlags.NORMAL | Gtk.StateFlags.FOCUSED,null);
+				E.override_color(Gtk.StateFlags.NORMAL,null);
 			}
 		}
 	}
@@ -495,6 +514,23 @@ public class AYSettings : AYTab{
 			err_text=re.message;
 		}
 		return ret;
+	}
+
+	private TreeIter? list_store_add_after_selected(string key,Gtk.ListStore store){
+		TreeIter? data_iter=null;
+		var view = builder.get_object (key) as Gtk.TreeView;
+
+		if(store!=null && view!=null){
+			TreeModel model;
+			TreeIter selected_iter;
+			var selection = view.get_selection();
+			if(selection.get_selected(out model,out selected_iter)){
+				store.insert_after (out data_iter, selected_iter);
+			}else{
+				store.append (out data_iter);
+			}
+		}
+		return data_iter;
 	}
 
 	public void get_from_conf() {
@@ -751,7 +787,7 @@ public class AYSettings : AYTab{
 							string S="";
 							uint line,pos;
 							if(!this.check_css(B.buffer.text,ref S,out line,out pos)){
-								string msg=_("New style will not saved!\nin line %d  at position %d\nerror:%s").printf(line,pos,S);
+								string msg=_("New style will not be saved!\nin line %d  at position %d\nerror:%s").printf(line,pos,S);
 								debug("on config apply css error %s",msg);
 								this.ayobject.main_window.show_message_box(_("AltYo CSS style error"),msg);
 							}else{//looks good
@@ -764,8 +800,19 @@ public class AYSettings : AYTab{
 						}else{
 							var B = builder.get_object (key) as Gtk.Entry;
 							if(B!=null){
-								if(B.text!=this.my_conf.get_string(key,""))
-									this.my_conf.set_string(key,B.text);
+								if(B.text!=this.my_conf.get_string(key,"")){
+									if(key=="terminal_prevent_close_regex" || key=="terminal_session_exclude_regex"){
+										string err="";
+										if(this.check_regex(B.text,ref err)){
+											this.my_conf.set_string(key,B.text);
+										}else{
+											string title=_("AltYo %s error").printf(key);
+											string msg=_("New value of %s will not be saved!\n%s").printf(key,err);
+											this.ayobject.main_window.show_message_box(title,msg);
+										}
+									}else
+										this.my_conf.set_string(key,B.text);
+								}
 							}else
 								debug(" no gui for key %s",key);
 						}
@@ -776,20 +823,34 @@ public class AYSettings : AYTab{
 
 							if(key=="tab_title_format_regex" || key=="terminal_url_regexps"){
 								string[] sl = {};
+								bool ignore_changes=false;
+								string err="";
 								store.foreach((model,  path,  iter) =>{
 										string? s1=null,s2=null;
 										store.get (iter,
 										0, out s1,
 										1, out s2,
 										-1);
-										if(s1!=null)
-											sl+=s1;
-										if(s2!=null)
-											sl+=s2;
-										debug("s1=%s s2=%s",s1,s2);
-										return false;//continue
+										if(s1!=null && s2!=null){
+											if(this.check_regex(s1,ref err)){
+													sl+=s1;
+													sl+=s2;
+												debug("s1=%s s2=%s",s1,s2);
+												return false;//continue
+											}else{
+												ignore_changes=true;
+												return true;//stop
+											}
+										}else
+											return false;//continue, skip empty
 									});
-								this.my_conf.set_string_list(key,sl);
+								if(!ignore_changes)
+									this.my_conf.set_string_list(key,sl);
+								else{
+									string title=_("AltYo %s error").printf(key);
+									string msg=_("New value of %s will not be saved!\n%s").printf(key,err);
+									this.ayobject.main_window.show_message_box(title,msg);
+								}
 							}else
 							if(key=="terminal_autostart_session"){
 								string[] sl = {};

@@ -34,6 +34,28 @@
       <mime-type>image/*</mime-type>
     </mime-types>
   </object>
+  <object class="GtkListStore" id="tab_title_format_regex">
+    <columns>
+      <!-- column-name pattern -->
+      <column type="gchararray"/>
+      <!-- column-name replace -->
+      <column type="gchararray"/>
+      <!-- column-name tooltip -->
+      <column type="gchararray"/>
+      <!-- column-name pattern_rgba -->
+      <column type="GdkRGBA"/>
+      <!-- column-name replace_rgba -->
+      <column type="GdkRGBA"/>
+      <!-- column-name pattern_s -->
+      <column type="gboolean"/>
+    </columns>
+  </object>
+  <object class="GtkAdjustment" id="terminal_height_adjustment">
+    <property name="lower">1</property>
+    <property name="upper">10000</property>
+    <property name="step_increment">10</property>
+    <property name="page_increment">100</property>
+  </object>
   <object class="GtkListStore" id="keybindings_store">
     <columns>
       <!-- column-name action_name -->
@@ -133,12 +155,19 @@
       </row>
     </data>
   </object>
-  <object class="GtkAdjustment" id="tab_max_width_adjustment">
-    <property name="lower">-1</property>
-    <property name="upper">10000</property>
-    <property name="value">-1</property>
-    <property name="step_increment">10</property>
-    <property name="page_increment">100</property>
+  <object class="GtkListStore" id="terminal_url_regexps">
+    <columns>
+      <!-- column-name match -->
+      <column type="gchararray"/>
+      <!-- column-name run -->
+      <column type="gchararray"/>
+      <!-- column-name tooltip -->
+      <column type="gchararray"/>
+      <!-- column-name match_color -->
+      <column type="GdkRGBA"/>
+      <!-- column-name match_s -->
+      <column type="gboolean"/>
+    </columns>
   </object>
   <object class="GtkScrolledWindow" id="settings-scrolledwindow">
     <property name="visible">True</property>
@@ -1974,6 +2003,7 @@ Allow use mouse scroll in some programs,for example in less</property>
                                         <property name="reorderable">True</property>
                                         <property name="search_column">0</property>
                                         <property name="enable_grid_lines">both</property>
+                                        <property name="tooltip_column">2</property>
                                         <signal name="button-press-event" handler="ay_settings_on_list_button_press_event" swapped="no"/>
                                         <child internal-child="selection">
                                           <object class="GtkTreeSelection" id="treeview-selection"/>
@@ -1987,7 +2017,9 @@ Allow use mouse scroll in some programs,for example in less</property>
                                                 <signal name="edited" handler="ay_settings_on_tab_title_format_regex_cellrenderertext_pattern_edited" swapped="no"/>
                                               </object>
                                               <attributes>
+                                                <attribute name="strikethrough">5</attribute>
                                                 <attribute name="text">0</attribute>
+                                                <attribute name="foreground-rgba">3</attribute>
                                               </attributes>
                                             </child>
                                           </object>
@@ -2002,6 +2034,7 @@ Allow use mouse scroll in some programs,for example in less</property>
                                               </object>
                                               <attributes>
                                                 <attribute name="text">1</attribute>
+                                                <attribute name="foreground-rgba">4</attribute>
                                               </attributes>
                                             </child>
                                           </object>
@@ -2436,7 +2469,6 @@ Allow use mouse scroll in some programs,for example in less</property>
                                   <object class="GtkAlignment" id="alignment4">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="left_padding">12</property>
                                     <child>
                                       <object class="GtkTreeView" id="terminal_url_regexps_treeview">
                                         <property name="height_request">100</property>
@@ -2445,8 +2477,10 @@ Allow use mouse scroll in some programs,for example in less</property>
                                         <property name="model">terminal_url_regexps</property>
                                         <property name="headers_clickable">False</property>
                                         <property name="reorderable">True</property>
+                                        <property name="rules_hint">True</property>
                                         <property name="search_column">0</property>
                                         <property name="enable_grid_lines">both</property>
+                                        <property name="tooltip_column">2</property>
                                         <signal name="button-press-event" handler="ay_settings_on_list_button_press_event" swapped="no"/>
                                         <child internal-child="selection">
                                           <object class="GtkTreeSelection" id="treeview-selection4"/>
@@ -2460,7 +2494,9 @@ Allow use mouse scroll in some programs,for example in less</property>
                                                 <signal name="edited" handler="ay_settings_on_terminal_url_regexps_match_cellrenderertext_pattern_edited" swapped="no"/>
                                               </object>
                                               <attributes>
+                                                <attribute name="strikethrough">4</attribute>
                                                 <attribute name="text">0</attribute>
+                                                <attribute name="foreground-rgba">3</attribute>
                                               </attributes>
                                             </child>
                                           </object>
@@ -2669,13 +2705,12 @@ Allow use mouse scroll in some programs,for example in less</property>
       </object>
     </child>
   </object>
-  <object class="GtkListStore" id="tab_title_format_regex">
-    <columns>
-      <!-- column-name patern -->
-      <column type="gchararray"/>
-      <!-- column-name replace -->
-      <column type="gchararray"/>
-    </columns>
+  <object class="GtkAdjustment" id="tab_max_width_adjustment">
+    <property name="lower">-1</property>
+    <property name="upper">10000</property>
+    <property name="value">-1</property>
+    <property name="step_increment">10</property>
+    <property name="page_increment">100</property>
   </object>
   <object class="GtkListStore" id="terminal_autostart_session">
     <columns>
@@ -2728,12 +2763,6 @@ Allow use mouse scroll in some programs,for example in less</property>
       </row>
     </data>
   </object>
-  <object class="GtkAdjustment" id="terminal_height_adjustment">
-    <property name="lower">1</property>
-    <property name="upper">10000</property>
-    <property name="step_increment">10</property>
-    <property name="page_increment">100</property>
-  </object>
   <object class="GtkAdjustment" id="terminal_opacity_adjustment">
     <property name="upper">1</property>
     <property name="step_increment">0.10000000000000001</property>
@@ -2744,14 +2773,6 @@ Allow use mouse scroll in some programs,for example in less</property>
     <property name="upper">100000</property>
     <property name="step_increment">10</property>
     <property name="page_increment">100</property>
-  </object>
-  <object class="GtkListStore" id="terminal_url_regexps">
-    <columns>
-      <!-- column-name match -->
-      <column type="gchararray"/>
-      <!-- column-name run -->
-      <column type="gchararray"/>
-    </columns>
   </object>
   <object class="GtkAdjustment" id="terminal_width_adjustment">
     <property name="lower">1</property>

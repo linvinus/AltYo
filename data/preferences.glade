@@ -133,6 +133,13 @@
       </row>
     </data>
   </object>
+  <object class="GtkAdjustment" id="tab_max_width_adjustment">
+    <property name="lower">-1</property>
+    <property name="upper">10000</property>
+    <property name="value">-1</property>
+    <property name="step_increment">10</property>
+    <property name="page_increment">100</property>
+  </object>
   <object class="GtkScrolledWindow" id="settings-scrolledwindow">
     <property name="visible">True</property>
     <property name="can_focus">True</property>
@@ -2343,9 +2350,11 @@ Allow use mouse scroll in some programs,for example in less</property>
                                   <object class="GtkEntry" id="terminal_prevent_close_regex">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
+                                    <property name="has_tooltip">True</property>
                                     <property name="hexpand">True</property>
                                     <property name="invisible_char">•</property>
                                     <property name="invisible_char_set">True</property>
+                                    <signal name="changed" handler="ay_settings_on_terminal_prevent_close_regex_changed" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -2372,7 +2381,9 @@ Allow use mouse scroll in some programs,for example in less</property>
                                   <object class="GtkEntry" id="terminal_session_exclude_regex">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
+                                    <property name="has_tooltip">True</property>
                                     <property name="invisible_char">•</property>
+                                    <signal name="changed" handler="ay_settings_on_terminal_session_exclude_regex" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -2657,13 +2668,6 @@ Allow use mouse scroll in some programs,for example in less</property>
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkAdjustment" id="tab_max_width_adjustment">
-    <property name="lower">-1</property>
-    <property name="upper">10000</property>
-    <property name="value">-1</property>
-    <property name="step_increment">10</property>
-    <property name="page_increment">100</property>
   </object>
   <object class="GtkListStore" id="tab_title_format_regex">
     <columns>

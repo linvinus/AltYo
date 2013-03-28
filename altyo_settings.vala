@@ -449,6 +449,45 @@ public class AYSettings : AYTab{
 		return ret;
 	}
 
+	[CCode (instance_pos = -1)]
+	public void on_terminal_prevent_close_regex_changed(Gtk.Editable editable) {
+		var E = builder.get_object ("terminal_prevent_close_regex") as Gtk.Entry;
+		this.check_entry_regex(E);
+	}
+
+	[CCode (instance_pos = -1)]
+	public void on_terminal_session_exclude_regex(Gtk.Editable editable) {
+		var E = builder.get_object ("terminal_session_exclude_regex") as Gtk.Entry;
+		this.check_entry_regex(E);
+	}
+
+	private void check_entry_regex(Gtk.Entry E) {
+		if( E != null){
+			string err="";
+			if(!this.check_regex(E.text,ref err)){
+				E.set_tooltip_text (err);
+				var bg=new Gdk.RGBA();
+				bg.parse("#FF0000");
+				E.override_color(Gtk.StateFlags.NORMAL | Gtk.StateFlags.FOCUSED,bg);
+			}else{
+				E.set_tooltip_text (err);
+				E.override_color(Gtk.StateFlags.NORMAL | Gtk.StateFlags.FOCUSED,null);
+			}
+		}
+	}
+
+	private bool check_regex(string pattern,ref string err_text){
+		bool ret=true;
+		try {
+			var regex = new Regex( pattern, RegexCompileFlags.EXTENDED );
+		} catch( RegexError re ) {
+			ret=false;
+			debug("check_regex err:%s",re.message);
+			err_text=re.message;
+		}
+		return ret;
+	}
+
 	public void get_from_conf() {
 
 		var chb = builder.get_object ("lock_keybindings_checkbutton") as Gtk.CheckButton;

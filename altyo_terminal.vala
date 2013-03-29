@@ -360,13 +360,15 @@ public class AYTab : Object{
 		this.tbutton.tab_format = my_conf.get_string("tab_format","[ _INDEX_ ]");
 		this.tbutton.tab_title_format = my_conf.get_string("tab_title_format","<span foreground='#FFF000'>_INDEX_</span>/_TITLE_");
 		this.tbutton.tab_title_regex = my_conf.get_string_list("tab_title_format_regex",{"^(mc) \\[","<span>_REPLACE_ </span>","([\\w\\.]+)@","<span font_weight='bold' foreground='#EEEEEE'>_USER_</span>","([\\w\\.\\-]+)\\]?:","@<span font_weight='bold' foreground='#FFF000'>_HOSTNAME_</span>:","([^:]*)$","<span>_PATH_</span>"},(ref new_val)=>{
-			if(new_val!=null && (new_val.length % 2)!=0){new_val={"^(mc) \\[","<span>_REPLACE_ </span>","([\\w\\.]+)@","<span font_weight='bold' foreground='#EEEEEE'>_USER_</span>","([\\w\\.\\-]+)\\]?:","@<span font_weight='bold' foreground='#FFF000'>_HOSTNAME_</span>:","([^:]*)$","<span>_PATH_</span>"};return true;}
-			return false;
+			if(new_val!=null && (new_val.length % 2)!=0){
+				return CFG_CHECK.USE_DEFAULT;
+			}
+			return CFG_CHECK.OK;
 			});
 
 		this.tbutton.conf_max_width=my_conf.get_integer("tab_max_width",-1,(ref new_val)=>{
-			if(new_val<-1){new_val=-1;return true;}
-			return false;
+			if(new_val<-1){new_val=-1;return CFG_CHECK.REPLACE;}
+			return CFG_CHECK.OK;
 			});
 	}
 
@@ -565,8 +567,8 @@ public class VTTerminal : AYTab{
 		#endif
 
 		this.vte_term.set_scrollback_lines (my_conf.get_integer("terminal_scrollback_lines",512,(ref new_val)=>{
-			if(new_val<-1){new_val=-1;return true;}//infinite scrollback
-			return false;
+			if(new_val<-1){new_val=-1;return CFG_CHECK.REPLACE;}//infinite scrollback
+			return CFG_CHECK.OK;
 			}));
 
 		Gdk.RGBA? fg;
@@ -618,9 +620,9 @@ public class VTTerminal : AYTab{
 		//vte bug, set_opacity don't call vte_terminal_queue_background_update
 		// we force update later
 		this.vte_term.set_opacity((uint16)((my_conf.get_double("terminal_opacity",1.0,(ref new_val)=>{
-			if(new_val<0.0){new_val=0.0;return true;}
-			if(new_val>1.0){new_val=1.0;return true;}
-			return false;
+			if(new_val<0.0){new_val=0.0;return CFG_CHECK.REPLACE;}
+			if(new_val>1.0){new_val=1.0;return CFG_CHECK.REPLACE;}
+			return CFG_CHECK.OK;
 			}) )*65535) );
 
 
@@ -638,9 +640,9 @@ public class VTTerminal : AYTab{
 			this.vte_term.set_background_tint_color(tint);
 
 		var sat = my_conf.get_double("terminal_background_saturation",0.5,(ref new_val)=>{
-			if(new_val>1){ new_val=1; return true;}
-			if(new_val<0){ new_val=0; return true;}
-			return false;
+			if(new_val>1){ new_val=1; return CFG_CHECK.REPLACE;}
+			if(new_val<0){ new_val=0; return CFG_CHECK.REPLACE;}
+			return CFG_CHECK.OK;
 			});
 		this.vte_term.set_background_saturation(sat);
 		if(bg_faket){
@@ -652,30 +654,30 @@ public class VTTerminal : AYTab{
 		}
 		/*0-BLOCK,1-IBEAM,2-UNDERLINE*/
 		var cursorshape  = my_conf.get_integer("terminal_cursorshape",0,(ref new_val)=>{
-			if(new_val>2){new_val=0;return true;}
-			if(new_val<0){new_val=0;return true;}
-			return false;
+			if(new_val>2){new_val=0;return CFG_CHECK.REPLACE;}
+			if(new_val<0){new_val=0;return CFG_CHECK.REPLACE;}
+			return CFG_CHECK.OK;
 			});
 		this.vte_term.set_cursor_shape((Vte.TerminalCursorShape)cursorshape);
 		/*0-SYSTEM,1-ON,2-OFF*/
 		var cursor_blinkmode  = my_conf.get_integer("terminal_cursor_blinkmode",0,(ref new_val)=>{
-			if(new_val>2){new_val=0;return true;}
-			if(new_val<0){new_val=0;return true;}
-			return false;
+			if(new_val>2){new_val=0;return CFG_CHECK.REPLACE;}
+			if(new_val<0){new_val=0;return CFG_CHECK.REPLACE;}
+			return CFG_CHECK.OK;
 			});
 		this.vte_term.set_cursor_blink_mode ((Vte.TerminalCursorBlinkMode)cursor_blinkmode);
 		/*0-AUTO,1-BACKSPACE,2-DELETE,3-SEQUENCE,4-TTY*/
 		var delbinding  = my_conf.get_integer("terminal_delete_binding",0,(ref new_val)=>{
-			if(new_val>4){new_val=0;return true;}
-			if(new_val<0){new_val=0;return true;}
-			return false;
+			if(new_val>4){new_val=0;return CFG_CHECK.REPLACE;}
+			if(new_val<0){new_val=0;return CFG_CHECK.REPLACE;}
+			return CFG_CHECK.OK;
 			});
 		this.vte_term.set_delete_binding ((Vte.TerminalEraseBinding)delbinding);
 		/*0-AUTO,1-BACKSPACE,2-DELETE,3-SEQUENCE,4-TTY*/
 		var backspace  = my_conf.get_integer("terminal_backspace_binding",0,(ref new_val)=>{
-			if(new_val>4){new_val=0;return true;}
-			if(new_val<0){new_val=0;return true;}
-			return false;
+			if(new_val>4){new_val=0;return CFG_CHECK.REPLACE;}
+			if(new_val<0){new_val=0;return CFG_CHECK.REPLACE;}
+			return CFG_CHECK.OK;
 			});
 		this.vte_term.set_backspace_binding ((Vte.TerminalEraseBinding)delbinding);
 

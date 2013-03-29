@@ -668,15 +668,15 @@ public class VTMainWindow : Window{
 			Gtk.StyleContext.add_provider_for_screen(this.get_screen(),css_main,Gtk.STYLE_PROVIDER_PRIORITY_USER);
 		}
 		this.position  = conf.get_integer("position",1,(ref new_val)=>{
-			if(new_val>3){new_val=this.position;return true;}
-			if(new_val<0){new_val=this.position;return true;}
-			return false;
+			if(new_val>3){new_val=this.position;return CFG_CHECK.REPLACE;}
+			if(new_val<0){new_val=this.position;return CFG_CHECK.REPLACE;}
+			return CFG_CHECK.OK;
 			});
 
 		this.animation_enabled=conf.get_boolean("animation_enabled",true);
 		this.pull_steps=conf.get_integer("animation_pull_steps",10,(ref new_val)=>{
-				if(new_val<1){new_val=10;return true;}
-				return false;
+				if(new_val<1){new_val=10;return CFG_CHECK.REPLACE;}
+				return CFG_CHECK.OK;
 			});
 
 		this.hotkey.unbind();
@@ -1104,12 +1104,12 @@ public class AYObject :Object{
 		debug("reconfigure AYObject");
 
 		this.terminal_width = conf.get_integer("terminal_width",80,(ref new_val)=>{
-			if(new_val<1){new_val=this.terminal_width;return true;}
-			return false;
+			if(new_val<1){new_val=this.terminal_width;return CFG_CHECK.REPLACE;}
+			return CFG_CHECK.OK;
 			});
 		this.terminal_height = conf.get_integer("terminal_height",50,(ref new_val)=>{
-			if(new_val<1){new_val=this.terminal_height;return true;}
-			return false;
+			if(new_val<1){new_val=this.terminal_height;return CFG_CHECK.REPLACE;}
+			return CFG_CHECK.OK;
 			});
 
 		this.hvbox.background_only_behind_widgets= !conf.get_boolean("tab_box_have_background",false);

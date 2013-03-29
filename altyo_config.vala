@@ -17,12 +17,17 @@
 
 using Gtk;
 using Gee;
+public enum CFG_CHECK{
+	OK,
+	REPLACE,
+	USE_DEFAULT
+	}
 
-public delegate bool check_string(ref string s);
-public delegate bool check_string_list(ref string[] sl);//todo return shuld be int. 0-ok 1-change 2-return default
-public delegate bool check_integer(ref int i);
-public delegate bool check_double(ref double d);
-public delegate bool check_boolean(ref bool b);
+public delegate CFG_CHECK check_string(ref string s);
+public delegate CFG_CHECK check_string_list(ref string[] sl);
+public delegate CFG_CHECK check_integer(ref int i);
+public delegate CFG_CHECK check_double(ref double d);
+public delegate CFG_CHECK check_boolean(ref bool b);
 
 public enum CFG_TYPE{
 	TYPE_UNKNOWN,
@@ -116,10 +121,17 @@ public class MySettings : Object {
 			try {
 				ret = kf.get_boolean(this.profile,key);
 				if(check_cb!=null)
-					if(check_cb(ref ret)){
-						this.changed=true;
-						kf.set_boolean(this.profile,key,ret);
-						}
+					switch(check_cb(ref ret)){
+						case CFG_CHECK.REPLACE:
+							this.changed=true;
+							kf.set_boolean(this.profile,key,ret);
+						break;
+						case CFG_CHECK.USE_DEFAULT:
+							ret=def;
+							this.changed=true;
+							kf.set_boolean(this.profile,key,def);
+						break;
+					}
 			} catch (KeyFileError err) {
 				warning (err.message);
 				this.changed=true;
@@ -139,10 +151,17 @@ public class MySettings : Object {
 			try {
 				ret = kf.get_integer(this.profile,key);
 				if(check_cb!=null)
-					if(check_cb(ref ret)){
-						this.changed=true;
-						kf.set_integer(this.profile,key,ret);
-						}
+					switch(check_cb(ref ret)){
+						case CFG_CHECK.REPLACE:
+							this.changed=true;
+							kf.set_integer(this.profile,key,ret);
+						break;
+						case CFG_CHECK.USE_DEFAULT:
+							ret=def;
+							this.changed=true;
+							kf.set_integer(this.profile,key,def);
+						break;
+					}
 			} catch (KeyFileError err) {
 				warning (err.message);
 				this.changed=true;
@@ -162,10 +181,17 @@ public class MySettings : Object {
 			try {
 				ret = kf.get_double(this.profile,key);
 				if(check_cb!=null)
-					if(check_cb(ref ret)){
-						this.changed=true;
-						kf.set_double(this.profile,key,ret);
-						}
+					switch(check_cb(ref ret)){
+						case CFG_CHECK.REPLACE:
+							this.changed=true;
+							kf.set_double(this.profile,key,ret);
+						break;
+						case CFG_CHECK.USE_DEFAULT:
+							ret=def;
+							this.changed=true;
+							kf.set_double(this.profile,key,def);
+						break;
+					}
 			} catch (KeyFileError err) {
 				warning (err.message);
 				this.changed=true;
@@ -185,10 +211,17 @@ public class MySettings : Object {
 			try {
 				ret = kf.get_string_list(this.profile,key);
 				if(check_cb!=null)
-					if(check_cb(ref ret)){
-						this.changed=true;
-						kf.set_string_list(this.profile,key,ret);
-						}
+					switch(check_cb(ref ret)){
+						case CFG_CHECK.REPLACE:
+							this.changed=true;
+							kf.set_string_list(this.profile,key,ret);
+						break;
+						case CFG_CHECK.USE_DEFAULT:
+							ret=def;
+							this.changed=true;
+							kf.set_string_list(this.profile,key,def);
+						break;
+					}
 			} catch (KeyFileError err) {
 				warning (err.message);
 				this.changed=true;
@@ -208,10 +241,17 @@ public class MySettings : Object {
 			try {
 				ret = kf.get_string(this.profile,key);
 				if(check_cb!=null)
-					if(check_cb(ref ret)){
-						this.changed=true;
-						kf.set_string(this.profile,key,ret);
-						}
+					switch(check_cb(ref ret)){
+						case CFG_CHECK.REPLACE:
+							this.changed=true;
+							kf.set_string(this.profile,key,ret);
+						break;
+						case CFG_CHECK.USE_DEFAULT:
+							ret=def;
+							this.changed=true;
+							kf.set_string(this.profile,key,def);
+						break;
+					}
 			} catch (KeyFileError err) {
 				warning (err.message);
 				this.changed=true;
@@ -222,7 +262,7 @@ public class MySettings : Object {
 		}
 
 
-	public bool set_string_list (string key, string[] def,check_string_list? check_cb=null) {
+	public bool set_string_list (string key, string[] def) {
 		if(!this.typemap.has_key(key))
 			this.typemap[key]=CFG_TYPE.TYPE_STRING_LIST;
 		else if(this.typemap[key]!=CFG_TYPE.TYPE_STRING_LIST)

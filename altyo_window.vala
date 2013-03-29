@@ -347,7 +347,7 @@ public class VTMainWindow : Window{
 
 	public bool on_pull_up(){
 
-			if(this.pull_step<(this.pull_steps-1)){
+			if(this.pull_step<this.pull_steps){
 				int arith_progress=(int)( ((float)(1+this.pull_steps)/2.0)*this.pull_steps);
 				int tmp =this.pull_steps-this.pull_step;
 				int arith_progress2=(int)( ((float)(this.pull_steps+tmp)/2.0)*this.pull_step);
@@ -428,9 +428,6 @@ public class VTMainWindow : Window{
 			this.update_geometry_hints(0,this.pull_w,1,this.pull_w,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
 			this.unmaximize();/*not working in metacity on secondary monitor, seems metacity bug*/
 			this.move(this.pull_x,this.pull_y);
-			this.resize (pull_w,pull_h);//important
-			this.update_events();
-			this.resize (pull_w,pull_h);//important
 		}else{
 			this.ayobject.main_vbox.set_size_request(this.orig_w_main_vbox,orig_h_main_vbox);
 			this.ayobject.tasks_notebook.set_size_request(orig_w_tasks_notebook,orig_h_tasks_notebook);

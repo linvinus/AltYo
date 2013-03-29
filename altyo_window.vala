@@ -184,6 +184,8 @@ public class VTMainWindow : Window{
 		}else{
 			this.update_position_size();
 		}
+		debug("CreateVTWindow end");
+
 	}
 
 	private void check_monitor_and_configure_position(){
@@ -236,10 +238,17 @@ public class VTMainWindow : Window{
 
 	public bool on_pull_down(){
 
-			this.pull_step++;
 			if(this.pull_step<this.pull_steps){
-				this.resize (this.pull_w,(this.pull_h/this.pull_steps)*this.pull_step);
+
+				int arith_progress=(int)( ((float)(1+this.pull_steps)/2.0)*this.pull_steps);
+				int tmp =this.pull_steps-this.pull_step;
+				//int arith_progress2=(int)( ((float)(1+tmp)/2.0)*this.pull_step); //bubble
+				int arith_progress2=(int)( ((float)(1+tmp)/2.0)*(tmp));
+				int h=(this.pull_h-(this.pull_h/arith_progress)*(arith_progress2) );
+
+				this.resize(this.pull_w,h+1);
 				this.update_events();
+				this.pull_step++;
 				return true;//continue animation
 			}else{
 				this.update_events();
@@ -256,6 +265,7 @@ public class VTMainWindow : Window{
 						this.resize (this.pull_w,pull_h);
 					}
 					this.update_events();
+					this.pull_step++;
 					return true;//continue animation
 				}
 
@@ -336,13 +346,21 @@ public class VTMainWindow : Window{
 	}
 
 	public bool on_pull_up(){
-			this.pull_step++;
-			this.resize (this.pull_w,(this.pull_h-(this.pull_h/this.pull_steps)*this.pull_step)+1);
-//~			this.queue_draw();
-			this.update_events();
-			if(this.pull_step<this.pull_steps)
+
+			if(this.pull_step<(this.pull_steps-1)){
+				int arith_progress=(int)( ((float)(1+this.pull_steps)/2.0)*this.pull_steps);
+				int tmp =this.pull_steps-this.pull_step;
+				int arith_progress2=(int)( ((float)(this.pull_steps+tmp)/2.0)*this.pull_step);
+
+				int h=(this.pull_h-(this.pull_h/arith_progress)*(arith_progress2) );
+				//debug("ff=%d this.pull_step=%d h=%d",ff,this.pull_step,h);
+				//debug("on_pull_down h=%d",h);
+				this.resize(this.pull_w,h+1);
+				this.pull_step++;
+				this.update_events();
+
 				return true;//continue animation
-			else{
+			}else{
 				//look at source of gtk_window_reshow_with_initial_size (GtkWindow *window)
 				if(this.pull_maximized){
 					this.update_geometry_hints(0,this.pull_w,1,this.pull_w,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
@@ -410,7 +428,9 @@ public class VTMainWindow : Window{
 			this.update_geometry_hints(0,this.pull_w,1,this.pull_w,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
 			this.unmaximize();/*not working in metacity on secondary monitor, seems metacity bug*/
 			this.move(this.pull_x,this.pull_y);
+			this.resize (pull_w,pull_h);//important
 			this.update_events();
+			this.resize (pull_w,pull_h);//important
 		}else{
 			this.ayobject.main_vbox.set_size_request(this.orig_w_main_vbox,orig_h_main_vbox);
 			this.ayobject.tasks_notebook.set_size_request(orig_w_tasks_notebook,orig_h_tasks_notebook);
@@ -420,7 +440,10 @@ public class VTMainWindow : Window{
 
 		debug("pull_up 0-%d  this.get_allocated_height=%d this.orig_h=%d",this.get_allocated_height()-this.pull_h, this.get_allocated_height(),this.pull_h);
 		debug("pull_up orig_h=%d orig_w=%d",this.pull_h,this.pull_w);
-		this.pull_step=0;
+		if (this.get_allocated_height()>1)
+			this.pull_step=0;
+		else
+			this.pull_step=this.pull_steps;//skip animation
 		this.pull_animation_active=true;
 		GLib.Timeout.add(this.animation_speed,this.on_pull_up);
 	}
@@ -507,7 +530,7 @@ public class VTMainWindow : Window{
 	return ret;
 	}
 
-	private void update_geometry_hints(int base_height,int base_width,int min_height,int min_width,Gdk.WindowHints mask){
+	public void update_geometry_hints(int base_height,int base_width,int min_height,int min_width,Gdk.WindowHints mask){
 					var gem=new Gdk.Geometry();
 					gem.base_height=base_height;
 					gem.base_width=base_width;
@@ -583,14 +606,14 @@ public class VTMainWindow : Window{
 
 
 	public void update_events(){
-		var window = this.get_window();
-			//window.process_updates(true);//force update
-			if(window!=null)
-				window.enable_synchronized_configure();//force update
+//~ 		var window = this.get_window();
+//~ 			//window.process_updates(true);//force update
+//~ 			if(window!=null)
+//~ 				window.enable_synchronized_configure();//force update
 		while (Gtk.events_pending ()){
 			Gtk.main_iteration ();
+			Gdk.flush();
 			}
-		Gdk.flush();
 
 	}
 

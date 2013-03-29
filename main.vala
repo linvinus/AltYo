@@ -223,10 +223,15 @@ int main (string[] args) {
 					win.pull_up();//all workarounds is inside pull_up,pull_down,update_position_size
 				}else{
 					win.show();
-					win.configure_position();
-					win.update_position_size();
+					win.update_events();
+					if(!win.start_maximized){
+						win.update_position_size();
+					}else{//already maximized
+						win.update_geometry_hints(win.get_allocated_height(),win.get_allocated_width(),win.get_allocated_height(),win.get_allocated_width(),Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
+					}
 					win.window_set_active();
 				}
+				debug("end win show");
 
 
 				sigaction_t action = sigaction_t ();

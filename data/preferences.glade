@@ -133,12 +133,6 @@
       </row>
     </data>
   </object>
-  <object class="GtkListStore" id="terminal_autostart_session">
-    <columns>
-      <!-- column-name command -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
   <object class="GtkScrolledWindow" id="settings-scrolledwindow">
     <property name="visible">True</property>
     <property name="can_focus">True</property>
@@ -2787,6 +2781,12 @@ Allow use mouse scroll in some programs,for example in less</property>
       <column type="gboolean"/>
       <!-- column-name replace_s -->
       <column type="gboolean"/>
+    </columns>
+  </object>
+  <object class="GtkListStore" id="terminal_autostart_session">
+    <columns>
+      <!-- column-name command -->
+      <column type="gchararray"/>
     </columns>
   </object>
   <object class="GtkAdjustment" id="terminal_background_saturation_adjustment">

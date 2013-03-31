@@ -1198,7 +1198,16 @@ public class AYObject :Object{
 		if(vtt is VTTerminal){
 			bool close=true;
 			VTTerminal vt=(VTTerminal)vtt;
-			var grx_exclude = new GLib.Regex(this.conf.get_string("terminal_prevent_close_regex",""));
+			var grx_exclude = new GLib.Regex(this.conf.get_string("terminal_prevent_close_regex","",(ref new_val)=>{
+			string err;
+			if(!this.conf.check_regex(new_val,out err)){
+				debug(_("terminal_prevent_close_regex wrong value! will be used default value. err:%s"),err);
+				return CFG_CHECK.USE_DEFAULT;
+			}
+
+			return CFG_CHECK.OK;
+			}));
+
 			string[] childs = {};
 			childs+=vt.find_tty_pgrp(vt.pid,FIND_TTY.CMDLINE);
 			var tmp_spid=vt.find_tty_pgrp(vt.pid,FIND_TTY.PID);
@@ -2102,7 +2111,16 @@ public class AYObject :Object{
 			var autostart_terminal_session=this.conf.get_string_list("terminal_autostart_session",null);
 
 			string[] terminal_session = {};
-			var grx_exclude = new GLib.Regex(this.conf.get_string("terminal_session_exclude_regex",""));
+			var grx_exclude = new GLib.Regex(this.conf.get_string("terminal_session_exclude_regex","",(ref new_val)=>{
+			string err;
+			if(!this.conf.check_regex(new_val,out err)){
+				debug(_("terminal_session_exclude_regex wrong value! will be used default value. err:%s"),err);
+				return CFG_CHECK.USE_DEFAULT;
+			}
+
+			return CFG_CHECK.OK;
+			}));
+
 			foreach (var vt in this.children) {
 				if(vt is VTTerminal){
 					bool cont=false;

@@ -321,8 +321,8 @@ public class AYSettings : AYTab{
         Gtk.TreeIter iter;
         if (!store.get_iter (out iter, path)) return;
 
-		string err="";
-		if(!this.check_regex(new_text,ref err)){
+		string err;
+		if(!this.my_conf.check_regex(new_text,out err)){
 			var bg=new Gdk.RGBA();
 			bg.parse("#FF0000");
 			store.set (iter,
@@ -359,8 +359,8 @@ public class AYSettings : AYTab{
         if (!store.get_iter (out iter, path)) return;
 
 
-		string err="";
-		if(!this.check_markup(new_text,ref err)){
+		string err;
+		if(!this.my_conf.check_markup(new_text,out err)){
 			var bg=new Gdk.RGBA();
 			bg.parse("#FF0000");
 			store.set (iter,
@@ -396,8 +396,8 @@ public class AYSettings : AYTab{
         Gtk.TreeIter iter;
         if (!store.get_iter (out iter, path)) return;
 
-		string err="";
-		if(!this.check_regex(new_text,ref err)){
+		string err;
+		if(!this.my_conf.check_regex(new_text,out err)){
 			var bg=new Gdk.RGBA();
 			bg.parse("#FF0000");
 			store.set (iter,
@@ -519,9 +519,9 @@ public class AYSettings : AYTab{
 
 	private void check_entry_regex(Gtk.Entry E) {
 		if( E != null){
-			string err="";
-			if(!this.check_regex(E.text,ref err)){
-				E.set_tooltip_text (GLib.Markup.escape_text(err,-1));
+			string err;
+			if(!this.my_conf.check_regex(E.text,out err)){
+				E.set_tooltip_text (err);
 				var bg=new Gdk.RGBA();
 				bg.parse("#FF0000");
 				E.override_color(Gtk.StateFlags.NORMAL,bg);
@@ -530,25 +530,13 @@ public class AYSettings : AYTab{
 				E.override_color(Gtk.StateFlags.NORMAL,null);
 			}
 		}
-	}
-
-	private bool check_regex(string pattern,ref string err_text){
-		bool ret=true;
-		try {
-			var regex = new Regex( pattern, RegexCompileFlags.EXTENDED );
-		} catch( RegexError re ) {
-			ret=false;
-			debug("check_regex err:%s",re.message);
-			err_text=re.message;
-		}
-		return ret;
 	}
 
 	private void check_entry_markup(Gtk.Entry E) {
 		if( E != null){
-			string err="";
-			if(!this.check_markup(E.text,ref err)){
-				E.set_tooltip_text (GLib.Markup.escape_text(err,-1));
+			string err;
+			if(!this.my_conf.check_markup(E.text,out err)){
+				E.set_tooltip_text (err);
 				var bg=new Gdk.RGBA();
 				bg.parse("#FF0000");
 				E.override_color(Gtk.StateFlags.NORMAL,bg);
@@ -557,21 +545,6 @@ public class AYSettings : AYTab{
 				E.override_color(Gtk.StateFlags.NORMAL,null);
 			}
 		}
-	}
-
-	private bool check_markup(string pattern,ref string err_text){
-		bool ret=true;
-		Pango.AttrList attr_list;
-		string text;
-		unichar accel_char;
-		try {
-			Pango.parse_markup(pattern,-1,(unichar)"_",out attr_list, out text, out accel_char);
-		} catch( Error re ) {
-			ret=false;
-			debug("check_markup err:%s",re.message);
-			err_text=re.message;
-		}
-		return ret;
 	}
 
 	private TreeIter? list_store_add_after_selected(string key,Gtk.ListStore store){
@@ -860,8 +833,8 @@ public class AYSettings : AYTab{
 							if(B!=null){
 								if(B.text!=this.my_conf.get_string(key,"")){
 									if(key=="terminal_prevent_close_regex" || key=="terminal_session_exclude_regex"){
-										string err="";
-										if(this.check_regex(B.text,ref err)){
+										string err;
+										if(this.my_conf.check_regex(B.text,out err)){
 											this.my_conf.set_string(key,B.text);
 										}else{
 											string title=_("AltYo %s error").printf(key);
@@ -870,8 +843,8 @@ public class AYSettings : AYTab{
 										}
 									}else
 									if(key=="tab_format" || key=="tab_title_format"){
-										string err="";
-										if(this.check_markup(B.text,ref err)){
+										string err;
+										if(this.my_conf.check_markup(B.text,out err)){
 											this.my_conf.set_string(key,B.text);
 										}else{
 											string title=_("AltYo %s error").printf(key);
@@ -900,8 +873,8 @@ public class AYSettings : AYTab{
 										1, out s2,
 										-1);
 										if(s1!=null && s2!=null){
-											if(this.check_regex(s1,ref err) &&
-											((key=="tab_title_format_regex" && this.check_markup(s2,ref err)) ||
+											if(this.my_conf.check_regex(s1,out err) &&
+											((key=="tab_title_format_regex" && this.my_conf.check_markup(s2,out err)) ||
 											  key!="tab_title_format_regex"
 											)){
 													sl+=s1;

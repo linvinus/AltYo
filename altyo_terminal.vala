@@ -357,12 +357,40 @@ public class AYTab : Object{
 	}
 
 	public void configure(MySettings my_conf){
-		this.tbutton.tab_format = my_conf.get_string("tab_format","[ _INDEX_ ]");
-		this.tbutton.tab_title_format = my_conf.get_string("tab_title_format","<span foreground='#FFF000'>_INDEX_</span>/_TITLE_");
-		this.tbutton.tab_title_regex = my_conf.get_string_list("tab_title_format_regex",{"^(mc) \\[","<span>_REPLACE_ </span>","([\\w\\.]+)@","<span font_weight='bold' foreground='#EEEEEE'>_USER_</span>","([\\w\\.\\-]+)\\]?:","@<span font_weight='bold' foreground='#FFF000'>_HOSTNAME_</span>:","([^:]*)$","<span>_PATH_</span>"},(ref new_val)=>{
-			if(new_val!=null && (new_val.length % 2)!=0){
+		this.tbutton.tab_format = my_conf.get_string("tab_format","[ _INDEX_ ]",(ref new_val)=>{
+			string err;
+			if(!my_conf.check_markup(new_val,out err)){
+				debug(_("tab_format wrong value! will be used default value. err:%s"),err);
 				return CFG_CHECK.USE_DEFAULT;
 			}
+
+			return CFG_CHECK.OK;
+			});
+
+		this.tbutton.tab_title_format = my_conf.get_string("tab_title_format","<span foreground='#FFF000'>_INDEX_</span>/_TITLE_",(ref new_val)=>{
+			string err;
+			if(!my_conf.check_markup(new_val,out err)){
+				debug(_("tab_title_format wrong value! will be used default value. err:%s"),err);
+				return CFG_CHECK.USE_DEFAULT;
+			}
+
+			return CFG_CHECK.OK;
+			});
+
+		this.tbutton.tab_title_regex = my_conf.get_string_list("tab_title_format_regex",{"^(mc) \\[","<span>_REPLACE_ </span>","([\\w\\.]+)@","<span font_weight='bold' foreground='#EEEEEE'>_USER_</span>","([\\w\\.\\-]+)\\]?:","@<span font_weight='bold' foreground='#FFF000'>_HOSTNAME_</span>:","([^:]*)$","<span>_PATH_</span>"},(ref new_val)=>{
+			if(new_val!=null && (new_val.length % 2)!=0){
+				debug(_("tab_title_format_regex odd value of array length! will be used default value."));
+				return CFG_CHECK.USE_DEFAULT;
+			}
+			for(int i=0; i<new_val.length-1;i+=2){
+				string err="";
+				string err2="";
+				if(!my_conf.check_regex(new_val[i],out err) || !my_conf.check_markup(new_val[i+1],out err2)){
+					debug(_("tab_title_format_regex wrong value! will be used default value. err:%s"),(err!=null?err:(err2!=null?err2:"unknown")));
+					return CFG_CHECK.USE_DEFAULT;
+				}
+			}
+
 			return CFG_CHECK.OK;
 			});
 
@@ -681,7 +709,22 @@ public class VTTerminal : AYTab{
 			});
 		this.vte_term.set_backspace_binding ((Vte.TerminalEraseBinding)delbinding);
 
-		string[] url_regexps = my_conf.get_string_list("terminal_url_regexps",{"http://[a-z0-9%-+?\\./]*","xdg-open"});
+		string[] url_regexps = my_conf.get_string_list("terminal_url_regexps",{"http://[a-z0-9%-+?\\./]*","xdg-open"},(ref new_val)=>{
+			if(new_val!=null && (new_val.length % 2)!=0){
+				debug(_("terminal_url_regexps odd value of array length! will be used default value."));
+				return CFG_CHECK.USE_DEFAULT;
+			}
+			for(int j=0; j<new_val.length-1;j+=2){
+				string err;
+				if(!my_conf.check_regex(new_val[j],out err)){
+					debug(_("terminal_url_regexps wrong value! will be used default value. err:%s"),err);
+					return CFG_CHECK.USE_DEFAULT;
+				}
+			}
+
+			return CFG_CHECK.OK;
+			});
+
 		if((url_regexps.length % 2) == 0){
 			this.vte_term.match_clear_all();
 			this.match_tags.clear();

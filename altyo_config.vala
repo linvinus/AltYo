@@ -442,6 +442,33 @@ public class MySettings : Object {
 			return CFG_TYPE.TYPE_UNKNOWN;
 		}
 	}
+
+	public bool check_markup(string pattern,out string err_text){
+		bool ret=true;
+		Pango.AttrList attr_list;
+		string text;
+		unichar accel_char;
+		try {
+			Pango.parse_markup(pattern,-1,(unichar)"_",out attr_list, out text, out accel_char);
+		} catch( Error re ) {
+			ret=false;
+			debug("check_markup err:%s",re.message);
+			err_text=re.message;
+		}
+		return ret;
+	}
+
+	public bool check_regex(string pattern,out string err_text){
+		bool ret=true;
+		try {
+			var regex = new Regex( pattern, RegexCompileFlags.EXTENDED );
+		} catch( RegexError re ) {
+			ret=false;
+			debug("check_regex err:%s",re.message);
+			err_text=re.message;
+		}
+		return ret;
+	}
 /*	todo
 public get_boolean_list
 public get_comment

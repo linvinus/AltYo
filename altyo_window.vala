@@ -1546,6 +1546,32 @@ public class AYObject :Object{
 			debug("ShowAbout end");
 	}
 
+	public void show_reset_to_defaults_dialog(){
+			var dialog = new MessageDialog (null, (DialogFlags.DESTROY_WITH_PARENT | DialogFlags.MODAL), MessageType.QUESTION, ButtonsType.YES_NO, _("Really reset to defaults?"));
+
+			dialog.response.connect ((response_id) => {
+				if(response_id == Gtk.ResponseType.YES){
+					//this.conf.
+					this.action_group.set_sensitive(true);//activate
+					this.action_group.get_action("open_settings").activate();//close
+					this.conf.reset_to_defaults();
+					this.action_group.get_action("open_settings").activate();//open
+					dialog.destroy ();
+				}else{
+					dialog.destroy ();
+				}
+			});
+
+			dialog.focus_out_event.connect (() => {
+				return true; //same bug as discribed in this.focus_out_event
+				});
+			dialog.set_transient_for(this.main_window);
+			dialog.show ();
+			dialog.grab_focus();
+			this.main_window.hotkey.send_net_active_window(dialog.get_window ());
+			dialog.run();
+	}
+
 	private bool check_for_existing_action(string name,string default_accel){
 		unowned Gtk.Action action = this.action_group.get_action(name);
 		unowned uint accelerator_key;

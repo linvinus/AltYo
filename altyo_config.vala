@@ -111,6 +111,16 @@ public class MySettings : Object {
 		this.changed=false;
 	}
 
+	public void reset_to_defaults(){
+			try {
+				debug("\treset_to_defaults settings file=%s\n",this.conf_file);
+				FileUtils.set_contents (this.conf_file, "", 0);
+				this.load_config();
+			} catch (FileError err) {
+				warning (err.message);
+			}
+	}
+
 	public bool get_boolean (string key,bool? def,check_boolean? check_cb=null){
 		if(!this.typemap.has_key(key))
 			this.typemap[key]=CFG_TYPE.TYPE_BOOLEAN;

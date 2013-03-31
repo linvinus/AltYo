@@ -80,6 +80,11 @@ public class AYSettings : AYTab{
 	}
 
 	[CCode (instance_pos = -1)]
+	public void on_reset_to_defaults(Gtk.Button w) {
+		GLib.Timeout.add(50,()=>{this.ayobject.show_reset_to_defaults_dialog();return false;});//async call
+	}
+
+	[CCode (instance_pos = -1)]
 	public void on_lock_keybindings_toggled  (Gtk.CheckButton w) {
 		this.ayobject.action_group.set_sensitive(!w.active);
 	}

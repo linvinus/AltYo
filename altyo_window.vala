@@ -1758,7 +1758,7 @@ public class AYObject :Object{
 		});
 
 		/* Add New Tab on <Ctrl><Shift>t */
-		this.add_window_accel("altyo_help", _("About"), _("About"), Gtk.Stock.NEW,"F1",()=>{
+		this.add_window_accel("altyo_about", _("About"), _("About"), Gtk.Stock.NEW,"",()=>{
 			this.ShowAbout();
 		});
 

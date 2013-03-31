@@ -838,7 +838,7 @@ public class VTTerminal : AYTab{
 			submenu.append(menuitem);
 		}
 
-		menuitem = (Gtk.MenuItem)acg.get_action("altyo_help").create_menu_item();
+		menuitem = (Gtk.MenuItem)acg.get_action("altyo_about").create_menu_item();
 		menu.append(menuitem);
 
 		menuitem = new Gtk.SeparatorMenuItem();

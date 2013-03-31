@@ -29,49 +29,6 @@
     <property name="step_increment">10</property>
     <property name="page_increment">100</property>
   </object>
-  <object class="GtkFileFilter" id="filefilter1">
-    <mime-types>
-      <mime-type>image/*</mime-type>
-    </mime-types>
-  </object>
-  <object class="GtkListStore" id="tab_title_format_regex">
-    <columns>
-      <!-- column-name pattern -->
-      <column type="gchararray"/>
-      <!-- column-name replace -->
-      <column type="gchararray"/>
-      <!-- column-name tooltip -->
-      <column type="gchararray"/>
-      <!-- column-name pattern_rgba -->
-      <column type="GdkRGBA"/>
-      <!-- column-name replace_rgba -->
-      <column type="GdkRGBA"/>
-      <!-- column-name pattern_s -->
-      <column type="gboolean"/>
-    </columns>
-  </object>
-  <object class="GtkAdjustment" id="terminal_height_adjustment">
-    <property name="lower">1</property>
-    <property name="upper">10000</property>
-    <property name="step_increment">10</property>
-    <property name="page_increment">100</property>
-  </object>
-  <object class="GtkListStore" id="keybindings_store">
-    <columns>
-      <!-- column-name action_name -->
-      <column type="gchararray"/>
-      <!-- column-name accel-description -->
-      <column type="gchararray"/>
-      <!-- column-name accel-key -->
-      <column type="guint"/>
-      <!-- column-name accel-mod -->
-      <column type="guint"/>
-      <!-- column-name accel-editable -->
-      <column type="gboolean"/>
-      <!-- column-name accel-tooltip -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
   <object class="GtkMenu" id="popup_command_list">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -155,18 +112,43 @@
       </row>
     </data>
   </object>
-  <object class="GtkListStore" id="terminal_url_regexps">
+  <object class="GtkListStore" id="tab_title_format_regex">
     <columns>
-      <!-- column-name match -->
+      <!-- column-name pattern -->
       <column type="gchararray"/>
-      <!-- column-name run -->
+      <!-- column-name replace -->
       <column type="gchararray"/>
       <!-- column-name tooltip -->
       <column type="gchararray"/>
-      <!-- column-name match_color -->
+      <!-- column-name pattern_rgba -->
       <column type="GdkRGBA"/>
-      <!-- column-name match_s -->
+      <!-- column-name replace_rgba -->
+      <column type="GdkRGBA"/>
+      <!-- column-name pattern_s -->
       <column type="gboolean"/>
+      <!-- column-name replace_s -->
+      <column type="gboolean"/>
+    </columns>
+  </object>
+  <object class="GtkFileFilter" id="filefilter1">
+    <mime-types>
+      <mime-type>image/*</mime-type>
+    </mime-types>
+  </object>
+  <object class="GtkListStore" id="keybindings_store">
+    <columns>
+      <!-- column-name action_name -->
+      <column type="gchararray"/>
+      <!-- column-name accel-description -->
+      <column type="gchararray"/>
+      <!-- column-name accel-key -->
+      <column type="guint"/>
+      <!-- column-name accel-mod -->
+      <column type="guint"/>
+      <!-- column-name accel-editable -->
+      <column type="gboolean"/>
+      <!-- column-name accel-tooltip -->
+      <column type="gchararray"/>
     </columns>
   </object>
   <object class="GtkScrolledWindow" id="settings-scrolledwindow">
@@ -1927,6 +1909,7 @@ Allow use mouse scroll in some programs,for example in less</property>
                                             <property name="hexpand">True</property>
                                             <property name="invisible_char">•</property>
                                             <property name="invisible_char_set">True</property>
+                                            <signal name="changed" handler="ay_settings_on_tab_format_markup" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">1</property>
@@ -1956,6 +1939,7 @@ Allow use mouse scroll in some programs,for example in less</property>
                                             <property name="hexpand">True</property>
                                             <property name="invisible_char">•</property>
                                             <property name="invisible_char_set">True</property>
+                                            <signal name="changed" handler="ay_settings_on_tab_title_format_markup" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">1</property>
@@ -2033,6 +2017,7 @@ Allow use mouse scroll in some programs,for example in less</property>
                                                 <signal name="edited" handler="ay_settings_on_tab_title_format_regex_cellrenderertext_replace_edited" swapped="no"/>
                                               </object>
                                               <attributes>
+                                                <attribute name="strikethrough">6</attribute>
                                                 <attribute name="text">1</attribute>
                                                 <attribute name="foreground-rgba">4</attribute>
                                               </attributes>
@@ -2763,6 +2748,12 @@ Allow use mouse scroll in some programs,for example in less</property>
       </row>
     </data>
   </object>
+  <object class="GtkAdjustment" id="terminal_height_adjustment">
+    <property name="lower">1</property>
+    <property name="upper">10000</property>
+    <property name="step_increment">10</property>
+    <property name="page_increment">100</property>
+  </object>
   <object class="GtkAdjustment" id="terminal_opacity_adjustment">
     <property name="upper">1</property>
     <property name="step_increment">0.10000000000000001</property>
@@ -2773,6 +2764,20 @@ Allow use mouse scroll in some programs,for example in less</property>
     <property name="upper">100000</property>
     <property name="step_increment">10</property>
     <property name="page_increment">100</property>
+  </object>
+  <object class="GtkListStore" id="terminal_url_regexps">
+    <columns>
+      <!-- column-name match -->
+      <column type="gchararray"/>
+      <!-- column-name run -->
+      <column type="gchararray"/>
+      <!-- column-name tooltip -->
+      <column type="gchararray"/>
+      <!-- column-name match_color -->
+      <column type="GdkRGBA"/>
+      <!-- column-name match_s -->
+      <column type="gboolean"/>
+    </columns>
   </object>
   <object class="GtkAdjustment" id="terminal_width_adjustment">
     <property name="lower">1</property>

@@ -193,7 +193,7 @@ public class VTToggleButton : Gtk.ToggleButton {
 		if((this.tab_title!=null && this.tab_title!="") ){
 			try{
 				GLib.Regex grx_arr;
-				string reg_title=this.tab_title; //GLib.Regex.escape_string(this.tab_title);
+				string reg_title=GLib.Markup.escape_text(this.tab_title,-1);//replace < > with &lt; &gt;
 				for(int i=0; i<this.tab_title_regex.length-1;i+=2){
 					grx_arr = new GLib.Regex(this.tab_title_regex[i]);
 

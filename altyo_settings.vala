@@ -327,7 +327,7 @@ public class AYSettings : AYTab{
 			bg.parse("#FF0000");
 			store.set (iter,
 			0, new_text,
-			2, err, /*tooltip*/
+			2, GLib.Markup.escape_text(err,-1), /*tooltip*/
 			3, bg,
 			5, true,/*strikethrough*/
 			-1);
@@ -358,9 +358,25 @@ public class AYSettings : AYTab{
         Gtk.TreeIter iter;
         if (!store.get_iter (out iter, path)) return;
 
-		store.set (iter,
+
+		string err="";
+		if(!this.check_markup(new_text,ref err)){
+			var bg=new Gdk.RGBA();
+			bg.parse("#FF0000");
+			store.set (iter,
 			1, new_text,
+			2, GLib.Markup.escape_text(err,-1), /*tooltip*/
+			4, bg,
+			6, true,/*strikethrough*/
 			-1);
+		}else{
+			store.set (iter,
+			1, new_text,
+			2, null,
+			4, null,
+			6, false,/*strikethrough*/
+			-1);
+		}
 	}
 
 	[CCode (instance_pos = -1)]
@@ -386,7 +402,7 @@ public class AYSettings : AYTab{
 			bg.parse("#FF0000");
 			store.set (iter,
 			0, new_text,
-			2, err, /*tooltip*/
+			2, GLib.Markup.escape_text(err,-1), /*tooltip*/
 			3, bg,
 			4, true,/*strikethrough*/
 			-1);
@@ -489,11 +505,23 @@ public class AYSettings : AYTab{
 		this.check_entry_regex(E);
 	}
 
+	[CCode (instance_pos = -1)]
+	public void on_tab_format_markup(Gtk.Editable editable) {
+		var E = builder.get_object ("tab_format") as Gtk.Entry;
+		this.check_entry_markup(E);
+	}
+
+	[CCode (instance_pos = -1)]
+	public void on_tab_title_format_markup(Gtk.Editable editable) {
+		var E = builder.get_object ("tab_title_format") as Gtk.Entry;
+		this.check_entry_markup(E);
+	}
+
 	private void check_entry_regex(Gtk.Entry E) {
 		if( E != null){
 			string err="";
 			if(!this.check_regex(E.text,ref err)){
-				E.set_tooltip_text (err);
+				E.set_tooltip_text (GLib.Markup.escape_text(err,-1));
 				var bg=new Gdk.RGBA();
 				bg.parse("#FF0000");
 				E.override_color(Gtk.StateFlags.NORMAL,bg);
@@ -511,6 +539,36 @@ public class AYSettings : AYTab{
 		} catch( RegexError re ) {
 			ret=false;
 			debug("check_regex err:%s",re.message);
+			err_text=re.message;
+		}
+		return ret;
+	}
+
+	private void check_entry_markup(Gtk.Entry E) {
+		if( E != null){
+			string err="";
+			if(!this.check_markup(E.text,ref err)){
+				E.set_tooltip_text (GLib.Markup.escape_text(err,-1));
+				var bg=new Gdk.RGBA();
+				bg.parse("#FF0000");
+				E.override_color(Gtk.StateFlags.NORMAL,bg);
+			}else{
+				E.set_tooltip_text (err);
+				E.override_color(Gtk.StateFlags.NORMAL,null);
+			}
+		}
+	}
+
+	private bool check_markup(string pattern,ref string err_text){
+		bool ret=true;
+		Pango.AttrList attr_list;
+		string text;
+		unichar accel_char;
+		try {
+			Pango.parse_markup(pattern,-1,(unichar)"_",out attr_list, out text, out accel_char);
+		} catch( Error re ) {
+			ret=false;
+			debug("check_markup err:%s",re.message);
 			err_text=re.message;
 		}
 		return ret;
@@ -811,6 +869,16 @@ public class AYSettings : AYTab{
 											this.ayobject.main_window.show_message_box(title,msg);
 										}
 									}else
+									if(key=="tab_format" || key=="tab_title_format"){
+										string err="";
+										if(this.check_markup(B.text,ref err)){
+											this.my_conf.set_string(key,B.text);
+										}else{
+											string title=_("AltYo %s error").printf(key);
+											string msg=_("New value of %s will not be saved!\n%s").printf(key,err);
+											this.ayobject.main_window.show_message_box(title,msg);
+										}
+									}else
 										this.my_conf.set_string(key,B.text);
 								}
 							}else
@@ -832,7 +900,10 @@ public class AYSettings : AYTab{
 										1, out s2,
 										-1);
 										if(s1!=null && s2!=null){
-											if(this.check_regex(s1,ref err)){
+											if(this.check_regex(s1,ref err) &&
+											((key=="tab_title_format_regex" && this.check_markup(s2,ref err)) ||
+											  key!="tab_title_format_regex"
+											)){
 													sl+=s1;
 													sl+=s2;
 												debug("s1=%s s2=%s",s1,s2);

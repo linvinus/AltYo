@@ -51,7 +51,7 @@ public class VTMainWindow : Window{
 	public bool maximized=false;
 	private bool update_maximized_size=false;
 	public bool animation_enabled = true;
-	public int animation_speed=25;
+	public int animation_speed=5;
 	public int pull_steps=20;
 	public bool pull_animation_active = false;
 	public bool pull_active = false;

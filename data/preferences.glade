@@ -29,6 +29,27 @@
     <property name="step_increment">10</property>
     <property name="page_increment">100</property>
   </object>
+  <object class="GtkFileFilter" id="filefilter1">
+    <mime-types>
+      <mime-type>image/*</mime-type>
+    </mime-types>
+  </object>
+  <object class="GtkListStore" id="keybindings_store">
+    <columns>
+      <!-- column-name action_name -->
+      <column type="gchararray"/>
+      <!-- column-name accel-description -->
+      <column type="gchararray"/>
+      <!-- column-name accel-key -->
+      <column type="guint"/>
+      <!-- column-name accel-mod -->
+      <column type="guint"/>
+      <!-- column-name accel-editable -->
+      <column type="gboolean"/>
+      <!-- column-name accel-tooltip -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
   <object class="GtkMenu" id="popup_command_list">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -112,42 +133,9 @@
       </row>
     </data>
   </object>
-  <object class="GtkListStore" id="tab_title_format_regex">
+  <object class="GtkListStore" id="terminal_autostart_session">
     <columns>
-      <!-- column-name pattern -->
-      <column type="gchararray"/>
-      <!-- column-name replace -->
-      <column type="gchararray"/>
-      <!-- column-name tooltip -->
-      <column type="gchararray"/>
-      <!-- column-name pattern_rgba -->
-      <column type="GdkRGBA"/>
-      <!-- column-name replace_rgba -->
-      <column type="GdkRGBA"/>
-      <!-- column-name pattern_s -->
-      <column type="gboolean"/>
-      <!-- column-name replace_s -->
-      <column type="gboolean"/>
-    </columns>
-  </object>
-  <object class="GtkFileFilter" id="filefilter1">
-    <mime-types>
-      <mime-type>image/*</mime-type>
-    </mime-types>
-  </object>
-  <object class="GtkListStore" id="keybindings_store">
-    <columns>
-      <!-- column-name action_name -->
-      <column type="gchararray"/>
-      <!-- column-name accel-description -->
-      <column type="gchararray"/>
-      <!-- column-name accel-key -->
-      <column type="guint"/>
-      <!-- column-name accel-mod -->
-      <column type="guint"/>
-      <!-- column-name accel-editable -->
-      <column type="gboolean"/>
-      <!-- column-name accel-tooltip -->
+      <!-- column-name command -->
       <column type="gchararray"/>
     </columns>
   </object>
@@ -1804,7 +1792,7 @@ Allow use mouse scroll in some programs,for example in less</property>
                   <object class="GtkLabel" id="label2">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Keybindings</property>
+                    <property name="label" translatable="yes">Key bindings</property>
                     <property name="angle">90</property>
                   </object>
                   <packing>
@@ -1817,6 +1805,94 @@ Allow use mouse scroll in some programs,for example in less</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkExpander" id="expander6">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <child>
+                          <object class="GtkBox" id="box17">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="margin_left">5</property>
+                            <property name="orientation">vertical</property>
+                            <child>
+                              <object class="GtkLinkButton" id="linkbutton1">
+                                <property name="label" translatable="yes">Pango Text Attribute Markup Language</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="has_tooltip">True</property>
+                                <property name="halign">start</property>
+                                <property name="valign">start</property>
+                                <property name="relief">none</property>
+                                <property name="xalign">0</property>
+                                <property name="yalign">0</property>
+                                <property name="uri">https://developer.gnome.org/pango/stable/PangoMarkupFormat.html</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLinkButton" id="linkbutton2">
+                                <property name="label" translatable="yes">Regular expression syntax</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="has_tooltip">True</property>
+                                <property name="halign">start</property>
+                                <property name="valign">start</property>
+                                <property name="relief">none</property>
+                                <property name="xalign">0</property>
+                                <property name="yalign">0</property>
+                                <property name="uri">https://developer.gnome.org/glib/stable/glib-regex-syntax.html</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="label56">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="xalign">0</property>
+                                <property name="label" translatable="yes">&lt;b&gt;Tab: format&lt;/b&gt;
+    _INDEX_ - replace by tab index
+    _TITLE_ - replace by terminal title.
+
+&lt;b&gt;Tab: pattern&lt;/b&gt;
+    _REPLACE_ - replace match pattern, but not subpatterns.
+    _USER_ - use match subpattern as user name.
+    _HOSTNAME_ - use match subpattern as host name.
+    _PATH_ - use match subpattern as path.</property>
+                                <property name="use_markup">True</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">2</property>
+                              </packing>
+                            </child>
+                          </object>
+                        </child>
+                        <child type="label">
+                          <object class="GtkLabel" id="label55">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Help</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
                     <child>
                       <object class="GtkExpander" id="expander1">
                         <property name="visible">True</property>
@@ -2056,7 +2132,7 @@ Allow use mouse scroll in some programs,for example in less</property>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">0</property>
+                        <property name="position">1</property>
                       </packing>
                     </child>
                     <child>
@@ -2102,7 +2178,7 @@ Allow use mouse scroll in some programs,for example in less</property>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">1</property>
+                        <property name="position">2</property>
                       </packing>
                     </child>
                     <child>
@@ -2334,7 +2410,7 @@ Allow use mouse scroll in some programs,for example in less</property>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">2</property>
+                        <property name="position">3</property>
                       </packing>
                     </child>
                     <child>
@@ -2532,7 +2608,7 @@ Allow use mouse scroll in some programs,for example in less</property>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">3</property>
+                        <property name="position">4</property>
                       </packing>
                     </child>
                     <child>
@@ -2592,8 +2668,6 @@ Allow use mouse scroll in some programs,for example in less</property>
                                   <object class="GtkTextView" id="program_style">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="hexpand">True</property>
-                                    <property name="vexpand">True</property>
                                   </object>
                                 </child>
                               </object>
@@ -2616,7 +2690,7 @@ Allow use mouse scroll in some programs,for example in less</property>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">4</property>
+                        <property name="position">5</property>
                       </packing>
                     </child>
                   </object>
@@ -2697,10 +2771,22 @@ Allow use mouse scroll in some programs,for example in less</property>
     <property name="step_increment">10</property>
     <property name="page_increment">100</property>
   </object>
-  <object class="GtkListStore" id="terminal_autostart_session">
+  <object class="GtkListStore" id="tab_title_format_regex">
     <columns>
-      <!-- column-name command -->
+      <!-- column-name pattern -->
       <column type="gchararray"/>
+      <!-- column-name replace -->
+      <column type="gchararray"/>
+      <!-- column-name tooltip -->
+      <column type="gchararray"/>
+      <!-- column-name pattern_rgba -->
+      <column type="GdkRGBA"/>
+      <!-- column-name replace_rgba -->
+      <column type="GdkRGBA"/>
+      <!-- column-name pattern_s -->
+      <column type="gboolean"/>
+      <!-- column-name replace_s -->
+      <column type="gboolean"/>
     </columns>
   </object>
   <object class="GtkAdjustment" id="terminal_background_saturation_adjustment">

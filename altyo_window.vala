@@ -86,8 +86,6 @@ public class VTMainWindow : Window{
 	public bool autohide=false;
 
 	private uint32 last_focus_out_event_time;
-	private Gdk.Atom? atom_wm_transient_for = null;
-	private Gdk.Atom? atom_type_window = null;
 	private unowned Gdk.Window ignore_last_active_window = null;
 
 	public VTMainWindow(WindowType type) {
@@ -121,8 +119,6 @@ public class VTMainWindow : Window{
 //~ 		this.override_background_color(StateFlags.NORMAL, c);
 		//this.pixwin.set_visual (this.screen.get_rgba_visual ());//transparancy
 		//this.pixwin.set_app_paintable(true);//do not draw backgroud
-		this.atom_wm_transient_for = Gdk.Atom.intern("WM_TRANSIENT_FOR",false);
-		this.atom_type_window = Gdk.Atom.intern("WINDOW",false);
 	}
 
 	public void CreateVTWindow(MySettings conf) {
@@ -462,8 +458,13 @@ public class VTMainWindow : Window{
 		 * as workaround, remember last focus-out time,
 		 * if it more than 100ms, then window was unfocused
 		 * */
+		 X.Window w=this.hotkey.get_input_focus();
+		 var slf_win=this.get_window();
+		 if(slf_win!=null)
+			debug("slf=%d w=%d",(int)Gdk.X11Window.get_xid(slf_win),(int)w);
 		//debug("toggle_widnow %d %d",(int)this.last_event_time,(int)this.hotkey.last_focus_out_event_time);
-		if(!this.keep_above && (this.current_state == WStates.VISIBLE) && ((int)this.hotkey.last_key_event_time-(int)this.last_focus_out_event_time)>100){
+		//&& !this.is_active && (this.current_state == WStates.VISIBLE) && ((int)this.hotkey.last_key_event_time-(int)this.last_focus_out_event_time)>100
+		if(!this.keep_above && slf_win!=null && Gdk.X11Window.get_xid(slf_win) != w ){
 			this.window_set_active();
 			this.update_events();
 			return;
@@ -557,31 +558,17 @@ public class VTMainWindow : Window{
 			 this.autohide &&
 			!this.pull_active &&
 		     this.current_state==WStates.VISIBLE ){
-				unowned Gdk.Screen gscreen = this.get_screen ();
-				Gdk.Window active_window = gscreen.get_active_window();
-				Gdk.Window self_win = this.get_window();
-				if(self_win!=null && active_window!=null)
-					debug("active_window active_xid=%x this_xid=%x",(int)Gdk.X11Window.get_xid(active_window),(int)Gdk.X11Window.get_xid(self_win));
-				else
-					debug("active_window2 active=%x this=%x",(int)active_window,(int)self_win);
+				var slf_win=this.get_window();
+				if(slf_win!=null){
+					X.Window w=this.hotkey.get_input_focus();
+					X.Window slf_xid = Gdk.X11Window.get_xid(slf_win);
+					debug("active_window4 slf=%x focus=%x",(int)slf_xid,(int)w);
 
-				if( self_win      != null &&
-					active_window != null &&
-					active_window != this.ignore_last_active_window &&
-					active_window != self_win){
-
-					uint8[] data =new uint8[4];//vala bug uint8 data[8]; wrong length
-					//if exist,check property WM_TRANSIENT_FOR of new active window
-					if(Gdk.property_get(active_window,this.atom_wm_transient_for,this.atom_type_window,(ulong)0,(ulong)4,(int)0,null,null,out data) ){
-						void* p =data;
-						uint32 transient_for_xid=*((uint32*)p);
-						debug("active_window3 active_xid=%x this_xid=%x == WM_TRANSIENT_FOR_xid=%x",(int)Gdk.X11Window.get_xid(active_window),(int)Gdk.X11Window.get_xid(self_win),transient_for_xid);
-						if(transient_for_xid!=Gdk.X11Window.get_xid(self_win))
-							this.pull_up();//WM_TRANSIENT_FOR not our, pull_up
-						else
-							this.ignore_last_active_window=active_window;//remember it
-					}else{
-						this.pull_up();//not exist,hide
+					if(slf_xid!=w){
+						X.Window transient = this.hotkey.get_transient_for_xid(w);
+						debug("active_window5 slf=%x transient_for=%x",(int)slf_xid,(int)transient);
+						if(transient!=slf_xid)//include transient==0
+							this.pull_up();//not exist,hide
 					}
 				}
 		}

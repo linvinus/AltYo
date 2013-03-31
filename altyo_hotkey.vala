@@ -197,4 +197,32 @@ public class PanelHotkey {
 //~ 	        display.send_event (Gdk.x11_get_default_root_xwindow(), false, X.EventMask.SubstructureRedirectMask|X.EventMask.StructureNotifyMask, ref e);
 
 	}
+	public X.Window get_input_focus(){
+		int revert_to_return;
+		X.Window w,root_return;
+		X.Window root_xwin=Gdk.X11Window.get_xid(this.root_window);
+
+		this.display.get_input_focus(out w, out revert_to_return);
+		//debug("get_input_focus=%x revert_to_return=%d",(int)w,revert_to_return);
+		do{
+			X.Window parent_return;
+			X.Window[] children_return;
+			X.Atom[] protocols=null;
+			this.display.query_tree (w, out root_return, out parent_return, out children_return);
+			//debug("get_input_focus=%x",(int)parent_return);
+			this.display.get_wm_protocols(parent_return,out protocols);
+			if(parent_return!=root_xwin && protocols!=null)
+				w=parent_return;
+			else
+				break;
+		}while(true);
+
+		return w;
+	}
+
+	public X.Window get_transient_for_xid(X.Window w){
+		X.Window result;
+		this.display.get_transient_for_hint(w,out result);
+		return result;
+	}
 }

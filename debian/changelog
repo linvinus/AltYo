@@ -1,3 +1,29 @@
+altyo (0.2~130402-linvinus1) quantal; urgency=low
+
+  * new: possibility, check css style in settings dialog
+  * new: possibility, check regexps, error message is in tooltip
+  * new: possibility, move regexp in regexp list, add new records after selected row
+  * new: possibility, don't save incorect regexps
+  * update: improve checking of config variables
+  * update: improve animation, now have acceleration 
+  * fix: window hints on start maximized
+  * fix: losted step on pull up
+  * new: possibility, check markup in settings dialog, and place the error message into tooltip 
+  * new: possibility, don't save the incorrect markups 
+  * fix: escape text in tab title, prevent markup error
+  * update: more checks on loading. inform user when value is not applied.
+  * rename: action altyo_help to altyo_about. disable F1 key binding
+  * update: replace altyo_help in terminal popup menu
+  * new: "Help" expander at "Advanced" tab.
+  * update: Russian translation
+  * new: "reset to defaults" button in settings dialog.
+  * update: Russian translation
+  * improvement: don't use timestamps for definition of focus state
+  * improvement: remove libgee from dependencies (instead use glib HashTable and glib List), this also reduce usage of RAM 
+  * improvement: manually process gtk events only if really needed
+
+ -- denis <linvinus@gmail.com>  Mon, 01 Apr 2013 23:43:16 +0400
+
 altyo (0.2~130326-linvinus1) quantal; urgency=low
 
   * improve: auto hide fix: unpredictable resize on startup.

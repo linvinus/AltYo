@@ -167,18 +167,24 @@ public class VTMainWindow : Window{
 			if(this.current_state==WStates.VISIBLE){
 				this.configure_position();
 				this.update_position_size();
-				this.update_events();
+				/*update maximize state according to config_maximized*/
+				if(!this.config_maximized && this.maximized){
+					this.unmaximize();
+				}else
+				if(this.config_maximized && !this.maximized){
+					this.maximize();
+				}
 			}
 			});
 
 		this.check_monitor_and_configure_position();
 
 		if(this.config_maximized && conf.get_boolean("start_hidden",false)){
-				this.ayobject.on_maximize(false);
-				this.maximized=true;
-				this.update_position_size();
+			this.ayobject.on_maximize(false);
+			this.maximized=true;
+			this.update_position_size(false);
 		}else{
-			this.update_position_size();
+			this.update_position_size(false);
 		}
 		debug("CreateVTWindow end");
 
@@ -243,24 +249,19 @@ public class VTMainWindow : Window{
 				int h=(this.pull_h-(this.pull_h/arith_progress)*(arith_progress2) );
 
 				this.resize(this.pull_w,h+1);
-				this.update_events();
+				this.display_sync();
 				this.pull_step++;
 				return true;//continue animation
 			}else{
-				this.update_events();
 
 				if(this.pull_step==this.pull_steps){
 					debug("on_pull_down last step");
-					/* update hints, so first pull up ,after maximize, will be smooth
-					 * this size will be after unmaximize (pull_up call unmaximize)
-					 * */
 					if(this.pull_maximized){
 						this.maximize();
 					}else{
-						//this.set_default_size(this.pull_w,pull_h);
 						this.resize (this.pull_w,pull_h);
 					}
-					this.update_events();
+					this.display_sync();
 					this.pull_step++;
 					return true;//continue animation
 				}
@@ -273,21 +274,6 @@ public class VTMainWindow : Window{
 				this.current_state=WStates.VISIBLE;
 				this.update_position_size();
 				this.window_set_active();
-				this.update_events();
-
-//~				if(this.pull_maximized){
-//~					this.maximize();
-//~					this.update_events();
-//~				}
-//~
-//~				var ch=this.pixwin.get_child();//.reparent(this);//reparent from offscreen window
-//~				this.pixwin.remove(ch);
-//~				this.add(ch);
-//~
-//~				this.update_position_size();
-//~				this.window_set_active();
-//~				this.update_events();
-
 				return false;
 			}
 	}
@@ -307,14 +293,14 @@ public class VTMainWindow : Window{
 					this.move (this.pull_x,this.pull_y);
 				else
 					this.move (this.pull_x,this.orig_y);
+
 			debug("pull_down pull_maximized=%d",(int)this.pull_maximized);
 			if(this.pull_maximized)
 				this.maximize();
-			this.update_events();
 			this.current_state=WStates.VISIBLE;
-			this.update_position_size();//reset size to -1
+			this.update_position_size(false);//reset size to -1
 			this.window_set_active();
-			this.queue_draw();//fix some draw problems (when mouse inside hvbox after show?).
+			//this.queue_draw();//fix some draw problems (when mouse inside hvbox after show?).
 			this.pull_active=false;
 			return;
 		}
@@ -323,7 +309,7 @@ public class VTMainWindow : Window{
 			this.configure_position();
 		this.resize (this.pull_w,2);//start height
 		this.show();
-		this.update_events();
+		this.display_sync();
 		this.current_state=WStates.VISIBLE;
 		this.window_set_active();//update keep_above stick and focus
 		if((this.mouse_follow || !this.gravity_north_west) && !this.pull_maximized){
@@ -333,7 +319,7 @@ public class VTMainWindow : Window{
 				this.move (this.pull_x,this.pull_y);
 			else
 				this.move (this.pull_x,this.orig_y);
-		this.update_events();
+		this.display_sync();
 		if (this.pull_w >1 && this.pull_h >1)
 			this.pull_step=0;
 		else
@@ -353,7 +339,8 @@ public class VTMainWindow : Window{
 				//debug("on_pull_down h=%d",h);
 				this.resize(this.pull_w,h+1);
 				this.pull_step++;
-				this.update_events();
+//~ 				this.update_events();
+				this.display_sync();
 
 				return true;//continue animation
 			}else{
@@ -466,13 +453,13 @@ public class VTMainWindow : Window{
 		//&& !this.is_active && (this.current_state == WStates.VISIBLE) && ((int)this.hotkey.last_key_event_time-(int)this.last_focus_out_event_time)>100
 		if(!this.keep_above && slf_win!=null && Gdk.X11Window.get_xid(slf_win) != w ){
 			this.window_set_active();
-			this.update_events();
 			return;
 		}
-			if(this.current_state == WStates.HIDDEN)
-					this.pull_down();
-				else
-					this.pull_up();
+
+		if(this.current_state == WStates.HIDDEN)
+				this.pull_down();
+			else
+				this.pull_up();
 		debug("toggle_widnow end");
 	}
 
@@ -590,18 +577,20 @@ public class VTMainWindow : Window{
 
 
 	public void update_events(){
-//~ 		var window = this.get_window();
-//~ 			//window.process_updates(true);//force update
-//~ 			if(window!=null)
-//~ 				window.enable_synchronized_configure();//force update
 		while (Gtk.events_pending ()){
 			Gtk.main_iteration ();
 			Gdk.flush();
 			}
-
 	}
 
-	public void update_position_size(){
+	public void display_sync(){
+ 		var window = this.get_window();
+		if(window!=null){
+			window.get_display().sync();
+		}
+	}
+
+	public void update_position_size(bool force_sync=true){
 				debug ("update_position_size start maximized=%d config_maximized=%d",(int)this.maximized ,(int)this.config_maximized);
 				/*update terminal align policy
 				 * */
@@ -626,24 +615,24 @@ public class VTMainWindow : Window{
 							this.ayobject.main_vbox.set_size_request(this.ayobject.terminal_width,should_be_h);
 							this.set_default_size(this.ayobject.terminal_width,should_be_h);
 							this.resize(this.ayobject.terminal_width,should_be_h);
-							this.update_events();
+							if(force_sync)
+								this.update_events();
 							this.move (this.orig_x,this.orig_y);
 							/* inform window manager where window should be placed*/
 							/* gem.win_gravity=Gdk.Gravity.NORTH; not working for multi-seat systems =( ,
 							 * use move_resize instead */
 							if(this.visible)
 								this.get_window().move_resize(this.orig_x,this.orig_y,this.ayobject.terminal_width,should_be_h);
+							if(force_sync)
+								this.display_sync();
 							debug ("update_position_size should_be_h=%d terminal_width=%d x=%d y=%d",should_be_h,this.ayobject.terminal_width,this.orig_x,this.orig_y) ;
 						}else
 							this.move (this.orig_x,this.orig_y);
-
 				}else{
 					this.ayobject.hvbox.set_size_request(-1,-1);//reset size
 					this.ayobject.tasks_notebook.set_size_request(-1,-1);//reset size
 					this.ayobject.main_vbox.set_size_request(-1,-1);//reset size
 					this.set_size_request(-1,-1);//reset size
-					if(this.animation_enabled && !this.maximized && this.config_maximized)
-						this.maximize();
 				}
 	}
 	public void reconfigure(){
@@ -744,8 +733,9 @@ public class VTMainWindow : Window{
 
 			/*calculate window size according to config_maximized*/
 			if(this.config_maximized){
+				/*used in pull_up, only if start hidden*/
 				this.ayobject.terminal_width=(int)rectangle.width;
-				this.ayobject.terminal_height=(int)rectangle.height-rectangle.height/3;
+				this.ayobject.terminal_height=(int)rectangle.height;
 			}else{
 
 				if(w<101){
@@ -760,19 +750,6 @@ public class VTMainWindow : Window{
 					this.ayobject.terminal_height=h;
 				}
 			}
-
-			/*update maximize state according to config_maximized*/
-			if(this.visible){
-				if(!this.config_maximized && this.maximized){
-					this.unmaximize();
-					//this.update_events();
-				}else
-				if(this.config_maximized && !this.maximized){
-					this.maximize();
-					//this.update_events();
-				}
-			}
-
 
 			if(this.position>3)this.position=1;
 
@@ -2062,8 +2039,6 @@ public class AYObject :Object{
 			this.main_window.set_default_size(this.terminal_width,should_be_h);
 			this.main_window.resize (this.terminal_width,should_be_h);
 			this.main_window.queue_resize_no_redraw();
-
-			//GLib.Timeout.add(10,()=>{debug("Update events");this.update_events(); return false;});
 			debug ("search_hide terminal_width=%d should_be_h=%d",terminal_width,should_be_h) ;
 		}
 		this.search_hbox.hide();

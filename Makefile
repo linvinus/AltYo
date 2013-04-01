@@ -30,7 +30,7 @@ ifeq ($(LINUX.DISTRIB.ID),debian)
 #debian specific possibility
 VALA_FLAGS += -D ALTERNATE_SCREEN_SCROLL
 endif
-VALA_FLAGS += --vapidir ./vapi --pkg gtk+-3.0 --pkg vte-2.90 --pkg gee-1.0 --pkg gdk-x11-3.0 --pkg cairo --pkg posix --pkg gmodule-2.0
+VALA_FLAGS += --vapidir ./vapi --pkg gtk+-3.0 --pkg vte-2.90 --pkg gdk-x11-3.0 --pkg cairo --pkg posix --pkg gmodule-2.0
 #DESTDIR?=
 PREFIX?=/usr
 

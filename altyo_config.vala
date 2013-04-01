@@ -16,7 +16,6 @@
  */
 
 using Gtk;
-using Gee;
 public enum CFG_CHECK{
 	OK,
 	REPLACE,
@@ -29,6 +28,7 @@ public delegate CFG_CHECK check_integer(ref int i);
 public delegate CFG_CHECK check_double(ref double d);
 public delegate CFG_CHECK check_boolean(ref bool b);
 
+[SimpleType]
 public enum CFG_TYPE{
 	TYPE_UNKNOWN,
 	TYPE_BOOLEAN,
@@ -39,6 +39,7 @@ public enum CFG_TYPE{
 	TYPE_ACCEL_STRING
 	}
 
+
 public class MySettings : Object {
 	private KeyFile kf;
 	public string conf_file;
@@ -47,12 +48,12 @@ public class MySettings : Object {
 	private string qconnection_section {get;set;default = "QConnections";}
 	private bool opened {get;set; default = false;}
 	private bool changed {get;set; default = false;}
-	private HashMap<string, CFG_TYPE> typemap;
+	private HashTable<string, int> typemap;
 
 	public signal void on_load();
 
 	public MySettings(string? cmd_conf_file=null){
-		this.typemap = new HashMap<string, CFG_TYPE> ();
+		this.typemap = new HashTable<string, int> (str_hash, str_equal);
 		if(cmd_conf_file!=null)
 			this.conf_file = cmd_conf_file;
 		else
@@ -122,10 +123,11 @@ public class MySettings : Object {
 	}
 
 	public bool get_boolean (string key,bool? def,check_boolean? check_cb=null){
-		if(!this.typemap.has_key(key))
-			this.typemap[key]=CFG_TYPE.TYPE_BOOLEAN;
-		else if(this.typemap[key]!=CFG_TYPE.TYPE_BOOLEAN)
-			assert(this.typemap[key]==CFG_TYPE.TYPE_BOOLEAN);
+		int key_type;
+		if(!this.typemap.lookup_extended(key,null,out key_type))
+			this.typemap.insert(key,(int)CFG_TYPE.TYPE_BOOLEAN);
+		else if(key_type!=CFG_TYPE.TYPE_BOOLEAN)
+			assert(key_type==CFG_TYPE.TYPE_BOOLEAN);
 
 		bool ret = def;
 			try {
@@ -152,10 +154,11 @@ public class MySettings : Object {
 		}
 
 	public int get_integer (string key,int def,check_integer? check_cb=null){
-		if(!this.typemap.has_key(key))
-			this.typemap[key]=CFG_TYPE.TYPE_INTEGER;
-		else if(this.typemap[key]!=CFG_TYPE.TYPE_INTEGER)
-			assert(this.typemap[key]==CFG_TYPE.TYPE_INTEGER);
+		int key_type;
+		if(!this.typemap.lookup_extended(key,null,out key_type))
+			this.typemap.insert(key,CFG_TYPE.TYPE_INTEGER);
+		else if(key_type!=CFG_TYPE.TYPE_INTEGER)
+			assert(key_type==CFG_TYPE.TYPE_INTEGER);
 
 		int ret = def;
 			try {
@@ -182,10 +185,11 @@ public class MySettings : Object {
 		}
 
 	public double get_double (string key,double def,check_double? check_cb=null){
-		if(!this.typemap.has_key(key))
-			this.typemap[key]=CFG_TYPE.TYPE_DOUBLE;
-		else if(this.typemap[key]!=CFG_TYPE.TYPE_DOUBLE)
-			assert(this.typemap[key]==CFG_TYPE.TYPE_DOUBLE);
+		int key_type;
+		if(!this.typemap.lookup_extended(key,null,out key_type))
+			this.typemap.insert(key,CFG_TYPE.TYPE_DOUBLE);
+		else if(key_type!=CFG_TYPE.TYPE_DOUBLE)
+			assert(key_type==CFG_TYPE.TYPE_DOUBLE);
 
 		double ret = def;
 			try {
@@ -212,10 +216,11 @@ public class MySettings : Object {
 		}
 
 	public string[] get_string_list (string key, string[] def,check_string_list? check_cb=null) {
-		if(!this.typemap.has_key(key))
-			this.typemap[key]=CFG_TYPE.TYPE_STRING_LIST;
-		else if(this.typemap[key]!=CFG_TYPE.TYPE_STRING_LIST)
-			assert(this.typemap[key]==CFG_TYPE.TYPE_STRING_LIST);
+		int key_type;
+		if(!this.typemap.lookup_extended(key,null,out key_type))
+			this.typemap.insert(key,CFG_TYPE.TYPE_STRING_LIST);
+		else if(key_type!=CFG_TYPE.TYPE_STRING_LIST)
+			assert(key_type==CFG_TYPE.TYPE_STRING_LIST);
 
 		string[] ret = def;
 			try {
@@ -242,10 +247,11 @@ public class MySettings : Object {
 		}
 
 	public string? get_string(string key, string def,check_string? check_cb=null) {
-		if(!this.typemap.has_key(key))
-			this.typemap[key]=CFG_TYPE.TYPE_STRING;
-		else if(this.typemap[key]!=CFG_TYPE.TYPE_STRING)
-			assert(this.typemap[key]==CFG_TYPE.TYPE_STRING);
+		int key_type;
+		if(!this.typemap.lookup_extended(key,null,out key_type))
+			this.typemap.insert(key,CFG_TYPE.TYPE_STRING);
+		else if(key_type!=CFG_TYPE.TYPE_STRING)
+			assert(key_type==CFG_TYPE.TYPE_STRING);
 
 		string ret = def;
 			try {
@@ -273,10 +279,11 @@ public class MySettings : Object {
 
 
 	public bool set_string_list (string key, string[] def) {
-		if(!this.typemap.has_key(key))
-			this.typemap[key]=CFG_TYPE.TYPE_STRING_LIST;
-		else if(this.typemap[key]!=CFG_TYPE.TYPE_STRING_LIST)
-			assert(this.typemap[key]==CFG_TYPE.TYPE_STRING_LIST);
+		int key_type;
+		if(!this.typemap.lookup_extended(key,null,out key_type))
+			this.typemap.insert(key,CFG_TYPE.TYPE_STRING_LIST);
+		else if(key_type!=CFG_TYPE.TYPE_STRING_LIST)
+			assert(key_type==CFG_TYPE.TYPE_STRING_LIST);
 
 		bool ret = true;
 			try {
@@ -290,10 +297,11 @@ public class MySettings : Object {
 		}
 
 	public bool set_string(string key, string? def) {
-		if(!this.typemap.has_key(key))
-			this.typemap[key]=CFG_TYPE.TYPE_STRING;
-		else if(this.typemap[key]!=CFG_TYPE.TYPE_STRING)
-			assert(this.typemap[key]==CFG_TYPE.TYPE_STRING);
+		int key_type;
+		if(!this.typemap.lookup_extended(key,null,out key_type))
+			this.typemap.insert(key,CFG_TYPE.TYPE_STRING);
+		else if(key_type!=CFG_TYPE.TYPE_STRING)
+			assert(key_type==CFG_TYPE.TYPE_STRING);
 
 		bool ret = true;
 			try {
@@ -310,10 +318,11 @@ public class MySettings : Object {
 		}
 
 	public bool set_integer (string key,int def){
-		if(!this.typemap.has_key(key))
-			this.typemap[key]=CFG_TYPE.TYPE_INTEGER;
-		else if(this.typemap[key]!=CFG_TYPE.TYPE_INTEGER)
-			assert(this.typemap[key]==CFG_TYPE.TYPE_INTEGER);
+		int key_type;
+		if(!this.typemap.lookup_extended(key,null,out key_type))
+			this.typemap.insert(key,CFG_TYPE.TYPE_INTEGER);
+		else if(key_type!=CFG_TYPE.TYPE_INTEGER)
+			assert(key_type==CFG_TYPE.TYPE_INTEGER);
 
 		bool ret = true;
 			try {
@@ -327,10 +336,11 @@ public class MySettings : Object {
 		}
 
 	public bool set_boolean (string key,bool def){
-		if(!this.typemap.has_key(key))
-			this.typemap[key]=CFG_TYPE.TYPE_BOOLEAN;
-		else if(this.typemap[key]!=CFG_TYPE.TYPE_BOOLEAN)
-			assert(this.typemap[key]==CFG_TYPE.TYPE_BOOLEAN);
+		int key_type;
+		if(!this.typemap.lookup_extended(key,null,out key_type))
+			this.typemap.insert(key,CFG_TYPE.TYPE_BOOLEAN);
+		else if(key_type!=CFG_TYPE.TYPE_BOOLEAN)
+			assert(key_type==CFG_TYPE.TYPE_BOOLEAN);
 
 		bool ret = true;
 			try {
@@ -344,10 +354,11 @@ public class MySettings : Object {
 		}
 
 	public bool set_double (string key,double def,uint digits_after_comma){
-		if(!this.typemap.has_key(key))
-			this.typemap[key]=CFG_TYPE.TYPE_DOUBLE;
-		else if(this.typemap[key]!=CFG_TYPE.TYPE_DOUBLE)
-			assert(this.typemap[key]==CFG_TYPE.TYPE_DOUBLE);
+		int key_type;
+		if(!this.typemap.lookup_extended(key,null,out key_type))
+			this.typemap.insert(key,CFG_TYPE.TYPE_DOUBLE);
+		else if(key_type!=CFG_TYPE.TYPE_DOUBLE)
+			assert(key_type==CFG_TYPE.TYPE_DOUBLE);
 
 		bool ret = true;
 			try {
@@ -378,10 +389,11 @@ public class MySettings : Object {
 		}
 
 	public string get_accel_string(string key, string def,check_string? check_cb=null) {
-		if(!this.typemap.has_key(key))
-			this.typemap[key]=CFG_TYPE.TYPE_ACCEL_STRING;
-		else if(this.typemap[key]!=CFG_TYPE.TYPE_ACCEL_STRING)
-			assert(this.typemap[key]==CFG_TYPE.TYPE_ACCEL_STRING);
+		int key_type;
+		if(!this.typemap.lookup_extended(key,null,out key_type))
+			this.typemap.insert(key,CFG_TYPE.TYPE_ACCEL_STRING);
+		else if(key_type!=CFG_TYPE.TYPE_ACCEL_STRING)
+			assert(key_type==CFG_TYPE.TYPE_ACCEL_STRING);
 
 		string ret = def;
 			try {
@@ -396,10 +408,11 @@ public class MySettings : Object {
 		}
 
 	public bool set_accel_string(string key, string def) {
-		if(!this.typemap.has_key(key))
-			this.typemap[key]=CFG_TYPE.TYPE_ACCEL_STRING;
-		else if(this.typemap[key]!=CFG_TYPE.TYPE_ACCEL_STRING)
-			assert(this.typemap[key]==CFG_TYPE.TYPE_ACCEL_STRING);
+		int key_type;
+		if(!this.typemap.lookup_extended(key,null,out key_type))
+			this.typemap.insert(key,CFG_TYPE.TYPE_ACCEL_STRING);
+		else if(key_type!=CFG_TYPE.TYPE_ACCEL_STRING)
+			assert(key_type==CFG_TYPE.TYPE_ACCEL_STRING);
 
 		bool ret = true;
 			try {
@@ -445,8 +458,9 @@ public class MySettings : Object {
 	}
 
 	public CFG_TYPE  get_key_type(string key){
-		if(this.typemap.has_key(key)){
-			return this.typemap[key];
+		int key_type;
+		if(this.typemap.lookup_extended(key,null,out key_type)){
+			return (CFG_TYPE)key_type;
 		}else{
 			debug("get_key_type TYPE_UNKNOWN for key=%s",key);
 			return CFG_TYPE.TYPE_UNKNOWN;

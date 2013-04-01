@@ -221,12 +221,14 @@ int main (string[] args) {
 
 				if ( conf.get_boolean("start_hidden",false) ){
 					win.pull_up();//all workarounds is inside pull_up,pull_down,update_position_size
+					win.pull_maximized=win.start_maximized;
 				}else{
 					win.show();
-					win.update_events();
 					if(!win.start_maximized){
 						win.update_position_size();
-					}else{//already maximized
+					}else{
+						win.maximize();
+						win.update_events();//process maximize event
 						win.update_geometry_hints(win.get_allocated_height(),win.get_allocated_width(),win.get_allocated_height(),win.get_allocated_width(),Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
 					}
 					win.window_set_active();

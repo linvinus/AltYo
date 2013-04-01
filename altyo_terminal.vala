@@ -17,7 +17,6 @@
 
 using Gtk;
 using Vte;
-using Gee;
 #if HAVE_QLIST
 using GnomeKeyring;
 #endif
@@ -408,7 +407,7 @@ public class VTTerminal : AYTab{
 	public bool auto_restart {get; set; default = true;}
 	public bool match_case {get; set; default = false;}
 	private OnChildExitCallBack on_child_exit {get; set; default = null;}
-	private HashMap<int, string> match_tags;
+	private HashTable<int, string> match_tags;
 
 
 	public VTTerminal(MySettings my_conf,Notebook notebook, int tab_index,string? session_command=null,string? session_path=null,OnChildExitCallBack? on_child_exit=null) {
@@ -418,7 +417,7 @@ public class VTTerminal : AYTab{
 		if(on_child_exit!=null)
 			this.on_child_exit=on_child_exit;
 
-		this.match_tags = new HashMap<int, string> ();
+		this.match_tags = new HashTable<int, string> (direct_hash, direct_equal);
 		this.vte_term = new Vte.Terminal();
 //~		this.vte_term.halign=Gtk.Align.START;
 //~		this.vte_term.valign=Gtk.Align.START;
@@ -727,13 +726,16 @@ public class VTTerminal : AYTab{
 
 		if((url_regexps.length % 2) == 0){
 			this.vte_term.match_clear_all();
-			this.match_tags.clear();
+			this.match_tags.foreach ((key, val) => {
+				free(val);
+			});
+			this.match_tags.steal_all();
 			debug("url_regexps=%d",url_regexps.length);
 			for(i=0;i<url_regexps.length-1;i+=2){
 				var key=this.vte_term.match_add_gregex((new Regex (url_regexps[i])),0);
 				debug("match_add_gregex %d",key);
-				if(!this.match_tags.has_key(key))
-					this.match_tags[key]=url_regexps[i+1];
+				if(!this.match_tags.lookup_extended(key,null,null))
+					this.match_tags.insert(key,url_regexps[i+1]);
 			}
 		}
 
@@ -866,9 +868,10 @@ public class VTTerminal : AYTab{
 			int col = ((int)event.x - (inner_border!=null ? inner_border.left : 0)) / char_width;
 			int row = ((int)event.y - (inner_border!=null ? inner_border.top : 0)) / char_height;
 			var match = this.vte_term.match_check (col, row, out tag);
-			if(tag!=null && this.match_tags.has_key(tag) ){
-					debug("check_match run=%s params=%s",this.match_tags[tag],match);
-					Posix.system(((string)this.match_tags[tag])+" '"+match+"' &");
+			string tag_value="";
+			if(tag!=null && this.match_tags.lookup_extended(tag,null,out tag_value) ){
+					debug("check_match run=%s params=%s",tag_value,match);
+					Posix.system(tag_value+" '"+match+"' &");
 			}
 	}
 

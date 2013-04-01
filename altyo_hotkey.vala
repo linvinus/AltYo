@@ -17,7 +17,6 @@
 
 using Gtk;
 using Gdk;
-using Gee;
 
 // Based on http://code.valaide.org/content/global-hotkeys by Oliver Sauder <os@esite.ch>
 
@@ -36,6 +35,10 @@ public class KeyBinding {
 		this.combination = combination;
 		this.key_code = key_code;
 		this.modifiers = modifiers;
+	}
+
+	~KeyBinding(){
+		free(this.combination);
 	}
 }
 
@@ -67,11 +70,11 @@ public class PanelHotkey {
         Gdk.ModifierType.MOD2_MASK|Gdk.ModifierType.LOCK_MASK|Gdk.ModifierType.MOD5_MASK
     };
 
-    private static Gee.List<KeyBinding> bindings;
+    private GLib.List<KeyBinding> bindings;
 
     public PanelHotkey () {
         _instance = this;
-        bindings = new Gee.ArrayList<KeyBinding> ();
+        bindings = new GLib.List<KeyBinding> ();
         root_window = get_default_root_window ();
 
         this.display = Gdk.x11_get_default_xdisplay ();
@@ -143,7 +146,10 @@ public class PanelHotkey {
 				}
 				if(!error){
 					var binding = new KeyBinding (combination, key_code, modifiers);
-					bindings.add (binding);
+					if(bindings.first()!=null)
+						bindings.append(binding);
+					else
+						bindings.prepend(binding);
 					return binding;
 				}
 			}
@@ -153,12 +159,12 @@ public class PanelHotkey {
     }
 
     public void unbind(){
-		foreach(var bind in bindings){
+		foreach(unowned KeyBinding bind in bindings){
 			foreach (var mod in lock_modifiers){
 				this.display.ungrab_key ((int)bind.key_code, bind.modifiers | mod, x_id);
+				flush();
 			}
 			bindings.remove(bind);
-			//bind.destroy();
 		}
 	}
 
@@ -204,19 +210,24 @@ public class PanelHotkey {
 
 		this.display.get_input_focus(out w, out revert_to_return);
 		//debug("get_input_focus=%x revert_to_return=%d",(int)w,revert_to_return);
-		do{
-			X.Window parent_return;
-			X.Window[] children_return;
-			X.Atom[] protocols=null;
-			this.display.query_tree (w, out root_return, out parent_return, out children_return);
-			//debug("get_input_focus=%x",(int)parent_return);
-			this.display.get_wm_protocols(parent_return,out protocols);
-			if(parent_return!=root_xwin && protocols!=null)
-				w=parent_return;
-			else
-				break;
-		}while(true);
+		if(w>1){//not None, not PointerRoot, see XGetInputFocus
+			do{
+				X.Window parent_return;
+				X.Window[] children_return;
+				X.Atom[] protocols=null;
+				this.display.query_tree (w, out root_return, out parent_return, out children_return);
+				//debug("get_input_focus=%x",(int)parent_return);
 
+				if(parent_return>1){
+					this.display.get_wm_protocols(parent_return,out protocols);
+					if(parent_return != root_xwin && protocols != null)
+						w=parent_return;
+					else
+						break;
+				}else
+					break;
+			}while(true);
+		}
 		return w;
 	}
 

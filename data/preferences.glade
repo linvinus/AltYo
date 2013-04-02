@@ -133,37 +133,6 @@
       </row>
     </data>
   </object>
-  <object class="GtkAdjustment" id="tab_max_width_adjustment">
-    <property name="lower">-1</property>
-    <property name="upper">10000</property>
-    <property name="value">-1</property>
-    <property name="step_increment">10</property>
-    <property name="page_increment">100</property>
-  </object>
-  <object class="GtkListStore" id="tab_title_format_regex">
-    <columns>
-      <!-- column-name pattern -->
-      <column type="gchararray"/>
-      <!-- column-name replace -->
-      <column type="gchararray"/>
-      <!-- column-name tooltip -->
-      <column type="gchararray"/>
-      <!-- column-name pattern_rgba -->
-      <column type="GdkRGBA"/>
-      <!-- column-name replace_rgba -->
-      <column type="GdkRGBA"/>
-      <!-- column-name pattern_s -->
-      <column type="gboolean"/>
-      <!-- column-name replace_s -->
-      <column type="gboolean"/>
-    </columns>
-  </object>
-  <object class="GtkListStore" id="terminal_autostart_session">
-    <columns>
-      <!-- column-name command -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
   <object class="GtkScrolledWindow" id="settings-scrolledwindow">
     <property name="visible">True</property>
     <property name="can_focus">True</property>
@@ -2743,53 +2712,98 @@ Allow use mouse scroll in some programs,for example in less</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButtonBox" id="buttonbox1">
+              <object class="GtkGrid" id="grid6">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="layout_style">center</property>
+                <property name="column_homogeneous">True</property>
                 <child>
-                  <object class="GtkButton" id="button4">
-                    <property name="label">gtk-revert-to-saved</property>
+                  <object class="GtkButtonBox" id="buttonbox1">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="use_stock">True</property>
-                    <signal name="clicked" handler="ay_settings_on_reset_to_defaults" swapped="no"/>
+                    <property name="can_focus">False</property>
+                    <property name="layout_style">center</property>
+                    <child>
+                      <object class="GtkButton" id="button4">
+                        <property name="label">gtk-revert-to-saved</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="use_stock">True</property>
+                        <signal name="clicked" handler="ay_settings_on_reset_to_defaults" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="button2">
+                        <property name="label">gtk-apply</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="use_stock">True</property>
+                        <signal name="clicked" handler="ay_settings_on_apply" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="button3">
+                        <property name="label">gtk-cancel</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="use_stock">True</property>
+                        <signal name="clicked" handler="ay_settings_on_close" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">3</property>
+                      </packing>
+                    </child>
                   </object>
                   <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">0</property>
+                    <property name="width">1</property>
+                    <property name="height">1</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="button2">
-                    <property name="label">gtk-apply</property>
+                  <object class="GtkLinkButton" id="config_path_linkbutton">
+                    <property name="label" translatable="yes">config.ini</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="use_stock">True</property>
-                    <signal name="clicked" handler="ay_settings_on_apply" swapped="no"/>
+                    <property name="has_tooltip">True</property>
+                    <property name="halign">start</property>
+                    <property name="valign">start</property>
+                    <property name="relief">none</property>
+                    <property name="xalign">0</property>
+                    <property name="uri">http://glade.gnome.org</property>
                   </object>
                   <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">0</property>
+                    <property name="width">1</property>
+                    <property name="height">1</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="button3">
-                    <property name="label">gtk-cancel</property>
+                  <object class="GtkLabel" id="label58">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="use_stock">True</property>
-                    <signal name="clicked" handler="ay_settings_on_close" swapped="no"/>
+                    <property name="can_focus">False</property>
                   </object>
                   <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">2</property>
+                    <property name="left_attach">2</property>
+                    <property name="top_attach">0</property>
+                    <property name="width">1</property>
+                    <property name="height">1</property>
                   </packing>
                 </child>
               </object>
@@ -2803,6 +2817,37 @@ Allow use mouse scroll in some programs,for example in less</property>
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkAdjustment" id="tab_max_width_adjustment">
+    <property name="lower">-1</property>
+    <property name="upper">10000</property>
+    <property name="value">-1</property>
+    <property name="step_increment">10</property>
+    <property name="page_increment">100</property>
+  </object>
+  <object class="GtkListStore" id="tab_title_format_regex">
+    <columns>
+      <!-- column-name pattern -->
+      <column type="gchararray"/>
+      <!-- column-name replace -->
+      <column type="gchararray"/>
+      <!-- column-name tooltip -->
+      <column type="gchararray"/>
+      <!-- column-name pattern_rgba -->
+      <column type="GdkRGBA"/>
+      <!-- column-name replace_rgba -->
+      <column type="GdkRGBA"/>
+      <!-- column-name pattern_s -->
+      <column type="gboolean"/>
+      <!-- column-name replace_s -->
+      <column type="gboolean"/>
+    </columns>
+  </object>
+  <object class="GtkListStore" id="terminal_autostart_session">
+    <columns>
+      <!-- column-name command -->
+      <column type="gchararray"/>
+    </columns>
   </object>
   <object class="GtkAdjustment" id="terminal_background_saturation_adjustment">
     <property name="upper">1</property>

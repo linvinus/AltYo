@@ -28,6 +28,9 @@ public class AYSettings : AYTab{
 				this.builder.connect_signals(this);
 				var B = builder.get_object ("settings-scrolledwindow") as Gtk.Widget;
 				this.hbox.add(B);
+				var L = builder.get_object ("config_path_linkbutton") as Gtk.LinkButton;
+				L.label=my_conf.conf_file;
+				L.uri="file://"+my_conf.conf_file;
 				this.get_from_conf();
  			} catch (Error e) {
  				error ("loading menu builder file: %s", e.message);

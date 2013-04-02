@@ -2749,10 +2749,11 @@ Allow use mouse scroll in some programs,for example in less</property>
                 <property name="layout_style">center</property>
                 <child>
                   <object class="GtkButton" id="button4">
-                    <property name="label" translatable="yes">Reset to defaults</property>
+                    <property name="label">gtk-revert-to-saved</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <property name="use_stock">True</property>
                     <signal name="clicked" handler="ay_settings_on_reset_to_defaults" swapped="no"/>
                   </object>
                   <packing>

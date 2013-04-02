@@ -1511,7 +1511,8 @@ public class AYObject :Object{
 	}
 
 	public void show_reset_to_defaults_dialog(){
-			var dialog = new MessageDialog (null, (DialogFlags.DESTROY_WITH_PARENT | DialogFlags.MODAL), MessageType.QUESTION, ButtonsType.YES_NO, _("Really reset to defaults?"));
+			string msg=_("Really reset to defaults?\nCurrent settings will be saved in backup file %s.bak").printf(this.conf.conf_file);
+			var dialog = new MessageDialog (null, (DialogFlags.DESTROY_WITH_PARENT | DialogFlags.MODAL), MessageType.QUESTION, ButtonsType.YES_NO, msg);
 
 			dialog.response.connect ((response_id) => {
 				if(response_id == Gtk.ResponseType.YES){

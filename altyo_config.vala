@@ -113,6 +113,10 @@ public class MySettings : Object {
 	}
 
 	public void reset_to_defaults(){
+			var tmp=this.conf_file;
+			this.conf_file+=".bak";
+			this.save(true);//save backup
+			this.conf_file=tmp;
 			try {
 				debug("\treset_to_defaults settings file=%s\n",this.conf_file);
 				FileUtils.set_contents (this.conf_file, "", 0);

@@ -376,7 +376,7 @@ public class AYTab : Object{
 			return CFG_CHECK.OK;
 			});
 
-		this.tbutton.tab_title_regex = my_conf.get_string_list("tab_title_format_regex",{"^(mc) \\[","<span>_REPLACE_ </span>","([\\w\\.]+)@","<span font_weight='bold' foreground='#EEEEEE'>_USER_</span>","([\\w\\.\\-]+)\\]?:","@<span font_weight='bold' foreground='#FFF000'>_HOSTNAME_</span>:","([^:]*)$","<span>_PATH_</span>"},(ref new_val)=>{
+		this.tbutton.tab_title_regex = my_conf.get_string_list("tab_title_format_regex",{"^(mc) \\[","<span>_REPLACE_ </span>","([\\w\\.]+)@","<span font_weight='bold' foreground='#EEEEEE'>_USER_</span>@","([\\w\\.\\-]+)\\]?:(?!/{2})","<span font_weight='bold' foreground='#FFF000'>_HOSTNAME_</span>:","([^:]*)$","<span>_PATH_</span>"},(ref new_val)=>{
 			if(new_val!=null && (new_val.length % 2)!=0){
 				debug(_("tab_title_format_regex odd value of array length! will be used default value."));
 				return CFG_CHECK.USE_DEFAULT;

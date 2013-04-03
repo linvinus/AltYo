@@ -193,6 +193,7 @@ public class VTToggleButton : Gtk.ToggleButton {
 			try{
 				GLib.Regex grx_arr;
 				string reg_title=GLib.Markup.escape_text(this.tab_title,-1);//replace < > with &lt; &gt;
+				bool done[4]={false,false,false,false};
 				for(int i=0; i<this.tab_title_regex.length-1;i+=2){
 					grx_arr = new GLib.Regex(this.tab_title_regex[i]);
 
@@ -200,24 +201,32 @@ public class VTToggleButton : Gtk.ToggleButton {
 							debug(" RegexEvalCallback %s %s %d",result.str,match_info.fetch(0),match_info.get_match_count());
 							GLib.Regex grx;
 
-							if(Regex.match_simple(".*_REPLACE_.*",this.tab_title_regex[i+1])){
+							if(!done[0] && Regex.match_simple(".*_REPLACE_.*",this.tab_title_regex[i+1])){
+								//done[0]=true;//replace is allowed repeatedly
 								grx = new GLib.Regex(GLib.Regex.escape_string("_REPLACE_"));
 								result.append(grx.replace_literal(this.tab_title_regex[i+1],(ssize_t) this.tab_title_regex[i+1].size(), 0, match_info.fetch(match_info.get_match_count()-1)) );
+								return true;//stop
 							}else
-							if(Regex.match_simple(".*_USER_.*",this.tab_title_regex[i+1])){
+							if(!done[1] && Regex.match_simple(".*_USER_.*",this.tab_title_regex[i+1])){
+								done[1]=true;
 								grx = new GLib.Regex(GLib.Regex.escape_string("_USER_"));
 								result.append(grx.replace_literal(this.tab_title_regex[i+1],(ssize_t) this.tab_title_regex[i+1].size(), 0, match_info.fetch(match_info.get_match_count()-1)) );
+								return true;//stop
 							}else
-							if(Regex.match_simple(".*_HOSTNAME_.*",this.tab_title_regex[i+1])){
+							if(!done[2] && Regex.match_simple(".*_HOSTNAME_.*",this.tab_title_regex[i+1])){
+								done[2]=true;
 								grx = new GLib.Regex(GLib.Regex.escape_string("_HOSTNAME_"));
 								result.append(grx.replace_literal(this.tab_title_regex[i+1],(ssize_t) this.tab_title_regex[i+1].size(), 0, match_info.fetch(match_info.get_match_count()-1)) );
 								this.host_name=match_info.fetch(match_info.get_match_count()-1);
+								return true;//stop
 							}else
-							if(Regex.match_simple(".*_PATH_.*",this.tab_title_regex[i+1])){
+							if(!done[3] && Regex.match_simple(".*_PATH_.*",this.tab_title_regex[i+1])){
+								done[3]=true;
 								grx = new GLib.Regex(GLib.Regex.escape_string("_PATH_"));
 								result.append(grx.replace_literal(this.tab_title_regex[i+1],(ssize_t) this.tab_title_regex[i+1].size(), 0, match_info.fetch(match_info.get_match_count()-1)) );
+								return true;//stop
 							}
-							return false;
+							return false;//continue
 						} );
 					//g_free(grx_arr);
 				}
@@ -376,7 +385,7 @@ public class AYTab : Object{
 			return CFG_CHECK.OK;
 			});
 
-		this.tbutton.tab_title_regex = my_conf.get_string_list("tab_title_format_regex",{"^(mc) \\[","<span>_REPLACE_ </span>","([\\w\\.]+)@","<span font_weight='bold' foreground='#EEEEEE'>_USER_</span>@","([\\w\\.\\-]+)\\]?:(?!/{2})","<span font_weight='bold' foreground='#FFF000'>_HOSTNAME_</span>:","([^:]*)$","<span>_PATH_</span>"},(ref new_val)=>{
+		this.tbutton.tab_title_regex = my_conf.get_string_list("tab_title_format_regex",{"^(mc) \\[","<span>_REPLACE_ </span>","([\\w\\.]+)@","<span font_weight='bold' foreground='#EEEEEE'>_USER_</span>@","@([\\w\\.\\-]+)\\]?:(?!/{2})","@<span font_weight='bold' foreground='#FFF000'>_HOSTNAME_</span>:","([^:]*)$","<span>_PATH_</span>"},(ref new_val)=>{
 			if(new_val!=null && (new_val.length % 2)!=0){
 				debug(_("tab_title_format_regex odd value of array length! will be used default value."));
 				return CFG_CHECK.USE_DEFAULT;

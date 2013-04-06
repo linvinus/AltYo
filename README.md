@@ -23,7 +23,7 @@ Main program advantages.
      You can setup, on which monitor start by default.
      Program have mode "Follow the mouse", in this mode, after hiding, window will shown on same monitor with mouse pointer.
 
-[![Main window](http://storage5.static.itmages.ru/i/13/0306/s_1362553192_8481235_e88c7350b2.png)](http://itmages.ru/image/view/926657/e88c7350)
+[![Main window](http://storage6.static.itmages.ru/i/13/0406/s_1365230653_4853839_d41d8cd98f.png)](http://itmages.ru/image/view/971951/d41d8cd9)
 [![Preferences Look and feel](http://storage3.static.itmages.ru/i/13/0406/s_1365229810_3352986_d41d8cd98f.png)](http://itmages.ru/image/view/971932/d41d8cd9)
 [![Preferences Key bindings](http://storage5.static.itmages.ru/i/13/0406/s_1365229912_4764716_d41d8cd98f.png)](http://itmages.ru/image/view/971933/d41d8cd9)
 [![Preferences Advanced](http://storage6.static.itmages.ru/i/13/0406/s_1365229959_4473970_d41d8cd98f.png)](http://itmages.ru/image/view/971934/d41d8cd9)

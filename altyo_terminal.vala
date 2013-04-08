@@ -717,7 +717,7 @@ public class VTTerminal : AYTab{
 			});
 		this.vte_term.set_backspace_binding ((Vte.TerminalEraseBinding)delbinding);
 
-		string[] url_regexps = my_conf.get_string_list("terminal_url_regexps",{"http://[a-z0-9%-+?\\./]*","xdg-open"},(ref new_val)=>{
+		string[] url_regexps = my_conf.get_string_list("terminal_url_regexps",{"((?i)http|https|ftp|sftp)\\://([a-zA-Z0-9\\-]+\\.)+[a-zA-Z]+(:[0-9]+)?(/([a-zA-Z0-9\\(\\)\\[\\]\\{\\};\\!\\*'\"`\\:@&=\\+\\$\\,/\\?#\\-\\_\\.\\~%\\^<>\\|\\\\])*)?","xdg-open"},(ref new_val)=>{
 			if(new_val!=null && (new_val.length % 2)!=0){
 				debug(_("terminal_url_regexps odd value of array length! will be used default value."));
 				return CFG_CHECK.USE_DEFAULT;

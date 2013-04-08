@@ -28,7 +28,7 @@ Main program advantages.
 [![Preferences Key bindings](http://storage5.static.itmages.ru/i/13/0406/s_1365229912_4764716_d41d8cd98f.png)](http://itmages.ru/image/view/971933/d41d8cd9)
 [![Preferences Advanced](http://storage6.static.itmages.ru/i/13/0406/s_1365229959_4473970_d41d8cd98f.png)](http://itmages.ru/image/view/971934/d41d8cd9)
 
-Source code available there https://github.com/linvinus/AltYoA
+Source code available there https://github.com/linvinus/AltYo
 
 small video presentation of available features - (obsolete) http://youtu.be/9W8m6T7HyVs and http://youtu.be/utxeh-SBTvI
 

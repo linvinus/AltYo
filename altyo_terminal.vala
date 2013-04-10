@@ -315,6 +315,12 @@ public class VTToggleButton : Gtk.ToggleButton {
 		this.label.ellipsize = tmp;
 	}
 
+	public void reconfigure(){
+		var s=this.tab_title;
+		this.tab_title=null;
+		this.set_title(this.tab_index,s);//force update title
+	}
+
 }//private class VTToggleButton
 
 public class AYTab : Object{
@@ -406,6 +412,8 @@ public class AYTab : Object{
 			if(new_val<-1){new_val=-1;return CFG_CHECK.REPLACE;}
 			return CFG_CHECK.OK;
 			});
+
+		this.tbutton.reconfigure();
 	}
 
 }

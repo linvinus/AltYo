@@ -241,7 +241,7 @@ public class VTToggleButton : Gtk.ToggleButton {
 		}else{
 			try{
 				var grx_index = new GLib.Regex(GLib.Regex.escape_string("_INDEX_"));
-                result2 = grx_index.replace_literal(this.tab_format,(ssize_t) this.tab_title_format.size(), 0, tab_index.to_string() );
+                result2 = grx_index.replace_literal(this.tab_format,(ssize_t) this.tab_format.size(), 0, tab_index.to_string() );
 
 			}catch(GLib.RegexError e){
 				this.label.set_markup("TAB: Error in regexp");

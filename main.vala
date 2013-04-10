@@ -170,7 +170,10 @@ int main (string[] args) {
 							debug("exec %s",s);
 							S+=" "+s;
 						}
-						((VTMainWindow)list.data).ayobject.add_tab(S);
+						VTMainWindow mwin = ((VTMainWindow)list.data);
+						mwin.ayobject.add_tab(S);
+						if(mwin.current_state == WStates.HIDDEN)
+							mwin.pull_down();
 					}
 				}else
 				if (Globals.opt_help) {

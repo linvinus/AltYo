@@ -67,6 +67,7 @@ public class VTToggleButton : Gtk.ToggleButton {
 	public string markup_normal  {get;set;}
 	public string markup_active  {get;set;}
 	public string markup_prelight  {get;set;}
+	private bool force_update_tab_title {get;set;default = false;}
 
 	//private string label_text;
 
@@ -180,9 +181,11 @@ public class VTToggleButton : Gtk.ToggleButton {
 
 	public bool set_title(int tab_index,string? title){
 		debug("set_title(%d,%s)",tab_index,title);
-		if((this.tab_title != null && this.tab_title == title && this.tab_index == tab_index )||
-		   (title == null && this.tab_index == tab_index ))
+		if( ((this.tab_title != null && this.tab_title == title && this.tab_index == tab_index )||
+		   (title == null && this.tab_index == tab_index )) && this.force_update_tab_title==false )
 			return false; //prevent unneccesary redraw
+
+		this.force_update_tab_title=false;
 
 		if(title!=null && title!="")
 			this.tab_title = title;
@@ -316,9 +319,8 @@ public class VTToggleButton : Gtk.ToggleButton {
 	}
 
 	public void reconfigure(){
-		var s=this.tab_title;
-		this.tab_title=null;
-		this.set_title(this.tab_index,s);//force update title
+		this.force_update_tab_title=true;
+		this.set_title(this.tab_index,this.tab_title);//force update title
 	}
 
 }//private class VTToggleButton

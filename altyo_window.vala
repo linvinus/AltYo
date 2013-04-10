@@ -1077,15 +1077,16 @@ public class AYObject :Object{
 			this.reconfigure();
 			});
 
-		//add type totype array
-		this.conf.get_boolean("terminal_new_tab_in_current_directory",true);
-		this.conf.get_string("terminal_prevent_close_regex","/?ssh\\ ?|/?scp\\ ?|/?wget\\ ?");
-		this.conf.get_string("terminal_session_exclude_regex","/?zsh\\ ?|/?mc\\ ?|/?bash\\ ?");
 	}//CreateAYObject
 
 
 	public void reconfigure(){
 		debug("reconfigure AYObject");
+
+		//add type into type array
+		this.conf.get_boolean("terminal_new_tab_in_current_directory",true);
+		this.conf.get_string("terminal_prevent_close_regex","/?ssh\\ ?|/?scp\\ ?|/?wget\\ ?");
+		this.conf.get_string("terminal_session_exclude_regex","/?zsh\\ ?|/?mc\\ ?|/?bash\\ ?");
 
 		this.terminal_width = conf.get_integer("terminal_width",80,(ref new_val)=>{
 			if(new_val<1){new_val=this.terminal_width;return CFG_CHECK.REPLACE;}
@@ -1162,7 +1163,7 @@ public class AYObject :Object{
 		if(vtt is VTTerminal){
 			bool close=true;
 			VTTerminal vt=(VTTerminal)vtt;
-			var grx_exclude = new GLib.Regex(this.conf.get_string("terminal_prevent_close_regex","",(ref new_val)=>{
+			var prevent_s = this.conf.get_string("terminal_prevent_close_regex","",(ref new_val)=>{
 			string err;
 			if(!this.conf.check_regex(new_val,out err)){
 				debug(_("terminal_prevent_close_regex wrong value! will be used default value. err:%s"),err);
@@ -1170,7 +1171,12 @@ public class AYObject :Object{
 			}
 
 			return CFG_CHECK.OK;
-			}));
+			});
+
+			GLib.Regex? grx_exclude=null;
+
+			if(prevent_s !=null && prevent_s != "" )
+				grx_exclude = new GLib.Regex(prevent_s);
 
 			string[] childs = {};
 			childs+=vt.find_tty_pgrp(vt.pid,FIND_TTY.CMDLINE);
@@ -1182,7 +1188,7 @@ public class AYObject :Object{
 			}
 			foreach(string ch in childs){
 				debug("checking %s",ch);
-				if(grx_exclude.match_all(ch,0,null)){
+				if(grx_exclude!=null && grx_exclude.match_all(ch,0,null)){
 					var q=_("Found important task \"%s\"").printf(ch);
 					q+="\n"+_("Close tab anyway?");
 					var dialog = new MessageDialog (null, (DialogFlags.DESTROY_WITH_PARENT | DialogFlags.MODAL), MessageType.QUESTION, ButtonsType.YES_NO, q);

@@ -1,3 +1,23 @@
+altyo (0.3~rc1-linvinus1) quantal; urgency=low
+  * improvements: use stock icon for settings action "Reset to defaults" 
+  * improvements: save the settings to a backup, before reset to defaults
+  * new: Link button to current config in settings dialog.
+  * improvements: more strict regexp for path
+  * improvements: more strict regexps
+  * update: readme
+  * update: readme
+  * update: url regexp according to http://en.wikipedia.org/wiki/Percent-encoding#Types_of_URI_characters
+  * update: Russian translation
+  * fix: tab_format.size
+  * improvement: update tab title on reconfigure
+  * fix: ignore terminal_prevent_close_regex empty value 
+  * fix: update some options on reset 
+  * fix: update tab title on reload v2
+  * improvement: pull down on remote exec
+  * improvement: draw stylish background in tab button
+
+ -- denis <linvinus@gmail.com>  Fri, 12 Apr 2013 10:43:01 +0400
+
 altyo (0.2~130402-linvinus1) quantal; urgency=low
 
   * new: possibility, check css style in settings dialog

@@ -171,7 +171,7 @@ int main (string[] args) {
 							S+=" "+s;
 						}
 						VTMainWindow mwin = ((VTMainWindow)list.data);
-						mwin.ayobject.add_tab(S);
+						mwin.ayobject.add_tab_with_title(S,S);
 						if(mwin.current_state == WStates.HIDDEN)
 							mwin.pull_down();
 					}

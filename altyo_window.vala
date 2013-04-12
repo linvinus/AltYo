@@ -640,9 +640,9 @@ public class VTMainWindow : Window{
 		var css_main = new CssProvider ();
 		string style_str= ""+
 					 "VTToggleButton GtkLabel  { font: Mono 10; -GtkWidget-focus-padding: 0px; -GtkButton-default-border:0px; -GtkButton-default-outside-border:0px; -GtkButton-inner-border:0px; border-width:0px; -outer-stroke-width: 0px; margin:0px; padding:0px;}"+
-					 "VTToggleButton {-GtkWidget-focus-padding: 0px;  -GtkButton-default-border:0px; -GtkButton-default-outside-border:0px; -GtkButton-inner-border:0px; border-width: 0px; -outer-stroke-width: 0px; border-radius: 0px; border-style: solid;  background-image: none; margin:0px; padding:1px 1px 0px 1px; background-color: alpha(#000000,0.0); color: #AAAAAA; transition: 0ms ease-in-out;}"+
-					 "VTToggleButton:active{background-color: #00AAAA; color: #000000; transition: 0ms ease-in-out;}"+
-					 "VTToggleButton:prelight {background-color: #AAAAAA; color: #000000; transition: 0ms ease-in-out;}"+
+					 "VTToggleButton {-GtkWidget-focus-padding: 0px;-GtkButton-default-border:0px;-GtkButton-default-outside-border:0px;-GtkButton-inner-border:0px;border-color:alpha(#000000,0.0);border-width: 1px;-outer-stroke-width: 0px;border-radius: 3px;border-style: solid;background-image: none;margin:0px;padding:0px 0px 0px 0px;background-color: alpha(#000000,0.0);color: #AAAAAA;transition: 400ms ease-in-out;}"+
+					 "VTToggleButton:active{background-color: #00AAAA;background-image: -gtk-gradient(radial,center center, 0,center center, 1, from (#00BBBB),to (#008888) );color: #000000;transition: 0ms ease-in-out;text-shadow: 1px 1px 2px #005555;}"+
+					 "VTToggleButton:prelight {background-color: #AAAAAA;background-image: -gtk-gradient(radial,center center, 0,center center, 1, from (#AAAAAA),to (#777777) ); color: #000000; transition: 0ms ease-in-out;}"+
 					 "#tasks_notebook {border-width: 2px 2px 0px 2px;border-color: #3C3B37;border-style: solid;padding:0px;margin:0;}"+
 					 "#terms_notebook {border-width: 0px;border-style: solid;padding:0px;margin:0;}"+
 					 "#search_hbox :active { border-color: @fg_color; color: #FF0000;}"+
@@ -1041,9 +1041,7 @@ public class AYObject :Object{
 		if(autostart_terminal_session != null && autostart_terminal_session.length>0){
 			foreach(var s in autostart_terminal_session){
 				if(s!=""){
-					var vt=this.add_tab(s);
-					var tab_index =  this.children.index(vt)+1;
-					vt.tbutton.set_title(tab_index,s);
+					this.add_tab_with_title(s,s);
 				}
 			}
 		}
@@ -1052,9 +1050,7 @@ public class AYObject :Object{
 		if(restore_terminal_session != null && restore_terminal_session.length>0){
 			foreach(var s in restore_terminal_session){
 				if(s!=""){
-					var vt=this.add_tab(s);
-					var tab_index =  this.children.index(vt)+1;
-					vt.tbutton.set_title(tab_index,s);
+					this.add_tab_with_title(s,s);
 				}
 			}
 		}
@@ -1152,6 +1148,13 @@ public class AYObject :Object{
 		this.activate_tab(vt.tbutton) ;//this.active_tab = this.hvbox.children_index(tbutton);
 
 		this.search_update();
+		return vt;
+	}
+
+	public VTTerminal add_tab_with_title(string title,string session_command,string? session_path=null) {
+		var vt=this.add_tab(session_command,session_path);
+		var tab_index =  this.children.index(vt)+1;
+		vt.tbutton.set_title(tab_index,title);
 		return vt;
 	}
 

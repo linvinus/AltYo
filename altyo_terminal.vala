@@ -98,56 +98,31 @@ public class VTToggleButton : Gtk.ToggleButton {
 			this.label.set_markup(this.markup_normal);
 	}
 
-//~ 	public  bool draw22 (Cairo.Context cr){
-
  	public override  bool draw (Cairo.Context cr){
-		//cr.save();
-		//base.draw(cr);
-		//cr.restore();
 
 		int width = this.get_allocated_width ();
 		int height = this.get_allocated_height ();
-		//cr.save();
+
 		var context = this.get_style_context();
-		var BORDER_WIDTH = 1;
-		cr.save();
+		
 		var flags = this.get_state_flags();
 		if(this.active && (flags & Gtk.StateFlags.ACTIVE)!=Gtk.StateFlags.ACTIVE){
 			if( ((flags & Gtk.StateFlags.PRELIGHT)!=Gtk.StateFlags.PRELIGHT) )
-				this.set_state_flags(Gtk.StateFlags.ACTIVE,true);
+				this.set_state_flags(flags|Gtk.StateFlags.ACTIVE,true);//force state active
 		}
 
-
+		cr.save();
 		//draw background
-		context.render_background(cr,BORDER_WIDTH, BORDER_WIDTH,
-					 width- 2*BORDER_WIDTH,
-					 height- 2*BORDER_WIDTH);
+		context.render_background(cr,0, 0,
+					 width,
+					 height);
 		context.render_frame(cr,0, 0,
 					 width,
 					 height);
-
-		//draw small devision line
-		cr.set_source_rgb (0.6, 0.6, 0.6);
-		cr.set_line_width (2.0);
-		cr.set_line_join (Cairo.LineJoin.ROUND);
-		cr.move_to(width,4);
-		cr.line_to(width, height-4);
 		cr.stroke ();
 		cr.restore();
-
-		/*Pango.Layout layout = this.label.get_layout();//Pango.cairo_create_layout(cr);//create_pango_layout (this.label);
-          // And draw the text in the middle of the allocated space
-		int fontw, fonth;
-		layout.get_pixel_size (out fontw, out fonth);
-		cr.move_to ((width - fontw) / 2,
-				   (height - fonth) / 2);
-		Pango.cairo_update_layout (cr, layout);
-		Pango.cairo_show_layout (cr, layout);
-		cr.stroke ();*/
+		//draw label
 		this.propagate_draw(((Gtk.Widget)this.get_child ()),cr);
-
-		//this.label.draw(cr);
-		//base.draw(cr);
 	return false;
 	}
 
@@ -376,7 +351,7 @@ public class AYTab : Object{
 			return CFG_CHECK.OK;
 			});
 
-		this.tbutton.tab_title_format = my_conf.get_string("tab_title_format","<span foreground='#FFF000'>_INDEX_</span>/_TITLE_",(ref new_val)=>{
+		this.tbutton.tab_title_format = my_conf.get_string("tab_title_format","<span foreground='#FFF000'>_INDEX_</span>/_TITLE_<span foreground='#999999' font_family='sans' size='9000' rise='1000'>|</span>",(ref new_val)=>{
 			string err;
 			if(!my_conf.check_markup(new_val,out err)){
 				debug(_("tab_title_format wrong value! will be used default value. err:%s"),err);

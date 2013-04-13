@@ -1,3 +1,14 @@
+altyo (0.3~rc2-linvinus1) quantal; urgency=low
+
+  * fix: don't draw vertical line in tab button. otherwise custom style can look ugly. emulate vertical line by char "|" in tab label. code clenup.
+  * fix: add tab title for remote execute program new: default style.
+  * fix: use special eyecandy only if gtk version 3.6 or higher
+  * improvement: move option "Tab bar background" into application style expander
+  * add: help link for gtk3 css
+  * update: readme
+
+ -- denis <linvinus@gmail.com>  Sat, 13 Apr 2013 22:44:54 +0400
+
 altyo (0.3~rc1-linvinus1) quantal; urgency=low
   * improvements: use stock icon for settings action "Reset to defaults" 
   * improvements: save the settings to a backup, before reset to defaults

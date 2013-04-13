@@ -752,11 +752,14 @@ public class HVBox : Container {
 
 		int[] arr_w = {};
 		int[] arr_h = {};
+
+		if(!background_only_behind_widgets){
+			context.render_background(cr, 0, 0,width, height);
+			context.render_frame(cr,0, 0, width, height);
+		}
+
 		var color = context.get_background_color(StateFlags.NORMAL);
 		cr.set_source_rgba (color.red,color.green,color.blue,color.alpha);//background
-
-		if(!background_only_behind_widgets)
-			context.render_background(cr, 0, 0,width+border.left+border.right, height+border.top+border.bottom);
 
 		unowned List<HVBoxItem> item_it=null;
 		unowned List<HVBoxItem> end_of_line=null;
@@ -778,8 +781,11 @@ public class HVBox : Container {
 				unowned Widget widget = item.widget;
 				allocation.width+=item.widget.get_allocated_width();
 			}
-			if(background_only_behind_widgets)
-				context.render_background(cr, allocation.x, allocation.y,allocation.width+border.left+border.right, allocation.height+border.top+border.bottom);
+			if(background_only_behind_widgets){
+				 cr.rectangle (allocation.x, allocation.y,allocation.width+border.left+border.right, allocation.height+border.top+border.bottom);
+				 cr.fill ();
+				 cr.stroke ();
+			}
 			//calculate every line width and height
 			arr_h += allocation.height;
 			arr_w += allocation.width;

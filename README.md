@@ -28,9 +28,11 @@ Main program advantages.
 [![Preferences Key bindings](http://storage5.static.itmages.ru/i/13/0406/s_1365229912_4764716_d41d8cd98f.png)](http://itmages.ru/image/view/971933/d41d8cd9)
 [![Preferences Advanced](http://storage6.static.itmages.ru/i/13/0406/s_1365229959_4473970_d41d8cd98f.png)](http://itmages.ru/image/view/971934/d41d8cd9)
 
-Source code available there https://github.com/linvinus/AltYo
+small video presentation of available features:
+* altyo 0.3 http://youtu.be/IEabsuFresk
+* altyo 0.2 http://youtu.be/9W8m6T7HyVs and http://youtu.be/utxeh-SBTvI
 
-small video presentation of available features - (obsolete) http://youtu.be/9W8m6T7HyVs and http://youtu.be/utxeh-SBTvI
+Source code available there https://github.com/linvinus/AltYo
 
 Packages for ubuntu available there https://launchpad.net/~linvinus/+archive/altyo
 
@@ -47,9 +49,9 @@ FAQ:
 
 * Q) when resizing terminal, lines break, if you are running Zsh
 * A) bug is described there https://bbs.archlinux.org/viewtopic.php?pid=1246865
-     you need to apply patch (https://bbs.archlinux.org/viewtopic.php?pid=1246865#p1246865).
-     to resolve that.
-     for ubuntu users, patched vte available in this ppa https://launchpad.net/~linvinus/+archive/vte
+  you need to apply patch (https://bbs.archlinux.org/viewtopic.php?pid=1246865#p1246865).
+  to resolve that.
+  for ubuntu users, patched vte available in this ppa https://launchpad.net/~linvinus/+archive/vte
 
 * Q) Window gravity south, not working under xfwm4
 * A) it is xfwm4 bug https://bugzilla.xfce.org/show_bug.cgi?id=3634

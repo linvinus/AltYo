@@ -123,12 +123,6 @@ public class VTMainWindow : Window{
 
 	public void CreateVTWindow(MySettings conf) {
 		this.conf=conf;
-		this.keep_above=conf.get_boolean("keep_above_at_startup",this.keep_above);
-		if(!this.keep_above){
-			this.skip_taskbar_hint = false;
-			this.set_keep_above(false);
-		}
-
 
 		Image img = new Image.from_resource ("/org/gnome/altyo/altyo.svg");
 		this.set_icon(img.pixbuf);
@@ -637,6 +631,12 @@ public class VTMainWindow : Window{
 	}
 	public void reconfigure(){
 		debug("reconfigure VTWindow");
+
+		//update on reset
+		conf.get_boolean("keep_above_at_startup",true);
+		conf.get_boolean("start_hidden",false);
+		conf.get_string("window_default_monitor","");
+
 		var css_main = new CssProvider ();
 		string style_str= ""+
 					 "VTToggleButton GtkLabel  { font: Mono 10; -GtkWidget-focus-padding: 0px; -GtkButton-default-border:0px; -GtkButton-default-outside-border:0px; -GtkButton-inner-border:0px; border-width:0px; -outer-stroke-width: 0px; margin:0px; padding:0px;}"+

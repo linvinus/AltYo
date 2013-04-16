@@ -104,7 +104,7 @@ public class VTToggleButton : Gtk.ToggleButton {
 		int height = this.get_allocated_height ();
 
 		var context = this.get_style_context();
-		
+
 		var flags = this.get_state_flags();
 		if(this.active && (flags & Gtk.StateFlags.ACTIVE)!=Gtk.StateFlags.ACTIVE){
 			if( ((flags & Gtk.StateFlags.PRELIGHT)!=Gtk.StateFlags.PRELIGHT) )
@@ -131,19 +131,23 @@ public class VTToggleButton : Gtk.ToggleButton {
 			this.set_state_flags(Gtk.StateFlags.PRELIGHT,true);
 			this.label.set_markup(this.markup_prelight);
 		}
-		return false;
+		return true;//stop
 	}
 	public override bool leave_notify_event (Gdk.EventCrossing event) {
 		if(event.type == Gdk.EventType.LEAVE_NOTIFY){
-			if(this.active){
-				this.set_state_flags(Gtk.StateFlags.ACTIVE,true);
-				this.label.set_markup(this.markup_active);
-			}else{
-				this.set_state_flags(Gtk.StateFlags.NORMAL,true);
-				this.label.set_markup(this.markup_normal);
-			}
+			this.update_state();
 		}
-		return false;
+		return true;//stop
+	}
+
+	public void update_state(){
+		if(this.active){
+			this.set_state_flags(Gtk.StateFlags.ACTIVE,true);
+			this.label.set_markup(this.markup_active);
+		}else{
+			this.set_state_flags(Gtk.StateFlags.NORMAL,true);
+			this.label.set_markup(this.markup_normal);
+		}
 	}
 
 

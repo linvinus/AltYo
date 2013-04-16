@@ -373,6 +373,7 @@ public class VTMainWindow : Window{
 		this.save_current_monitor(this.pull_x,this.pull_y);
 		if(!this.animation_enabled){
 			this.pull_active=true;
+			this.ayobject.clear_prelight_state();
 			this.prev_focus=this.get_focus();
 			this.hide();
 			this.unrealize();//important!
@@ -419,6 +420,7 @@ public class VTMainWindow : Window{
 		else
 			this.pull_step=this.pull_steps;//skip animation
 		this.pull_animation_active=true;
+		this.ayobject.clear_prelight_state();
 		GLib.Timeout.add(this.animation_speed,this.on_pull_up);
 	}
 
@@ -653,7 +655,10 @@ public class VTMainWindow : Window{
 					 "HVBox,#search_hbox{background-color: alpha(#000000,1.0);}"+
 					 "";
 		if(Gtk.get_major_version()>=3 && Gtk.get_minor_version()>=6)//special eyecandy if supported ;)
-			style_str+= "VTToggleButton { transition: 400ms ease-in-out;} VTToggleButton:active { transition: 0ms ease-in-out;text-shadow: 1px 1px 2px #005555;} VTToggleButton:prelight {transition: 0ms ease-in-out;}";
+			style_str+= "VTToggleButton:active { text-shadow: 1px 1px 2px #005555;}";
+
+			//todo: bad performance on pull_up. when tab state is prelight then, on every animation step happens recursive size recalculation
+			//style_str+= "VTToggleButton { transition: 400ms ease-in-out;} VTToggleButton:active { transition: 0ms ease-in-out;text-shadow: 1px 1px 2px #005555;} VTToggleButton:prelight {transition: 0ms ease-in-out;}";
 
 		css_main.parsing_error.connect((section,error)=>{
 			debug("css_main.parsing_error %s",error.message);
@@ -1818,6 +1823,7 @@ public class AYObject :Object{
 
 
 	public void hvbox_size_changed(int width, int height,bool on_size_request){
+			if(this.main_window.pull_active || this.main_window.pull_animation_active) return;
 			//debug ("hvbox_size_changed start");
 			if(!this.main_window.maximized && this.main_window.get_realized()){
 				//debug ("hvbox_size_changed w=%d h=%d  task_w=%d task_h=%d term_h=%d",width,height,this.tasks_notebook.get_allocated_width(),this.tasks_notebook.get_allocated_height(),this.terminal_height) ;
@@ -2181,6 +2187,16 @@ public class AYObject :Object{
 			debug("maximize==START");
 		}
 
+	}
+
+	public void clear_prelight_state(){
+		int flags;
+		foreach (var yatab in this.children) {
+			flags=yatab.tbutton.get_state_flags();
+			if((flags & Gtk.StateFlags.PRELIGHT)==Gtk.StateFlags.PRELIGHT){
+				yatab.tbutton.update_state();//clear PRELIGHT
+			}
+		}
 	}
 
 }//class AYObject

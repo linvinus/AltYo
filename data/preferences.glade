@@ -2760,6 +2760,8 @@ Allow use mouse scroll in some programs,for example in less</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip_text" translatable="yes">Reset all settings to default values</property>
                         <property name="use_stock">True</property>
                         <signal name="clicked" handler="ay_settings_on_reset_to_defaults" swapped="no"/>
                       </object>
@@ -2786,7 +2788,7 @@ Allow use mouse scroll in some programs,for example in less</property>
                     </child>
                     <child>
                       <object class="GtkButton" id="button3">
-                        <property name="label">gtk-cancel</property>
+                        <property name="label">gtk-close</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>

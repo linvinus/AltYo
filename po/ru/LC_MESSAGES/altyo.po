@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-14 12:40+0400\n"
+"POT-Creation-Date: 2013-04-16 22:39+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -80,11 +80,11 @@ msgstr "<b>URL регулярные выражения</b>"
 msgid "<b>Window</b>"
 msgstr "<b>Окно программы</b>"
 
-#: data/preferences.glade:2917
+#: data/preferences.glade:2919
 msgid "ASCII Backspace"
 msgstr "ASCII Backspace"
 
-#: data/preferences.glade:2920
+#: data/preferences.glade:2922
 msgid "ASCII Delete"
 msgstr "ASCII Delete"
 
@@ -121,7 +121,7 @@ msgstr "Альтернативная прокрутка"
 msgid "Application style"
 msgstr "Стиль приложения"
 
-#: data/preferences.glade:2914
+#: data/preferences.glade:2916
 msgid "Auto"
 msgstr "Автоматически"
 
@@ -249,7 +249,7 @@ msgstr "Монитор по умолчанию, на котором будет �
 msgid "Delete key binding"
 msgstr "Клавиша Delete генерирует"
 
-#: data/preferences.glade:2923
+#: data/preferences.glade:2925
 msgid "Delete sequence"
 msgstr "Экранирующая последовательность"
 
@@ -397,11 +397,11 @@ msgstr "Следующий терминал"
 msgid "Number of animation steps,less is faster."
 msgstr "Количество щагов анимации, чем меньше тем быстрее"
 
-#: data/preferences.glade:2903
+#: data/preferences.glade:2905
 msgid "Off"
 msgstr "Не мерцает."
 
-#: data/preferences.glade:2900
+#: data/preferences.glade:2902
 msgid "On"
 msgstr "Мерцает."
 
@@ -486,6 +486,10 @@ msgstr "Синтаксис регулярных выражений"
 #: data/preferences.glade:2092
 msgid "Replace"
 msgstr "Заменить"
+
+#: data/preferences.glade:2764
+msgid "Reset all settings to default values"
+msgstr "Сбросить настройки на значения по умолчанию"
 
 #: data/preferences.glade:132
 msgid "Right"
@@ -606,11 +610,11 @@ msgid "Switch to tab %d,double press switch to tab %d"
 msgstr ""
 "Переключиться на закладку %d,нажмите дважды для переключения на закладку %d"
 
-#: data/preferences.glade:2897
+#: data/preferences.glade:2899
 msgid "System"
 msgstr "Системный"
 
-#: data/preferences.glade:2926
+#: data/preferences.glade:2928
 msgid "TTY \"erase\""
 msgstr "TTY \"erase\""
 
@@ -697,7 +701,7 @@ msgstr "Искать циклически по умолчанию"
 msgid "add"
 msgstr "Добавить"
 
-#: data/preferences.glade:2812
+#: data/preferences.glade:2814
 msgid "config.ini"
 msgstr "config.ini"
 
@@ -826,9 +830,6 @@ msgstr ""
 
 #~ msgid "Keybindings"
 #~ msgstr "Комбинации клавиш"
-
-#~ msgid "Really reset to defaults?"
-#~ msgstr "Вы действительно хотите восстановить значения по умолчанию?"
 
 #~ msgid "Reset to defaults"
 #~ msgstr "Восстановить значения по умолчанию"

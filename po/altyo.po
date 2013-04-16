@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-14 12:40+0400\n"
+"POT-Creation-Date: 2013-04-16 22:39+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -729,38 +729,42 @@ msgstr ""
 msgid "Advanced"
 msgstr ""
 
-#: data/preferences.glade:2812
+#: data/preferences.glade:2764
+msgid "Reset all settings to default values"
+msgstr ""
+
+#: data/preferences.glade:2814
 msgid "config.ini"
 msgstr ""
 
-#: data/preferences.glade:2897
+#: data/preferences.glade:2899
 msgid "System"
 msgstr ""
 
-#: data/preferences.glade:2900
+#: data/preferences.glade:2902
 msgid "On"
 msgstr ""
 
-#: data/preferences.glade:2903
+#: data/preferences.glade:2905
 msgid "Off"
 msgstr ""
 
-#: data/preferences.glade:2914
+#: data/preferences.glade:2916
 msgid "Auto"
 msgstr ""
 
-#: data/preferences.glade:2917
+#: data/preferences.glade:2919
 msgid "ASCII Backspace"
 msgstr ""
 
-#: data/preferences.glade:2920
+#: data/preferences.glade:2922
 msgid "ASCII Delete"
 msgstr ""
 
-#: data/preferences.glade:2923
+#: data/preferences.glade:2925
 msgid "Delete sequence"
 msgstr ""
 
-#: data/preferences.glade:2926
+#: data/preferences.glade:2928
 msgid "TTY \"erase\""
 msgstr ""

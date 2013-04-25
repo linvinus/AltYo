@@ -1826,11 +1826,11 @@ public class AYObject :Object{
 			if(this.main_window.pull_active || this.main_window.pull_animation_active) return;
 			//debug ("hvbox_size_changed start");
 			if(!this.main_window.maximized && this.main_window.get_realized()){
-				//debug ("hvbox_size_changed w=%d h=%d  task_w=%d task_h=%d term_h=%d",width,height,this.tasks_notebook.get_allocated_width(),this.tasks_notebook.get_allocated_height(),this.terminal_height) ;
+				//debug ("hvbox_size_changed w=%d h=%d  task_w=%d task_h=%d term_h=%d mw_h=%d should_be_h=%d",width,height,this.tasks_notebook.get_allocated_width(),this.tasks_notebook.get_allocated_height(),this.terminal_height,this.main_window.get_allocated_height(),should_be_h) ;
 				var should_be_h = this.terminal_height+height + (this.search_hbox.get_visible()?this.search_hbox.get_allocated_height():0);
 				if(this.main_window.get_allocated_height()>should_be_h+2||
 						this.terminal_width!=this.main_window.get_allocated_width()||
-						this.tasks_notebook.get_allocated_height()!=this.terminal_width){
+						this.tasks_notebook.get_allocated_height()!=this.terminal_height){
 
 					this.hvbox.set_default_width(this.terminal_width);
 					this.tasks_notebook.set_size_request(this.terminal_width,this.terminal_height);

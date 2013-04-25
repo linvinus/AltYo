@@ -257,9 +257,13 @@ public class VTToggleButton : Gtk.ToggleButton {
 	public override void get_preferred_width (out int minimum_width, out int natural_width) {
 		int max_width=-1;
 
-		var tmp = this.label.ellipsize;
-		this.label.ellipsize = Pango.EllipsizeMode.NONE;
-		base.get_preferred_width (out minimum_width, out natural_width);//get NORMAL size
+		var lay=this.label.get_layout();
+		var tmp=lay.get_ellipsize();
+		if(tmp!=Pango.EllipsizeMode.NONE)
+			lay.set_ellipsize(Pango.EllipsizeMode.NONE);
+		base.get_preferred_width (out minimum_width, out natural_width);//get non elipsized size
+		if(tmp!=Pango.EllipsizeMode.NONE)
+			lay.set_ellipsize(tmp);
 
 		//set limit if configured
 		if(this.conf_max_width>0)
@@ -273,14 +277,16 @@ public class VTToggleButton : Gtk.ToggleButton {
 		}
 
 		if(max_width>0 && minimum_width>max_width){
-			minimum_width=max_width;
-			this.label.ellipsize = Pango.EllipsizeMode.MIDDLE;//limit label size
+			this.label.ellipsize = Pango.EllipsizeMode.MIDDLE;//limit label size,queue resize (hardcoded in label)
+			minimum_width=max_width;//return limited size
 			this.has_tooltip=true;
-		}else{
+		}else
+		if(max_width>0 && minimum_width>0 && minimum_width<max_width && this.label.ellipsize == Pango.EllipsizeMode.MIDDLE){
+			this.label.ellipsize = Pango.EllipsizeMode.NONE;//reset limit,queue resize (hardcoded in label)
+			base.get_preferred_width (out minimum_width, out natural_width);//get new NORMAL size
 			this.has_tooltip=false;
 			this.width_request=-1;//reset it if size is ok
 		}
-
 	}
 
 	public override void get_preferred_height (out int minimum_height, out int natural_height) {

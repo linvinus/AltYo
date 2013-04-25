@@ -767,8 +767,13 @@ public class AYSettings : AYTab{
 				case CFG_TYPE.TYPE_DOUBLE:
 				var B = builder.get_object (key) as Gtk.SpinButton;
 					if(B!=null){
+						/***** WARNING! *******************
+						 * accuracy, two sign after comma*/
+						int r_val=(int)(B.value * 100);//round
+						B.value=(double)((double)(r_val)/(double)100);
+						//debug("CFG_TYPE.TYPE_DOUBLE=%.2f",B.value);
 						if(B.value!=this.my_conf.get_double(key,0))
-							this.my_conf.set_double(key, B.value, 2);
+							this.my_conf.set_double(key, B.value, 2);//two sign after comma
 					}else debug(" no gui for key %s",key);
 				break;
 				case CFG_TYPE.TYPE_INTEGER:

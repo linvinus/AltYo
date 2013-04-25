@@ -369,10 +369,12 @@ public class MySettings : Object {
 				this.changed=true;
 				if(digits_after_comma>0){
 					uint round=1;
+					double rest=5.0;
 					while(digits_after_comma-->0){
 						round*=10;
 					}
-					int i=(int)(def * round);//round
+					rest/=(round*10);
+					int i=(int)((def+rest) * round);//round
 					def=(double)((double)(i)/(double)round);
 					string S="%.2f".printf(def);
 					//printf string is localized, but KeyFile allow only

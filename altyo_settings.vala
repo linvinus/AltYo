@@ -769,7 +769,7 @@ public class AYSettings : AYTab{
 					if(B!=null){
 						/***** WARNING! *******************
 						 * accuracy, two sign after comma*/
-						int r_val=(int)(B.value * 100);//round
+						int r_val=(int)((B.value+0.005) * 100);//round
 						B.value=(double)((double)(r_val)/(double)100);
 						//debug("CFG_TYPE.TYPE_DOUBLE=%.2f",B.value);
 						if(B.value!=this.my_conf.get_double(key,0))

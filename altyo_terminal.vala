@@ -275,9 +275,9 @@ public class VTToggleButton : Gtk.ToggleButton {
 				this.label.ellipsize = Pango.EllipsizeMode.MIDDLE;//limit label size,queue resize (hardcoded in label)
 			natural_width=minimum_width=max_width;//return limited size
 			this.has_tooltip=true;
-		}else
-		if(max_width>0 && natural_width>0 && natural_width<max_width && this.label.ellipsize == Pango.EllipsizeMode.MIDDLE){
-			this.label.ellipsize = Pango.EllipsizeMode.NONE;//reset limit,queue resize (hardcoded in label)
+		}else{
+			if(this.label.ellipsize != Pango.EllipsizeMode.NONE)
+				this.label.ellipsize = Pango.EllipsizeMode.NONE;//reset limit,queue resize (hardcoded in label)
 			minimum_width = natural_width;
 			this.has_tooltip=false;
 			this.width_request=-1;//reset it if size is ok

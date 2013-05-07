@@ -1090,8 +1090,9 @@ public class AYObject :Object{
 
 		//add type into type array
 		this.conf.get_boolean("terminal_new_tab_in_current_directory",true);
-		this.conf.get_string("terminal_prevent_close_regex","/?ssh\\ ?|/?scp\\ ?|/?wget\\ ?");
-		this.conf.get_string("terminal_session_exclude_regex","/?zsh\\ ?|/?mc\\ ?|/?bash\\ ?");
+		this.conf.get_string("terminal_prevent_close_regex","/?ssh\\ ?|/?scp\\ ?|/?wget\\ ?|/?rsync\\ ?|/?curl\\ ?");
+		this.conf.get_string("terminal_session_exclude_regex","/?zsh\\ ?|/?mc\\ ?|/?bash\\ ?|/?screen\\ ?|/?tmux\\ ?");
+		this.conf.get_boolean("window_hide_after_close_last_tab",false);
 
 		this.terminal_width = conf.get_integer("terminal_width",80,(ref new_val)=>{
 			if(new_val<1){new_val=this.terminal_width;return CFG_CHECK.REPLACE;}
@@ -1136,6 +1137,8 @@ public class AYObject :Object{
 					string S=_("Shell terminated.")+"\n\r\n\r";
 					terminal.vte_term.feed(S,S.length);
 					terminal.start_command();
+					if(this.conf.get_boolean("window_hide_after_close_last_tab",false))
+						this.main_window.toggle_widnow();
 				}
 			});
 		}else{
@@ -1269,6 +1272,8 @@ public class AYObject :Object{
 			var vt_new=this.add_tab();
 			string S=_("Shell terminated.")+"\n\r\n\r";
 			vt_new.vte_term.feed(S,S.length);
+			if(this.conf.get_boolean("window_hide_after_close_last_tab",false))
+				this.main_window.toggle_widnow();			
 		}
 	}
 
@@ -1505,7 +1510,7 @@ public class AYObject :Object{
 			dialog.authors={"Konstantinov Denis linvinus@gmail.com"};
 			dialog.website ="https://github.com/linvinus/AltYo";
 			dialog.version ="0.3";
-			dialog.translator_credits="in English by willemw12@gmail.com";
+			dialog.translator_credits="willemw12@gmail.com";
 
 			dialog.response.connect ((response_id) => {
 					this.main_window.window_set_active();

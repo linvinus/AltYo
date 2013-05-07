@@ -133,6 +133,108 @@
       </row>
     </data>
   </object>
+  <object class="GtkAdjustment" id="tab_max_width_adjustment">
+    <property name="lower">-1</property>
+    <property name="upper">10000</property>
+    <property name="value">-1</property>
+    <property name="step_increment">10</property>
+    <property name="page_increment">100</property>
+  </object>
+  <object class="GtkListStore" id="tab_title_format_regex">
+    <columns>
+      <!-- column-name pattern -->
+      <column type="gchararray"/>
+      <!-- column-name replace -->
+      <column type="gchararray"/>
+      <!-- column-name tooltip -->
+      <column type="gchararray"/>
+      <!-- column-name pattern_rgba -->
+      <column type="GdkRGBA"/>
+      <!-- column-name replace_rgba -->
+      <column type="GdkRGBA"/>
+      <!-- column-name pattern_s -->
+      <column type="gboolean"/>
+      <!-- column-name replace_s -->
+      <column type="gboolean"/>
+    </columns>
+  </object>
+  <object class="GtkListStore" id="terminal_autostart_session">
+    <columns>
+      <!-- column-name command -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkAdjustment" id="terminal_background_saturation_adjustment">
+    <property name="upper">1</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkListStore" id="terminal_cursor_blinkmode_liststore">
+    <columns>
+      <!-- column-name gchararray1 -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">System</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">On</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Off</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="terminal_delete_binding_liststore">
+    <columns>
+      <!-- column-name gchararray1 -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Auto</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">ASCII Backspace</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">ASCII Delete</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Delete sequence</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">TTY "erase"</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkAdjustment" id="terminal_height_adjustment">
+    <property name="lower">1</property>
+    <property name="upper">10000</property>
+    <property name="step_increment">10</property>
+    <property name="page_increment">100</property>
+  </object>
+  <object class="GtkListStore" id="terminal_notify_level_liststore">
+    <columns>
+      <!-- column-name gchararray1 -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Never</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Contents changed</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Title changed</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Any changes</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkScrolledWindow" id="settings-scrolledwindow">
     <property name="visible">True</property>
     <property name="can_focus">True</property>
@@ -916,7 +1018,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">18</property>
+                                        <property name="top_attach">19</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -929,7 +1031,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">18</property>
+                                        <property name="top_attach">19</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -943,7 +1045,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">19</property>
+                                        <property name="top_attach">20</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -956,7 +1058,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">19</property>
+                                        <property name="top_attach">20</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -970,7 +1072,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">21</property>
+                                        <property name="top_attach">22</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -984,7 +1086,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">22</property>
+                                        <property name="top_attach">23</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1003,7 +1105,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">22</property>
+                                        <property name="top_attach">23</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1017,7 +1119,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">23</property>
+                                        <property name="top_attach">24</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1035,7 +1137,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">23</property>
+                                        <property name="top_attach">24</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1050,6 +1152,7 @@ otherwise - gravity south</property>
                                             <property name="can_focus">False</property>
                                             <property name="orientation">vertical</property>
                                             <property name="filter">filefilter1</property>
+                                            <signal name="file-set" handler="ay_settings_on_terminal_background_image_file_file_set" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
@@ -1077,7 +1180,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">21</property>
+                                        <property name="top_attach">22</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1091,7 +1194,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">24</property>
+                                        <property name="top_attach">25</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1106,7 +1209,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">24</property>
+                                        <property name="top_attach">25</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1120,22 +1223,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">25</property>
-                                        <property name="width">1</property>
-                                        <property name="height">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="terminal_background_fake_transparent_scroll">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="xalign">0</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">25</property>
+                                        <property name="top_attach">26</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1149,7 +1237,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">20</property>
+                                        <property name="top_attach">21</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1162,7 +1250,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">20</property>
+                                        <property name="top_attach">21</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1204,7 +1292,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">17</property>
+                                        <property name="top_attach">18</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1216,7 +1304,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">17</property>
+                                        <property name="top_attach">18</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1601,6 +1689,56 @@ Allow use mouse scroll in some programs,for example in less</property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">7</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="terminal_background_fake_transparent_scroll">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="has_tooltip">True</property>
+                                        <property name="tooltip_text" translatable="yes">Controls whether or not the terminal will scroll the background image (if one is set) when the text in the window must be scrolled. </property>
+                                        <property name="xalign">0</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">26</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkComboBox" id="terminal_notify_level">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="model">terminal_notify_level_liststore</property>
+                                        <child>
+                                          <object class="GtkCellRendererText" id="cellrenderertext9"/>
+                                          <attributes>
+                                            <attribute name="text">0</attribute>
+                                          </attributes>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">17</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="label57">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="xalign">0</property>
+                                        <property name="label" translatable="yes">Notify on</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">17</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -2870,88 +3008,6 @@ Allow use mouse scroll in some programs,for example in less</property>
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkAdjustment" id="tab_max_width_adjustment">
-    <property name="lower">-1</property>
-    <property name="upper">10000</property>
-    <property name="value">-1</property>
-    <property name="step_increment">10</property>
-    <property name="page_increment">100</property>
-  </object>
-  <object class="GtkListStore" id="tab_title_format_regex">
-    <columns>
-      <!-- column-name pattern -->
-      <column type="gchararray"/>
-      <!-- column-name replace -->
-      <column type="gchararray"/>
-      <!-- column-name tooltip -->
-      <column type="gchararray"/>
-      <!-- column-name pattern_rgba -->
-      <column type="GdkRGBA"/>
-      <!-- column-name replace_rgba -->
-      <column type="GdkRGBA"/>
-      <!-- column-name pattern_s -->
-      <column type="gboolean"/>
-      <!-- column-name replace_s -->
-      <column type="gboolean"/>
-    </columns>
-  </object>
-  <object class="GtkListStore" id="terminal_autostart_session">
-    <columns>
-      <!-- column-name command -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
-  <object class="GtkAdjustment" id="terminal_background_saturation_adjustment">
-    <property name="upper">1</property>
-    <property name="step_increment">0.10000000000000001</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkListStore" id="terminal_cursor_blinkmode_liststore">
-    <columns>
-      <!-- column-name gchararray1 -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">System</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">On</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Off</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="terminal_delete_binding_liststore">
-    <columns>
-      <!-- column-name gchararray1 -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Auto</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">ASCII Backspace</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">ASCII Delete</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Delete sequence</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">TTY "erase"</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkAdjustment" id="terminal_height_adjustment">
-    <property name="lower">1</property>
-    <property name="upper">10000</property>
-    <property name="step_increment">10</property>
-    <property name="page_increment">100</property>
   </object>
   <object class="GtkAdjustment" id="terminal_opacity_adjustment">
     <property name="upper">1</property>

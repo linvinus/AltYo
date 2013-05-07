@@ -579,6 +579,18 @@ public class AYSettings : AYTab{
 			B.sensitive=!w.active;
 		}
 	}
+	[CCode (instance_pos = -1)]
+	public void on_terminal_background_image_file_file_set  (Gtk.FileChooserButton w) {
+		string? S=null;
+		S=w.get_filename();		
+		var B = builder.get_object ("terminal_background_fake_transparent_scroll") as Gtk.CheckButton;
+		if(B!=null){
+			if(S!=null && S!="")
+				B.sensitive=true;
+			else
+				B.sensitive=true;
+		}
+	}
 
 	public void get_from_conf() {
 
@@ -609,7 +621,8 @@ public class AYSettings : AYTab{
 				   key=="terminal_cursorshape" ||
 				   key=="terminal_cursor_blinkmode" ||
 				   key=="terminal_delete_binding" ||
-				   key=="terminal_backspace_binding" ){
+				   key=="terminal_backspace_binding" ||
+				   key=="terminal_notify_level" ){
 					var B = builder.get_object (key) as Gtk.ComboBox;
 						B.active=this.my_conf.get_integer(key,0);
 				}else{
@@ -653,6 +666,11 @@ public class AYSettings : AYTab{
 							if(S!=""){
 								var B = builder.get_object (key) as Gtk.FileChooserButton;
 								B.set_filename(S);
+							}else{
+								var B = builder.get_object ("terminal_background_fake_transparent_scroll") as Gtk.CheckButton;
+								if(B!=null){
+									B.sensitive=false;
+								}
 							}
 						}else
 						if(key=="program_style"){
@@ -789,7 +807,8 @@ public class AYSettings : AYTab{
 				   key=="terminal_cursorshape" ||
 				   key=="terminal_cursor_blinkmode" ||
 				   key=="terminal_delete_binding" ||
-				   key=="terminal_backspace_binding"){
+				   key=="terminal_backspace_binding" ||
+				   key=="terminal_notify_level"){
 					var B = builder.get_object (key) as Gtk.ComboBox;
 						if(B.active!=this.my_conf.get_integer(key,0))
 							this.my_conf.set_integer(key,B.active);

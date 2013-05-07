@@ -68,6 +68,27 @@ public class VTToggleButton : Gtk.ToggleButton {
 	public string markup_active  {get;set;}
 	public string markup_prelight  {get;set;}
 	private bool force_update_tab_title {get;set;default = false;}
+	private bool _user_notify=false;
+	public bool user_notify {
+		get{
+			return _user_notify;
+		}
+		set{
+			if(value && !_user_notify && !this.active){
+				var flags = this.get_state_flags();
+				this.set_state_flags(Gtk.StateFlags.SELECTED,true);
+				_user_notify=true;
+				this.queue_draw();
+			}else{
+				var flags = this.get_state_flags();
+				this.set_state_flags(flags&~Gtk.StateFlags.SELECTED,true);
+				if(_user_notify)
+					this.queue_draw();
+				_user_notify=false;
+			}
+				
+		}//set
+		}
 
 	//private string label_text;
 
@@ -87,15 +108,13 @@ public class VTToggleButton : Gtk.ToggleButton {
 		this.inconsistent=true;//prevent 2px shift//If the toggle button is in an \"in between\" state
 		this.draw_indicator=true;
 		this.label.mnemonic_widget=null;
+		this.user_notify=false;
 	}
 
 	public override void toggled () {
 		debug ("toggled = %s , %s ",this.really_toggling.to_string(),this.label.get_text());
 		this.active=this.really_toggling;
-		if(this.active)
-			this.label.set_markup(this.markup_active);
-		else
-			this.label.set_markup(this.markup_normal);
+		this.update_state();
 	}
 
  	public override  bool draw (Cairo.Context cr){
@@ -142,10 +161,11 @@ public class VTToggleButton : Gtk.ToggleButton {
 
 	public void update_state(){
 		if(this.active){
+			this.user_notify=false;
 			this.set_state_flags(Gtk.StateFlags.ACTIVE,true);
 			this.label.set_markup(this.markup_active);
 		}else{
-			this.set_state_flags(Gtk.StateFlags.NORMAL,true);
+			this.set_state_flags((this._user_notify?Gtk.StateFlags.NORMAL|Gtk.StateFlags.SELECTED:Gtk.StateFlags.NORMAL),true);
 			this.label.set_markup(this.markup_normal);
 		}
 	}
@@ -400,6 +420,7 @@ public class VTTerminal : AYTab{
 	public bool match_case {get; set; default = false;}
 	private OnChildExitCallBack on_child_exit {get; set; default = null;}
 	private HashTable<int, string> match_tags;
+	private uint terminal_contents_changed_timer = 0;
 
 
 	public VTTerminal(MySettings my_conf,Notebook notebook, int tab_index,string? session_command=null,string? session_path=null,OnChildExitCallBack? on_child_exit=null) {
@@ -517,6 +538,22 @@ public class VTTerminal : AYTab{
 		}
  		else if(this.on_child_exit!=null)
  			this.on_child_exit(this);
+	}
+	
+	private void check_for_notify(){
+		if(!this.tbutton.active && !this.tbutton.user_notify){
+			debug("terminal_contents_changed");
+			if(this.terminal_contents_changed_timer!=0)
+				GLib.Source.remove(this.terminal_contents_changed_timer);
+			this.terminal_contents_changed_timer=GLib.Timeout.add_seconds(1,this.on_terminal_contents_changed_timeout);
+		}		
+	}
+	
+	public bool on_terminal_contents_changed_timeout(){
+		debug("on_terminal_contents_changed_timeout");
+		this.terminal_contents_changed_timer=0;
+		this.tbutton.user_notify=true;
+		return false;//stop timer
 	}
 
 	public void configure(MySettings my_conf){
@@ -741,7 +778,19 @@ public class VTTerminal : AYTab{
 		this.vte_term.set_audible_bell(my_conf.get_boolean("terminal_audible_bell",true));
 		this.vte_term.set_visible_bell(my_conf.get_boolean("terminal_visible_bell",true));
 		this.vte_term.set_allow_bold(my_conf.get_boolean("terminal_allow_bold_text",true));
-
+		var notify  = my_conf.get_integer("terminal_notify_level",2,(ref new_val)=>{
+			if(new_val>3){new_val=0;return CFG_CHECK.REPLACE;}
+			if(new_val<0){new_val=0;return CFG_CHECK.REPLACE;}
+			return CFG_CHECK.OK;
+			});
+		this.vte_term.contents_changed.disconnect(this.check_for_notify);
+		this.vte_term.window_title_changed.disconnect(this.check_for_notify);
+		
+		if((notify & 1)==1)
+			this.vte_term.contents_changed.connect(this.check_for_notify);
+		if((notify & 2)==2)
+			this.vte_term.window_title_changed.connect(this.check_for_notify);
+		
 	}//configure
 
 	public bool vte_button_press_event(Widget widget,Gdk.EventButton event) {

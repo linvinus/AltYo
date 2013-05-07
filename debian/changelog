@@ -1,3 +1,23 @@
+altyo (0.3~rc4-linvinus1) quantal; urgency=low
+
+  * improvements: use "close" button instead "cancel" in settings dialog. add tooltip for revert button.
+  * update: Russian translation
+  * improvements: clear prelight state of tab button on pull up. disable css animation.
+  * fix: for gtk 3.8, infinity loop in calculation of tab width, when tab width more than allowed width.
+  * improvement: of saving settings, rounding values of type "double" before compare.
+  * improvement: of rounding algorithm
+  * fix: v.2 for gtk 3.8, infinity loop in calculation of tab width, when tab width more than allowed width.
+  * fix: little performance optimization
+  * fix: disable tab tooltip if tab label is not ellipsized.
+  * update: terminal_prevent_close_regex, terminal_session_exclude_regex 
+  * new: option window_hide_after_close_last_tab
+  * improvement: in gui settings, add tooltip and set sensitive state of window_hide_after_close_last_tab according to terminal_auto_restart_shell state
+  * new: option terminal_notify_level 
+  * improvements: add tooltip for "Scroll background" option, lock this option until user will set image file.
+  * update: Russian translation
+
+ -- denis <linvinus@gmail.com>  Tue, 07 May 2013 23:42:38 +0400
+
 altyo (0.3~rc3-linvinus1) quantal; urgency=low
 
   * improvements: more tips, in settings dialog. 

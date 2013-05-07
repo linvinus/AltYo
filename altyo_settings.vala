@@ -572,6 +572,14 @@ public class AYSettings : AYTab{
 		return data_iter;
 	}
 
+	[CCode (instance_pos = -1)]
+	public void on_terminal_auto_restart_shell_toggled  (Gtk.CheckButton w) {
+		var B = builder.get_object ("window_hide_after_close_last_tab") as Gtk.CheckButton;
+		if(B!=null){
+			B.sensitive=!w.active;
+		}
+	}
+
 	public void get_from_conf() {
 
 		var chb = builder.get_object ("lock_keybindings_checkbutton") as Gtk.CheckButton;

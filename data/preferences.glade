@@ -708,6 +708,8 @@ otherwise - gravity south</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
+                                            <property name="has_tooltip">True</property>
+                                            <property name="tooltip_text" translatable="yes">Make sense if "Auto restart shell" is disabled</property>
                                             <property name="xalign">0</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
@@ -1240,6 +1242,7 @@ otherwise - gravity south</property>
                                         <property name="receives_default">False</property>
                                         <property name="xalign">0</property>
                                         <property name="draw_indicator">True</property>
+                                        <signal name="toggled" handler="ay_settings_on_terminal_auto_restart_shell_toggled" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>

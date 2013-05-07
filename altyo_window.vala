@@ -1511,7 +1511,7 @@ public class AYObject :Object{
 			dialog.authors={"Konstantinov Denis linvinus@gmail.com"};
 			dialog.website ="https://github.com/linvinus/AltYo";
 			dialog.version ="0.3";
-			dialog.translator_credits="willemw12@gmail.com";
+			dialog.translator_credits=_("willemw12@gmail.com");
 
 			dialog.response.connect ((response_id) => {
 					this.main_window.window_set_active();

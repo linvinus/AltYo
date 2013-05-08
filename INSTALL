@@ -1,0 +1,19 @@
+Basic Installation
+==================
+To compile you need header files for 
+glib 2.32 or newer
+gtk 3.4 or newer (for Xorg server)
+libvte 0.30.1 or newer
+vala 0.16 or newer
+
+Type `make' to compile the package.
+
+Type `make install' to install the programs and any data files and
+documentation.  When installing into a prefix owned by root, it is
+recommended that the package be configured and built as a regular
+user, and only the `make install' phase executed with root
+privileges.
+
+By default program will installed into /usr, you can override install
+directory by PREFIX variable.
+For example: `PREFIX=/usr/local make install'

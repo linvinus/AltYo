@@ -68,7 +68,7 @@ install: gen_mo
 	test -z "$(DESTDIR)$(PREFIX)/bin" || mkdir -p "$(DESTDIR)$(PREFIX)/bin";
 	cp -a ./$(PRG_NAME) $(DESTDIR)$(PREFIX)/bin
 	test -z "$(DESTDIR)$(PREFIX)/share/applications" || mkdir -p "$(DESTDIR)$(PREFIX)/share/applications";
-	cp -a ./altyo.desktop $(DESTDIR)$(PREFIX)/share/applications
+	cp -a ./data/altyo.desktop $(DESTDIR)$(PREFIX)/share/applications
 	test -z "$(DESTDIR)$(PREFIX)/share/locale/ru/LC_MESSAGES" || mkdir -p "$(DESTDIR)$(PREFIX)/share/locale/ru/LC_MESSAGES";
 	cp -a ./po/ru/LC_MESSAGES/altyo.mo $(DESTDIR)$(PREFIX)/share/locale/ru/LC_MESSAGES
 	test -z "$(DESTDIR)$(PREFIX)/share/icons" || mkdir -p "$(DESTDIR)$(PREFIX)/share/icons";

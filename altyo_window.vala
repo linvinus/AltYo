@@ -182,6 +182,24 @@ public class VTMainWindow : Window{
 		}
 		debug("CreateVTWindow end");
 
+		if ( conf.get_boolean("start_hidden",false) ){
+			this.pull_up();//all workarounds is inside pull_up,pull_down,update_position_size
+			this.pull_maximized=this.start_maximized;
+		}else{
+			this.show();
+			if(!this.start_maximized){
+				this.update_position_size();
+			}else{
+				this.maximize();
+				this.update_events();//process maximize event
+				this.update_geometry_hints(this.get_allocated_height(),this.get_allocated_width(),this.get_allocated_height(),this.get_allocated_width(),Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
+			}
+			this.window_set_active();
+		}
+		
+		this.ayobject.create_tabs();
+		debug("end win show");
+
 	}
 
 	private void check_monitor_and_configure_position(){
@@ -808,7 +826,8 @@ public class VTMainWindow : Window{
 			if(this.prev_focus!=null)
 				this.prev_focus.grab_focus();
 			else
-				this.ayobject.activate_tab(this.ayobject.active_tab);
+				if(this.ayobject.active_tab!=null)
+					this.ayobject.activate_tab(this.ayobject.active_tab);
 		}
 	}
 
@@ -1046,6 +1065,23 @@ public class AYObject :Object{
 		this.reconfigure();
 		this.main_vbox.show_all();
 
+		this.search_hbox.hide();//search hidden by default
+		//this.overlay_notebook.hide();//this.overlay_notebook hidden by default
+		this.tasks_notebook.set_current_page(TASKS.TERMINALS);//this.overlay_notebook hidden by default
+
+
+		//this.setup_keyboard_accelerators() ;
+		#if HAVE_QLIST
+		qlist.setup_keyboard_accelerators();
+		#endif
+
+		this.conf.on_load.connect(()=>{
+			this.reconfigure();
+			});
+
+	}//CreateAYObject
+	
+	public void create_tabs(){
 		var autostart_terminal_session=this.conf.get_string_list("terminal_autostart_session",null);
 		if(autostart_terminal_session != null && autostart_terminal_session.length>0){
 			foreach(var s in autostart_terminal_session){
@@ -1065,25 +1101,8 @@ public class AYObject :Object{
 		}
 
 		if(this.children.length()==0)
-			this.add_tab();
-
-
-
-		this.search_hbox.hide();//search hidden by default
-		//this.overlay_notebook.hide();//this.overlay_notebook hidden by default
-		this.tasks_notebook.set_current_page(TASKS.TERMINALS);//this.overlay_notebook hidden by default
-
-
-		//this.setup_keyboard_accelerators() ;
-		#if HAVE_QLIST
-		qlist.setup_keyboard_accelerators();
-		#endif
-
-		this.conf.on_load.connect(()=>{
-			this.reconfigure();
-			});
-
-	}//CreateAYObject
+			this.add_tab();		
+	}
 
 
 	public void reconfigure(){
@@ -1145,13 +1164,13 @@ public class AYObject :Object{
 		}else{
 			vt = new VTTerminal(this.conf,this.terms_notebook,(int)(this.children.length()+1),session_command,session_path,on_exit );
 		}
+		children.append(vt);
 
 		vt.configure(this.conf);
 
 		vt.vte_term.window_title_changed.connect( () => {
 			this.title_changed((Vte.Terminal)vt.vte_term);
         } );
-		children.append(vt);
 
 		vt.tbutton.button_press_event.connect(tab_button_press_event);
 		this.hvbox.add(vt.tbutton);
@@ -2162,16 +2181,17 @@ public class AYObject :Object{
 			if(this.action_group!=null) //ignore if not configured
 				this.action_group.sensitive=true;
 			//this.overlay_notebook.hide();
-			unowned AYTab vtt = ((AYTab)this.active_tab.object);
-			if((vtt is VTTerminal))
-				((VTTerminal) vtt).vte_term.grab_focus();
+			if(this.active_tab!=null){//possible on start
+				unowned AYTab vtt = ((AYTab)this.active_tab.object);
+				if( vtt is VTTerminal )
+					((VTTerminal) vtt).vte_term.grab_focus();
+			}
 		}else if(page_num==TASKS.QLIST){
 			if(this.action_group!=null) //ignore if not configured
 				this.action_group.sensitive=false;
 			//this.overlay_notebook.show();
 
 		}
-		page.set_size_request(-1,this.terminal_height);
 	}
 
 	public void on_maximize(bool new_maximize){

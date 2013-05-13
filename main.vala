@@ -214,31 +214,9 @@ int main (string[] args) {
 
 				var win = new VTMainWindow (WindowType.TOPLEVEL);
 				win.set_application(app);
-				//win.destroy.connect (()=>{conf.save(); Gtk.main_quit();});
-				main_win=win;
-
-				win.animation_enabled=conf.get_boolean("animation_enabled",true);
-				win.pull_steps=conf.get_integer("animation_pull_steps",10);
-
 				win.CreateVTWindow(conf);
-
-				if ( conf.get_boolean("start_hidden",false) ){
-					win.pull_up();//all workarounds is inside pull_up,pull_down,update_position_size
-					win.pull_maximized=win.start_maximized;
-				}else{
-					win.show();
-					if(!win.start_maximized){
-						win.update_position_size();
-					}else{
-						win.maximize();
-						win.update_events();//process maximize event
-						win.update_geometry_hints(win.get_allocated_height(),win.get_allocated_width(),win.get_allocated_height(),win.get_allocated_width(),Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
-					}
-					win.window_set_active();
-				}
-				debug("end win show");
-
-
+				main_win=win;
+				
 				sigaction_t action = sigaction_t ();
 				action.sa_handler = signal_handler;
 				/* Hook up signal handlers */

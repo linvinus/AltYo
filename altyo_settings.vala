@@ -579,6 +579,7 @@ public class AYSettings : AYTab{
 			B.sensitive=!w.active;
 		}
 	}
+	
 	[CCode (instance_pos = -1)]
 	public void on_terminal_background_image_file_file_set  (Gtk.FileChooserButton w) {
 		string? S=null;
@@ -592,6 +593,14 @@ public class AYSettings : AYTab{
 		}
 	}
 
+	[CCode (instance_pos = -1)]
+	public void on_terminal_notify_level_changed(Gtk.ComboBox w){
+		var B = builder.get_object ("terminal_timeout_before_notify") as Gtk.SpinButton;
+		if(B!=null){
+			B.sensitive=( (w.active==1 || w.active==3) ?true:false);
+		}
+	}
+	
 	public void get_from_conf() {
 
 		var chb = builder.get_object ("lock_keybindings_checkbutton") as Gtk.CheckButton;

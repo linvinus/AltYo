@@ -63,7 +63,7 @@ public class VTToggleButton : Gtk.ToggleButton {
 	public int  conf_max_width {get;set;default = -1;}
 
 	private string tab_title {get;set;default = null;}
-	private int    tab_index {get;set;default = -1;}
+	public int    tab_index {get;set;default = -1;}
 	public string markup_normal  {get;set;}
 	public string markup_active  {get;set;}
 	public string markup_prelight  {get;set;}
@@ -78,17 +78,22 @@ public class VTToggleButton : Gtk.ToggleButton {
 				var flags = this.get_state_flags();
 				this.set_state_flags(Gtk.StateFlags.SELECTED,true);
 				_user_notify=true;
-				this.queue_draw();
 			}else{
-				var flags = this.get_state_flags();
-				this.set_state_flags(flags&~Gtk.StateFlags.SELECTED,true);
-				if(_user_notify)
-					this.queue_draw();
-				_user_notify=false;
+				if(!value){
+					var flags = this.get_state_flags();
+					this.set_state_flags(flags&~Gtk.StateFlags.SELECTED,true);
+					_user_notify=false;
+					if(this.terminal_contents_changed_timer!=0){
+						GLib.Source.remove(this.terminal_contents_changed_timer);
+						this.terminal_contents_changed_timer=0;//stop timer if active
+					}
+				}
 			}
-				
 		}//set
 		}
+	public bool notify_on_title_change=false;
+	private uint terminal_contents_changed_timer = 0;
+	public uint notify_timeout = 1;
 
 	//private string label_text;
 
@@ -172,12 +177,21 @@ public class VTToggleButton : Gtk.ToggleButton {
 
 
 	public bool set_title(int tab_index,string? title){
-		debug("set_title(%d,%s)",tab_index,title);
+		debug("set_title start");
 		if( ((this.tab_title != null && this.tab_title == title && this.tab_index == tab_index )||
 		   (title == null && this.tab_index == tab_index )) && this.force_update_tab_title==false )
 			return false; //prevent unneccesary redraw
-
+		debug("set_title(%d,%s)",tab_index,title);
+		
 		this.force_update_tab_title=false;
+		
+		if(!this.active && 
+		   this.notify_on_title_change && 
+		   this.tab_title != null && 
+		   this.tab_title != title && 
+		   this.user_notify == false &&
+		   this.tab_index == tab_index)//ignore DnD index change
+			this.user_notify=true;
 
 		if(title!=null && title!="")
 			this.tab_title = title;
@@ -316,6 +330,23 @@ public class VTToggleButton : Gtk.ToggleButton {
 		this.set_title(this.tab_index,this.tab_title);//force update title
 	}
 
+	public void check_for_notify(){
+		if(!this.active && !this.user_notify){
+			debug("terminal_contents_changed");
+			if(this.terminal_contents_changed_timer!=0)
+				GLib.Source.remove(this.terminal_contents_changed_timer);
+			this.terminal_contents_changed_timer=GLib.Timeout.add_seconds(this.notify_timeout,this.on_terminal_contents_changed_timeout);
+		}		
+	}
+	
+	public bool on_terminal_contents_changed_timeout(){
+		debug("on_terminal_contents_changed_timeout");
+		if(this.terminal_contents_changed_timer!=0){
+			this.terminal_contents_changed_timer=0;
+			this.user_notify=true;
+		}
+		return false;//stop timer
+	}
 }//private class VTToggleButton
 
 public class AYTab : Object{
@@ -338,9 +369,11 @@ public class AYTab : Object{
 		this.tbutton.set_focus_on_click(false);
 		this.tbutton.set_relief(ReliefStyle.NONE); //подумать как улучшить вид
 		this.tbutton.set_has_window (false);
-		this.configure(my_conf);
-		this.tbutton.set_title(tab_index,null);
+		this.tbutton.tab_index=tab_index;
 		this.tbutton.show();
+		this.configure(my_conf);
+		//this.tbutton.set_title(tab_index,null);
+		
 
 		this.hbox = new HBox(false, 0);
 		//this.hbox.pack_start(this.vte_term,true,true,0);
@@ -420,7 +453,6 @@ public class VTTerminal : AYTab{
 	public bool match_case {get; set; default = false;}
 	private OnChildExitCallBack on_child_exit {get; set; default = null;}
 	private HashTable<int, string> match_tags;
-	private uint terminal_contents_changed_timer = 0;
 
 
 	public VTTerminal(MySettings my_conf,Notebook notebook, int tab_index,string? session_command=null,string? session_path=null,OnChildExitCallBack? on_child_exit=null) {
@@ -540,22 +572,6 @@ public class VTTerminal : AYTab{
  			this.on_child_exit(this);
 	}
 	
-	private void check_for_notify(){
-		if(!this.tbutton.active && !this.tbutton.user_notify){
-			debug("terminal_contents_changed");
-			if(this.terminal_contents_changed_timer!=0)
-				GLib.Source.remove(this.terminal_contents_changed_timer);
-			this.terminal_contents_changed_timer=GLib.Timeout.add_seconds(1,this.on_terminal_contents_changed_timeout);
-		}		
-	}
-	
-	public bool on_terminal_contents_changed_timeout(){
-		debug("on_terminal_contents_changed_timeout");
-		this.terminal_contents_changed_timer=0;
-		this.tbutton.user_notify=true;
-		return false;//stop timer
-	}
-
 	public void configure(MySettings my_conf){
 		uint path_length=0;
 		string spath = "";
@@ -783,14 +799,21 @@ public class VTTerminal : AYTab{
 			if(new_val<0){new_val=0;return CFG_CHECK.REPLACE;}
 			return CFG_CHECK.OK;
 			});
-		this.vte_term.contents_changed.disconnect(this.check_for_notify);
-		this.vte_term.window_title_changed.disconnect(this.check_for_notify);
+		this.vte_term.contents_changed.disconnect(this.tbutton.check_for_notify);
 		
 		if((notify & 1)==1)
-			this.vte_term.contents_changed.connect(this.check_for_notify);
+			this.vte_term.contents_changed.connect(this.tbutton.check_for_notify);
 		if((notify & 2)==2)
-			this.vte_term.window_title_changed.connect(this.check_for_notify);
+			this.tbutton.notify_on_title_change=true;
+		else
+			this.tbutton.notify_on_title_change=false;
 		
+		this.tbutton.notify_timeout  = my_conf.get_integer("terminal_timeout_before_notify",5,(ref new_val)=>{
+				if(new_val>1440){new_val=1440;return CFG_CHECK.REPLACE;}
+				if(new_val<0){new_val=0;return CFG_CHECK.REPLACE;}
+			return CFG_CHECK.OK;
+			});
+				
 	}//configure
 
 	public bool vte_button_press_event(Widget widget,Gdk.EventButton event) {

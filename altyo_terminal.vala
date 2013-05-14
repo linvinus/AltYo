@@ -398,7 +398,7 @@ public class AYTab : Object{
 		this.hbox.destroy();//destroy all widgets and unref self
 	}
 
-	public void configure(MySettings my_conf){
+	private void configure(MySettings my_conf){
 		this.tbutton.tab_format = my_conf.get_string("tab_format","[ _INDEX_ ]",(ref new_val)=>{
 			string err;
 			if(!my_conf.check_markup(new_val,out err)){
@@ -443,7 +443,6 @@ public class AYTab : Object{
 
 		this.tbutton.reconfigure();
 	}
-
 }
 
 public class VTTerminal : AYTab{
@@ -453,7 +452,6 @@ public class VTTerminal : AYTab{
 	public bool match_case {get; set; default = false;}
 	private OnChildExitCallBack on_child_exit {get; set; default = null;}
 	private HashTable<int, string> match_tags;
-
 
 	public VTTerminal(MySettings my_conf,Notebook notebook, int tab_index,string? session_command=null,string? session_path=null,OnChildExitCallBack? on_child_exit=null) {
 		base(my_conf, notebook, tab_index);
@@ -478,17 +476,6 @@ public class VTTerminal : AYTab{
 			});*/
 
 
-
-
-		if(!this.start_command(session_command,session_path)){
-			if(!this.start_command()){//try without session
-				this.my_conf.set_string("custom_command","");
-				if(!this.start_command()){//try without custom_command
-					debug("Unable to run shell command!");
-					Gtk.main_quit();
-					}
-			}
-		}
 		this.vte_term.child_exited.connect(this.child_exited);
 
 		this.hbox.pack_start(this.vte_term,true,true,0);
@@ -501,10 +488,21 @@ public class VTTerminal : AYTab{
 		this.my_conf.on_load.connect(()=>{
 			this.configure(this.my_conf);
 			});
-		this.configure(my_conf);
+		
 		this.vte_term.button_press_event.connect(vte_button_press_event);
+		this.configure(my_conf);
+		//GLib.Idle.add(call);
+		if(!this.start_command(session_command,session_path)){
+			if(!this.start_command()){//try without session
+				this.my_conf.set_string("custom_command","");
+				if(!this.start_command()){//try without custom_command
+					debug("Unable to run shell command!");
+					Gtk.main_quit();
+					}
+			}
+		}
+				
 		this.hbox.show_all();
-//~ 		this.vte_term.show();
 	}
 
 	public void destroy() {
@@ -550,7 +548,18 @@ public class VTTerminal : AYTab{
 		 *  GLib.SpawnChildSetupFunc? child_setup,
 		 *  out GLib.Pid child_pid)*/
 		Pid p;
-		var ret = this.vte_term.fork_command_full(pty_flags ,path,argvp,argvp,sflags,null,out p);
+		string[] new_args = {};
+		string[] args = GLib.Environment.list_variables ();
+		foreach(string arg in args){
+			if( !GLib.Regex.match_simple("COLUMNS|LINES|GNOME_DESKTOP_ICON|COLORTERM|WINDOWID",arg,RegexCompileFlags.CASELESS,0) ){
+				unowned string val=GLib.Environment.get_variable(arg);
+				string s="%s=%s".printf(arg,(val!=null?val:""));
+				new_args+=s;
+			}
+		}
+		new_args+="COLORTERM="+GLib.Environment.get_prgname();
+				
+		var ret = this.vte_term.fork_command_full(pty_flags ,path,argvp,new_args,sflags,null,out p);
 		this.pid=p;
 		return ret;
 	}
@@ -572,7 +581,7 @@ public class VTTerminal : AYTab{
  			this.on_child_exit(this);
 	}
 	
-	public void configure(MySettings my_conf){
+	private void configure(MySettings my_conf){
 		uint path_length=0;
 		string spath = "";
 		string spath_reversed = "";
@@ -813,7 +822,6 @@ public class VTTerminal : AYTab{
 				if(new_val<0){new_val=0;return CFG_CHECK.REPLACE;}
 			return CFG_CHECK.OK;
 			});
-				
 	}//configure
 
 	public bool vte_button_press_event(Widget widget,Gdk.EventButton event) {

@@ -138,7 +138,6 @@ public class VTMainWindow : Window{
 		this.reconfigure();//window
 
 		this.ayobject= new AYObject(this,conf);
-
 		this.add(this.ayobject.main_vbox);
 
 
@@ -196,8 +195,8 @@ public class VTMainWindow : Window{
 			}
 			this.window_set_active();
 		}
+		GLib.Idle.add(this.ayobject.create_tabs);
 		
-		this.ayobject.create_tabs();
 		debug("end win show");
 
 	}
@@ -1081,7 +1080,7 @@ public class AYObject :Object{
 
 	}//CreateAYObject
 	
-	public void create_tabs(){
+	public bool create_tabs(){
 		var autostart_terminal_session=this.conf.get_string_list("terminal_autostart_session",null);
 		if(autostart_terminal_session != null && autostart_terminal_session.length>0){
 			foreach(var s in autostart_terminal_session){
@@ -1101,7 +1100,9 @@ public class AYObject :Object{
 		}
 
 		if(this.children.length()==0)
-			this.add_tab();		
+			this.add_tab();
+
+		return false;
 	}
 
 
@@ -1165,8 +1166,6 @@ public class AYObject :Object{
 			vt = new VTTerminal(this.conf,this.terms_notebook,(int)(this.children.length()+1),session_command,session_path,on_exit );
 		}
 		children.append(vt);
-
-		vt.configure(this.conf);
 
 		vt.vte_term.window_title_changed.connect( () => {
 			this.title_changed((Vte.Terminal)vt.vte_term);
@@ -1324,7 +1323,7 @@ public class AYObject :Object{
 					this.active_tab = tab_button;
 					this.active_tab.really_toggling=true;
 					this.active_tab.set_active(this.active_tab.really_toggling);
-					vt.tbutton.set_title((this.children.index(vt)+1),null);
+					//vt.tbutton.set_title((this.children.index(vt)+1),null);//not necessary
 					if(vt is VTTerminal){
 						((VTTerminal)vt).vte_term.grab_focus();
 						((VTTerminal)vt).vte_term.show () ;

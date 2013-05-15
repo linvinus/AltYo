@@ -1420,8 +1420,9 @@ public class AYObject :Object{
 					this.hvbox.queue_draw();
 					this.main_window.update_events();
 				}
-				if(this.tab_sort_order==TAB_SORT_ORDER.HOSTNAME)
-					this.tab_sort(((VTTerminal)vt));
+				if( (this.tab_sort_order==TAB_SORT_ORDER.HOSTNAME) &&
+				    ( vt.tbutton.host_name!=null || !vt.tbutton.do_not_sort) )
+						this.tab_sort();
 				break;
 			}
 		}
@@ -1429,61 +1430,41 @@ public class AYObject :Object{
 	}
 
 
-	public void tab_sort (VTTerminal vt_new_title) {
-		if(vt_new_title.tbutton.host_name==null ||
-		   vt_new_title.tbutton.do_not_sort) return;//do not sort if hostname empty
+	public void tab_sort () {
+		bool update_titles=false;
+		bool changed=false;
 
-		this.children.sort_with_data( (vt_a, vt_next_b)=>{
-			VTTerminal vt = vt_a as VTTerminal, vt_next = vt_next_b as VTTerminal;
-//~			//unowned VTTerminal vt = (VTTerminal)a;
-//~			//unowned VTTerminal vt_next = (VTTerminal)b;
-			debug("compare: %s == %s",vt.tbutton.host_name,vt_next.tbutton.host_name);
-			if(vt.tbutton.host_name!=null && vt_next.tbutton.host_name!=null ){
-				int res=vt.tbutton.host_name.collate(vt_next.tbutton.host_name);
-				debug("compare: %d> %d == %d",res,this.children.index(vt),this.children.index(vt_next));
-				if(res>0 && !vt.tbutton.do_not_sort){
-					this.hvbox.place_before(vt.tbutton,vt_next.tbutton);
-					return 1;
-				}else if(res<0 /*&& !vt.tbutton.do_not_sort*/){
-					return -1;
+		do{
+			changed=false;
+			/*sort while sorting*/
+
+			this.children.sort_with_data( (vt_a, vt_next_b)=>{
+				VTTerminal vt = vt_a as VTTerminal, vt_next = vt_next_b as VTTerminal;
+
+				debug("compare: %s == %s",vt.tbutton.host_name,vt_next.tbutton.host_name);
+				if(vt.tbutton.host_name!=null && vt_next.tbutton.host_name!=null ){
+					int res=vt.tbutton.host_name.collate(vt_next.tbutton.host_name);
+					debug("compare: %d> %d == %d",res,this.children.index(vt),this.children.index(vt_next));
+					if(res>0 && !vt.tbutton.do_not_sort){
+						this.hvbox.place_before(vt.tbutton,vt_next.tbutton);
+						changed=true;
+						return 1;
+					}else if(res<0 /*&& !vt.tbutton.do_not_sort*/){
+						return -1;
+					}else
+						return 0;
+					//return vt.tbutton.host_name.collate(vt_next.tbutton.host_name);
 				}else
 					return 0;
-				//return vt.tbutton.host_name.collate(vt_next.tbutton.host_name);
-			}else
-				return 0;
-		});
-		this.update_tabs_title();
-//~
-//~		unowned List<unowned VTTerminal> item_it=null;
-//~		unowned List<unowned VTTerminal> same_hostname_last=null;
-//~		unowned VTTerminal vt=null;
-//~		//echo -en "\033]0;denis@asd:~\007"
-//~		bool modify=true;
-//~		for (item_it = this.children; item_it != null ; item_it = item_it.next) {
-//~				vt = item_it.data;
-//~				debug("compare: %s == %s",vt.tbutton.host_name,vt_new_title.tbutton.host_name);
-//~				if(vt.tbutton.host_name!=null && !vt.tbutton.do_not_sort){
-//~					int res=vt.tbutton.host_name.collate(vt_new_title.tbutton.host_name);
-//~					if(res==0){
-//~						if(vt==vt_new_title) {modify=false; break;}
-//~						else{
-//~							same_hostname_last=item_it;
-//~						}
-//~					}else
-//~					if(same_hostname_last!=null) break;
-//~				}
-//~		}
-//~		if(modify){
-//~				if(same_hostname_last!=null){
-//~					int new_pos = this.children.position(same_hostname_last);
-//~					if(new_pos<this.children.index(vt_new_title)) new_pos++;
-//~					debug("modify: new_pos=%d",new_pos);
-//~					this.children.remove(vt_new_title);
-//~					this.children.insert(vt_new_title,new_pos);
-//~					this.hvbox.place_on_index(vt_new_title.tbutton,new_pos);
-//~					this.update_tabs_title();
-//~				}
-//~		}
+			});
+			
+			if(changed)
+				update_titles=true;
+		}while(changed);
+
+		if(update_titles)
+			this.update_tabs_title();
+
 	}//tab_sort
 
 	public void ShowQuitDialog(){
@@ -1839,6 +1820,10 @@ public class AYObject :Object{
 			}else{
 				this.main_window.maximize();
 			}
+        });
+
+        this.add_window_accel("terminal_sort_by_hostname",_("Sort by hostname"), _("Sort by hostname"), Gtk.Stock.EDIT,"",()=> {
+            this.tab_sort();
         });
 
 	}//setup_keyboard_accelerators

@@ -490,6 +490,7 @@ public class VTTerminal : AYTab{
 			});
 		
 		this.vte_term.button_press_event.connect(vte_button_press_event);
+		this.tbutton.button_press_event.connect(vttoggle_button_press_event);
 		this.configure(my_conf);
 		//GLib.Idle.add(call);
 		if(!this.start_command(session_command,session_path)){
@@ -837,6 +838,19 @@ public class VTTerminal : AYTab{
 		return false; //true == ignore event
 	}
 
+	public bool vttoggle_button_press_event(Widget widget,Gdk.EventButton event) {
+		if(event.type==Gdk.EventType.BUTTON_PRESS){
+//~			if(event.button==1 && (event.state & Gdk.ModifierType.CONTROL_MASK)==Gdk.ModifierType.CONTROL_MASK){
+//~				this.check_match(event);
+//~			}else
+			if(event.button== 3){//right mouse button
+				this.popup_tab_menu(event);
+				return true;
+			}
+		}
+		return false; //true == ignore event
+	}
+
 	public void popup_menu(Gdk.EventButton event){
 		//debug("terminal popup_menu");
 		var menu = new Gtk.Menu();
@@ -899,19 +913,6 @@ public class VTTerminal : AYTab{
 			action_autohide.set_active(!vtw.autohide);
 		}
 
-		if(vtw.ayobject.tab_sort_order==TAB_SORT_ORDER.HOSTNAME){
-			var action_sort=acg.get_action("disable_sort_tab") as ToggleAction;
-			if(action_sort.active!=this.tbutton.do_not_sort){
-				//invert value, becouse it will inverted after set_active
-				//Gtk.Action.block_activate don't working :(
-				this.tbutton.do_not_sort=!this.tbutton.do_not_sort;
-				action_sort.set_active(!this.tbutton.do_not_sort);
-			}
-
-			menuitem = (Gtk.MenuItem)acg.get_action("disable_sort_tab").create_menu_item();
-			submenu.append(menuitem);
-		}
-
 		menuitem = (Gtk.MenuItem)acg.get_action("altyo_about").create_menu_item();
 		menu.append(menuitem);
 
@@ -931,6 +932,43 @@ public class VTTerminal : AYTab{
 		//debug("popup_menu ref_count=%d",(int)menu.ref_count);
 	}
 
+	public void popup_tab_menu(Gdk.EventButton event){
+		//debug("terminal popup_menu");
+		var menu = new Gtk.Menu();
+		//debug("popup_menu ref_count=%d",(int)menu.ref_count);
+		unowned Gtk.Widget parent;
+			parent = this.vte_term;
+			while(parent.parent!=null ){parent = parent.parent;} //find VTMainWindow
+		VTMainWindow vtw=(VTMainWindow)parent;
+		menu.set_accel_group(vtw.ayobject.accel_group);
+		Gtk.ActionGroup acg=vtw.ayobject.action_group;
+
+		Gtk.MenuItem menuitem;
+
+		menuitem = (Gtk.MenuItem)acg.get_action("terminal_sort_by_hostname").create_menu_item();
+		menu.append(menuitem);
+
+		if(vtw.ayobject.tab_sort_order==TAB_SORT_ORDER.HOSTNAME){
+			var action_sort=acg.get_action("disable_sort_tab") as ToggleAction;
+			if(action_sort.active!=this.tbutton.do_not_sort){
+				//invert value, becouse it will inverted after set_active
+				//Gtk.Action.block_activate don't working :(
+				this.tbutton.do_not_sort=!this.tbutton.do_not_sort;
+				action_sort.set_active(!this.tbutton.do_not_sort);
+			}
+
+			menuitem = (Gtk.MenuItem)acg.get_action("disable_sort_tab").create_menu_item();
+			menu.append(menuitem);
+		}
+
+		menu.deactivate.connect (this.on_deactivate);
+		menu.show_all();
+        //menu.attach_to_widget (this.vte_term, null);
+		menu.popup(null, null, null, event.button, event.time);
+		menu.ref();//no one own menu,emulate owners,uref will be on_deactivate
+		//debug("popup_menu ref_count=%d",(int)menu.ref_count);		
+	}//popup_tab_menu
+	
 	private void check_match (Gdk.EventButton event){
 			int char_width=(int)this.vte_term.get_char_width();
 			int char_height=(int)this.vte_term.get_char_height();

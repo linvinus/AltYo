@@ -1441,10 +1441,10 @@ public class AYObject :Object{
 			this.children.sort_with_data( (vt_a, vt_next_b)=>{
 				VTTerminal vt = vt_a as VTTerminal, vt_next = vt_next_b as VTTerminal;
 
-				debug("compare: %s == %s",vt.tbutton.host_name,vt_next.tbutton.host_name);
+				//debug("compare: %s == %s",vt.tbutton.host_name,vt_next.tbutton.host_name);
 				if(vt.tbutton.host_name!=null && vt_next.tbutton.host_name!=null ){
 					int res=vt.tbutton.host_name.collate(vt_next.tbutton.host_name);
-					debug("compare: %d> %d == %d",res,this.children.index(vt),this.children.index(vt_next));
+					//debug("compare: %d> %d == %d",res,this.children.index(vt),this.children.index(vt_next));
 					if(res>0 && !vt.tbutton.do_not_sort){
 						this.hvbox.place_before(vt.tbutton,vt_next.tbutton);
 						changed=true;

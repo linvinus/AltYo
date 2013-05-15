@@ -691,6 +691,21 @@ public class AYSettings : AYTab{
 							return false;//continue
 							});
 							B.buffer.text=result;
+						}else
+						if(key=="tab_sort_order"){
+							var B = builder.get_object (key) as Gtk.ComboBox;
+							var store = builder.get_object (key+"_liststore") as Gtk.ListStore;
+							string ret = this.my_conf.get_string(key,"none");
+							store.foreach((model,  path,  iter) =>{
+									string? val=null;
+									store.get (iter,1, out val,	-1);//get combobox item value
+									if(val!=null && val==ret){
+										B.active=path.get_indices()[0];
+										return true;//stop
+									}
+								return false;//continue
+							});
+					
 						}else{
 							var B = builder.get_object (key) as Gtk.Entry;
 							if(B!=null){
@@ -877,6 +892,20 @@ public class AYSettings : AYTab{
 									this.my_conf.set_string(key,result);
 								}
 							}
+						}else
+						if(key=="tab_sort_order"){
+							var B = builder.get_object (key) as Gtk.ComboBox;
+							var store = builder.get_object (key+"_liststore") as Gtk.ListStore;
+							string ret = this.my_conf.get_string(key,"none");
+							var path = new TreePath.from_indices(B.active);
+							TreeIter? iter=null;
+							string? val=null;
+							if(path!=null && store.get_iter (out iter, path)){
+								store.get (iter, 1, out val);
+								if(val!=ret){
+									this.my_conf.set_string(key,val);
+									}
+							}					
 						}else{
 							var B = builder.get_object (key) as Gtk.Entry;
 							if(B!=null){

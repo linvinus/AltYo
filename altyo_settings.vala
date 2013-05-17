@@ -904,6 +904,8 @@ public class AYSettings : AYTab{
 								store.get (iter, 1, out val);
 								if(val!=ret){
 									this.my_conf.set_string(key,val);
+									if(val!="none")
+										this.ayobject.tab_sort();
 									}
 							}					
 						}else{

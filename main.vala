@@ -53,6 +53,7 @@ struct Globals{
 	static bool opt_help = false;
 	static string? cmd_conf_file = null;
 	static bool toggle = false;
+	static string? app_id = null;
 
 	[CCode (array_length = false, array_null_terminated = true)]
 	public static string[]? exec_file_with_args = null;
@@ -65,6 +66,7 @@ struct Globals{
 					/*The option takes a string argument, multiple uses of the option are collected into an array of strings. */
 					{ "exec", 'e', 0, OptionArg.STRING_ARRAY, ref Globals.exec_file_with_args,N_("run command in new tab"), N_("\"command arg1 argN...\"") },
 					{ "toggle", 0, 0, OptionArg.NONE, ref Globals.toggle,N_("show/hide window"), null },
+					{ "id", 'i', 0, OptionArg.STRING, ref Globals.app_id,N_("Set application id"),"org.gtk.altyo_my" },
 					{ null }
 			};
 
@@ -121,8 +123,22 @@ int main (string[] args) {
 	Intl.textdomain (GETTEXT_PACKAGE);
 
 	Gtk.init (ref args);
+	Globals.app_id="org.gtk.altyo";//default app id
+	string[] args2=args;//copy args for local use, original args will be used on remote side
+	unowned string[] args3=args2;
 
-    var app = new Gtk.Application("org.gtk.altyo", ApplicationFlags.HANDLES_COMMAND_LINE);
+	if(args.length>1 ){//show local help if needed
+		   try {
+				   OptionContext ctx2 = new OptionContext("AltYo");
+				   ctx2.add_main_entries(Globals.options, null);
+				   ctx2.parse(ref args3);
+		   } catch (Error e) {
+						   GLib.stderr.printf("Error initializing: %s\n", e.message);
+		   }
+	}
+	args2=null;//destroy
+					
+    var app = new Gtk.Application(Globals.app_id, ApplicationFlags.HANDLES_COMMAND_LINE);
 
 	//remote args usage
     app.command_line.connect((command_line)=>{//ApplicationCommandLine
@@ -194,15 +210,7 @@ int main (string[] args) {
 
 	app.startup.connect(()=>{//first run
 				debug("app.startup.connect");
-				if(args.length>1 ){//show local help if needed
-					   try {
-							   OptionContext ctx2 = new OptionContext("AltYo");
-							   ctx2.add_main_entries(Globals.options, null);
-							   ctx2.parse(ref args);
-					   } catch (Error e) {
-									   GLib.stderr.printf("Error initializing: %s\n", e.message);
-					   }
-				}
+
 				var conf = new MySettings(Globals.cmd_conf_file);
 
 				configure_debug(conf);
@@ -216,6 +224,16 @@ int main (string[] args) {
 				win.set_application(app);
 				win.CreateVTWindow(conf);
 				main_win=win;
+
+				if(Globals.exec_file_with_args!=null){
+					string S ="";
+					foreach(var s in Globals.exec_file_with_args){
+						debug("exec %s",s);
+						S+=" "+s;
+					}
+					
+					win.ayobject.add_tab_with_title(S,S);
+				}
 				
 				sigaction_t action = sigaction_t ();
 				action.sa_handler = signal_handler;

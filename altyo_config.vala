@@ -163,6 +163,18 @@ public class MySettings : Object {
 			version[VER.rc]=5;//update version
 		}
 
+		if(version[VER.major]==0 && version[VER.minor]==3 && version[VER.rc]<6){
+			try {
+				var old=kf.get_boolean(this.profile,"window_hide_after_close_last_tab");
+				if(old)
+					kf.set_integer(this.profile,"window_action_on_close_last_tab",1);//restart shell and hide
+				kf.remove_key(this.profile,"window_hide_after_close_last_tab");
+				this.changed=true;
+			}catch (KeyFileError err) {}
+			
+			version[VER.rc]=6;//update version
+		}
+
 		return version;
 	}
 

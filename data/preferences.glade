@@ -34,6 +34,22 @@
       <mime-type>image/*</mime-type>
     </mime-types>
   </object>
+  <object class="GtkListStore" id="keybindings_store">
+    <columns>
+      <!-- column-name action_name -->
+      <column type="gchararray"/>
+      <!-- column-name accel-description -->
+      <column type="gchararray"/>
+      <!-- column-name accel-key -->
+      <column type="guint"/>
+      <!-- column-name accel-mod -->
+      <column type="guint"/>
+      <!-- column-name accel-editable -->
+      <column type="gboolean"/>
+      <!-- column-name accel-tooltip -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
   <object class="GtkMenu" id="popup_command_list">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -117,6 +133,13 @@
       </row>
     </data>
   </object>
+  <object class="GtkAdjustment" id="tab_max_width_adjustment">
+    <property name="lower">-1</property>
+    <property name="upper">10000</property>
+    <property name="value">-1</property>
+    <property name="step_increment">10</property>
+    <property name="page_increment">100</property>
+  </object>
   <object class="GtkListStore" id="tab_sort_order_liststore">
     <columns>
       <!-- column-name name -->
@@ -135,27 +158,80 @@
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="tab_title_format_regex">
+    <columns>
+      <!-- column-name pattern -->
+      <column type="gchararray"/>
+      <!-- column-name replace -->
+      <column type="gchararray"/>
+      <!-- column-name tooltip -->
+      <column type="gchararray"/>
+      <!-- column-name pattern_rgba -->
+      <column type="GdkRGBA"/>
+      <!-- column-name replace_rgba -->
+      <column type="GdkRGBA"/>
+      <!-- column-name pattern_s -->
+      <column type="gboolean"/>
+      <!-- column-name replace_s -->
+      <column type="gboolean"/>
+    </columns>
+  </object>
+  <object class="GtkListStore" id="terminal_autostart_session">
+    <columns>
+      <!-- column-name command -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkAdjustment" id="terminal_background_saturation_adjustment">
+    <property name="upper">1</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkListStore" id="terminal_cursor_blinkmode_liststore">
+    <columns>
+      <!-- column-name gchararray1 -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">System</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">On</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Off</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="terminal_delete_binding_liststore">
+    <columns>
+      <!-- column-name gchararray1 -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Auto</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">ASCII Backspace</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">ASCII Delete</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Delete sequence</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">TTY "erase"</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkAdjustment" id="terminal_height_adjustment">
     <property name="lower">1</property>
     <property name="upper">10000</property>
     <property name="step_increment">10</property>
     <property name="page_increment">100</property>
-  </object>
-  <object class="GtkListStore" id="keybindings_store">
-    <columns>
-      <!-- column-name action_name -->
-      <column type="gchararray"/>
-      <!-- column-name accel-description -->
-      <column type="gchararray"/>
-      <!-- column-name accel-key -->
-      <column type="guint"/>
-      <!-- column-name accel-mod -->
-      <column type="guint"/>
-      <!-- column-name accel-editable -->
-      <column type="gboolean"/>
-      <!-- column-name accel-tooltip -->
-      <column type="gchararray"/>
-    </columns>
   </object>
   <object class="GtkScrolledWindow" id="settings-scrolledwindow">
     <property name="visible">True</property>
@@ -727,20 +803,47 @@ otherwise - gravity south</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkCheckButton" id="window_hide_after_close_last_tab">
-                                            <property name="label" translatable="yes">Hide after close last tab</property>
+                                          <object class="GtkGrid" id="grid8">
                                             <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">False</property>
-                                            <property name="has_tooltip">True</property>
-                                            <property name="tooltip_text" translatable="yes">Make sense if "Auto restart shell" is disabled</property>
-                                            <property name="xalign">0</property>
-                                            <property name="draw_indicator">True</property>
+                                            <property name="can_focus">False</property>
+                                            <child>
+                                              <object class="GtkLabel" id="label61">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="xalign">0</property>
+                                                <property name="label" translatable="yes">On close last tab</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">0</property>
+                                                <property name="top_attach">0</property>
+                                                <property name="width">1</property>
+                                                <property name="height">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkComboBox" id="window_action_on_close_last_tab">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="model">window_action_on_close_last_tab_liststore</property>
+                                                <child>
+                                                  <object class="GtkCellRendererText" id="cellrenderertext11"/>
+                                                  <attributes>
+                                                    <attribute name="text">0</attribute>
+                                                  </attributes>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">1</property>
+                                                <property name="top_attach">0</property>
+                                                <property name="width">1</property>
+                                                <property name="height">1</property>
+                                              </packing>
+                                            </child>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
                                             <property name="fill">True</property>
-                                            <property name="position">7</property>
+                                            <property name="position">6</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -2993,82 +3096,6 @@ Allow use mouse scroll in some programs,for example in less</property>
       </object>
     </child>
   </object>
-  <object class="GtkAdjustment" id="tab_max_width_adjustment">
-    <property name="lower">-1</property>
-    <property name="upper">10000</property>
-    <property name="value">-1</property>
-    <property name="step_increment">10</property>
-    <property name="page_increment">100</property>
-  </object>
-  <object class="GtkListStore" id="tab_title_format_regex">
-    <columns>
-      <!-- column-name pattern -->
-      <column type="gchararray"/>
-      <!-- column-name replace -->
-      <column type="gchararray"/>
-      <!-- column-name tooltip -->
-      <column type="gchararray"/>
-      <!-- column-name pattern_rgba -->
-      <column type="GdkRGBA"/>
-      <!-- column-name replace_rgba -->
-      <column type="GdkRGBA"/>
-      <!-- column-name pattern_s -->
-      <column type="gboolean"/>
-      <!-- column-name replace_s -->
-      <column type="gboolean"/>
-    </columns>
-  </object>
-  <object class="GtkListStore" id="terminal_autostart_session">
-    <columns>
-      <!-- column-name command -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
-  <object class="GtkAdjustment" id="terminal_background_saturation_adjustment">
-    <property name="upper">1</property>
-    <property name="step_increment">0.10000000000000001</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkListStore" id="terminal_cursor_blinkmode_liststore">
-    <columns>
-      <!-- column-name gchararray1 -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">System</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">On</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Off</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="terminal_delete_binding_liststore">
-    <columns>
-      <!-- column-name gchararray1 -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Auto</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">ASCII Backspace</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">ASCII Delete</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Delete sequence</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">TTY "erase"</col>
-      </row>
-    </data>
-  </object>
   <object class="GtkListStore" id="terminal_notify_level_liststore">
     <columns>
       <!-- column-name gchararray1 -->
@@ -3124,6 +3151,23 @@ Allow use mouse scroll in some programs,for example in less</property>
     <property name="upper">10000</property>
     <property name="step_increment">10</property>
     <property name="page_increment">10</property>
+  </object>
+  <object class="GtkListStore" id="window_action_on_close_last_tab_liststore">
+    <columns>
+      <!-- column-name gchararray1 -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Restart shell</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Restart shell and hide</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Quit</col>
+      </row>
+    </data>
   </object>
   <object class="GtkListStore" id="window_default_monitor_liststore">
     <columns>

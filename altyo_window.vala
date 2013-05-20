@@ -977,6 +977,7 @@ public class AYObject :Object{
 
 	private AYSettings aysettings {get;set; default = null;}
 	private bool aysettings_shown=false;
+	private int action_on_close_last_tab=0;
 
 	public AYObject(VTMainWindow _MW ,MySettings _conf) {
 		debug("AYObject new");
@@ -1121,7 +1122,15 @@ public class AYObject :Object{
 		this.conf.get_boolean("terminal_new_tab_in_current_directory",true);
 		this.conf.get_string("terminal_prevent_close_regex","/?ssh\\ ?|/?scp\\ ?|/?wget\\ ?|/?rsync\\ ?|/?curl\\ ?");
 		this.conf.get_string("terminal_session_exclude_regex","/?zsh\\ ?|/?mc\\ ?|/?bash\\ ?|/?screen\\ ?|/?tmux\\ ?");
-		this.conf.get_boolean("window_hide_after_close_last_tab",false);
+		/* 0 - restart shell
+		 * 1 - restart shell, hide
+		 * 2 - quit
+		 * */
+		this.action_on_close_last_tab=this.conf.get_integer("window_action_on_close_last_tab",0,(ref new_val)=>{
+			if(new_val>2){ new_val=1; return CFG_CHECK.REPLACE;}
+			if(new_val<0){ new_val=0; return CFG_CHECK.REPLACE;}
+			return CFG_CHECK.OK;
+			});
 
 		this.terminal_width = conf.get_integer("terminal_width",80,(ref new_val)=>{
 			if(new_val<1){new_val=this.terminal_width;return CFG_CHECK.REPLACE;}
@@ -1293,10 +1302,18 @@ public class AYObject :Object{
 			this.search_update();
 		}else{				
 			if(!this.main_window.allow_close){
-				var vt_new=this.add_tab();
-				string S=_("Shell terminated.")+"\n\r\n\r";
-				vt_new.vte_term.feed(S,S.length);
-				if(this.conf.get_boolean("window_hide_after_close_last_tab",false))
+				if(this.action_on_close_last_tab==2){//quit
+					this.main_window.allow_close=true;
+					this.main_window.destroy();
+					return;				
+				}
+				
+				if(this.action_on_close_last_tab<2){//restart shell
+					var vt_new=this.add_tab();
+					string S=_("Shell terminated.")+"\n\r\n\r";
+					vt_new.vte_term.feed(S,S.length);
+				}
+				if(this.action_on_close_last_tab==1)//restart shell and hide
 					this.main_window.toggle_widnow();			
 			}
 		}

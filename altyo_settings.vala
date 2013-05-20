@@ -576,14 +576,6 @@ public class AYSettings : AYTab{
 	}
 
 	[CCode (instance_pos = -1)]
-	public void on_terminal_auto_restart_shell_toggled  (Gtk.CheckButton w) {
-		var B = builder.get_object ("window_hide_after_close_last_tab") as Gtk.CheckButton;
-		if(B!=null){
-			B.sensitive=!w.active;
-		}
-	}
-	
-	[CCode (instance_pos = -1)]
 	public void on_terminal_background_image_file_file_set  (Gtk.FileChooserButton w) {
 		string? S=null;
 		S=w.get_filename();		
@@ -634,7 +626,8 @@ public class AYSettings : AYTab{
 				   key=="terminal_cursor_blinkmode" ||
 				   key=="terminal_delete_binding" ||
 				   key=="terminal_backspace_binding" ||
-				   key=="terminal_notify_level" ){
+				   key=="terminal_notify_level" ||
+				   key=="window_action_on_close_last_tab" ){
 					var B = builder.get_object (key) as Gtk.ComboBox;
 						B.active=this.my_conf.get_integer(key,0);
 				}else{
@@ -835,7 +828,8 @@ public class AYSettings : AYTab{
 				   key=="terminal_cursor_blinkmode" ||
 				   key=="terminal_delete_binding" ||
 				   key=="terminal_backspace_binding" ||
-				   key=="terminal_notify_level"){
+				   key=="terminal_notify_level" ||
+				   key=="window_action_on_close_last_tab"){
 					var B = builder.get_object (key) as Gtk.ComboBox;
 						if(B.active!=this.my_conf.get_integer(key,0))
 							this.my_conf.set_integer(key,B.active);

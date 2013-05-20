@@ -93,7 +93,6 @@ public class VTMainWindow : Window{
 		}
 
 	construct {
-		this.title = "AltYo";
 		//this.border_width = 0;
 		this.skip_taskbar_hint = true;
 		this.urgency_hint = true;
@@ -123,6 +122,11 @@ public class VTMainWindow : Window{
 
 	public void CreateVTWindow(MySettings conf) {
 		this.conf=conf;
+		var now = new DateTime.now_local();
+		if(this.application.application_id!=null)
+			this.title="AltYo "+this.application.application_id;
+		else
+			this.title = "AltYo "+now.to_string()+" "+now.get_microsecond().to_string();
 
 		Image img = new Image.from_resource ("/org/gnome/altyo/altyo.svg");
 		this.set_icon(img.pixbuf);

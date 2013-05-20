@@ -54,6 +54,7 @@ struct Globals{
 	static string? cmd_conf_file = null;
 	static bool toggle = false;
 	static string? app_id = null;
+	static bool disable_hotkey = false;
 
 	[CCode (array_length = false, array_null_terminated = true)]
 	public static string[]? exec_file_with_args = null;
@@ -66,7 +67,8 @@ struct Globals{
 					/*The option takes a string argument, multiple uses of the option are collected into an array of strings. */
 					{ "exec", 'e', 0, OptionArg.STRING_ARRAY, ref Globals.exec_file_with_args,N_("run command in new tab"), N_("\"command arg1 argN...\"") },
 					{ "toggle", 0, 0, OptionArg.NONE, ref Globals.toggle,N_("show/hide window"), null },
-					{ "id", 'i', 0, OptionArg.STRING, ref Globals.app_id,N_("Set application id"),"org.gtk.altyo_my" },
+					{ "id", 0, 0, OptionArg.STRING, ref Globals.app_id,N_("Set application id, none means desable application id"),"org.gtk.altyo_my,none" },
+					{ "disable_hotkey", 0, 0, OptionArg.NONE, ref Globals.disable_hotkey,N_("Disable main hotkey"),null},
 					{ null }
 			};
 
@@ -137,6 +139,8 @@ int main (string[] args) {
 		   }
 	}
 	args2=null;//destroy
+	if(Globals.app_id == "none")
+		Globals.app_id=null;
 					
     var app = new Gtk.Application(Globals.app_id, ApplicationFlags.HANDLES_COMMAND_LINE);
 
@@ -212,6 +216,7 @@ int main (string[] args) {
 				debug("app.startup.connect");
 
 				var conf = new MySettings(Globals.cmd_conf_file);
+				conf.disable_hotkey=Globals.disable_hotkey;
 
 				configure_debug(conf);
 				debug("git_hash=%s",AY_GIT_HASH);

@@ -703,17 +703,21 @@ public class VTMainWindow : Window{
 			});
 
 		this.hotkey.unbind();
-		KeyBinding grave=this.hotkey.bind (this.conf.get_accel_string("main_hotkey","<Alt>grave"));
-		if(grave!=null)
-			grave.on_trigged.connect(this.toggle_widnow);
-		else{
-			var new_key = this.conf.get_accel_string("main_hotkey","<Alt>grave");
-			do{
-				new_key = this.ShowGrabKeyDialog(new_key);
-				grave=this.hotkey.bind (new_key);
-			}while(grave==null);
-			this.conf.set_accel_string("main_hotkey",new_key);
-			grave.on_trigged.connect(this.toggle_widnow);
+		if(!this.conf.disable_hotkey){
+			KeyBinding grave=this.hotkey.bind (this.conf.get_accel_string("main_hotkey","<Alt>grave"));
+			if(grave!=null)
+				grave.on_trigged.connect(this.toggle_widnow);
+			else{
+				var new_key = this.conf.get_accel_string("main_hotkey","<Alt>grave");
+				do{
+					new_key = this.ShowGrabKeyDialog(new_key);
+					grave=this.hotkey.bind (new_key);
+				}while(grave==null);
+				this.conf.set_accel_string("main_hotkey",new_key);
+				grave.on_trigged.connect(this.toggle_widnow);
+			}
+		}else{
+			this.conf.get_accel_string("main_hotkey","<Alt>grave");//just read option
 		}
 
 		this.mouse_follow  = conf.get_boolean("follow_the_white_rabbit",false);
@@ -1151,16 +1155,7 @@ public class AYObject :Object{
 		VTTerminal vt;
 		if(on_exit==null){
 			vt = new VTTerminal(this.conf,this.terms_notebook,(int)(this.children.length()+1),session_command,session_path,(terminal)=>{
-				//close tab if autorestart=false
-				if(this.children.length()>1)//don't close last tab
-					this.close_tab(this.hvbox.children_index(terminal.tbutton));
-				else{
-					string S=_("Shell terminated.")+"\n\r\n\r";
-					terminal.vte_term.feed(S,S.length);
-					terminal.start_command();
-					if(this.conf.get_boolean("window_hide_after_close_last_tab",false))
-						this.main_window.toggle_widnow();
-				}
+				this.close_tab(this.hvbox.children_index(terminal.tbutton));
 			});
 		}else{
 			vt = new VTTerminal(this.conf,this.terms_notebook,(int)(this.children.length()+1),session_command,session_path,on_exit );
@@ -1254,6 +1249,11 @@ public class AYObject :Object{
 					return;//prevent close
 			}
 		}
+		
+//~ 		if(this.children.length()==1 && !this.conf.get_boolean("terminal_auto_restart_shell",true)){
+//~ 			this.ShowQuitDialog();
+//~ 			if(this.main_window.allow_close) return;//exit now, window is terminating
+//~ 		}
 
 		this.hvbox.remove(tab_button);
 		if(tab_button==this.active_tab)
@@ -1287,12 +1287,14 @@ public class AYObject :Object{
 			this.activate_tab(new_active_tbutton);
 			this.update_tabs_title();
 			this.search_update();
-		}else{
-			var vt_new=this.add_tab();
-			string S=_("Shell terminated.")+"\n\r\n\r";
-			vt_new.vte_term.feed(S,S.length);
-			if(this.conf.get_boolean("window_hide_after_close_last_tab",false))
-				this.main_window.toggle_widnow();			
+		}else{				
+			if(!this.main_window.allow_close){
+				var vt_new=this.add_tab();
+				string S=_("Shell terminated.")+"\n\r\n\r";
+				vt_new.vte_term.feed(S,S.length);
+				if(this.conf.get_boolean("window_hide_after_close_last_tab",false))
+					this.main_window.toggle_widnow();			
+			}
 		}
 	}
 

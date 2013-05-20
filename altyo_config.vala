@@ -49,6 +49,7 @@ public class MySettings : Object {
 	private bool opened {get;set; default = false;}
 	private bool changed {get;set; default = false;}
 	private HashTable<string, int> typemap;
+	public  bool disable_hotkey = false;
 
 	public signal void on_load();
 

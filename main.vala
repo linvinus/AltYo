@@ -139,9 +139,14 @@ int main (string[] args) {
 		   }
 	}
 	args2=null;//destroy
+
 	if(Globals.app_id == "none")
 		Globals.app_id=null;
-					
+	else if(!GLib.Application.id_is_valid(Globals.app_id)){
+		printf("Wrong application id \"%s\"\n",Globals.app_id);
+		return 1;//stop on error
+	}
+
     var app = new Gtk.Application(Globals.app_id, ApplicationFlags.HANDLES_COMMAND_LINE);
 
 	//remote args usage
@@ -217,6 +222,11 @@ int main (string[] args) {
 
 				var conf = new MySettings(Globals.cmd_conf_file);
 				conf.disable_hotkey=Globals.disable_hotkey;
+
+				if(!conf.opened){
+					printf("Unable to open configuration file!\n");
+					exit(1);
+				}
 
 				configure_debug(conf);
 				debug("git_hash=%s",AY_GIT_HASH);

@@ -20,7 +20,10 @@ public class AYSettings : AYTab{
 		base(my_conf, notebook, tab_index);
 		this.tbutton.set_title(tab_index, _("AYsettings") );
 		this.ayobject=ayo;
-		this.autorun_file = GLib.Environment.get_user_config_dir()+"/autostart"+"/altyo.desktop";
+		if(this.ayobject.main_window.application.application_id!=null)
+			this.autorun_file = GLib.Environment.get_user_config_dir()+"/autostart"+"/"+this.ayobject.main_window.application.application_id+".desktop";
+		else
+			this.autorun_file = GLib.Environment.get_user_config_dir()+"/autostart"+"/altyo.none.desktop";
 		this.builder = new Gtk.Builder ();
  			try {
 				this.builder.add_from_resource ("/org/gnome/altyo/preferences.glade");
@@ -1022,8 +1025,12 @@ Name=altyo
 Name[ru_RU]=АльтЁ
 Comment[ru_RU]=АльтЁ терминал
 Comment=AltYo terminal
-Exec=altyo
-						""";
+Exec=altyo""";
+					if(this.ayobject.main_window.application.application_id!=null)
+						autorun_content += " --id="+this.ayobject.main_window.application.application_id+"\n";
+					else
+						autorun_content += " --id=none\n";
+					
 						if(!GLib.FileUtils.set_contents (this.autorun_file, autorun_content)){
 							debug(" unable to save altyo.desktop file");
 							}

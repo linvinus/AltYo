@@ -22,11 +22,18 @@ public enum CFG_CHECK{
 	USE_DEFAULT
 	}
 
+public enum VER{
+	major,
+	minor,
+	rc
+	}
+
 public delegate CFG_CHECK check_string(ref string s);
 public delegate CFG_CHECK check_string_list(ref string[] sl);
 public delegate CFG_CHECK check_integer(ref int i);
 public delegate CFG_CHECK check_double(ref double d);
 public delegate CFG_CHECK check_boolean(ref bool b);
+public delegate CFG_CHECK check_integer_list(ref int[] il);
 
 [SimpleType]
 public enum CFG_TYPE{
@@ -36,7 +43,8 @@ public enum CFG_TYPE{
 	TYPE_INTEGER,
 	TYPE_STRING,
 	TYPE_STRING_LIST,
-	TYPE_ACCEL_STRING
+	TYPE_ACCEL_STRING,
+	TYPE_INTEGER_LIST,
 	}
 
 
@@ -46,7 +54,7 @@ public class MySettings : Object {
 	private string profile {get;set;default = "profile0";}
 	private string accel_section {get;set;default = "KeyBindings";}
 	private string qconnection_section {get;set;default = "QConnections";}
-	private bool opened {get;set; default = false;}
+	public bool opened {get;set; default = false;}
 	private bool changed {get;set; default = false;}
 	private HashTable<string, int> typemap;
 	public  bool disable_hotkey = false;
@@ -61,6 +69,14 @@ public class MySettings : Object {
 			this.conf_file = GLib.Environment.get_user_config_dir()+"/altyo"+"/config.ini";
 		kf = new KeyFile();
 		this.load_config();
+		if(this.opened)
+			this.set_integer_list("profile_version",this.check_for_migrate(this.get_integer_list("profile_version", {0,0,0}, (ref new_val)=>{
+				if(new_val.length != 3){
+					new_val = {0,0,0};
+					return CFG_CHECK.REPLACE;
+				}
+				return CFG_CHECK.OK;
+				})) );
 	}
 
 	public void load_config(){
@@ -90,10 +106,12 @@ public class MySettings : Object {
 						var str = kf.to_data (null);
 						try {
 								FileUtils.set_contents (this.conf_file, str, str.length);
+								this.opened = true;
 						} catch (FileError err) {
 								warning (err.message);
 						}
 				}
+				
 	}
 
 	public void reload_config(){
@@ -127,12 +145,33 @@ public class MySettings : Object {
 			}
 	}
 
+	private int[] check_for_migrate(int[] version){
+
+		if(version[VER.major]==0 && version[VER.minor]==0){
+			version[VER.minor]=3;//update settings to latest version 0.3
+		}
+			
+		if(version[VER.major]==0 && version[VER.minor]==3 && version[VER.rc]<5){
+			/*migrate from 0.3 rc4 to rc5
+			* move autostart file*/
+			string old_default_desktop_file=GLib.Environment.get_user_config_dir()+"/autostart/altyo.desktop";
+			string new_default_desktop_file=GLib.Environment.get_user_config_dir()+"/autostart/org.gtk.altyo.desktop";
+			
+			if(GLib.FileUtils.test(old_default_desktop_file,GLib.FileTest.EXISTS) )
+						GLib.FileUtils.rename(old_default_desktop_file,new_default_desktop_file);
+
+			version[VER.rc]=5;//update version
+		}
+
+		return version;
+	}
+
 	public bool get_boolean (string key,bool? def,check_boolean? check_cb=null){
 		int key_type;
 		if(!this.typemap.lookup_extended(key,null,out key_type))
 			this.typemap.insert(key,(int)CFG_TYPE.TYPE_BOOLEAN);
 		else if(key_type!=CFG_TYPE.TYPE_BOOLEAN)
-			assert(key_type==CFG_TYPE.TYPE_BOOLEAN);
+			GLib.assert(key_type==CFG_TYPE.TYPE_BOOLEAN);
 
 		bool ret = def;
 			try {
@@ -163,7 +202,7 @@ public class MySettings : Object {
 		if(!this.typemap.lookup_extended(key,null,out key_type))
 			this.typemap.insert(key,CFG_TYPE.TYPE_INTEGER);
 		else if(key_type!=CFG_TYPE.TYPE_INTEGER)
-			assert(key_type==CFG_TYPE.TYPE_INTEGER);
+			GLib.assert(key_type==CFG_TYPE.TYPE_INTEGER);
 
 		int ret = def;
 			try {
@@ -188,13 +227,44 @@ public class MySettings : Object {
 			}
 		return ret;
 		}
+		
+	public int[] get_integer_list (string key,int[] def,check_integer_list? check_cb=null){
+		int key_type;
+		if(!this.typemap.lookup_extended(key,null,out key_type))
+			this.typemap.insert(key,CFG_TYPE.TYPE_INTEGER_LIST);
+		else if(key_type!=CFG_TYPE.TYPE_INTEGER_LIST)
+			GLib.assert(key_type==CFG_TYPE.TYPE_INTEGER_LIST);
 
+		int[] ret = def;
+			try {
+				ret = kf.get_integer_list(this.profile,key);
+				if(check_cb!=null)
+					switch(check_cb(ref ret)){
+						case CFG_CHECK.REPLACE:
+							this.changed=true;
+							kf.set_integer_list(this.profile,key,ret);
+						break;
+						case CFG_CHECK.USE_DEFAULT:
+							ret=def;
+							this.changed=true;
+							kf.set_integer_list(this.profile,key,def);
+						break;
+					}
+			} catch (KeyFileError err) {
+				warning (err.message);
+				this.changed=true;
+				kf.set_integer_list(this.profile,key,def);
+				ret = def;
+			}
+		return ret;
+		}
+		
 	public double get_double (string key,double def,check_double? check_cb=null){
 		int key_type;
 		if(!this.typemap.lookup_extended(key,null,out key_type))
 			this.typemap.insert(key,CFG_TYPE.TYPE_DOUBLE);
 		else if(key_type!=CFG_TYPE.TYPE_DOUBLE)
-			assert(key_type==CFG_TYPE.TYPE_DOUBLE);
+			GLib.assert(key_type==CFG_TYPE.TYPE_DOUBLE);
 
 		double ret = def;
 			try {
@@ -225,7 +295,7 @@ public class MySettings : Object {
 		if(!this.typemap.lookup_extended(key,null,out key_type))
 			this.typemap.insert(key,CFG_TYPE.TYPE_STRING_LIST);
 		else if(key_type!=CFG_TYPE.TYPE_STRING_LIST)
-			assert(key_type==CFG_TYPE.TYPE_STRING_LIST);
+			GLib.assert(key_type==CFG_TYPE.TYPE_STRING_LIST);
 
 		string[] ret = def;
 			try {
@@ -256,7 +326,7 @@ public class MySettings : Object {
 		if(!this.typemap.lookup_extended(key,null,out key_type))
 			this.typemap.insert(key,CFG_TYPE.TYPE_STRING);
 		else if(key_type!=CFG_TYPE.TYPE_STRING)
-			assert(key_type==CFG_TYPE.TYPE_STRING);
+			GLib.assert(key_type==CFG_TYPE.TYPE_STRING);
 
 		string ret = def;
 			try {
@@ -288,7 +358,7 @@ public class MySettings : Object {
 		if(!this.typemap.lookup_extended(key,null,out key_type))
 			this.typemap.insert(key,CFG_TYPE.TYPE_STRING_LIST);
 		else if(key_type!=CFG_TYPE.TYPE_STRING_LIST)
-			assert(key_type==CFG_TYPE.TYPE_STRING_LIST);
+			GLib.assert(key_type==CFG_TYPE.TYPE_STRING_LIST);
 
 		bool ret = true;
 			try {
@@ -306,7 +376,7 @@ public class MySettings : Object {
 		if(!this.typemap.lookup_extended(key,null,out key_type))
 			this.typemap.insert(key,CFG_TYPE.TYPE_STRING);
 		else if(key_type!=CFG_TYPE.TYPE_STRING)
-			assert(key_type==CFG_TYPE.TYPE_STRING);
+			GLib.assert(key_type==CFG_TYPE.TYPE_STRING);
 
 		bool ret = true;
 			try {
@@ -327,12 +397,30 @@ public class MySettings : Object {
 		if(!this.typemap.lookup_extended(key,null,out key_type))
 			this.typemap.insert(key,CFG_TYPE.TYPE_INTEGER);
 		else if(key_type!=CFG_TYPE.TYPE_INTEGER)
-			assert(key_type==CFG_TYPE.TYPE_INTEGER);
+			GLib.assert(key_type==CFG_TYPE.TYPE_INTEGER);
 
 		bool ret = true;
 			try {
 				this.changed=true;
 				kf.set_integer(this.profile,key,def);
+			} catch (KeyFileError err) {
+				warning (err.message);
+				ret = false;
+			}
+		return ret;
+		}
+		
+	public bool set_integer_list (string key,int[] def){
+		int key_type;
+		if(!this.typemap.lookup_extended(key,null,out key_type))
+			this.typemap.insert(key,CFG_TYPE.TYPE_INTEGER_LIST);
+		else if(key_type!=CFG_TYPE.TYPE_INTEGER_LIST)
+			GLib.assert(key_type==CFG_TYPE.TYPE_INTEGER_LIST);
+
+		bool ret = true;
+			try {
+				this.changed=true;
+				kf.set_integer_list(this.profile,key,def);
 			} catch (KeyFileError err) {
 				warning (err.message);
 				ret = false;
@@ -345,7 +433,7 @@ public class MySettings : Object {
 		if(!this.typemap.lookup_extended(key,null,out key_type))
 			this.typemap.insert(key,CFG_TYPE.TYPE_BOOLEAN);
 		else if(key_type!=CFG_TYPE.TYPE_BOOLEAN)
-			assert(key_type==CFG_TYPE.TYPE_BOOLEAN);
+			GLib.assert(key_type==CFG_TYPE.TYPE_BOOLEAN);
 
 		bool ret = true;
 			try {
@@ -363,7 +451,7 @@ public class MySettings : Object {
 		if(!this.typemap.lookup_extended(key,null,out key_type))
 			this.typemap.insert(key,CFG_TYPE.TYPE_DOUBLE);
 		else if(key_type!=CFG_TYPE.TYPE_DOUBLE)
-			assert(key_type==CFG_TYPE.TYPE_DOUBLE);
+			GLib.assert(key_type==CFG_TYPE.TYPE_DOUBLE);
 
 		bool ret = true;
 			try {
@@ -400,7 +488,7 @@ public class MySettings : Object {
 		if(!this.typemap.lookup_extended(key,null,out key_type))
 			this.typemap.insert(key,CFG_TYPE.TYPE_ACCEL_STRING);
 		else if(key_type!=CFG_TYPE.TYPE_ACCEL_STRING)
-			assert(key_type==CFG_TYPE.TYPE_ACCEL_STRING);
+			GLib.assert(key_type==CFG_TYPE.TYPE_ACCEL_STRING);
 
 		string ret = def;
 			try {
@@ -419,7 +507,7 @@ public class MySettings : Object {
 		if(!this.typemap.lookup_extended(key,null,out key_type))
 			this.typemap.insert(key,CFG_TYPE.TYPE_ACCEL_STRING);
 		else if(key_type!=CFG_TYPE.TYPE_ACCEL_STRING)
-			assert(key_type==CFG_TYPE.TYPE_ACCEL_STRING);
+			GLib.assert(key_type==CFG_TYPE.TYPE_ACCEL_STRING);
 
 		bool ret = true;
 			try {

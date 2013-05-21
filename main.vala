@@ -67,7 +67,7 @@ struct Globals{
 					/*The option takes a string argument, multiple uses of the option are collected into an array of strings. */
 					{ "exec", 'e', 0, OptionArg.STRING_ARRAY, ref Globals.exec_file_with_args,N_("run command in new tab"), N_("\"command arg1 argN...\"") },
 					{ "toggle", 0, 0, OptionArg.NONE, ref Globals.toggle,N_("show/hide window"), null },
-					{ "id", 0, 0, OptionArg.STRING, ref Globals.app_id,N_("Set application id, none means desable application id"),"org.gtk.altyo_my,none" },
+					{ "id", 0, 0, OptionArg.STRING, ref Globals.app_id,N_("Set application id, none means disable application id"),"org.gtk.altyo_my,none" },
 					{ "disable_hotkey", 0, 0, OptionArg.NONE, ref Globals.disable_hotkey,N_("Disable main hotkey"),null},
 					{ null }
 			};
@@ -208,7 +208,7 @@ int main (string[] args) {
 				if(Globals.toggle){
 					unowned List<weak Window> list = app.get_windows();
 					if(list!=null)
-						((VTMainWindow)list.data).toggle_widnow();
+						((VTMainWindow)list.data).toggle_window();
 				}
 
 				Globals.reload=false;

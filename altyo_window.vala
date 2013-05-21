@@ -454,8 +454,8 @@ public class VTMainWindow : Window{
 		 * reparent to pix win
 		 * Think, is it worth it? }*/
 
-	public void toggle_widnow(){
-		debug("toggle_widnow start");
+	public void toggle_window(){
+		debug("toggle_window start");
 		if(this.pull_animation_active) return;
 		/* when hotkey is pressed, main window loose focus,
 		 * so impossible to check, is windows focused or not.
@@ -466,7 +466,7 @@ public class VTMainWindow : Window{
 		 var slf_win=this.get_window();
 		 if(slf_win!=null)
 			debug("slf=%d w=%d",(int)Gdk.X11Window.get_xid(slf_win),(int)w);
-		//debug("toggle_widnow %d %d",(int)this.last_event_time,(int)this.hotkey.last_focus_out_event_time);
+		//debug("toggle_window %d %d",(int)this.last_event_time,(int)this.hotkey.last_focus_out_event_time);
 		//&& !this.is_active && (this.current_state == WStates.VISIBLE) && ((int)this.hotkey.last_key_event_time-(int)this.last_focus_out_event_time)>100
 		if(!this.keep_above && slf_win!=null && Gdk.X11Window.get_xid(slf_win) != w ){
 			this.window_set_active();
@@ -477,7 +477,7 @@ public class VTMainWindow : Window{
 				this.pull_down();
 			else
 				this.pull_up();
-		debug("toggle_widnow end");
+		debug("toggle_window end");
 	}
 
 	public override bool window_state_event (Gdk.EventWindowState event){
@@ -710,7 +710,7 @@ public class VTMainWindow : Window{
 		if(!this.conf.disable_hotkey){
 			KeyBinding grave=this.hotkey.bind (this.conf.get_accel_string("main_hotkey","<Alt>grave"));
 			if(grave!=null)
-				grave.on_trigged.connect(this.toggle_widnow);
+				grave.on_trigged.connect(this.toggle_window);
 			else{
 				var new_key = this.conf.get_accel_string("main_hotkey","<Alt>grave");
 				do{
@@ -718,7 +718,7 @@ public class VTMainWindow : Window{
 					grave=this.hotkey.bind (new_key);
 				}while(grave==null);
 				this.conf.set_accel_string("main_hotkey",new_key);
-				grave.on_trigged.connect(this.toggle_widnow);
+				grave.on_trigged.connect(this.toggle_window);
 			}
 		}else{
 			this.conf.get_accel_string("main_hotkey","<Alt>grave");//just read option
@@ -1314,7 +1314,7 @@ public class AYObject :Object{
 					vt_new.vte_term.feed(S,S.length);
 				}
 				if(this.action_on_close_last_tab==1)//restart shell and hide
-					this.main_window.toggle_widnow();			
+					this.main_window.toggle_window();			
 			}
 		}
 	}
@@ -1791,7 +1791,7 @@ public class AYObject :Object{
    		/* Show/hide main window on <Alt>grave
    		 * add main_hotkey just to be able show it in popup menu*/
 		this.add_window_accel("main_hotkey", _("Show/Hide"), _("Show/Hide"), Gtk.Stock.GO_UP,"<Alt>grave",()=>{
-			this.main_window.toggle_widnow();
+			this.main_window.toggle_window();
 		});
 
 		/* Add New Tab on <Ctrl><Shift>t */

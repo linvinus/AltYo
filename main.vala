@@ -55,6 +55,7 @@ struct Globals{
 	static bool toggle = false;
 	static string? app_id = null;
 	static bool disable_hotkey = false;
+	static bool tiling_wm_mode = false;
 
 	[CCode (array_length = false, array_null_terminated = true)]
 	public static string[]? exec_file_with_args = null;
@@ -69,6 +70,7 @@ struct Globals{
 					{ "toggle", 0, 0, OptionArg.NONE, ref Globals.toggle,N_("show/hide window"), null },
 					{ "id", 0, 0, OptionArg.STRING, ref Globals.app_id,N_("Set application id, none means disable application id"),"org.gtk.altyo_my,none" },
 					{ "disable_hotkey", 0, 0, OptionArg.NONE, ref Globals.disable_hotkey,N_("Disable main hotkey"),null},
+					{ "tiling_wm_mode", 0, 0, OptionArg.NONE, ref Globals.tiling_wm_mode,N_("Disable control of window dimension, and set --id=none"),null},
 					{ null }
 			};
 
@@ -146,6 +148,11 @@ int main (string[] args) {
 		printf("Wrong application id \"%s\"\n",Globals.app_id);
 		return 1;//stop on error
 	}
+	
+	if(Globals.tiling_wm_mode){
+		Globals.disable_hotkey=true;
+		Globals.app_id=null;
+	}
 
     var app = new Gtk.Application(Globals.app_id, ApplicationFlags.HANDLES_COMMAND_LINE);
 
@@ -222,6 +229,7 @@ int main (string[] args) {
 
 				var conf = new MySettings(Globals.cmd_conf_file);
 				conf.disable_hotkey=Globals.disable_hotkey;
+				conf.tiling_wm_mode=Globals.tiling_wm_mode;
 
 				if(!conf.opened){
 					printf("Unable to open configuration file!\n");

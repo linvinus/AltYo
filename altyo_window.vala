@@ -181,19 +181,30 @@ public class VTMainWindow : Window{
 		}
 		debug("CreateVTWindow end");
 
-		if ( conf.get_boolean("start_hidden",false) ){
-			this.pull_up();//all workarounds is inside pull_up,pull_down,update_position_size
-			this.pull_maximized=this.start_maximized;
-		}else{
-			this.show();
-			if(!this.start_maximized){
-				this.update_position_size();
+		if(!this.conf.tiling_wm_mode){
+			if ( conf.get_boolean("start_hidden",false) ){
+				this.pull_up();//all workarounds is inside pull_up,pull_down,update_position_size
+				this.pull_maximized=this.start_maximized;
 			}else{
-				this.maximize();
-				this.update_events();//process maximize event
-				this.update_geometry_hints(this.get_allocated_height(),this.get_allocated_width(),this.get_allocated_height(),this.get_allocated_width(),Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
+				this.show();
+				if(!this.start_maximized){
+					this.update_position_size();
+				}else{
+					this.maximize();
+					this.update_events();//process maximize event
+					this.update_geometry_hints(this.get_allocated_height(),this.get_allocated_width(),this.get_allocated_height(),this.get_allocated_width(),Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
+				}
+				this.window_set_active();
 			}
-			this.window_set_active();
+		}else{
+			this.ayobject.on_maximize(false);
+			//this.ayobject.on_maximize(true);
+			this.update_position_size(false);
+			int hvbox_h, hvbox_h_ignore;
+			this.ayobject.hvbox.get_preferred_height_for_width(this.ayobject.terminal_width,out hvbox_h,out hvbox_h_ignore);
+			var should_be_h = this.ayobject.terminal_height+hvbox_h;			
+			this.resize(this.ayobject.terminal_width,should_be_h);
+			this.show();
 		}
 		GLib.Idle.add(this.ayobject.create_tabs);
 		
@@ -452,7 +463,7 @@ public class VTMainWindow : Window{
 
 	public void toggle_window(){
 		debug("toggle_window start");
-		if(this.pull_animation_active) return;
+		if(this.pull_animation_active || this.conf.tiling_wm_mode) return;
 		/* when hotkey is pressed, main window loose focus,
 		 * so impossible to check, is windows focused or not.
 		 * as workaround, remember last focus-out time,
@@ -479,7 +490,7 @@ public class VTMainWindow : Window{
 	public override bool window_state_event (Gdk.EventWindowState event){
 		debug("window_state_event type=%d new_state=%d mask=%d",(int)event.type,(int)event.new_window_state,(int)event.changed_mask);
 		 var ret=base.window_state_event(event);
-		if(!this.pull_active && !this.pull_animation_active){
+		if(!this.pull_active && !this.pull_animation_active && !this.conf.tiling_wm_mode){
 				debug("window_state_event !!!!!!!!! this.maximized=%d",(int)this.maximized);
 			//ignore maximize event when pull active
 			if( (event.changed_mask & Gdk.WindowState.MAXIMIZED)==Gdk.WindowState.MAXIMIZED ){//maximize state change
@@ -607,7 +618,8 @@ public class VTMainWindow : Window{
 				debug ("update_position_size start maximized=%d config_maximized=%d",(int)this.maximized ,(int)this.config_maximized);
 				/*update terminal align policy
 				 * */
-				this.ayobject.on_maximize(this.maximized);
+				this.ayobject.on_maximize(this.maximized||this.conf.tiling_wm_mode);
+				if(this.conf.tiling_wm_mode) return;
 
 				/* update position only in unmaximized mode
 				 * */
@@ -813,7 +825,7 @@ public class VTMainWindow : Window{
 
 		if(this.current_state==WStates.VISIBLE){
 
-			if(this.keep_above){
+			if(this.keep_above && !this.conf.tiling_wm_mode){
 				this.skip_taskbar_hint = true;
 				this.set_keep_above(true);
 				//this.show ();//first show then send_net_active_window!
@@ -839,7 +851,7 @@ public class VTMainWindow : Window{
 
 			var title=_("Please select key combination, to show/hide AltYo.");
 			if(prev_bind!=null)
-				title+="\n"+_("previous key '%s' incorrect or busy").printf(prev_bind);
+				title+="\n"+_("Previous key '%s' incorrect or busy").printf(prev_bind);
 			var dialog = new MessageDialog (null, (DialogFlags.DESTROY_WITH_PARENT | DialogFlags.MODAL), MessageType.QUESTION, ButtonsType.OK, title);
 			var aLabel = new Label(_("Press any key"));
 			var dialog_box = ((Gtk.Box)dialog.get_content_area ());
@@ -1008,8 +1020,8 @@ public class AYObject :Object{
 		this.tasks_notebook.switch_page.connect(on_switch_task);
 
 		this.save_session    = conf.get_boolean("autosave_session",false);
-
-		this.tasks_notebook.set_size_request(terminal_width,this.terminal_height);
+		if(!this.conf.tiling_wm_mode)
+			this.tasks_notebook.set_size_request(terminal_width,this.terminal_height);
 
 		this.hvbox = new HVBox();
 		this.hvbox.halign=Gtk.Align.FILL;
@@ -1806,7 +1818,7 @@ public class AYObject :Object{
 		this.add_window_toggle_accel("keep_above", _("Stay on top"), _("Stay on top"), Gtk.Stock.EDIT,"",()=> {
 			this.main_window.keep_above=!this.main_window.keep_above;
 			debug("action keep_above %d",(int)this.main_window.keep_above);
-			if(this.main_window.keep_above){
+			if(this.main_window.keep_above && !this.conf.tiling_wm_mode){
 				this.main_window.skip_taskbar_hint = true;
 				this.main_window.set_keep_above(true);
 			}else{
@@ -1817,7 +1829,7 @@ public class AYObject :Object{
 		this.add_window_toggle_accel("window_toggle_stick", _("Stick"), _("Toggle stick"), Gtk.Stock.EDIT,"",()=> {
 			this.main_window.orig_stick=!this.main_window.orig_stick;
 			//debug("action keep_above %d",(int)this.main_window.keep_above);
-			if(this.main_window.orig_stick){
+			if(this.main_window.orig_stick && !this.conf.tiling_wm_mode){
 				this.main_window.stick();
 			}else{
 				this.main_window.unstick();
@@ -1851,6 +1863,8 @@ public class AYObject :Object{
 
 
 	public void hvbox_size_changed(int width, int height,bool on_size_request){
+			if(this.conf.tiling_wm_mode) return;
+			
 			if(this.main_window.pull_active || this.main_window.pull_animation_active) return;
 			//debug ("hvbox_size_changed start");
 			if(!this.main_window.maximized && this.main_window.get_realized()){
@@ -2030,10 +2044,11 @@ public class AYObject :Object{
 				var was_wn=this.tasks_notebook.get_allocated_width();
 				this.tasks_notebook.set_size_request(was_wn,-1);
 				this.search_hbox.show();
-
-				this.main_window.set_default_size(was_w,was_h);
-				this.main_window.resize (was_w,was_h);
-				this.main_window.queue_resize_no_redraw();
+				if(!this.conf.tiling_wm_mode){
+					this.main_window.set_default_size(was_w,was_h);
+					this.main_window.resize (was_w,was_h);
+					this.main_window.queue_resize_no_redraw();
+				}
 			}else
 				this.search_hbox.show();
 
@@ -2083,10 +2098,12 @@ public class AYObject :Object{
 		var should_be_h = this.terminal_height+this.hvbox.get_allocated_height();
 		if(this.main_window.get_allocated_height()>should_be_h+2){
 			//this.configure_position();//this needed to update position after unmaximize
-			this.main_vbox.set_size_request(this.terminal_width,should_be_h);
-			this.main_window.set_default_size(this.terminal_width,should_be_h);
-			this.main_window.resize (this.terminal_width,should_be_h);
-			this.main_window.queue_resize_no_redraw();
+			if(!this.conf.tiling_wm_mode){
+				this.main_vbox.set_size_request(this.terminal_width,should_be_h);
+				this.main_window.set_default_size(this.terminal_width,should_be_h);
+				this.main_window.resize (this.terminal_width,should_be_h);
+				this.main_window.queue_resize_no_redraw();
+			}
 			debug ("search_hide terminal_width=%d should_be_h=%d",terminal_width,should_be_h) ;
 		}
 		this.search_hbox.hide();

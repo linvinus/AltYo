@@ -1450,6 +1450,7 @@ public class AYObject :Object{
 				if(vt.tbutton.set_title(tab_index, s )){
 					this.hvbox.queue_draw();
 					this.main_window.update_events();
+					this.window_title_update();
 				}
 				if( (this.tab_sort_order==TAB_SORT_ORDER.HOSTNAME) &&
 				    ( vt.tbutton.host_name!=null || !vt.tbutton.do_not_sort) )
@@ -2069,7 +2070,17 @@ public class AYObject :Object{
 		}
 	}
 
+	public void window_title_update(){
+		AYTab vtt = ((AYTab)this.active_tab.object);
+		if(vtt!=null) {
+			if(vtt.tbutton.tab_title!=null)
+				this.main_window.title=vtt.tbutton.tab_title;
+			else				
+				this.main_window.title=_("AltYo Tab%d").printf(this.children.index(vtt)+1);
+		}
+	}
 	public void search_update(){
+		this.window_title_update();
 		if(this.search_hbox.visible){
 			unowned AYTab vtt = ((AYTab)this.active_tab.object);
 			if(!(vtt is VTTerminal)) {

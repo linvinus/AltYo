@@ -62,7 +62,7 @@ public class VTToggleButton : Gtk.ToggleButton {
 	public bool do_not_sort  {get;set;default = false;}
 	public int  conf_max_width {get;set;default = -1;}
 
-	private string tab_title {get;set;default = null;}
+	public string tab_title {get;set;default = null;}
 	public int    tab_index {get;set;default = -1;}
 	public string markup_normal  {get;set;}
 	public string markup_active  {get;set;}

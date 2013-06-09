@@ -1,3 +1,26 @@
+altyo (0.3~rc5-linvinus1) quantal; urgency=low
+
+  * update: add license file
+  * new: option terminal_timeout_before_notify 
+  * fix: start terminals after window size was congigured
+  * improvements: skip some variables if runned from another terminal. code optimization
+  * new: action terminal_sort_by_hostname, and popup menu for tab buttons
+  * improvement: add representation for tab_sort_order in  settings dialog
+  * improvements: sotr tab after settings changed, anable "Disable sort tab" option only for active tab.
+  * new: command line option --id, allow set different application id
+  * new: command line option --disable_hotkey
+  * new: option profile_version, now possible automatically update user options 
+  * improvements: check command line application id, rename autostart file according to application_id
+  * replace: option window_hide_after_close_last_tab by window_action_on_close_last_tab
+  * fix: typographical errors
+  * fix: remove nonexistent signal handler
+  * new: command line option --tiling_wm_mode
+  * improvement: dynamic window title
+  * improvement: possibility to quick change Delete/backspace binding
+  * update: Russian translation
+
+ -- denis <linvinus@gmail.com>  Sun, 09 Jun 2013 14:43:49 +0400
+
 altyo (0.3~rc4-linvinus1) quantal; urgency=low
 
   * improvements: use "close" button instead "cancel" in settings dialog. add tooltip for revert button.

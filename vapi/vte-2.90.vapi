@@ -18,11 +18,13 @@ namespace Vte {
 		public bool set_utf8 (bool utf8) throws GLib.Error;
 		public int fd { get; construct; }
 		[NoAccessorMethod]
+		public Vte.PtyFlags flags { get; construct; }
+		[NoAccessorMethod]
 		public string term { owned get; set; }
 	}
 	[CCode (cheader_filename = "vte/vte.h", type_id = "vte_terminal_get_type ()")]
 	public class Terminal : Gtk.Widget, Atk.Implementor, Gtk.Buildable, Gtk.Scrollable {
-		[CCode (has_construct_function = false)]
+		[CCode (has_construct_function = false, type = "GtkWidget*")]
 		public Terminal ();
 		public void copy_primary ();
 		public void feed (string data, long length);
@@ -35,6 +37,8 @@ namespace Vte {
 		public long get_char_width ();
 		public int get_child_exit_status ();
 		public long get_column_count ();
+		public unowned string get_current_directory_uri ();
+		public unowned string get_current_file_uri ();
 		public Vte.TerminalCursorBlinkMode get_cursor_blink_mode ();
 		public void get_cursor_position (out long column, out long row);
 		public Vte.TerminalCursorShape get_cursor_shape ();
@@ -56,7 +60,7 @@ namespace Vte {
 		public void im_append_menuitems (Gtk.MenuShell menushell);
 		public bool is_word_char (unichar c);
 		public int match_add_gregex (GLib.Regex regex, GLib.RegexMatchFlags flags);
-		public string match_check (long column, long row, out int tag);
+		public string? match_check (long column, long row, out int tag);
 		public void match_clear_all ();
 		public void match_remove (int tag);
 		public void match_set_cursor (int tag, Gdk.Cursor? cursor);
@@ -117,7 +121,7 @@ namespace Vte {
 		public void set_visible_bell (bool is_visible);
 		public void set_word_chars (string spec);
 		public void watch_child (GLib.Pid child_pid);
-		public bool write_contents (GLib.OutputStream stream, Vte.TerminalWriteFlags flags, GLib.Cancellable? cancellable) throws GLib.Error;
+		public bool write_contents (GLib.OutputStream stream, Vte.TerminalWriteFlags flags, GLib.Cancellable? cancellable = null) throws GLib.Error;
 		public bool allow_bold { get; set; }
 		public bool audible_bell { get; set; }
 		[NoAccessorMethod]
@@ -132,6 +136,14 @@ namespace Vte {
 		public Gdk.Color background_tint_color { get; set; }
 		[NoAccessorMethod]
 		public bool background_transparent { get; set; }
+		[NoAccessorMethod]
+		public Vte.TerminalEraseBinding backspace_binding { get; set; }
+		public string current_directory_uri { get; }
+		public string current_file_uri { get; }
+		public Vte.TerminalCursorBlinkMode cursor_blink_mode { get; set; }
+		public Vte.TerminalCursorShape cursor_shape { get; set; }
+		[NoAccessorMethod]
+		public Vte.TerminalEraseBinding delete_binding { get; set; }
 		public string emulation { get; set; }
 		public string encoding { get; set; }
 		[NoAccessorMethod]
@@ -159,6 +171,8 @@ namespace Vte {
 		public virtual signal void contents_changed ();
 		[HasEmitter]
 		public virtual signal void copy_clipboard ();
+		public signal void current_directory_uri_changed ();
+		public signal void current_file_uri_changed ();
 		public virtual signal void cursor_moved ();
 		public virtual signal void decrease_font_size ();
 		public virtual signal void deiconify_window ();
@@ -185,15 +199,10 @@ namespace Vte {
 		public virtual signal void text_scrolled (int delta);
 		public virtual signal void window_title_changed ();
 	}
-	[CCode (cheader_filename = "vte/vte.h", cname = "_VteCharAttributes")]
+	[CCode (cheader_filename = "vte/vte.h", cname = "_VteCharAttributes", has_type_id = false)]
 	public struct _CharAttributes {
 	}
-	[CCode (cheader_filename = "vte/vte.h", cprefix = "VTE_PTY_ERROR_")]
-	public enum PtyError {
-		PTY_HELPER_FAILED,
-		PTY98_FAILED
-	}
-	[CCode (cheader_filename = "vte/vte.h", cprefix = "VTE_PTY_")]
+	[CCode (cheader_filename = "vte/vte.h", cprefix = "VTE_PTY_", type_id = "vte_pty_flags_get_type ()")]
 	[Flags]
 	public enum PtyFlags {
 		NO_LASTLOG,
@@ -203,19 +212,25 @@ namespace Vte {
 		NO_FALLBACK,
 		DEFAULT
 	}
-	[CCode (cheader_filename = "vte/vte.h", cprefix = "VTE_CURSOR_BLINK_")]
+	[CCode (cheader_filename = "vte/vte.h", cprefix = "VTE_ANTI_ALIAS_", type_id = "vte_terminal_anti_alias_get_type ()")]
+	public enum TerminalAntiAlias {
+		USE_DEFAULT,
+		FORCE_ENABLE,
+		FORCE_DISABLE
+	}
+	[CCode (cheader_filename = "vte/vte.h", cprefix = "VTE_CURSOR_BLINK_", type_id = "vte_terminal_cursor_blink_mode_get_type ()")]
 	public enum TerminalCursorBlinkMode {
 		SYSTEM,
 		ON,
 		OFF
 	}
-	[CCode (cheader_filename = "vte/vte.h", cprefix = "VTE_CURSOR_SHAPE_")]
+	[CCode (cheader_filename = "vte/vte.h", cprefix = "VTE_CURSOR_SHAPE_", type_id = "vte_terminal_cursor_shape_get_type ()")]
 	public enum TerminalCursorShape {
 		BLOCK,
 		IBEAM,
 		UNDERLINE
 	}
-	[CCode (cheader_filename = "vte/vte.h", cprefix = "VTE_ERASE_")]
+	[CCode (cheader_filename = "vte/vte.h", cprefix = "VTE_ERASE_", type_id = "vte_terminal_erase_binding_get_type ()")]
 	public enum TerminalEraseBinding {
 		AUTO,
 		ASCII_BACKSPACE,
@@ -223,9 +238,15 @@ namespace Vte {
 		DELETE_SEQUENCE,
 		TTY
 	}
-	[CCode (cheader_filename = "vte/vte.h", cprefix = "VTE_TERMINAL_WRITE_")]
+	[CCode (cheader_filename = "vte/vte.h", cprefix = "VTE_TERMINAL_WRITE_", type_id = "vte_terminal_write_flags_get_type ()")]
 	public enum TerminalWriteFlags {
 		DEFAULT
+	}
+	[CCode (cheader_filename = "vte/vte.h", cprefix = "VTE_PTY_ERROR_")]
+	public errordomain PtyError {
+		PTY_HELPER_FAILED,
+		PTY98_FAILED;
+		public static GLib.Quark quark ();
 	}
 	[CCode (cheader_filename = "vte/vte.h", instance_pos = 3.9)]
 	public delegate bool SelectionFunc (Vte.Terminal terminal, long column, long row);
@@ -236,5 +257,5 @@ namespace Vte {
 	[CCode (cheader_filename = "vte/vte.h")]
 	public const int MINOR_VERSION;
 	[CCode (cheader_filename = "vte/vte.h")]
-	public static string get_user_shell ();
+	public static string? get_user_shell ();
 }

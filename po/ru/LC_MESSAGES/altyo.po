@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-08 19:14+0400\n"
+"POT-Creation-Date: 2013-06-09 14:40+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -80,11 +80,11 @@ msgstr "<b>URL регулярные выражения</b>"
 msgid "<b>Window</b>"
 msgstr "<b>Окно программы</b>"
 
-#: data/preferences.glade:217
+#: altyo_terminal.vala:951 altyo_terminal.vala:988 data/preferences.glade:217
 msgid "ASCII Backspace"
 msgstr "ASCII Backspace"
 
-#: data/preferences.glade:220
+#: altyo_terminal.vala:957 altyo_terminal.vala:994 data/preferences.glade:220
 msgid "ASCII Delete"
 msgstr "ASCII Delete"
 
@@ -130,7 +130,7 @@ msgstr "Любых изменениях"
 msgid "Application style"
 msgstr "Стиль приложения"
 
-#: data/preferences.glade:214
+#: altyo_terminal.vala:945 altyo_terminal.vala:982 data/preferences.glade:214
 msgid "Auto"
 msgstr "Автоматически"
 
@@ -270,7 +270,7 @@ msgstr "Монитор по умолчанию, на котором будет �
 msgid "Delete key binding"
 msgstr "Клавиша Delete генерирует"
 
-#: data/preferences.glade:223
+#: altyo_terminal.vala:963 altyo_terminal.vala:1000 data/preferences.glade:223
 msgid "Delete sequence"
 msgstr "Экранирующая последовательность"
 
@@ -444,7 +444,9 @@ msgstr "Мерцает."
 
 #: data/preferences.glade:834
 msgid "On close last tab"
-msgstr "После закрытия\nпоследней закладки"
+msgstr ""
+"После закрытия\n"
+"последней закладки"
 
 #: altyo_window.vala:1658
 msgid "Open new tab"
@@ -484,6 +486,7 @@ msgid "Prevent close"
 msgstr "Не закрывать если"
 
 #: altyo_window.vala:854
+#, c-format
 msgid "Previous key '%s' incorrect or busy"
 msgstr "Предыдущая комбинация '%s' уже занята, или неправильнго формата"
 
@@ -503,7 +506,7 @@ msgstr ""
 "Окно будет выпадать на том же экране, где находится курсор мыши\n"
 "Используется если у вас несколько мониторов."
 
-#: altyo_terminal.vala:888
+#: altyo_terminal.vala:909
 msgid "Quick settings"
 msgstr "Быстрые настройки"
 
@@ -539,12 +542,14 @@ msgstr "Сбросить настройки на значения по умол�
 #: data/preferences.glade:3161
 msgid "Restart shell"
 msgstr ""
-"перезапустить\nкоммандную оболочку"
+"перезапустить\n"
+"коммандную оболочку"
 
 #: data/preferences.glade:3164
 msgid "Restart shell and hide"
 msgstr ""
-"перезапустить\nкоммандную оболочку\n"
+"перезапустить\n"
+"коммандную оболочку\n"
 "и скрыть окно"
 
 #: data/preferences.glade:132
@@ -678,7 +683,7 @@ msgstr ""
 msgid "System"
 msgstr "Системный"
 
-#: data/preferences.glade:226
+#: altyo_terminal.vala:969 altyo_terminal.vala:1006 data/preferences.glade:226
 msgid "TTY \"erase\""
 msgstr "TTY \"erase\""
 
@@ -721,6 +726,14 @@ msgstr "Цвет текста"
 #: data/preferences.glade:1944
 msgid "The time during which respond to the double pressing."
 msgstr "Время, в течение которого реагировать на повторное нажатие."
+
+#: altyo_terminal.vala:978
+msgid "This terminal: Backspace"
+msgstr "В этом терминале: Backspace"
+
+#: altyo_terminal.vala:939
+msgid "This terminal: Delete"
+msgstr "В этом терминале: Delete"
 
 #: data/preferences.glade:1810
 msgid "Timeout before Notify "

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-08 19:14+0400\n"
+"POT-Creation-Date: 2013-06-09 14:40+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -51,8 +51,36 @@ msgstr ""
 msgid "terminal_url_regexps wrong value! will be used default value. err:%s"
 msgstr ""
 
-#: altyo_terminal.vala:888
+#: altyo_terminal.vala:909
 msgid "Quick settings"
+msgstr ""
+
+#: altyo_terminal.vala:939
+msgid "This terminal: Delete"
+msgstr ""
+
+#: altyo_terminal.vala:945 altyo_terminal.vala:982 data/preferences.glade:214
+msgid "Auto"
+msgstr ""
+
+#: altyo_terminal.vala:951 altyo_terminal.vala:988 data/preferences.glade:217
+msgid "ASCII Backspace"
+msgstr ""
+
+#: altyo_terminal.vala:957 altyo_terminal.vala:994 data/preferences.glade:220
+msgid "ASCII Delete"
+msgstr ""
+
+#: altyo_terminal.vala:963 altyo_terminal.vala:1000 data/preferences.glade:223
+msgid "Delete sequence"
+msgstr ""
+
+#: altyo_terminal.vala:969 altyo_terminal.vala:1006 data/preferences.glade:226
+msgid "TTY \"erase\""
+msgstr ""
+
+#: altyo_terminal.vala:978
+msgid "This terminal: Backspace"
 msgstr ""
 
 #: altyo_window.vala:852
@@ -368,26 +396,6 @@ msgstr ""
 
 #: data/preferences.glade:203
 msgid "Off"
-msgstr ""
-
-#: data/preferences.glade:214
-msgid "Auto"
-msgstr ""
-
-#: data/preferences.glade:217
-msgid "ASCII Backspace"
-msgstr ""
-
-#: data/preferences.glade:220
-msgid "ASCII Delete"
-msgstr ""
-
-#: data/preferences.glade:223
-msgid "Delete sequence"
-msgstr ""
-
-#: data/preferences.glade:226
-msgid "TTY \"erase\""
 msgstr ""
 
 #: data/preferences.glade:243

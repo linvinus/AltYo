@@ -41,7 +41,7 @@ Main program advantages.
 [![Preferences Advanced](http://storage6.static.itmages.ru/i/13/0406/s_1365229959_4473970_d41d8cd98f.png)](http://itmages.ru/image/view/971934/d41d8cd9)
 [![Tiling window manager](http://storage3.static.itmages.ru/i/13/0612/s_1371022015_7777413_5cf29d0faf.png)](http://itmages.ru/image/view/1071250/5cf29d0f)
 [![Tiling window manager](http://storage5.static.itmages.ru/i/13/0612/s_1371022059_3043913_a19d77ddef.png)](http://itmages.ru/image/view/1071252/a19d77dd)
-
+[![Normal window](http://storage2.static.itmages.ru/i/13/0612/s_1371037750_9206122_f69d88b067.png)](http://itmages.ru/image/view/1071578/f69d88b0)
 
 small video presentation of available features:
 * altyo 0.3 http://youtu.be/IEabsuFresk

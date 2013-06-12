@@ -32,6 +32,7 @@ Main program advantages.
   now you may control each instance individually  
   `altyo --id=org.gtk.altyo_left_monitor -e "htop"`  
   `altyo --id=org.gtk.altyo_right_monitor -e "mc"`  
+  If you don't want invent unique id, you may use `--id=none`, but in that case you will have no possibility to control instances from command line.
 
 [![Main window](http://storage6.static.itmages.ru/i/13/0406/s_1365230653_4853839_d41d8cd98f.png)](http://itmages.ru/image/view/971951/d41d8cd9)
 [![Preferences Look and feel](http://storage3.static.itmages.ru/i/13/0406/s_1365229810_3352986_d41d8cd98f.png)](http://itmages.ru/image/view/971932/d41d8cd9)

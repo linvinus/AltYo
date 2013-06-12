@@ -1,7 +1,7 @@
 AltYo
 =====
 
-AltYo - drop-down console, is written in vala, depends only on libvte, gtk3.
+AltYo - drop-down terminal emulator, written in vala, depends only on libvte, gtk3.
 
 Main program advantages.
 ------------------------
@@ -23,7 +23,8 @@ Main program advantages.
   * You can setup, on which monitor start by default.  
   * Program have mode "Follow the mouse", in this mode, after hiding, window will shown on same monitor with mouse pointer.
 * Tiling window manager support (usual window).  
-     Use `--tiling_wm_mode` command line option to run in tiling window manager
+     Use `--tiling_wm_mode` command line option to run in tiling window manager,  
+     For any other window managers, altyo will operate as usual terminal emulator (like xterm).
 * Multiple instances. You may run several instances of alto in same time.  
   To do that you should setup unique id for each instance and use separate configuration file.  
   For example:  

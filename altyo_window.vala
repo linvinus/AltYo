@@ -197,6 +197,7 @@ public class VTMainWindow : Window{
 				this.window_set_active();
 			}
 		}else{
+			this.set_decorated (true);
 			this.ayobject.on_maximize(false);
 			//this.ayobject.on_maximize(true);
 			this.update_position_size(false);
@@ -205,6 +206,7 @@ public class VTMainWindow : Window{
 			var should_be_h = this.ayobject.terminal_height+hvbox_h;			
 			this.resize(this.ayobject.terminal_width,should_be_h);
 			this.show();
+			this.window_set_active();
 		}
 		GLib.Idle.add(this.ayobject.create_tabs);
 		
@@ -825,7 +827,7 @@ public class VTMainWindow : Window{
 
 		if(this.current_state==WStates.VISIBLE){
 
-			if(this.keep_above && !this.conf.tiling_wm_mode){
+			if(this.keep_above && this.conf.tiling_wm_mode==false){
 				this.skip_taskbar_hint = true;
 				this.set_keep_above(true);
 				//this.show ();//first show then send_net_active_window!

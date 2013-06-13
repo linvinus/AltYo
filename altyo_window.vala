@@ -669,6 +669,7 @@ public class VTMainWindow : Window{
 		conf.get_boolean("keep_above_at_startup",true);
 		conf.get_boolean("start_hidden",false);
 		conf.get_string("window_default_monitor","");
+		this.allow_close=!conf.get_boolean("confirm_to_quit",true);
 
 		var css_main = new CssProvider ();
 		string style_str= ""+
@@ -1796,7 +1797,11 @@ public class AYObject :Object{
 
 		/* Quit on <Ctrl><Shift>q */
 		this.add_window_accel("altyo_exit", _("Quit"), _("Quit"), Gtk.Stock.QUIT,"<Control><Shift>Q",()=> {
-			this.ShowQuitDialog();
+			if(this.main_window.allow_close==false){
+				this.ShowQuitDialog();
+			}else{
+				this.main_window.destroy();
+			}
         });
 
    		/* Show/hide main window on <Alt>grave

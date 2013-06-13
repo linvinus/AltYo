@@ -1178,8 +1178,24 @@ public class AYObject :Object{
 	public VTTerminal add_tab(string? session_command=null,string? session_path=null,OnChildExitCallBack? on_exit=null) {
 		VTTerminal vt;
 		if(on_exit==null){
-			vt = new VTTerminal(this.conf,this.terms_notebook,(int)(this.children.length()+1),session_command,session_path,(terminal)=>{
-				this.close_tab(this.hvbox.children_index(terminal.tbutton));
+			vt = new VTTerminal(this.conf,this.terms_notebook,(int)(this.children.length()+1),session_command,session_path,(terminal)=>{		
+				/* if child exited (guess by ctrl+d) and it was last tab
+				 * and action_on_close_last_tab==quit then quit*/
+				if(this.children.length()==1 && this.action_on_close_last_tab==2){//quit
+					this.main_window.allow_close=true;
+					this.main_window.destroy();
+					return;
+				}else{
+					if(terminal.auto_restart){//restart shell if allowed
+						string S=_("Shell terminated.")+"\n\r\n\r";
+						debug(S);
+						terminal.vte_term.feed(S,S.length);
+						terminal.start_shell();
+					}else{//or close tab
+						this.close_tab(this.hvbox.children_index(terminal.tbutton));
+					}
+				}
+				
 			});
 		}else{
 			vt = new VTTerminal(this.conf,this.terms_notebook,(int)(this.children.length()+1),session_command,session_path,on_exit );
@@ -1311,22 +1327,20 @@ public class AYObject :Object{
 			this.activate_tab(new_active_tbutton);
 			this.update_tabs_title();
 			this.search_update();
-		}else{				
-			if(!this.main_window.allow_close){
-				if(this.action_on_close_last_tab==2){//quit
-					this.main_window.allow_close=true;
-					this.main_window.destroy();
-					return;				
-				}
-				
-				if(this.action_on_close_last_tab<2){//restart shell
-					var vt_new=this.add_tab();
-					string S=_("Shell terminated.")+"\n\r\n\r";
-					vt_new.vte_term.feed(S,S.length);
-				}
-				if(this.action_on_close_last_tab==1)//restart shell and hide
-					this.main_window.toggle_window();			
+		}else{//action_on_close_last_tab
+			if(this.action_on_close_last_tab==2){//quit
+				this.main_window.allow_close=true;
+				this.main_window.destroy();
+				return;				
 			}
+			
+			if(this.action_on_close_last_tab<2){//restart shell
+				var vt_new=this.add_tab();
+				string S=_("Shell terminated.")+"\n\r\n\r";
+				vt_new.vte_term.feed(S,S.length);
+			}
+			if(this.action_on_close_last_tab==1)//restart shell and hide
+				this.main_window.toggle_window();			
 		}
 	}
 

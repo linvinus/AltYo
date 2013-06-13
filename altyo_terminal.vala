@@ -452,11 +452,17 @@ public class VTTerminal : AYTab{
 	public bool match_case {get; set; default = false;}
 	private OnChildExitCallBack on_child_exit {get; set; default = null;}
 	private HashTable<int, string> match_tags;
+	public  string session_command {get;set;default=null;}
+	public  string session_path {get;set;default=null;}
+	
 
 	public VTTerminal(MySettings my_conf,Notebook notebook, int tab_index,string? session_command=null,string? session_path=null,OnChildExitCallBack? on_child_exit=null) {
 		base(my_conf, notebook, tab_index);
 		this.my_conf=my_conf;
 		this.notebook=notebook;
+		this.session_command=session_command;
+		this.session_path=session_path;
+		
 		if(on_child_exit!=null)
 			this.on_child_exit=on_child_exit;
 
@@ -493,7 +499,14 @@ public class VTTerminal : AYTab{
 		this.tbutton.button_press_event.connect(vttoggle_button_press_event);
 		this.configure(my_conf);
 		//GLib.Idle.add(call);
-		if(!this.start_command(session_command,session_path)){
+		
+		this.start_shell();
+				
+		this.hbox.show_all();
+	}
+	
+	public void start_shell(){
+		if(!this.start_command(this.session_command,this.session_path)){
 			if(!this.start_command()){//try without session
 				this.my_conf.set_string("custom_command","");
 				if(!this.start_command()){//try without custom_command
@@ -501,9 +514,7 @@ public class VTTerminal : AYTab{
 					Gtk.main_quit();
 					}
 			}
-		}
-				
-		this.hbox.show_all();
+		}		
 	}
 
 	public void destroy() {
@@ -566,19 +577,7 @@ public class VTTerminal : AYTab{
 	}
 
 	public void child_exited(){
-		if(this.auto_restart){
-			string S=_("Shell terminated.")+"\n\r\n\r";
-			debug(S);
-			this.vte_term.feed(S,S.length);
-			if(!this.start_command()){//try without session
-				this.my_conf.set_string("custom_command","");
-				if(!this.start_command()){//try without custom_command
-					debug("Unable to run shell command!");
-					Gtk.main_quit();
-					}
-			}
-		}
- 		else if(this.on_child_exit!=null)
+		if(this.on_child_exit!=null)
  			this.on_child_exit(this);
 	}
 	

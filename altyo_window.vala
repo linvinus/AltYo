@@ -197,6 +197,7 @@ public class VTMainWindow : Window{
 				this.window_set_active();
 			}
 		}else{
+			this.set_wmclass("altyo-tiling","Altyo");
 			this.set_decorated (true);
 			this.ayobject.on_maximize(false);
 			//this.ayobject.on_maximize(true);

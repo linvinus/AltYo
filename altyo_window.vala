@@ -2098,7 +2098,7 @@ public class AYObject :Object{
 			if(vtt.tbutton.tab_title!=null)
 				this.main_window.title=vtt.tbutton.tab_title;
 			else				
-				this.main_window.title=_("AltYo Tab%d").printf(this.children.index(vtt)+1);
+				this.main_window.title=_("Tab%d - AltYo").printf(this.children.index(vtt)+1);
 		}
 	}
 	public void search_update(){

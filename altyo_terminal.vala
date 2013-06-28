@@ -935,7 +935,7 @@ public class VTTerminal : AYTab{
 		/**************************************************************/
 
 		var submenu2 = new Gtk.Menu ();
-		menuitem = new Gtk.MenuItem.with_label (_("This terminal: Delete"));
+		menuitem = new Gtk.MenuItem.with_label (_("Current Terminal: Delete"));
 		menuitem.set_submenu(submenu2);
 		submenu.append(menuitem);
 		
@@ -974,7 +974,7 @@ public class VTTerminal : AYTab{
 		/**************************************************************/
 
 		var submenu3 = new Gtk.Menu ();
-		menuitem = new Gtk.MenuItem.with_label (_("This terminal: Backspace"));
+		menuitem = new Gtk.MenuItem.with_label (_("Current Terminal: Backspace"));
 		menuitem.set_submenu(submenu3);
 		submenu.append(menuitem);
 		

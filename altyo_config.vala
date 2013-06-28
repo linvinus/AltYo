@@ -59,6 +59,7 @@ public class MySettings : Object {
 	private HashTable<string, int> typemap;
 	public  bool disable_hotkey = false;
 	public  bool tiling_wm_mode = false;
+	public string? default_path = null;
 
 	public signal void on_load();
 

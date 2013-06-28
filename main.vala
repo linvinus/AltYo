@@ -56,6 +56,7 @@ struct Globals{
 	static string? app_id = null;
 	static bool disable_hotkey = false;
 	static bool tiling_wm_mode = false;
+	static string? path = null;
 
 	[CCode (array_length = false, array_null_terminated = true)]
 	public static string[]? exec_file_with_args = null;
@@ -71,6 +72,7 @@ struct Globals{
 					{ "id", 0, 0, OptionArg.STRING, ref Globals.app_id,N_("Set application id, none means disable application id"),"org.gtk.altyo_my,none" },
 					{ "disable_hotkey", 0, 0, OptionArg.NONE, ref Globals.disable_hotkey,N_("Disable main hotkey"),null},
 					{ "tiling_wm_mode", 0, 0, OptionArg.NONE, ref Globals.tiling_wm_mode,N_("Disable control of window dimension, and set --id=none"),null},
+					{ "default_path", 0, 0, OptionArg.STRING, ref Globals.path,N_("Set/update default path"),"/home/user/cpecial" },
 					{ null }
 			};
 
@@ -181,6 +183,7 @@ int main (string[] args) {
 				Globals.reload=false;
 				Globals.opt_help=false;
 				Globals.toggle=false;
+				Globals.path=null;
 
 				try {
 					if(!ctx.parse(ref pargv))return 3;
@@ -203,6 +206,9 @@ int main (string[] args) {
 							S+=" "+s;
 						}
 						VTMainWindow mwin = ((VTMainWindow)list.data);
+						if(Globals.path!=null){
+							mwin.conf.default_path=Globals.path;
+						}
 						mwin.ayobject.add_tab_with_title(S,S);
 						if(mwin.current_state == WStates.HIDDEN)
 							mwin.pull_down();
@@ -230,6 +236,7 @@ int main (string[] args) {
 				var conf = new MySettings(Globals.cmd_conf_file);
 				conf.disable_hotkey=Globals.disable_hotkey;
 				conf.tiling_wm_mode=Globals.tiling_wm_mode;
+				conf.default_path=Globals.path;
 
 				if(!conf.opened){
 					printf("Unable to open configuration file!\n");

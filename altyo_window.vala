@@ -1180,7 +1180,7 @@ public class AYObject :Object{
 	public VTTerminal add_tab(string? session_command=null,string? session_path=null,OnChildExitCallBack? on_exit=null) {
 		VTTerminal vt;
 		if(on_exit==null){
-			vt = new VTTerminal(this.conf,this.terms_notebook,(int)(this.children.length()+1),session_command,session_path,(terminal)=>{		
+			vt = new VTTerminal(this.conf,this.terms_notebook,(int)(this.children.length()+1),session_command,(session_path!=null?session_path:conf.default_path),(terminal)=>{		
 				/* if child exited (guess by ctrl+d) and it was last tab
 				 * and action_on_close_last_tab==quit then quit*/
 				if(this.children.length()==1 && this.action_on_close_last_tab==2){//quit
@@ -1879,6 +1879,45 @@ public class AYObject :Object{
 
         this.add_window_accel("terminal_sort_by_hostname",_("Sort by hostname"), _("Sort by hostname"), Gtk.Stock.EDIT,"",()=> {
             this.tab_sort();
+        });
+        
+        this.add_window_accel("window_open_new_window",_("Open new window"), _("Open new window"), Gtk.Stock.EDIT,"<Control><Shift>N",()=> {
+			if(this.conf.get_boolean("terminal_new_tab_in_current_directory",true)){
+				debug("window_open_new_window_in_current_directory");
+				if(this.active_tab!=null){
+					if(this.active_tab.object is VTTerminal){
+					VTTerminal vt =((VTTerminal)this.active_tab.object);
+					var tmp=vt.find_tty_pgrp(vt.pid,FIND_TTY.CWD);
+					//var tmp = vt.vte_term.get_current_directory_uri();//:TODO in vte 0.34
+					//debug("path: %s",tmp);
+					
+					/* firstly try to find absolite path
+					 * else search in default system path*/
+					string exec;
+					if(GLib.FileUtils.test(GLib.Environment.get_current_dir()+"/"+GLib.Environment.get_prgname(),GLib.FileTest.EXISTS) ){
+						exec="%s/%s --tiling_wm_mode --default_path '%s'&".printf(GLib.Environment.get_current_dir(),GLib.Environment.get_prgname(),tmp);
+					}else{
+						exec="%s --tiling_wm_mode --default_path '%s'&".printf(GLib.Environment.get_prgname(),tmp);
+					}
+					
+					debug("window_open_new_window: %s",exec);
+					Posix.system(exec);
+					}
+					//else
+					//this.add_tab();
+				}
+			}else{
+					/* firstly try to find absolite path
+					 * else search in default system path*/
+					string exec;
+					if(GLib.FileUtils.test(GLib.Environment.get_current_dir()+"/"+GLib.Environment.get_prgname(),GLib.FileTest.EXISTS) ){
+						exec="%s/%s --tiling_wm_mode --default_path '%s'&".printf(GLib.Environment.get_current_dir(),GLib.Environment.get_prgname(),GLib.Environment.get_current_dir());
+					}else{
+						exec="%s --tiling_wm_mode --default_path '%s'&".printf(GLib.Environment.get_prgname(),GLib.Environment.get_current_dir());
+					}
+					debug("window_open_new_window: %s",exec);
+					Posix.system(exec);				
+			}
         });
 
 	}//setup_keyboard_accelerators

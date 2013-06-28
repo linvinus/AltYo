@@ -15,7 +15,7 @@ LINUX.DISTRIB.ID=debian
 endif
 
 ifeq ($(LINUX.DISTRIB.ID),Ubuntu)
-LINUX.DISTRIB.ID=debian
+LINUX.DISTRIB.ID=ubuntu
 endif
 
 CHANGELOG_TAG=${shell grep -m 1 "^altyo" ./debian/changelog | sed 's/.*(//' | sed 's/).*$$//'| sed 's/~/_/' | sed 's/:/%/'}
@@ -26,7 +26,7 @@ VALA_FLAGS += --disable-warnings
 #VALA_FLAGS += -g --save-temps -X -O0
 VALA_FLAGS += -X -DGETTEXT_PACKAGE=\"$(PRG_NAME)\" -X -DVERSION=\"0.2\" -X -DAY_GIT_HASH=\"$(GIT_HASH)\"
 #\ -I.\ -include\ "./config.h" -v
-ifeq ($(LINUX.DISTRIB.ID),debian)
+ifeq ($(LINUX.DISTRIB.ID),ubuntu)
 #debian specific possibility
 VALA_FLAGS += -D ALTERNATE_SCREEN_SCROLL
 endif

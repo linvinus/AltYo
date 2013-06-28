@@ -502,7 +502,7 @@ public class VTTerminal : AYTab{
 		
 		this.start_shell();
 				
-		this.hbox.show_all();
+		this.hbox.show();
 	}
 	
 	public void start_shell(){

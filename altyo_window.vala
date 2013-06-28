@@ -205,8 +205,9 @@ public class VTMainWindow : Window{
 			int hvbox_h, hvbox_h_ignore;
 			this.ayobject.hvbox.get_preferred_height_for_width(this.ayobject.terminal_width,out hvbox_h,out hvbox_h_ignore);
 			var should_be_h = this.ayobject.terminal_height+hvbox_h;			
-			this.resize(this.ayobject.terminal_width,should_be_h);
 			this.show();
+			this.resize(this.ayobject.terminal_width,should_be_h);
+			
 			this.window_set_active();
 		}
 		GLib.Idle.add(this.ayobject.create_tabs);

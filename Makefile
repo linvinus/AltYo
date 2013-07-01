@@ -1,9 +1,9 @@
 PRG_NAME=altyo
 
 # guess Linux distro
-LINUX.DISTRIB.FILE=$(shell ls /etc/lsb-release)
+LINUX.DISTRIB.FILE=$(shell ls /etc/lsb-release 2>/dev/null)
 ifeq ($(LINUX.DISTRIB.FILE),)
-LINUX.DISTRIB.FILE=$(shell ls /etc/debian_version)
+LINUX.DISTRIB.FILE=$(shell ls /etc/debian_version 2>/dev/null)
 endif
 
 ifeq ($(LINUX.DISTRIB.FILE),/etc/lsb-release)

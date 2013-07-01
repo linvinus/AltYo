@@ -1895,9 +1895,9 @@ public class AYObject :Object{
 					 * else search in default system path*/
 					string exec;
 					if(GLib.FileUtils.test(GLib.Environment.get_current_dir()+"/"+GLib.Environment.get_prgname(),GLib.FileTest.EXISTS) ){
-						exec="%s/%s --tiling_wm_mode --default_path '%s'&".printf(GLib.Environment.get_current_dir(),GLib.Environment.get_prgname(),tmp);
+						exec="%s/%s --tiling_wm_mode --default_path '%s' -c '%s'&".printf(GLib.Environment.get_current_dir(),GLib.Environment.get_prgname(),tmp,this.conf.conf_file);
 					}else{
-						exec="%s --tiling_wm_mode --default_path '%s'&".printf(GLib.Environment.get_prgname(),tmp);
+						exec="%s --tiling_wm_mode --default_path '%s' -c '%s'&".printf(GLib.Environment.get_prgname(),tmp,this.conf.conf_file);
 					}
 					
 					debug("window_open_new_window: %s",exec);
@@ -1911,9 +1911,9 @@ public class AYObject :Object{
 					 * else search in default system path*/
 					string exec;
 					if(GLib.FileUtils.test(GLib.Environment.get_current_dir()+"/"+GLib.Environment.get_prgname(),GLib.FileTest.EXISTS) ){
-						exec="%s/%s --tiling_wm_mode --default_path '%s'&".printf(GLib.Environment.get_current_dir(),GLib.Environment.get_prgname(),GLib.Environment.get_current_dir());
+						exec="%s/%s --tiling_wm_mode --default_path '%s' -c '%s'&".printf(GLib.Environment.get_current_dir(),GLib.Environment.get_prgname(),GLib.Environment.get_current_dir(),this.conf.conf_file);
 					}else{
-						exec="%s --tiling_wm_mode --default_path '%s'&".printf(GLib.Environment.get_prgname(),GLib.Environment.get_current_dir());
+						exec="%s --tiling_wm_mode --default_path '%s' -c '%s'&".printf(GLib.Environment.get_prgname(),GLib.Environment.get_current_dir(),this.conf.conf_file);
 					}
 					debug("window_open_new_window: %s",exec);
 					Posix.system(exec);				

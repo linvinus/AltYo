@@ -58,7 +58,7 @@ public class MySettings : Object {
 	private bool changed {get;set; default = false;}
 	private HashTable<string, int> typemap;
 	public  bool disable_hotkey = false;
-	public  bool tiling_wm_mode = false;
+	public  bool standalone_mode = false;
 	public string? default_path = null;
 
 	public signal void on_load();
@@ -66,13 +66,13 @@ public class MySettings : Object {
 	public MySettings(string? cmd_conf_file=null,bool? standalone=false ){
 		this.typemap = new HashTable<string, int> (str_hash, str_equal);
 		if(standalone!=null)
-			this.tiling_wm_mode=standalone;
+			this.standalone_mode=standalone;
 			
 		if(cmd_conf_file!=null)
 			this.conf_file = cmd_conf_file;
 		else{
 			
-			if(standalone!=null && this.tiling_wm_mode==true)
+			if(standalone!=null && this.standalone_mode==true)
 				this.conf_file = GLib.Environment.get_user_config_dir()+"/altyo"+"/config-standalone.ini";
 			else
 				this.conf_file = GLib.Environment.get_user_config_dir()+"/altyo"+"/config.ini";

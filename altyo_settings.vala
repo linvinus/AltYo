@@ -22,8 +22,12 @@ public class AYSettings : AYTab{
 		this.ayobject=ayo;
 		if(this.ayobject.main_window.application.application_id!=null)
 			this.autorun_file = GLib.Environment.get_user_config_dir()+"/autostart"+"/"+this.ayobject.main_window.application.application_id+".desktop";
-		else
-			this.autorun_file = GLib.Environment.get_user_config_dir()+"/autostart"+"/altyo.none.desktop";
+		else{
+			if(my_conf.standalone_mode)
+				this.autorun_file = GLib.Environment.get_user_config_dir()+"/autostart"+"/altyo.standalone.desktop";
+			else
+				this.autorun_file = GLib.Environment.get_user_config_dir()+"/autostart"+"/altyo.none.desktop";
+		}
 		this.builder = new Gtk.Builder ();
  			try {
 				this.builder.add_from_resource ("/org/gnome/altyo/preferences.glade");
@@ -1022,11 +1026,11 @@ public class AYSettings : AYTab{
 Type=Application
 Encoding=UTF-8
 Version=1.0
-Name=altyo
+Name=%s
 Name[ru_RU]=АльтЁ
 Comment[ru_RU]=АльтЁ терминал
 Comment=AltYo terminal
-Exec=altyo""";
+Exec=altyo""".printf(my_conf.standalone_mode?"altyo --standalone":"altyo");
 					if(this.ayobject.main_window.application.application_id!=null)
 						autorun_content += " --id="+this.ayobject.main_window.application.application_id+"\n";
 					else

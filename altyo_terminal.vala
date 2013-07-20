@@ -947,29 +947,30 @@ public class VTTerminal : AYTab{
 		menuitem = new Gtk.MenuItem.with_label (_("Quick settings"));
 		menuitem.set_submenu(submenu);
 		menu.append(menuitem);
-
-		menuitem = (Gtk.MenuItem)acg.get_action("follow_the_mouse").create_menu_item();
-		submenu.append(menuitem);
-		var action_keepabove = acg.get_action("keep_above") as ToggleAction;
-		menuitem = (Gtk.MenuItem)action_keepabove.create_menu_item();
-		submenu.append(menuitem);
-		if(action_keepabove.active!=vtw.keep_above){
-			vtw.keep_above=!vtw.keep_above;//invert value, becouse it will inverted after set_active
-			action_keepabove.set_active(!vtw.keep_above);
-		}
-		var action_stick = acg.get_action("window_toggle_stick") as ToggleAction;
-		menuitem = (Gtk.MenuItem)action_stick.create_menu_item();
-		submenu.append(menuitem);
-		if(action_stick.active!=vtw.orig_stick){
-			vtw.orig_stick=!vtw.orig_stick;//invert value, becouse it will inverted after set_active
-			action_stick.set_active(!vtw.orig_stick);
-		}
-		var action_autohide = acg.get_action("window_toggle_autohide") as ToggleAction;
-		menuitem = (Gtk.MenuItem)action_autohide.create_menu_item();
-		submenu.append(menuitem);
-		if(action_autohide.active!=vtw.autohide){
-			vtw.autohide=!vtw.autohide;//invert value, becouse it will inverted after set_active
-			action_autohide.set_active(!vtw.autohide);
+		if(!this.my_conf.standalone_mode){
+			menuitem = (Gtk.MenuItem)acg.get_action("follow_the_mouse").create_menu_item();
+			submenu.append(menuitem);
+			var action_keepabove = acg.get_action("keep_above") as ToggleAction;
+			menuitem = (Gtk.MenuItem)action_keepabove.create_menu_item();
+			submenu.append(menuitem);
+			if(action_keepabove.active!=vtw.keep_above){
+				vtw.keep_above=!vtw.keep_above;//invert value, becouse it will inverted after set_active
+				action_keepabove.set_active(!vtw.keep_above);
+			}
+			var action_stick = acg.get_action("window_toggle_stick") as ToggleAction;
+			menuitem = (Gtk.MenuItem)action_stick.create_menu_item();
+			submenu.append(menuitem);
+			if(action_stick.active!=vtw.orig_stick){
+				vtw.orig_stick=!vtw.orig_stick;//invert value, becouse it will inverted after set_active
+				action_stick.set_active(!vtw.orig_stick);
+			}
+			var action_autohide = acg.get_action("window_toggle_autohide") as ToggleAction;
+			menuitem = (Gtk.MenuItem)action_autohide.create_menu_item();
+			submenu.append(menuitem);
+			if(action_autohide.active!=vtw.autohide){
+				vtw.autohide=!vtw.autohide;//invert value, becouse it will inverted after set_active
+				action_autohide.set_active(!vtw.autohide);
+			}
 		}
 		/**************************************************************/
 
@@ -1055,8 +1056,10 @@ public class VTTerminal : AYTab{
 		menuitem = new Gtk.SeparatorMenuItem();
 		menu.append(menuitem);
 
-		menuitem = (Gtk.MenuItem)acg.get_action("main_hotkey").create_menu_item();
-		menu.append(menuitem);
+		if(!this.my_conf.standalone_mode){
+			menuitem = (Gtk.MenuItem)acg.get_action("main_hotkey").create_menu_item();
+			menu.append(menuitem);
+		}
 		menuitem = (Gtk.MenuItem)acg.get_action("altyo_exit").create_menu_item();
 		menu.append(menuitem);
 

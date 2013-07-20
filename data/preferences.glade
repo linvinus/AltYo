@@ -2912,7 +2912,7 @@ Allow use mouse scroll in some programs,for example in less</property>
                     <property name="can_focus">False</property>
                     <property name="layout_style">center</property>
                     <child>
-                      <object class="GtkButton" id="button4">
+                      <object class="GtkButton" id="restore_button">
                         <property name="label">gtk-revert-to-saved</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
@@ -2929,7 +2929,7 @@ Allow use mouse scroll in some programs,for example in less</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton" id="button2">
+                      <object class="GtkButton" id="apply_button">
                         <property name="label">gtk-apply</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>

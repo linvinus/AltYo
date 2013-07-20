@@ -1901,7 +1901,7 @@ public class AYObject :Object{
 					}
 					/*pass cfg only if sure that it is for standalone_mode*/
 					if(conf.standalone_mode)
-						exec+=" -c '%s'&".printf(this.conf.conf_file);
+						exec+=" --config_readonly -c '%s'&".printf(this.conf.conf_file);
 					else
 						exec+="&";
 					
@@ -1922,7 +1922,7 @@ public class AYObject :Object{
 					}
 					/*pass cfg only if sure that it is for standalone_mode*/
 					if(conf.standalone_mode)
-						exec+=" -c '%s'&".printf(this.conf.conf_file);
+						exec+=" --config_readonly -c '%s'&".printf(this.conf.conf_file);
 					else
 						exec+="&";
 											

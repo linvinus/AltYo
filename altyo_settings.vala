@@ -38,6 +38,13 @@ public class AYSettings : AYTab{
  			} catch (Error e) {
  				error ("loading menu builder file: %s", e.message);
  			}
+ 		if(my_conf.readonly){
+			var A = builder.get_object ("apply_button") as Gtk.Button;
+			A.sensitive=false;
+			var R = builder.get_object ("restore_button") as Gtk.Button;
+			R.sensitive=false;
+			R.tooltip_text=A.tooltip_text=_("Config is read only!");
+		}
 	}
 
 	[CCode (instance_pos = -1)]

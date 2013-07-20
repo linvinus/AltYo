@@ -59,6 +59,7 @@ public class MySettings : Object {
 	private HashTable<string, int> typemap;
 	public  bool disable_hotkey = false;
 	public  bool standalone_mode = false;
+	public  bool readonly = false;
 	public string? default_path = null;
 
 	public signal void on_load();
@@ -129,15 +130,18 @@ public class MySettings : Object {
 	}
 
 	public void save(bool force=false){
-		if(this.changed || force){
-			var str = kf.to_data (null);
-			try {
-				debug("\tsave settings into file=%s\n",this.conf_file);
-				FileUtils.set_contents (this.conf_file, str, str.length);
-			} catch (FileError err) {
-				warning (err.message);
+		if(this.readonly==false){
+			if(this.changed || force){
+				var str = kf.to_data (null);
+				try {
+					debug("\tsave settings into file=%s\n",this.conf_file);
+					FileUtils.set_contents (this.conf_file, str, str.length);
+				} catch (FileError err) {
+					warning (err.message);
+				}
 			}
-		}
+		}else
+			debug("config is read only, all changes will be lost!\n");
 		this.changed=false;
 	}
 

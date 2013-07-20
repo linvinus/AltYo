@@ -57,6 +57,7 @@ struct Globals{
 	static bool disable_hotkey = false;
 	static bool standalone_mode = false;
 	static string? path = null;
+	static bool config_readonly = false;
 
 	[CCode (array_length = false, array_null_terminated = true)]
 	public static string[]? exec_file_with_args = null;
@@ -73,6 +74,7 @@ struct Globals{
 					{ "disable_hotkey", 0, 0, OptionArg.NONE, ref Globals.disable_hotkey,N_("Disable main hotkey"),null},
 					{ "standalone", 0, 0, OptionArg.NONE, ref Globals.standalone_mode,N_("Disable control of window dimension, and set --id=none"),null},
 					{ "default_path", 0, 0, OptionArg.STRING, ref Globals.path,N_("Set/update default path"),"/home/user/cpecial" },
+					{ "config_readonly", 0, 0, OptionArg.NONE, ref Globals.config_readonly, null, null },
 					{ null }
 			};
 
@@ -234,6 +236,7 @@ int main (string[] args) {
 				debug("app.startup.connect");
 
 				var conf = new MySettings(Globals.cmd_conf_file,Globals.standalone_mode);
+				conf.readonly=Globals.config_readonly;
 				conf.disable_hotkey=Globals.disable_hotkey;
 				conf.default_path=Globals.path;
 

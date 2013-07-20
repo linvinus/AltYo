@@ -930,6 +930,10 @@ public class VTTerminal : AYTab{
 		menu.append(menuitem);
 		menuitem = (Gtk.MenuItem)acg.get_action("terminal_close_tab").create_menu_item();
 		menu.append(menuitem);
+		if(this.my_conf.standalone_mode){
+			menuitem = (Gtk.MenuItem)acg.get_action("window_open_new_window").create_menu_item();
+			menu.append(menuitem);
+		}
 		menuitem = (Gtk.MenuItem)acg.get_action("terminal_search_dialog").create_menu_item();
 		menu.append(menuitem);
 

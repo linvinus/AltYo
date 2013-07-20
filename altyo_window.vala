@@ -1881,7 +1881,7 @@ public class AYObject :Object{
             this.tab_sort();
         });
         
-        this.add_window_accel("window_open_new_window",_("Open new window"), _("Open new window"), Gtk.Stock.EDIT,"<Control><Shift>N",()=> {
+        this.add_window_accel("window_open_new_window",_("Open new window"), _("Open new window"), Gtk.Stock.NEW,"<Control><Shift>N",()=> {
 			if(this.conf.get_boolean("terminal_new_tab_in_current_directory",true)){
 				debug("window_open_new_window_in_current_directory");
 				if(this.active_tab!=null){

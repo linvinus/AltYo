@@ -63,12 +63,20 @@ public class MySettings : Object {
 
 	public signal void on_load();
 
-	public MySettings(string? cmd_conf_file=null){
+	public MySettings(string? cmd_conf_file=null,bool? standalone=false ){
 		this.typemap = new HashTable<string, int> (str_hash, str_equal);
+		if(standalone!=null)
+			this.tiling_wm_mode=standalone;
+			
 		if(cmd_conf_file!=null)
 			this.conf_file = cmd_conf_file;
-		else
-			this.conf_file = GLib.Environment.get_user_config_dir()+"/altyo"+"/config.ini";
+		else{
+			
+			if(standalone!=null && this.tiling_wm_mode==true)
+				this.conf_file = GLib.Environment.get_user_config_dir()+"/altyo"+"/config-standalone.ini";
+			else
+				this.conf_file = GLib.Environment.get_user_config_dir()+"/altyo"+"/config.ini";
+		}
 		kf = new KeyFile();
 		this.load_config();
 		if(this.opened)

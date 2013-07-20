@@ -233,9 +233,8 @@ int main (string[] args) {
 	app.startup.connect(()=>{//first run
 				debug("app.startup.connect");
 
-				var conf = new MySettings(Globals.cmd_conf_file);
+				var conf = new MySettings(Globals.cmd_conf_file,Globals.tiling_wm_mode);
 				conf.disable_hotkey=Globals.disable_hotkey;
-				conf.tiling_wm_mode=Globals.tiling_wm_mode;
 				conf.default_path=Globals.path;
 
 				if(!conf.opened){

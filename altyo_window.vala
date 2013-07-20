@@ -1895,10 +1895,15 @@ public class AYObject :Object{
 					 * else search in default system path*/
 					string exec;
 					if(GLib.FileUtils.test(GLib.Environment.get_current_dir()+"/"+GLib.Environment.get_prgname(),GLib.FileTest.EXISTS) ){
-						exec="%s/%s --tiling_wm_mode --default_path '%s' -c '%s'&".printf(GLib.Environment.get_current_dir(),GLib.Environment.get_prgname(),tmp,this.conf.conf_file);
+						exec="%s/%s --tiling_wm_mode --default_path '%s'".printf(GLib.Environment.get_current_dir(),GLib.Environment.get_prgname(),tmp);
 					}else{
-						exec="%s --tiling_wm_mode --default_path '%s' -c '%s'&".printf(GLib.Environment.get_prgname(),tmp,this.conf.conf_file);
+						exec="%s --tiling_wm_mode --default_path '%s'".printf(GLib.Environment.get_prgname(),tmp);
 					}
+					/*pass cfg only if sure that it is for tiling_wm_mode*/
+					if(conf.tiling_wm_mode)
+						exec+=" -c '%s'&".printf(this.conf.conf_file);
+					else
+						exec+="&";
 					
 					debug("window_open_new_window: %s",exec);
 					Posix.system(exec);
@@ -1911,10 +1916,16 @@ public class AYObject :Object{
 					 * else search in default system path*/
 					string exec;
 					if(GLib.FileUtils.test(GLib.Environment.get_current_dir()+"/"+GLib.Environment.get_prgname(),GLib.FileTest.EXISTS) ){
-						exec="%s/%s --tiling_wm_mode --default_path '%s' -c '%s'&".printf(GLib.Environment.get_current_dir(),GLib.Environment.get_prgname(),GLib.Environment.get_current_dir(),this.conf.conf_file);
+						exec="%s/%s --tiling_wm_mode --default_path '%s'".printf(GLib.Environment.get_current_dir(),GLib.Environment.get_prgname(),GLib.Environment.get_current_dir());
 					}else{
-						exec="%s --tiling_wm_mode --default_path '%s' -c '%s'&".printf(GLib.Environment.get_prgname(),GLib.Environment.get_current_dir(),this.conf.conf_file);
+						exec="%s --tiling_wm_mode --default_path '%s'".printf(GLib.Environment.get_prgname(),GLib.Environment.get_current_dir());
 					}
+					/*pass cfg only if sure that it is for tiling_wm_mode*/
+					if(conf.tiling_wm_mode)
+						exec+=" -c '%s'&".printf(this.conf.conf_file);
+					else
+						exec+="&";
+											
 					debug("window_open_new_window: %s",exec);
 					Posix.system(exec);				
 			}

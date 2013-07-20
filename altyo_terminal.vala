@@ -454,6 +454,8 @@ public class VTTerminal : AYTab{
 	private HashTable<int, string> match_tags;
 	public  string session_command {get;set;default=null;}
 	public  string session_path {get;set;default=null;}
+	private string? last_link;
+	private int?    last_tag;
 	
 
 	public VTTerminal(MySettings my_conf,Notebook notebook, int tab_index,string? session_command=null,string? session_path=null,OnChildExitCallBack? on_child_exit=null) {
@@ -870,6 +872,21 @@ public class VTTerminal : AYTab{
 		}
 	}
 
+	public void on_copy_link_activate(){
+		Gtk.Clipboard clipboard = Gtk.Clipboard.get_for_display (Gdk.Display.get_default (), Gdk.SELECTION_CLIPBOARD);
+		clipboard.set_text (this.last_link, -1);
+		this.last_link=null;
+	}
+
+	public void on_run_link_activate(){
+		string tag_value="";
+		if(last_tag!=null && this.match_tags.lookup_extended(this.last_tag,null,out tag_value) ){
+				debug("check_match run=%s params=%s",tag_value,this.last_link);
+				Posix.system(tag_value+" '"+this.last_link+"' &");
+		}
+		this.last_tag=null;
+	}
+
 	public void popup_menu(Gdk.EventButton event){
 		//debug("terminal popup_menu");
 		var menu = new Gtk.Menu();
@@ -882,6 +899,24 @@ public class VTTerminal : AYTab{
 		Gtk.ActionGroup acg=vtw.ayobject.action_group;
 
 		Gtk.MenuItem menuitem;
+
+		this.last_link=null;
+		this.last_tag=null;
+		string? match=this.get_match((int)event.x,(int)event.y,out this.last_tag);
+		if(match!=null){
+			this.last_link=match;
+			menuitem = new Gtk.MenuItem.with_label (_("Copy link"));
+			menuitem.activate.connect(this.on_copy_link_activate);
+			menu.append(menuitem);
+			menuitem = new Gtk.MenuItem.with_label (_("Run link Ctrl+left mouse button"));
+			menuitem.activate.connect(this.on_run_link_activate);
+//~			var label=menuitem.get_child() as Gtk.Label;
+//~			label.set_justify( Gtk.Justification.RIGHT);
+//~			label.set_pattern( "___ ___");
+//~			((Gtk.Widget)menuitem).add_accelerator( "activate", vtw.ayobject.accel_group,
+//~                              0xfee9, Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE);
+			menu.append(menuitem);
+		}
 
 		menuitem = (Gtk.MenuItem)acg.get_action("terminal_copy_text").create_menu_item();
 		menu.append(menuitem);
@@ -1065,17 +1100,21 @@ public class VTTerminal : AYTab{
 		menu.ref();//no one own menu,emulate owners,uref will be on_deactivate
 		//debug("popup_menu ref_count=%d",(int)menu.ref_count);		
 	}//popup_tab_menu
-	
-	private void check_match (Gdk.EventButton event){
+
+	private string? get_match(int x,int y ,out int? tag){
 			int char_width=(int)this.vte_term.get_char_width();
 			int char_height=(int)this.vte_term.get_char_height();
 			unowned Gtk.Border? inner_border=null;
-			int? tag=null;
 			this.vte_term.style_get("inner-border", out inner_border, null);
-			int col = ((int)event.x - (inner_border!=null ? inner_border.left : 0)) / char_width;
-			int row = ((int)event.y - (inner_border!=null ? inner_border.top : 0)) / char_height;
-			var match = this.vte_term.match_check (col, row, out tag);
+			int col = ((int)x - (inner_border!=null ? inner_border.left : 0)) / char_width;
+			int row = ((int)y - (inner_border!=null ? inner_border.top : 0)) / char_height;
+			return this.vte_term.match_check (col, row, out tag);
+	}
+	
+	private void check_match (Gdk.EventButton event){
 			string tag_value="";
+			int? tag=null;
+			string? match=this.get_match((int)event.x,(int)event.y,out tag);
 			if(tag!=null && this.match_tags.lookup_extended(tag,null,out tag_value) ){
 					debug("check_match run=%s params=%s",tag_value,match);
 					Posix.system(tag_value+" '"+match+"' &");

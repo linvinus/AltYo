@@ -1026,11 +1026,14 @@ public class AYSettings : AYTab{
 Type=Application
 Encoding=UTF-8
 Version=1.0
-Name=%s
+Name=altyo
 Name[ru_RU]=АльтЁ
 Comment[ru_RU]=АльтЁ терминал
 Comment=AltYo terminal
-Exec=altyo""".printf(my_conf.standalone_mode?"altyo --standalone":"altyo");
+Exec=altyo""";
+					if(my_conf.standalone_mode)
+						autorun_content += " --standalone";
+						
 					if(this.ayobject.main_window.application.application_id!=null)
 						autorun_content += " --id="+this.ayobject.main_window.application.application_id+"\n";
 					else

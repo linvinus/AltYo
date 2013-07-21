@@ -973,6 +973,7 @@ public class AYObject :Object{
 	public CheckButton search_match_case {get;set;}
 	public int search_history_length = 10;
 	public unowned VTToggleButton active_tab {get;set; default = null;}
+	public unowned VTToggleButton previous_active_tab {get;set; default = null;}
 	public unowned MySettings conf {get;set; default = null;}
 	//public Gtk.Window win {get;set; default = null;}
 
@@ -1369,6 +1370,7 @@ public class AYObject :Object{
 					if (this.active_tab!=null){
 						this.active_tab.really_toggling=false;
 						this.active_tab.set_active(this.active_tab.really_toggling);
+						this.previous_active_tab=active_tab;
 					}
 					this.active_tab = tab_button;
 					this.active_tab.really_toggling=true;
@@ -1805,6 +1807,7 @@ public class AYObject :Object{
 					}else{//close
 						this.close_tab(this.hvbox.children_index(this.aysettings.tbutton));
 						this.aysettings_shown=false;
+						this.activate_tab(this.previous_active_tab);
 					}
 				}
         });

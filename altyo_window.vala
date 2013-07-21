@@ -1311,12 +1311,14 @@ public class AYObject :Object{
 //~ 			GLib.Thread.create<void*>(()=>{debug ("close_tab close in thread\n"); vtt.destroy(); return null;},false);//vtt.destroy() also destroys tab_button
 //~ 		} catch (Error e) {
 //~ 			debug ("close_tab thread %s\n", e.message);
+			bool switch_to_previous=false;
 			if(vtt is VTTerminal)
 				((VTTerminal)vtt).destroy();
 			else
 			if(vtt is AYSettings){
 				((AYSettings)vtt).destroy();
 				this.aysettings_shown=false;
+				switch_to_previous=true;
 			}else
 				vtt.destroy();
 //~ 		}
@@ -1326,7 +1328,7 @@ public class AYObject :Object{
 			if (tab_position>(this.children.length()-1))
 				tab_position=(int)this.children.length()-1;
 
-			unowned VTToggleButton new_active_tbutton = (VTToggleButton)this.hvbox.children_nth(tab_position);
+			unowned VTToggleButton new_active_tbutton = (switch_to_previous ? this.previous_active_tab : (VTToggleButton)this.hvbox.children_nth(tab_position));
 			this.activate_tab(new_active_tbutton);
 			this.update_tabs_title();
 			this.search_update();
@@ -1807,7 +1809,6 @@ public class AYObject :Object{
 					}else{//close
 						this.close_tab(this.hvbox.children_index(this.aysettings.tbutton));
 						this.aysettings_shown=false;
-						this.activate_tab(this.previous_active_tab);
 					}
 				}
         });

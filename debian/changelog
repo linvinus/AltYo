@@ -1,3 +1,38 @@
+altyo (0.3~rc6-linvinus1) quantal; urgency=low
+
+  * update: README, added description about tiling window manager support
+  * update: README, notice about --id=none
+  * improvement: enable window decoration in --tiling_wm_mode
+  * update: README, notice about --tiling_wm_mode in usual window manager
+  * update: README,Normal window screenshot
+  * new: settings option "Confirm to quit".
+  * improvement: quit on close last tab, if terminal_auto_restart_shell is true 
+  * fix: quit on close last tab, if allow_close true
+  * improvement: different wm_class for tiling mode
+  * improvement: use standard application title format, when terminal title is empty
+  * fix: regression, Scrollbars don't hide, after restarting altyo (tiling_wm mode).
+  * new: action - open new window "<Control><Shift>N" 
+  * new: command line option --default_path
+  * update: English translation
+  * fix: disable ALTERNATE_SCREEN_SCROLL for debian, this feature is only ubuntu-related
+  * improvement: use parent config file for new window
+  * improvement: ignore "No such file or directory" for /etc/lsb-release and /etc/debian_version
+  * improvements: use separate configuration file for standalone mode
+  * improvement: rename option "--tiling_wm_mode" to "--standalone"
+  * new: option "--config_readonly" , used to prevent overriding of settings in standalone mode.
+  * new: popup menu item for links, fixed #4
+  * improvement: add option "Open new window" into popup menu in standalone mode.
+  * new: desktop file for stand-alone mode
+  * improvement: use different file names for autostart
+  * fix: previous commit
+  * improvement: in standalone mode, don't show unnecessary options in popup menu
+  * update: Russian translation
+  * improvement: return to previous active tab after close settings
+  * update: previous commit
+  * fix: url regex, allow handle one level domain names
+
+ -- denis <linvinus@gmail.com>  Mon, 22 Jul 2013 11:27:47 +0400
+
 altyo (0.3~rc5-linvinus1) quantal; urgency=low
 
   * update: add license file

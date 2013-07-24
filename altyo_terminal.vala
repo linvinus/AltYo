@@ -764,7 +764,7 @@ public class VTTerminal : AYTab{
 			});
 		this.vte_term.set_backspace_binding ((Vte.TerminalEraseBinding)delbinding);
 
-		string[] url_regexps = my_conf.get_string_list("terminal_url_regexps",{"((?i)http|https|ftp|sftp)\\://([a-zA-Z0-9\\-]+(\\.)?)+(:[0-9]+)?(/([a-zA-Z0-9\\(\\)\\[\\]\\{\\};\\!\\*'\"`\\:@&=\\+\\$\\,/\\?#\\-\\_\\.\\~%\\^<>\\|\\\\])*)?","xdg-open"},(ref new_val)=>{
+		string[] url_regexps = my_conf.get_string_list("terminal_url_regexps",{"(\\\"\\s*)?((?i)http|https|ftp|sftp)\\://([a-zA-Z0-9\\-]+(\\.)?)+(:[0-9]+)?(/([a-zA-Z0-9\\(\\)\\[\\]\\{\\};\\!\\*'\"`\\:@&=\\+\\$\\,/\\?#\\-\\_\\.\\~%\\^<>\\|\\\\])*)?","xdg-open"},(ref new_val)=>{
 			if(new_val!=null && (new_val.length % 2)!=0){
 				debug(_("terminal_url_regexps odd value of array length! will be used default value."));
 				return CFG_CHECK.USE_DEFAULT;
@@ -881,6 +881,14 @@ public class VTTerminal : AYTab{
 	public void on_run_link_activate(){
 		string tag_value="";
 		if(last_tag!=null && this.match_tags.lookup_extended(this.last_tag,null,out tag_value) ){
+					if( (this.last_link.get_char (0).to_string ()=="\"" && this.last_link.get_char (this.last_link.length-1).to_string ()=="\"")
+					||  (this.last_link.get_char (0).to_string ()=="'"  && this.last_link.get_char (this.last_link.length-1).to_string ()=="'" ) ){
+					/*remove quotes if present at beggining and at the end
+					 * example: " http://www.google.com/?q="denis""
+					 * */
+					this.last_link=this.last_link.slice(1,this.last_link.length-1);
+					this.last_link=this.last_link.strip();
+				}
 				debug("check_match run=%s params=%s",tag_value,this.last_link);
 				Posix.system(tag_value+" '"+this.last_link+"' &");
 		}
@@ -1122,8 +1130,16 @@ public class VTTerminal : AYTab{
 			string tag_value="";
 			int? tag=null;
 			string? match=this.get_match((int)event.x,(int)event.y,out tag);
-			if(tag!=null && this.match_tags.lookup_extended(tag,null,out tag_value) ){
-					debug("check_match run=%s params=%s",tag_value,match);
+			if(tag!=null && this.match_tags.lookup_extended(tag,null,out tag_value) ){		
+					if( (match.get_char (0).to_string ()=="\"" && match.get_char (match.length-1).to_string ()=="\"")
+					||  (match.get_char (0).to_string ()=="'"  && match.get_char (match.length-1).to_string ()=="'" ) ){
+						/*remove quotes if present at beggining and at the end
+						 * example: " http://www.google.com/?q="denis""
+						 * */
+						match=match.slice(1,match.length-1);
+						match=match.strip();
+					}
+					debug("check_match run: \"%s '%s' &\"",tag_value,match);
 					Posix.system(tag_value+" '"+match+"' &");
 			}
 	}

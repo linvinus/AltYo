@@ -102,13 +102,9 @@ public class AYSettings : AYTab{
 	}
 
 	[CCode (instance_pos = -1)]
-	public void on_lock_keybindings_toggled  (Gtk.CheckButton w) {
-		this.ayobject.action_group.set_sensitive(!w.active);
-	}
-
-	[CCode (instance_pos = -1)]
     public void accel_edited_cb (Gtk.CellRendererAccel cell, string path_string, uint accel_key, Gdk.ModifierType accel_mods, uint hardware_keycode){
 		debug("accel_edited_cb start");
+		this.ayobject.action_group.set_sensitive(true);
         var path = new Gtk.TreePath.from_string (path_string);
         if (path == null)
             return;
@@ -128,8 +124,6 @@ public class AYSettings : AYTab{
 			if(name!=null){
 				var parsed_name=Gtk.accelerator_name (accel_key, accel_mods);
 				this.my_conf.set_accel_string(name,parsed_name);
-				this.keybindings_store.set (iter, 2, accel_key);
-				this.keybindings_store.set (iter, 3, accel_mods);
 				if(name=="main_hotkey"){
 					this.ayobject.main_window.reconfigure();//check is it was correct, and not busy
 					var saved_key = this.my_conf.get_accel_string(name,"");
@@ -152,6 +146,7 @@ public class AYSettings : AYTab{
     [CCode (instance_pos = -1)]
      public void accel_cleared_cb (Gtk.CellRendererAccel cell,string path_string){
 		debug("accel_cleared_cb start");
+		this.ayobject.action_group.set_sensitive(true);
         var path = new Gtk.TreePath.from_string (path_string);
         if (path == null)
             return;
@@ -173,9 +168,11 @@ public class AYSettings : AYTab{
 //~         settings.set_int (key, 0);
     }
 	[CCode (instance_pos = -1)]
-	public void accel_editing_started (Gtk.CellRenderer cell,
+	public void accel_editing_started_cb (Gtk.CellRenderer cell,
 						  Gtk.CellEditable editable,
 						  string    path_string){
+		debug("accel_editing_started_cb");
+		this.ayobject.action_group.set_sensitive(false);
 		var tree = builder.get_object ("keybindings_treeview") as Gtk.TreeView;
 		tree.grab_focus();//so Gtk.CellRendererAccel will have a focus
 	}
@@ -606,10 +603,6 @@ public class AYSettings : AYTab{
 	}
 	
 	public void get_from_conf() {
-
-		var chb = builder.get_object ("lock_keybindings_checkbutton") as Gtk.CheckButton;
-		if(chb!=null)
-			chb.active = !this.ayobject.action_group.sensitive;
 
 		var keys = this.my_conf.get_profile_keys();
 		foreach(var key in keys){

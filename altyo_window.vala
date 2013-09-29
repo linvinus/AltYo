@@ -728,7 +728,21 @@ public class VTMainWindow : Window{
 				var new_key = this.conf.get_accel_string("main_hotkey","<Alt>grave");
 				do{
 					new_key = this.ShowGrabKeyDialog(new_key);
-					grave=this.hotkey.bind (new_key);
+					if(this.ayobject!=null && this.ayobject.action_group!=null){
+						/*update main_hotkey on reset*/
+						var action = this.ayobject.action_group.get_action("main_hotkey");
+						if(action!=null){
+							uint accelerator_key;
+							Gdk.ModifierType accelerator_mods;							
+							Gtk.accelerator_parse(new_key,out accelerator_key,out accelerator_mods);
+							if(accelerator_key!=0){
+								if(this.ayobject.update_action_keybinding(action,accelerator_key,accelerator_mods))
+									grave=this.hotkey.bind (new_key);//if new_key is not used for other actions then, try to bind
+							}
+						}
+					}else{
+						grave=this.hotkey.bind (new_key);//currently we have no actions, try to bind
+					}
 				}while(grave==null);
 				this.conf.set_accel_string("main_hotkey",new_key);
 				grave.on_trigged.connect(this.toggle_window);
@@ -1595,11 +1609,16 @@ public class AYObject :Object{
 			dialog.response.connect ((response_id) => {
 				if(response_id == Gtk.ResponseType.YES){
 					//this.conf.
+					dialog.destroy ();
 					this.action_group.set_sensitive(true);//activate
 					this.action_group.get_action("open_settings").activate();//close
-					this.conf.reset_to_defaults();
+					this.conf.reset_to_defaults();//make empty config
+					//reset all keybindings
+					foreach(var action_in_list in this.action_group.list_actions ()){
+						Gtk.AccelMap.change_entry(action_in_list.get_accel_path(),0,0,true);
+					}					
+					this.conf.reload_config();
 					this.action_group.get_action("open_settings").activate();//open
-					dialog.destroy ();
 				}else{
 					dialog.destroy ();
 				}
@@ -1615,29 +1634,77 @@ public class AYObject :Object{
 			dialog.run();
 	}
 
+	public bool update_action_keybinding(Gtk.Action action, uint accelerator_key,Gdk.ModifierType accelerator_mods, bool force=false){
+				//if current accel don't equal to parsed, then try to update
+				
+				//debug("accel error: %s key:%d mod:%d",action.get_accel_path(),(int)accelerator_key,(int)accelerator_mods);
+				
+				AccelKey current_ak;
+				Gtk.AccelMap.lookup_entry(action.get_accel_path(),out current_ak);
+				debug("update accel: %s current_ak.accel_key=%d != accelerator_key=%d current_ak.accel_mods=%d != accelerator_mods=%d",action.get_accel_path(),
+				(int)current_ak.accel_key,(int)accelerator_key,
+				current_ak.accel_mods,accelerator_mods);
+				
+				if( (current_ak.accel_key!=accelerator_key || current_ak.accel_mods!=accelerator_mods) &&
+				    !Gtk.AccelMap.change_entry(action.get_accel_path(),accelerator_key,accelerator_mods,force) ){
+					//if accelerator could not be changed becouse another action already bind the same hotkey
+					//find conflicting action
+					debug("found conflicting action! trying find name...");
+
+					string action_label="";
+					AccelKey conflicting_ak;
+					foreach(var action_in_list in this.action_group.list_actions ()){
+						Gtk.AccelMap.lookup_entry(action_in_list.get_accel_path(),out conflicting_ak);
+						if(conflicting_ak.accel_key==accelerator_key && conflicting_ak.accel_mods==accelerator_mods){
+							action_label=action_in_list.get_label();
+							break;
+							}
+					}
+					string s=_("You are trying to use key binding \"%s\"\nfor action \"%s\"\nbut, same key binding already binded to the action \"%s\"").printf(Gtk.accelerator_name (accelerator_key, accelerator_mods),action.get_label(),action_label);
+					this.main_window.show_message_box(_("error"),s);
+
+					return false;
+					}
+		return true;//succesfull
+	}
+	
 	private bool check_for_existing_action(string name,string default_accel){
 		unowned Gtk.Action action = this.action_group.get_action(name);
-		unowned uint accelerator_key;
-		unowned Gdk.ModifierType accelerator_mods;
-		unowned AccelKey* ak;
+		uint accelerator_key;
+		Gdk.ModifierType accelerator_mods;
+		AccelKey current_ak;
+		string key_string=conf.get_accel_string(name,default_accel);
+		AccelMap am=Gtk.AccelMap.get();
+		string accel_path;
 
 		if(action!=null){
-			Gtk.accelerator_parse(conf.get_accel_string(name,default_accel),out accelerator_key,out accelerator_mods);
-			ak=this.accel_group.find((key, closure) =>{	return (closure==action.get_accel_closure()); });
-			//if current accel don't equal to parsed, then try to update
-			if(ak->accel_key!=accelerator_key || ak->accel_mods!=accelerator_mods){
-				//debug("accel error: %s key:%d mod:%d",action.get_accel_path(),(int)accelerator_key,(int)accelerator_mods);
-				//update accelerator for action if parsed corrected
-				if(accelerator_key!=0 && accelerator_mods!=0){
-					//debug("update accel: %",action.get_accel_path());
-					AccelMap am=Gtk.AccelMap.get();
-					am.change_entry(action.get_accel_path(),accelerator_key,accelerator_mods,false);
-				}
+			accel_path=action.get_accel_path();
+			
+			if(key_string==""){
+				am.change_entry(accel_path,0,0,true);//clear hotkey if present
+				return true; //action exist
 			}
+			
+			//get current action AccelKey
+			am.lookup_entry(accel_path,out current_ak);
+			
+			Gtk.accelerator_parse(key_string,out accelerator_key,out accelerator_mods);
+			if(accelerator_key==0 && accelerator_mods==0){
+				debug("parsing error! action_name=%s key_string=%s",name,key_string);
+				//update config for best setting that we know
+				var parsed_name=Gtk.accelerator_name (current_ak.accel_key, current_ak.accel_mods);
+				conf.set_accel_string(name,parsed_name);
+				return true;//action exist
+			}else if(current_ak.accel_key!=accelerator_key || current_ak.accel_mods!=accelerator_mods){
+				this.update_action_keybinding(action,accelerator_key,accelerator_mods);
+				//if error was occurred in update_action_keybinding, then accell in config will be sinchronized with current binded accel
+			}
+			//reload current_ak if it was changed in update_action_keybinding
+			am.lookup_entry(accel_path,out current_ak);
 			//just update config to be enshure that settings are same as we think
-			var parsed_name=Gtk.accelerator_name (ak->accel_key, ak->accel_mods);
+			var parsed_name=Gtk.accelerator_name (current_ak.accel_key, current_ak.accel_mods);
 			conf.set_accel_string(name,parsed_name);
-			return true;
+			return true;//action exist
 		}
 		return false;
 	}
@@ -1653,16 +1720,24 @@ public class AYObject :Object{
 	}
 
 	private void add_window_accel_real(Gtk.Action action, string accel, MyCallBack cb){
-
+		uint accelerator_key;
+		Gdk.ModifierType accelerator_mods;
+		
 		//we can't connect cb dirrectly to action.activate
 		//so, using lambda again =(
 		action.activate.connect(()=>{cb(action);});
-		//add in to action_group to make a single repository
-		this.action_group.add_action_with_accel (action,accel);
+
+		//add action into action_group to make a single repository
+		this.action_group.add_action_with_accel (action,"");//create accel path
 		action.set_accel_group (this.accel_group);//use main window accel group
 		action.connect_accelerator ();
-		//inc refcount otherwise action will be freed at the end of this function
-		//action.ref();
+		//set up key binding, and check for conflicts
+		Gtk.accelerator_parse(accel,out accelerator_key,out accelerator_mods);	
+
+		if(!this.update_action_keybinding(action,accelerator_key,accelerator_mods)){
+			conf.set_accel_string(action.name,"");//clear conflicting value
+		}
+		
 	}
 
 	public void setup_keyboard_accelerators() {

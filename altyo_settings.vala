@@ -120,7 +120,9 @@ public class AYSettings : AYTab{
         if (accel_path == null)
             return;
 
-		if(Gtk.AccelMap.change_entry(accel_path,accel_key,accel_mods,false)){
+		Gtk.Action action=this.ayobject.action_group.get_action(this.get_name_from_path(accel_path));
+		
+		if(this.ayobject.update_action_keybinding(action,accel_key,accel_mods)){
 			debug("accel_edited_cb name:%s ",accel_path);
 			string? name = this.get_name_from_path(accel_path);
 			if(name!=null){
@@ -144,17 +146,6 @@ public class AYSettings : AYTab{
 			this.keybindings_store.set (iter, 3, accel_mods);
 			this.my_conf.save();
 			}
-		}else{
-			debug("accel_edited_cb unable to change!");
-			string action_label="";
-			foreach(var action in this.ayobject.action_group.list_actions ()){
-				if(action.get_accel_path()==accel_path){
-					action_label=action.get_label();
-					break;
-					}
-			}
-			string s=_("Key binding \"%s\" already binded to \"%s\"").printf(Gtk.accelerator_name (accel_key, accel_mods),action_label);
-			this.ayobject.main_window.show_message_box(_("error"),s);
 		}
     }
 
@@ -181,6 +172,13 @@ public class AYSettings : AYTab{
 		}
 //~         settings.set_int (key, 0);
     }
+	[CCode (instance_pos = -1)]
+	public void accel_editing_started (Gtk.CellRenderer cell,
+						  Gtk.CellEditable editable,
+						  string    path_string){
+		var tree = builder.get_object ("keybindings_treeview") as Gtk.TreeView;
+		tree.grab_focus();//so Gtk.CellRendererAccel will have a focus
+	}
 
     [CCode (instance_pos = -1)]
     public bool on_list_button_press_event(Gtk.Widget w,Gdk.EventButton event){

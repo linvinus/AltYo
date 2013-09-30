@@ -52,6 +52,29 @@ Source code available there https://github.com/linvinus/AltYo
 Packages for ubuntu available there https://launchpad.net/~linvinus/+archive/altyo
 
 Package for Arch Linux AUR https://aur.archlinux.org/packages/altyo-git/ (package created by willemw)
+Tips and tricks:
+----
+1. You always may open new stand-alone terminal, in current directory, by pressing `<Ctrl><Shift>N` (default key binding)
+2. In search mode (when text entry have a focus), you may use following hotkeys  
+   `ctrl+1` - toggle "Wrap search"  
+   `ctrl+2` - toggle "Match case-sensitive"  
+   `ctrl+3` - toggle search mode "terminal text"/"terminal name"  
+   `ctrl+Up` or `Enter` - find next  
+   `ctrl+Down` - find prev  
+   `Esc` - close search dialog  
+sorry, this keys is hardcoded.
+3. You may switching to tab by searching in a titles.  
+   To do that you need to open search dialog `<Ctrl><Shift>F` (default key binding),  
+   then activate search option  "terminal name", by pressing `<Ctrl+3>`,  
+   then type sought-for part of tab title.  
+   Then you may use hotkeys to cycle through the search results  
+   `ctrl+Up` or `Enter` - find next  
+   `ctrl+Down` - find prev  
+   Also, you may configure special hotkey to quickly activate this mode "Search in tab title"
+4. You may sort tabs by hostname (if tab title contain host name in the following form `<user>@<host>:<path>`)  
+   To do that press right mouse button on tab title, then, in context menu, select "Sort by hostname"  
+   Also, you may configure special hotkey for this action "Sort by hostname".
+
 
 FAQ:
 ----

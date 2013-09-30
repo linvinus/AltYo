@@ -42,6 +42,11 @@ public enum TAB_SORT_ORDER{
 	HOSTNAME
 	}
 
+public enum SEARCH_MODE{
+	SEARCH_IN_TEXT,
+	SEARCH_IN_NAME
+	}
+
 public delegate void MyCallBack(Gtk.Action a);
 
 public class VTMainWindow : Window{
@@ -985,7 +990,9 @@ public class AYObject :Object{
 	public ComboBoxText search_text_combo {get;set;}
 	public CheckButton search_wrap_around {get;set;}
 	public CheckButton search_match_case {get;set;}
+	public Gtk.RadioButton search_mode_rbutton {get;set;}
 	public int search_history_length = 10;
+	public SEARCH_MODE search_in = SEARCH_MODE.SEARCH_IN_TEXT;
 	public unowned VTToggleButton active_tab {get;set; default = null;}
 	public unowned VTToggleButton previous_active_tab {get;set; default = null;}
 	public unowned MySettings conf {get;set; default = null;}
@@ -2089,6 +2096,56 @@ public class AYObject :Object{
 						vtt.vte_term.search_set_gregex(reg_exp);
 					}
 	}
+	
+	public void search_in_tab_name(bool forward=true){
+		
+		unowned List<unowned AYTab> item_it = null;
+		unowned AYTab vt = null;
+		
+		uint length = this.children.length();
+		
+		string? new_pattern = this.search_text_combo.get_active_text();
+		//skip search if pattern is empty, or if only one tab is open
+		if(new_pattern==null || new_pattern=="" || length<2) return; 
+
+		var reg_exp = new GLib.Regex(".*"+new_pattern+".*",0);
+		
+		item_it =  this.children.find((AYTab)this.active_tab.object); //this.children;
+		//start search from next avaylable tab
+		if(forward){
+			if (item_it.next!=null)
+					item_it = item_it.next;
+			else
+					item_it = this.children.first();
+		}else{
+			if (item_it.prev!=null)
+					item_it = item_it.prev;
+			else
+					item_it = this.children.last();
+		}
+		//cycle through all items
+		do{
+			vt = item_it.data;
+			debug("search %s in %s",new_pattern,vt.tbutton.tab_title);
+			if(reg_exp.match(vt.tbutton.tab_title,0,null)){
+				this.activate_tab(vt.tbutton);
+				break;
+			}
+			
+			if(forward){
+				if (item_it.next!=null)
+						item_it = item_it.next;
+				else
+						item_it = this.children.first();
+			}else{
+				if (item_it.prev!=null)
+						item_it = item_it.prev;
+				else
+						item_it = this.children.last();
+			}		
+			length--;	
+		}while(length>0);
+	}
 
 	public void create_search_box(){
 		this.search_text_combo = new ComboBoxText.with_entry ();
@@ -2097,22 +2154,58 @@ public class AYObject :Object{
 			if(!(ayt is VTTerminal)) return false;
 			unowned VTTerminal vtt = ((VTTerminal) ayt);
 			var keyname = Gdk.keyval_name(event.keyval);
-			if( keyname == "Return"){
-					this.search_update_pattern(vtt);
-					vtt.vte_term.search_find_previous();
-					return true;
-				}else if( keyname == "Up" && (event.state & Gdk.ModifierType.CONTROL_MASK ) == Gdk.ModifierType.CONTROL_MASK ){
-					vtt.vte_term.search_find_previous();
-					return true;
-				}else if( keyname == "Down" && (event.state & Gdk.ModifierType.CONTROL_MASK ) == Gdk.ModifierType.CONTROL_MASK ){
-					vtt.vte_term.search_find_next();
-					return true;
-				}else if( keyname == "Escape"){
-					this.search_hide();
-					return true;
+			
+			if(       keyname == "1" && (event.state & Gdk.ModifierType.CONTROL_MASK ) == Gdk.ModifierType.CONTROL_MASK ){
+				this.search_wrap_around.activate();
+			}else if( keyname == "2" && (event.state & Gdk.ModifierType.CONTROL_MASK ) == Gdk.ModifierType.CONTROL_MASK ){
+				this.search_match_case.activate();
+			}else if( keyname == "3" && (event.state & Gdk.ModifierType.CONTROL_MASK ) == Gdk.ModifierType.CONTROL_MASK ){
+				/*change search mode*/
+				unowned SList <Gtk.RadioButton> rbutton_group = this.search_mode_rbutton.get_group ();
+				if(this.search_mode_rbutton.active){
+					var rb=rbutton_group.nth_data(0) as Gtk.RadioButton;
+					rb.set_active(true);
+				}else{
+					var rb=rbutton_group.nth_data(1) as Gtk.RadioButton;
+					rb.set_active(true);
 				}
+			}
+			if(this.search_in == SEARCH_MODE.SEARCH_IN_TEXT){
+				if( keyname == "Return"){
+						this.search_update_pattern(vtt);
+						vtt.vte_term.search_find_previous();
+						return true;
+					}else if( keyname == "Up" && (event.state & Gdk.ModifierType.CONTROL_MASK ) == Gdk.ModifierType.CONTROL_MASK ){
+						vtt.vte_term.search_find_previous();
+						return true;
+					}else if( keyname == "Down" && (event.state & Gdk.ModifierType.CONTROL_MASK ) == Gdk.ModifierType.CONTROL_MASK ){
+						vtt.vte_term.search_find_next();
+						return true;
+					}else if( keyname == "Escape"){
+						this.search_hide();
+						return true;
+					}
+			}else if(this.search_in == SEARCH_MODE.SEARCH_IN_NAME){
+				if( keyname == "Return"){
+						this.search_in_tab_name();
+						this.search_text_combo.grab_focus();//if tab was switched it grab focus, so regrab it for search entry
+						return true;
+					}else if( keyname == "Up" && (event.state & Gdk.ModifierType.CONTROL_MASK ) == Gdk.ModifierType.CONTROL_MASK ){
+						this.search_in_tab_name();
+						this.search_text_combo.grab_focus();//if tab was switched it grab focus, so regrab it for search entry
+						return true;
+					}else if( keyname == "Down" && (event.state & Gdk.ModifierType.CONTROL_MASK ) == Gdk.ModifierType.CONTROL_MASK ){
+						this.search_in_tab_name(false);//backward
+						this.search_text_combo.grab_focus();//if tab was switched it grab focus, so regrab it for search entry
+						return true;
+					}else if( keyname == "Escape"){
+						this.search_hide();
+						return true;
+					}
+			}
 			return false;
-			});
+			});//key_press_event
+			
 		this.search_text_combo.show();
 		this.search_hbox.pack_start(search_text_combo,false,false,0);
 
@@ -2132,6 +2225,7 @@ public class AYObject :Object{
 			this.search_text_combo.grab_focus();
 			});
 		this.search_wrap_around.show();
+		this.search_wrap_around.tooltip_text="Ctrl+1";
 		this.search_hbox.pack_start(this.search_wrap_around,false,false,0);
 
 		this.search_match_case = new CheckButton.with_label(_("Match case-sensitive"));
@@ -2142,20 +2236,58 @@ public class AYObject :Object{
 			this.search_text_combo.grab_focus();
 			});
 		this.search_match_case.show();
+		this.search_match_case.tooltip_text="Ctrl+2";
 		this.search_hbox.pack_start(this.search_match_case,false,false,0);
 
+
+		Gtk.Box rbox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
+		Gtk.RadioButton rbutton;
+		
+		this.search_mode_rbutton = new Gtk.RadioButton.with_label_from_widget (null, _("terminal text"));
+		this.search_mode_rbutton.set_active (true);
+		this.search_mode_rbutton.tooltip_text="Ctrl+3";
+		rbox.pack_start (this.search_mode_rbutton, false, false, 0);
+		this.search_mode_rbutton.toggled.connect ((button)=>{
+			if(button.active){
+				debug("toggled=%s",button.label);
+				this.search_in=SEARCH_MODE.SEARCH_IN_TEXT;
+				this.search_wrap_around.sensitive=true;
+				this.search_match_case.sensitive=true;
+			}
+			});
+
+		rbutton = new Gtk.RadioButton.with_label_from_widget (this.search_mode_rbutton, _("terminal name"));
+		rbutton.tooltip_text="Ctrl+3";
+		rbox.pack_start (rbutton, false, false, 0);
+		rbutton.toggled.connect ((button)=>{
+			if(button.active){
+				debug("toggled=%s",button.label);
+				this.search_in=SEARCH_MODE.SEARCH_IN_NAME;
+				this.search_wrap_around.sensitive=false;
+				this.search_match_case.sensitive=false;				
+			}
+			});
+		
+		this.search_hbox.pack_start(rbox,false,false,0);
 
 		var next_button = new Button();
 		Image img = new Image.from_stock ("gtk-go-up",Gtk.IconSize.SMALL_TOOLBAR);
 		next_button.add(img);
 		next_button.clicked.connect(()=>{
-			unowned AYTab ayt = ((AYTab)this.active_tab.object);
-			if(!(ayt is VTTerminal)) return;
-			unowned VTTerminal vtt = (VTTerminal)ayt;
-			this.search_update_pattern(vtt);
-			vtt.vte_term.search_find_previous();
+			if(this.search_in == SEARCH_MODE.SEARCH_IN_TEXT){
+				unowned AYTab ayt = ((AYTab)this.active_tab.object);
+				if(!(ayt is VTTerminal)) return;
+				unowned VTTerminal vtt = (VTTerminal)ayt;
+				this.search_update_pattern(vtt);
+				vtt.vte_term.search_find_previous();
+			}else
+			if(this.search_in == SEARCH_MODE.SEARCH_IN_NAME){
+				this.search_in_tab_name(true);//forward
+				this.search_text_combo.grab_focus();//if tab was switched it grab focus, so regrab it for search entry				
+			}
 			});
 		next_button.set_focus_on_click(false);
+		next_button.tooltip_text="Ctrl+UP";
 		next_button.show();
 		this.search_hbox.pack_start(next_button,false,false,0);
 
@@ -2163,13 +2295,20 @@ public class AYObject :Object{
 		img = new Image.from_stock ("gtk-go-down",Gtk.IconSize.SMALL_TOOLBAR);
 		prev_button.add(img);
 		prev_button.clicked.connect(()=>{
-			unowned AYTab ayt = ((AYTab)this.active_tab.object);
-			if(!(ayt is VTTerminal)) return;
-			unowned VTTerminal vtt = (VTTerminal)ayt;
-			this.search_update_pattern(vtt);
-			vtt.vte_term.search_find_next();
+			if(this.search_in == SEARCH_MODE.SEARCH_IN_TEXT){
+				unowned AYTab ayt = ((AYTab)this.active_tab.object);
+				if(!(ayt is VTTerminal)) return;
+				unowned VTTerminal vtt = (VTTerminal)ayt;
+				this.search_update_pattern(vtt);
+				vtt.vte_term.search_find_next();
+			}else
+			if(this.search_in == SEARCH_MODE.SEARCH_IN_NAME){
+				this.search_in_tab_name(false);//backward
+				this.search_text_combo.grab_focus();//if tab was switched it grab focus, so regrab it for search entry				
+			}				
 			});
 		prev_button.set_focus_on_click(false);
+		prev_button.tooltip_text="Ctrl+Down";
 		prev_button.show();
 		this.search_hbox.pack_start(prev_button,false,false,0);
 
@@ -2180,6 +2319,7 @@ public class AYObject :Object{
 			this.search_hide();
 			});
 		hide_button.set_focus_on_click(false);
+		hide_button.tooltip_text="Esc";
 		hide_button.show();
 		this.search_hbox.pack_end(hide_button,false,false,0);
 

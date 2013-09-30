@@ -1116,13 +1116,15 @@ public class VTTerminal : AYTab{
 			});		
 		menu.append(menuitem);
 
-		menuitem = new Gtk.MenuItem.with_label (_("Copy terminal host name"));
-		menuitem.activate.connect(()=>{
-			Gdk.Display display = vtw.get_display ();
-			Gtk.Clipboard clipboard = Gtk.Clipboard.get_for_display (display, Gdk.SELECTION_CLIPBOARD);
-			clipboard.set_text(this.tbutton.host_name,-1);
-			});		
-		menu.append(menuitem);
+		if(this.tbutton.host_name!=null && this.tbutton.host_name!=""){
+			menuitem = new Gtk.MenuItem.with_label (_("Copy terminal host name"));
+			menuitem.activate.connect(()=>{
+				Gdk.Display display = vtw.get_display ();
+				Gtk.Clipboard clipboard = Gtk.Clipboard.get_for_display (display, Gdk.SELECTION_CLIPBOARD);
+				clipboard.set_text(this.tbutton.host_name,-1);
+				});		
+			menu.append(menuitem);
+		}
 
 		
 		menu.deactivate.connect (this.on_deactivate);

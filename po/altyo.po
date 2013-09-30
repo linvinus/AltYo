@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-30 17:05+0400\n"
+"POT-Creation-Date: 2013-09-30 17:14+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -64,22 +64,27 @@ msgid "Current Terminal: Delete"
 msgstr ""
 
 #: altyo_terminal.vala:992 altyo_terminal.vala:1029
+#: data/preferences.glade:3074
 msgid "Auto"
 msgstr ""
 
 #: altyo_terminal.vala:998 altyo_terminal.vala:1035
+#: data/preferences.glade:3077
 msgid "ASCII Backspace"
 msgstr ""
 
 #: altyo_terminal.vala:1004 altyo_terminal.vala:1041
+#: data/preferences.glade:3080
 msgid "ASCII Delete"
 msgstr ""
 
 #: altyo_terminal.vala:1010 altyo_terminal.vala:1047
+#: data/preferences.glade:3083
 msgid "Delete sequence"
 msgstr ""
 
 #: altyo_terminal.vala:1016 altyo_terminal.vala:1053
+#: data/preferences.glade:3086
 msgid "TTY \"erase\""
 msgstr ""
 
@@ -240,7 +245,7 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: altyo_window.vala:1901
+#: altyo_window.vala:1901 data/preferences.glade:3165
 msgid "Quit"
 msgstr ""
 
@@ -383,6 +388,18 @@ msgid ""
 "%s"
 msgstr ""
 
+#: data/preferences.glade:17
+msgid "Block"
+msgstr ""
+
+#: data/preferences.glade:20
+msgid "Ibeam"
+msgstr ""
+
+#: data/preferences.glade:23
+msgid "Underline"
+msgstr ""
+
 #: data/preferences.glade:60 data/preferences.glade:82
 #: data/preferences.glade:104
 msgid "add"
@@ -391,6 +408,18 @@ msgstr ""
 #: data/preferences.glade:69 data/preferences.glade:91
 #: data/preferences.glade:113
 msgid "remove"
+msgstr ""
+
+#: data/preferences.glade:126
+msgid "Left"
+msgstr ""
+
+#: data/preferences.glade:129
+msgid "Center"
+msgstr ""
+
+#: data/preferences.glade:132
+msgid "Right"
 msgstr ""
 
 #: data/preferences.glade:209
@@ -813,4 +842,48 @@ msgstr ""
 
 #: data/preferences.glade:2954
 msgid "config.ini"
+msgstr ""
+
+#: data/preferences.glade:3012
+msgid "None"
+msgstr ""
+
+#: data/preferences.glade:3016
+msgid "Hostname"
+msgstr ""
+
+#: data/preferences.glade:3057
+msgid "System"
+msgstr ""
+
+#: data/preferences.glade:3060
+msgid "On"
+msgstr ""
+
+#: data/preferences.glade:3063
+msgid "Off"
+msgstr ""
+
+#: data/preferences.glade:3103
+msgid "Never"
+msgstr ""
+
+#: data/preferences.glade:3106
+msgid "Contents changed"
+msgstr ""
+
+#: data/preferences.glade:3109
+msgid "Title changed"
+msgstr ""
+
+#: data/preferences.glade:3112
+msgid "Any changes"
+msgstr ""
+
+#: data/preferences.glade:3159
+msgid "Restart shell"
+msgstr ""
+
+#: data/preferences.glade:3162
+msgid "Restart shell and hide"
 msgstr ""

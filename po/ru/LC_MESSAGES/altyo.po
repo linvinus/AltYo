@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-30 17:05+0400\n"
+"POT-Creation-Date: 2013-09-30 17:14+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -81,10 +81,12 @@ msgid "<b>Window</b>"
 msgstr "<b>Окно программы</b>"
 
 #: altyo_terminal.vala:998 altyo_terminal.vala:1035
+#: data/preferences.glade:3077
 msgid "ASCII Backspace"
 msgstr "ASCII Backspace"
 
 #: altyo_terminal.vala:1004 altyo_terminal.vala:1041
+#: data/preferences.glade:3080
 msgid "ASCII Delete"
 msgstr "ASCII Delete"
 
@@ -117,11 +119,16 @@ msgstr "AltYo ошибка CSS стиля"
 msgid "Alternate screen scroll"
 msgstr "Альтернативная прокрутка"
 
+#: data/preferences.glade:3112
+msgid "Any changes"
+msgstr "Любых изменениях"
+
 #: data/preferences.glade:2853
 msgid "Application style"
 msgstr "Стиль приложения"
 
 #: altyo_terminal.vala:992 altyo_terminal.vala:1029
+#: data/preferences.glade:3074
 msgid "Auto"
 msgstr "Автоматически"
 
@@ -180,6 +187,14 @@ msgstr "Клавиша Backspace генерирует"
 msgid "Base title"
 msgstr "Основной шаблон закладки"
 
+#: data/preferences.glade:17
+msgid "Block"
+msgstr "Блок"
+
+#: data/preferences.glade:129
+msgid "Center"
+msgstr "В центре"
+
 #: data/preferences.glade:2773
 msgid "Check css"
 msgstr "Проверить css"
@@ -211,6 +226,10 @@ msgstr "Конфигурационный файл доступен только 
 #: data/preferences.glade:696
 msgid "Confirm to Quit"
 msgstr "Запрашивать подтверждение перед выходом"
+
+#: data/preferences.glade:3106
+msgid "Contents changed"
+msgstr "Изменениях в терминале"
 
 #: data/preferences.glade:1641
 msgid ""
@@ -278,6 +297,7 @@ msgid "Delete key binding"
 msgstr "Клавиша Delete генерирует"
 
 #: altyo_terminal.vala:1010 altyo_terminal.vala:1047
+#: data/preferences.glade:3083
 msgid "Delete sequence"
 msgstr "Экранирующая последовательность"
 
@@ -330,6 +350,14 @@ msgstr "Высота"
 msgid "Help"
 msgstr "Справка"
 
+#: data/preferences.glade:3016
+msgid "Hostname"
+msgstr "Названию хоста"
+
+#: data/preferences.glade:20
+msgid "Ibeam"
+msgstr "I-образный"
+
 #: data/preferences.glade:1872
 msgid "Key binding"
 msgstr "Горячие клавиши"
@@ -337,6 +365,10 @@ msgstr "Горячие клавиши"
 #: data/preferences.glade:1919
 msgid "Key bindings"
 msgstr "Горячие клавиши"
+
+#: data/preferences.glade:126
+msgid "Left"
+msgstr "Слева"
 
 #: data/preferences.glade:1774
 msgid "Look and feel"
@@ -374,6 +406,10 @@ msgstr "Развернуть окно на весь экран, или восс�
 msgid "Monitor"
 msgstr "Монитор"
 
+#: data/preferences.glade:3103
+msgid "Never"
+msgstr "Никогда"
+
 #: altyo_settings.vala:884
 #, c-format
 msgid ""
@@ -408,6 +444,10 @@ msgstr ""
 msgid "Next tab"
 msgstr "Следующий терминал"
 
+#: data/preferences.glade:3012
+msgid "None"
+msgstr "Без сортировки"
+
 #: data/preferences.glade:1677
 msgid "Notify on"
 msgstr "Уведомлять об"
@@ -415,6 +455,14 @@ msgstr "Уведомлять об"
 #: data/preferences.glade:245
 msgid "Number of animation steps,less is faster."
 msgstr "Количество щагов анимации, чем меньше тем быстрее"
+
+#: data/preferences.glade:3063
+msgid "Off"
+msgstr "Не мерцает."
+
+#: data/preferences.glade:3060
+msgid "On"
+msgstr "Мерцает."
 
 #: data/preferences.glade:718
 msgid "On close last tab"
@@ -488,7 +536,7 @@ msgstr ""
 msgid "Quick settings"
 msgstr "Быстрые настройки"
 
-#: altyo_window.vala:1901
+#: altyo_window.vala:1901 data/preferences.glade:3165
 msgid "Quit"
 msgstr "Выход"
 
@@ -516,6 +564,23 @@ msgstr "Заменить"
 #: data/preferences.glade:2904
 msgid "Reset all settings to default values"
 msgstr "Сбросить настройки на значения по умолчанию"
+
+#: data/preferences.glade:3159
+msgid "Restart shell"
+msgstr ""
+"перезапустить\n"
+"коммандную оболочку"
+
+#: data/preferences.glade:3162
+msgid "Restart shell and hide"
+msgstr ""
+"перезапустить\n"
+"коммандную оболочку\n"
+"и скрыть окно"
+
+#: data/preferences.glade:132
+msgid "Right"
+msgstr "Справа"
 
 #: data/preferences.glade:2710
 msgid "Run"
@@ -648,7 +713,12 @@ msgid "Switch to tab %d,double press switch to tab %d"
 msgstr ""
 "Переключиться на закладку %d,нажмите дважды для переключения на закладку %d"
 
+#: data/preferences.glade:3057
+msgid "System"
+msgstr "Системный"
+
 #: altyo_terminal.vala:1016 altyo_terminal.vala:1053
+#: data/preferences.glade:3086
 msgid "TTY \"erase\""
 msgstr "TTY \"erase\""
 
@@ -701,6 +771,10 @@ msgstr "Выждать перед уведомлением"
 msgid "Tint color"
 msgstr "Цвет затенения"
 
+#: data/preferences.glade:3109
+msgid "Title changed"
+msgstr "Изменениях заголовка"
+
 #: altyo_window.vala:1948
 msgid "Toggle autohide"
 msgstr "Переключить состояние настройки автоматического скрытия"
@@ -708,6 +782,10 @@ msgstr "Переключить состояние настройки автом�
 #: altyo_window.vala:1939
 msgid "Toggle stick"
 msgstr "Переключить состояние настройки \"всегда на видимом рабочем месте\""
+
+#: data/preferences.glade:23
+msgid "Underline"
+msgstr "Подчёркивание"
 
 #: data/preferences.glade:446
 msgid "When height equal 100, maximize window."
@@ -884,75 +962,19 @@ msgstr "Константинов Денис"
 #~ msgid "AltYo Tab%d"
 #~ msgstr "AltYo Закладка №%d"
 
-#~ msgid "Any changes"
-#~ msgstr "Любых изменениях"
-
-#~ msgid "Block"
-#~ msgstr "Блок"
-
-#~ msgid "Center"
-#~ msgstr "В центре"
-
-#~ msgid "Contents changed"
-#~ msgstr "Изменениях в терминале"
-
-#~ msgid "Hostname"
-#~ msgstr "Названию хоста"
-
-#~ msgid "Ibeam"
-#~ msgstr "I-образный"
-
 #~ msgid "Key binding \"%s\" already binded to \"%s\""
 #~ msgstr "Горячая клавиша \"%s\" уже используется в действии \"%s\""
 
 #~ msgid "Keybindings"
 #~ msgstr "Комбинации клавиш"
 
-#~ msgid "Left"
-#~ msgstr "Слева"
-
 #~ msgid "Make sense if \"Auto restart shell\" is disabled"
 #~ msgstr ""
 #~ "Эта опция работает если вЫключена опция \"Автоматически перезапускать "
 #~ "коммандную оболочку\""
 
-#~ msgid "Never"
-#~ msgstr "Никогда"
-
-#~ msgid "None"
-#~ msgstr "Без сортировки"
-
-#~ msgid "Off"
-#~ msgstr "Не мерцает."
-
-#~ msgid "On"
-#~ msgstr "Мерцает."
-
 #~ msgid "Reset to defaults"
 #~ msgstr "Восстановить значения по умолчанию"
 
-#~ msgid "Restart shell"
-#~ msgstr ""
-#~ "перезапустить\n"
-#~ "коммандную оболочку"
-
-#~ msgid "Restart shell and hide"
-#~ msgstr ""
-#~ "перезапустить\n"
-#~ "коммандную оболочку\n"
-#~ "и скрыть окно"
-
-#~ msgid "Right"
-#~ msgstr "Справа"
-
-#~ msgid "System"
-#~ msgstr "Системный"
-
 #~ msgid "Temporary lock key bindings"
 #~ msgstr "Временно отключить все комбинации клавиш"
-
-#~ msgid "Title changed"
-#~ msgstr "Изменениях заголовка"
-
-#~ msgid "Underline"
-#~ msgstr "Подчёркивание"

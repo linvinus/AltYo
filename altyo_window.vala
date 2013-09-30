@@ -1660,7 +1660,7 @@ public class AYObject :Object{
 							break;
 							}
 					}
-					string s=_("You are trying to use key binding \"%s\"\nfor action \"%s\"\nbut, same key binding already binded to the action \"%s\"").printf(Gtk.accelerator_name (accelerator_key, accelerator_mods),action.get_label(),action_label);
+					string s=_("You are trying to use key binding \"%s\"\nfor action \"%s\"\nbut, same key binding already binded to the action \"%s\"").printf(Gtk.accelerator_get_label(accelerator_key,accelerator_mods),action.get_label(),action_label);
 					this.main_window.show_message_box(_("error"),s);
 
 					return false;

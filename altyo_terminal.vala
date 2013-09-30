@@ -1110,22 +1110,28 @@ public class VTTerminal : AYTab{
 			menu.append(menuitem);
 		}
 		
-		menuitem = new Gtk.MenuItem.with_label (_("Copy terminal name"));
-		menuitem.activate.connect(()=>{
+		Gtk.ImageMenuItem image_menuitem;
+		Gtk.Image image;
+		image_menuitem = new Gtk.ImageMenuItem.with_label (_("Copy terminal name"));
+		image = new Gtk.Image.from_icon_name ("gtk-copy", Gtk.IconSize.MENU);
+		image_menuitem.set_image(image);
+		image_menuitem.activate.connect(()=>{
 			Gdk.Display display = vtw.get_display ();
 			Gtk.Clipboard clipboard = Gtk.Clipboard.get_for_display (display, Gdk.SELECTION_CLIPBOARD);
 			clipboard.set_text(this.tbutton.tab_title,-1);
 			});		
-		menu.append(menuitem);
+		menu.append(image_menuitem);
 
 		if(this.tbutton.host_name!=null && this.tbutton.host_name!=""){
-			menuitem = new Gtk.MenuItem.with_label (_("Copy terminal host name"));
-			menuitem.activate.connect(()=>{
+			image_menuitem = new Gtk.ImageMenuItem.with_label (_("Copy terminal host name"));
+			image = new Gtk.Image.from_icon_name ("gtk-copy", Gtk.IconSize.MENU);
+			image_menuitem.set_image(image);
+			image_menuitem.activate.connect(()=>{
 				Gdk.Display display = vtw.get_display ();
 				Gtk.Clipboard clipboard = Gtk.Clipboard.get_for_display (display, Gdk.SELECTION_CLIPBOARD);
 				clipboard.set_text(this.tbutton.host_name,-1);
 				});		
-			menu.append(menuitem);
+			menu.append(image_menuitem);
 		}
 
 		

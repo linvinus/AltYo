@@ -1913,7 +1913,7 @@ public class AYObject :Object{
 		});
 
 		/* Add New Tab on <Ctrl><Shift>t */
-		this.add_window_accel("altyo_about", _("About"), _("About"), Gtk.Stock.NEW,"",()=>{
+		this.add_window_accel("altyo_about", _("About"), _("About"), Gtk.Stock.ABOUT,"",()=>{
 			this.ShowAbout();
 		});
 
@@ -1963,7 +1963,7 @@ public class AYObject :Object{
 			}
         });
 
-        this.add_window_accel("terminal_sort_by_hostname",_("Sort by hostname"), _("Sort by hostname"), Gtk.Stock.EDIT,"",()=> {
+        this.add_window_accel("terminal_sort_by_hostname",_("Sort by hostname"), _("Sort by hostname"), Gtk.Stock.SORT_ASCENDING,"",()=> {
             this.tab_sort();
         });
         
@@ -2017,7 +2017,7 @@ public class AYObject :Object{
 			}
         });
 
-        this.add_window_accel("terminal_search_in_tab_title",_("Search in tab title"), _("Search in tab title"), Gtk.Stock.EDIT,"",()=> {
+        this.add_window_accel("terminal_search_in_tab_title",_("Search in tab title"), _("Search in tab title"), Gtk.Stock.FIND,"",()=> {
 				unowned SList <Gtk.RadioButton> rbutton_group = this.search_mode_rbutton.get_group ();
 				if(this.search_mode_rbutton.active){
 					//set SEARCH_MODE.SEARCH_IN_NAME

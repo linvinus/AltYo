@@ -17,7 +17,7 @@ Main program advantages.
 * Program will warn you if you try to close the terminal with an important program(ssh,wget pattern is customizable), even if program runned in the background.
 * All options can be configured via graphical settings dialog.
 * Program will warn you if you setup incorrect setting value, if settings is absent in config file, program will use default value.
-* Hotkey for the first 20 tabs (double press of `alt+5` will switch to 15 tab)
+* Hotkey for ~~the first 20~~ unlimited tabs (double press of `alt+5` will switch to 15 tab, triple press will switch to 25 tab and so on)
 * You may use css to styling program (thanks to gtk3)
 * Multi monitor support.  
   * You can setup, on which monitor start by default.  
@@ -44,7 +44,8 @@ Main program advantages.
 [![Normal window](http://storage2.static.itmages.ru/i/13/0612/s_1371037750_9206122_f69d88b067.png)](http://itmages.ru/image/view/1071578/f69d88b0)
 
 small video presentation of available features:
-* altyo 0.3 http://youtu.be/IEabsuFresk
+* youtube video altyo 0.3  
+  [![youtube altyo 0.3](http://img.youtube.com/vi/IEabsuFresk/0.jpg)](http://youtu.be/IEabsuFresk)
 * altyo 0.2 http://youtu.be/9W8m6T7HyVs and http://youtu.be/utxeh-SBTvI
 
 Source code available there https://github.com/linvinus/AltYo

@@ -977,6 +977,7 @@ public class AYObject :Object{
 
 	private int double_hotkey_milliseconds = 0;
 	private int double_hotkey = 0;
+	private int double_hotkey_level = 0;
 	private DateTime double_hotkey_last_time = null;
 
 //~ 	public Overlay main_overlay {get;set;}
@@ -1804,13 +1805,15 @@ public class AYObject :Object{
 
 					if(this.double_hotkey==j && this.double_hotkey_last_time!=null && now.difference(this.double_hotkey_last_time)<this.double_hotkey_milliseconds){
 						this.double_hotkey=j;
-						j+=10;
-					}else
+						this.double_hotkey_level+=10;
+					}else{
 						this.double_hotkey=j;
+						this.double_hotkey_level=0;
+					}
 
 					this.double_hotkey_last_time=now;
 
-					unowned AYTab vt = children.nth_data(j-1);
+					unowned AYTab vt = children.nth_data(j+this.double_hotkey_level-1);
 					if(vt != null)
 						this.activate_tab(vt.tbutton);
 			});

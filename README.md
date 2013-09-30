@@ -58,19 +58,21 @@ Tips and tricks:
 2. In search mode (when text entry have a focus), you may use following hotkeys  
    `ctrl+1` - toggle "Wrap search"  
    `ctrl+2` - toggle "Match case-sensitive"  
-   `ctrl+3` - toggle search mode "terminal text"/"terminal name"  
+   `ctrl+3` - toggle search mode "terminal text"/"terminals titles"  
    `ctrl+Up` or `Enter` - find next  
    `ctrl+Down` - find prev  
+   `Up` - search history  
+   `Down` - search history  
    `Esc` - close search dialog  
 sorry, this keys is hardcoded.
 3. You may switching to tab by searching in a titles.  
    To do that you need to open search dialog `<Ctrl><Shift>F` (default key binding),  
-   then activate search option  "terminal name", by pressing `<Ctrl+3>`,  
+   then activate search option  "terminals titles", by pressing `<Ctrl+3>`,  
    then type sought-for part of tab title.  
    Then you may use hotkeys to cycle through the search results  
    `ctrl+Up` or `Enter` - find next  
    `ctrl+Down` - find prev  
-   Also, you may configure special hotkey to quickly activate this mode "Search in tab title"
+   Also, you may configure special hotkey to quickly activate this mode "Search in terminals titles"
 4. You may sort tabs by hostname (if tab title contain host name in the following form `<user>@<host>:<path>`)  
    To do that press right mouse button on tab title, then, in context menu, select "Sort by hostname"  
    Also, you may configure special hotkey for this action "Sort by hostname".

@@ -96,3 +96,6 @@ FAQ:
 
 * Q) Window gravity south, not working under xfwm4
 * A) it is xfwm4 bug https://bugzilla.xfce.org/show_bug.cgi?id=3634
+
+* Q) tabs does not close after entering "exit" command (mc restarting after pressing F10 if it was runned as autorun command)
+* A) if you prefer close tabs by "exit" command, you may turn off option "Auto restart shell"

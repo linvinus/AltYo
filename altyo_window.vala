@@ -2017,7 +2017,7 @@ public class AYObject :Object{
 			}
         });
 
-        this.add_window_accel("terminal_search_in_tab_title",_("Search in tab title"), _("Search in tab title"), Gtk.Stock.FIND,"",()=> {
+        this.add_window_accel("terminal_search_in_tab_title",_("Search in terminals titles"), _("Search in terminals titles"), Gtk.Stock.FIND,"",()=> {
 				unowned SList <Gtk.RadioButton> rbutton_group = this.search_mode_rbutton.get_group ();
 				if(this.search_mode_rbutton.active){
 					//set SEARCH_MODE.SEARCH_IN_NAME
@@ -2265,9 +2265,10 @@ public class AYObject :Object{
 				this.search_wrap_around.sensitive=true;
 				this.search_match_case.sensitive=true;
 			}
+			this.search_text_combo.grab_focus();
 			});
 
-		rbutton = new Gtk.RadioButton.with_label_from_widget (this.search_mode_rbutton, _("terminal name"));
+		rbutton = new Gtk.RadioButton.with_label_from_widget (this.search_mode_rbutton, _("terminals titles"));
 		rbutton.tooltip_text="Ctrl+3";
 		rbox.pack_start (rbutton, false, false, 0);
 		rbutton.toggled.connect ((button)=>{
@@ -2277,6 +2278,7 @@ public class AYObject :Object{
 				this.search_wrap_around.sensitive=false;
 				this.search_match_case.sensitive=false;				
 			}
+			this.search_text_combo.grab_focus();
 			});
 		
 		this.search_hbox.pack_start(rbox,false,false,0);

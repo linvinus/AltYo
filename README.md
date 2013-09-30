@@ -99,3 +99,8 @@ FAQ:
 
 * Q) tabs does not close after entering "exit" command (mc restarting after pressing F10 if it was runned as autorun command)
 * A) if you prefer close tabs by "exit" command, you may turn off option "Auto restart shell"
+
+* Q) "auto run" commands doesn't see environment variables from bashrc file
+* A) this happen because they are running as standalone application,  
+     but, for example, you may use following wrap around `bash -c "EDITOR=vim mc"`  
+     in this example mc will runned with special environment variable

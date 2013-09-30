@@ -1094,6 +1094,8 @@ public class VTTerminal : AYTab{
 
 		menuitem = (Gtk.MenuItem)acg.get_action("terminal_sort_by_hostname").create_menu_item();
 		menu.append(menuitem);
+		menuitem = (Gtk.MenuItem)acg.get_action("terminal_search_in_tab_title").create_menu_item();
+		menu.append(menuitem);
 
 		if(vtw.ayobject.tab_sort_order==TAB_SORT_ORDER.HOSTNAME && vtw.ayobject.active_tab==this.tbutton){
 			var action_sort=acg.get_action("disable_sort_tab") as ToggleAction;

@@ -2016,6 +2016,17 @@ public class AYObject :Object{
 					Posix.system(exec);				
 			}
         });
+
+        this.add_window_accel("terminal_search_in_tab_title",_("Search in tab title"), _("Search in tab title"), Gtk.Stock.EDIT,"",()=> {
+				unowned SList <Gtk.RadioButton> rbutton_group = this.search_mode_rbutton.get_group ();
+				if(this.search_mode_rbutton.active){
+					//set SEARCH_MODE.SEARCH_IN_NAME
+					var rb=rbutton_group.nth_data(0) as Gtk.RadioButton;
+					rb.set_active(true);
+				}
+				if(!((Entry)this.search_text_combo.get_child()).has_focus)
+					this.search_show();
+        });
         
 	}//setup_keyboard_accelerators
 

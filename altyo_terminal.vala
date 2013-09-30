@@ -1098,7 +1098,7 @@ public class VTTerminal : AYTab{
 		if(vtw.ayobject.tab_sort_order==TAB_SORT_ORDER.HOSTNAME && vtw.ayobject.active_tab==this.tbutton){
 			var action_sort=acg.get_action("disable_sort_tab") as ToggleAction;
 			if(action_sort.active!=this.tbutton.do_not_sort){
-				//invert value, becouse it will inverted after set_active
+				//invert value, because it will inverted after set_active
 				//Gtk.Action.block_activate don't working :(
 				this.tbutton.do_not_sort=!this.tbutton.do_not_sort;
 				action_sort.set_active(!this.tbutton.do_not_sort);
@@ -1107,7 +1107,24 @@ public class VTTerminal : AYTab{
 			menuitem = (Gtk.MenuItem)acg.get_action("disable_sort_tab").create_menu_item();
 			menu.append(menuitem);
 		}
+		
+		menuitem = new Gtk.MenuItem.with_label (_("Copy terminal name"));
+		menuitem.activate.connect(()=>{
+			Gdk.Display display = vtw.get_display ();
+			Gtk.Clipboard clipboard = Gtk.Clipboard.get_for_display (display, Gdk.SELECTION_CLIPBOARD);
+			clipboard.set_text(this.tbutton.tab_title,-1);
+			});		
+		menu.append(menuitem);
 
+		menuitem = new Gtk.MenuItem.with_label (_("Copy terminal host name"));
+		menuitem.activate.connect(()=>{
+			Gdk.Display display = vtw.get_display ();
+			Gtk.Clipboard clipboard = Gtk.Clipboard.get_for_display (display, Gdk.SELECTION_CLIPBOARD);
+			clipboard.set_text(this.tbutton.host_name,-1);
+			});		
+		menu.append(menuitem);
+
+		
 		menu.deactivate.connect (this.on_deactivate);
 		menu.show_all();
         //menu.attach_to_widget (this.vte_term, null);

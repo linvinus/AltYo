@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-01 08:33+0400\n"
+"POT-Creation-Date: 2013-10-01 21:28+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,9 +16,17 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: main.vala:71
+msgid "\"command arg1 argN...\""
+msgstr "\"комманда arg1 argN...\""
+
 #: altyo_settings.vala:76
 msgid "%"
 msgstr "%"
+
+#: main.vala:69
+msgid "/path/to/config.ini"
+msgstr "/path/to/config.ini"
 
 #: data/preferences.glade:368
 msgid "100 or lower is in percentage"
@@ -80,12 +88,12 @@ msgstr "<b>URL регулярные выражения</b>"
 msgid "<b>Window</b>"
 msgstr "<b>Окно программы</b>"
 
-#: altyo_terminal.vala:998 altyo_terminal.vala:1035
+#: altyo_terminal.vala:1000 altyo_terminal.vala:1037
 #: data/preferences.glade:3077
 msgid "ASCII Backspace"
 msgstr "ASCII Backspace"
 
-#: altyo_terminal.vala:1004 altyo_terminal.vala:1041
+#: altyo_terminal.vala:1006 altyo_terminal.vala:1043
 #: data/preferences.glade:3080
 msgid "ASCII Delete"
 msgstr "ASCII Delete"
@@ -106,12 +114,12 @@ msgstr "Действия"
 msgid "Advanced"
 msgstr "Дополнительные"
 
-#: altyo_settings.vala:919 altyo_settings.vala:929 altyo_settings.vala:973
+#: altyo_settings.vala:921 altyo_settings.vala:931 altyo_settings.vala:975
 #, c-format
 msgid "AltYo %s error"
 msgstr "AltYo ошибка %s"
 
-#: altyo_settings.vala:886
+#: altyo_settings.vala:888
 msgid "AltYo CSS style error"
 msgstr "AltYo ошибка CSS стиля"
 
@@ -127,7 +135,7 @@ msgstr "Любых изменениях"
 msgid "Application style"
 msgstr "Стиль приложения"
 
-#: altyo_terminal.vala:992 altyo_terminal.vala:1029
+#: altyo_terminal.vala:994 altyo_terminal.vala:1031
 #: data/preferences.glade:3074
 msgid "Auto"
 msgstr "Автоматически"
@@ -243,7 +251,7 @@ msgstr ""
 msgid "Copy"
 msgstr "Копировать"
 
-#: altyo_terminal.vala:916
+#: altyo_terminal.vala:918
 msgid "Copy link"
 msgstr "Копировать ссылку"
 
@@ -251,19 +259,19 @@ msgstr "Копировать ссылку"
 msgid "Copy selected text"
 msgstr "Копировать выделенный текст"
 
-#: altyo_terminal.vala:1126
+#: altyo_terminal.vala:1128
 msgid "Copy terminal host name"
 msgstr "Скопировать host name"
 
-#: altyo_terminal.vala:1115
+#: altyo_terminal.vala:1117
 msgid "Copy terminal name"
 msgstr "Скопировать заголовок терминала"
 
-#: altyo_terminal.vala:1025
+#: altyo_terminal.vala:1027
 msgid "Current Terminal: Backspace"
 msgstr "В этом терминале: Backspace"
 
-#: altyo_terminal.vala:986
+#: altyo_terminal.vala:988
 msgid "Current Terminal: Delete"
 msgstr "В этом терминале: Delete"
 
@@ -296,10 +304,18 @@ msgstr "Монитор по умолчанию, на котором будет �
 msgid "Delete key binding"
 msgstr "Клавиша Delete генерирует"
 
-#: altyo_terminal.vala:1010 altyo_terminal.vala:1047
+#: altyo_terminal.vala:1012 altyo_terminal.vala:1049
 #: data/preferences.glade:3083
 msgid "Delete sequence"
 msgstr "Экранирующая последовательность"
+
+#: main.vala:75
+msgid "Disable control of window dimension, and set --id=none"
+msgstr "Отключить управление размером окна, и установить --id=none"
+
+#: main.vala:74
+msgid "Disable main hotkey"
+msgstr "Отключить главную горячую клавишу"
 
 #: altyo_window.vala:1923
 msgid "Disable sort tab"
@@ -410,7 +426,7 @@ msgstr "Монитор"
 msgid "Never"
 msgstr "Никогда"
 
-#: altyo_settings.vala:884
+#: altyo_settings.vala:886
 #, c-format
 msgid ""
 "New style will not be saved!\n"
@@ -431,7 +447,7 @@ msgstr ""
 "Открывать новый терминал\n"
 "в текущей директории"
 
-#: altyo_settings.vala:920 altyo_settings.vala:930 altyo_settings.vala:974
+#: altyo_settings.vala:922 altyo_settings.vala:932 altyo_settings.vala:976
 #, c-format
 msgid ""
 "New value of %s will not be saved!\n"
@@ -532,13 +548,17 @@ msgstr ""
 "Окно будет выпадать на том же экране, где находится курсор мыши\n"
 "Используется если у вас несколько мониторов."
 
-#: altyo_terminal.vala:955
+#: altyo_terminal.vala:957
 msgid "Quick settings"
 msgstr "Быстрые настройки"
 
 #: altyo_window.vala:1904 data/preferences.glade:3165
 msgid "Quit"
 msgstr "Выход"
+
+#: main.vala:69
+msgid "Read configuration from file"
+msgstr "Прочитать конфигурацию из файла"
 
 #: altyo_window.vala:1548
 msgid "Really quit?"
@@ -556,6 +576,10 @@ msgstr ""
 #: data/preferences.glade:1964
 msgid "Regular expression syntax"
 msgstr "Синтаксис регулярных выражений"
+
+#: main.vala:68
+msgid "Reload configuration"
+msgstr "Перечитать конфигурацию"
 
 #: data/preferences.glade:2232
 msgid "Replace"
@@ -586,7 +610,7 @@ msgstr "Справа"
 msgid "Run"
 msgstr "Запустить"
 
-#: altyo_terminal.vala:919
+#: altyo_terminal.vala:921
 msgid "Run link Ctrl+left mouse button"
 msgstr "Открыть ссылку Ctrl+левая кнопка мыши"
 
@@ -629,6 +653,14 @@ msgstr "Поиск в заголовках терминалов"
 #: data/preferences.glade:2637
 msgid "Select-by-word characters"
 msgstr "Выбирающие слово символы"
+
+#: main.vala:73
+msgid "Set application id, none means disable application id"
+msgstr "Установить id приложения, none означает не использовать id"
+
+#: main.vala:76
+msgid "Set/update default path"
+msgstr "Установить/Обновить путь по умолчанию"
 
 #: altyo_window.vala:1851
 msgid "Settings"
@@ -717,7 +749,7 @@ msgstr ""
 msgid "System"
 msgstr "Системный"
 
-#: altyo_terminal.vala:1016 altyo_terminal.vala:1053
+#: altyo_terminal.vala:1018 altyo_terminal.vala:1055
 #: data/preferences.glade:3086
 msgid "TTY \"erase\""
 msgstr "TTY \"erase\""
@@ -880,6 +912,14 @@ msgstr "px"
 msgid "remove"
 msgstr "Удалить"
 
+#: main.vala:71
+msgid "run command in new tab"
+msgstr "запустить команду в новой закладке"
+
+#: main.vala:72
+msgid "show/hide window"
+msgstr "показать/скрыть окно"
+
 #: data/preferences.glade:2069
 msgid ""
 "size in pixels\n"
@@ -937,14 +977,14 @@ msgstr ""
 "Неверное значение параметра terminal_session_exclude_regex, будет "
 "использованно значение по умолчанию! ошибка:%s"
 
-#: altyo_terminal.vala:769
+#: altyo_terminal.vala:771
 msgid ""
 "terminal_url_regexps odd value of array length! will be used default value."
 msgstr ""
 "Нечётное кличество в массиве terminal_url_regexps, будет использованно "
 "значение по умолчанию!"
 
-#: altyo_terminal.vala:775
+#: altyo_terminal.vala:777
 #, c-format
 msgid "terminal_url_regexps wrong value! will be used default value. err:%s"
 msgstr ""

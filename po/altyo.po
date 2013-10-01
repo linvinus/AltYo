@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-01 08:33+0400\n"
+"POT-Creation-Date: 2013-10-01 21:28+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,46 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: main.vala:68
+msgid "Reload configuration"
+msgstr ""
+
+#: main.vala:69
+msgid "Read configuration from file"
+msgstr ""
+
+#: main.vala:69
+msgid "/path/to/config.ini"
+msgstr ""
+
+#: main.vala:71
+msgid "run command in new tab"
+msgstr ""
+
+#: main.vala:71
+msgid "\"command arg1 argN...\""
+msgstr ""
+
+#: main.vala:72
+msgid "show/hide window"
+msgstr ""
+
+#: main.vala:73
+msgid "Set application id, none means disable application id"
+msgstr ""
+
+#: main.vala:74
+msgid "Disable main hotkey"
+msgstr ""
+
+#: main.vala:75
+msgid "Disable control of window dimension, and set --id=none"
+msgstr ""
+
+#: main.vala:76
+msgid "Set/update default path"
+msgstr ""
 
 #: altyo_terminal.vala:405
 #, c-format
@@ -37,66 +77,66 @@ msgstr ""
 msgid "tab_title_format_regex wrong value! will be used default value. err:%s"
 msgstr ""
 
-#: altyo_terminal.vala:769
+#: altyo_terminal.vala:771
 msgid ""
 "terminal_url_regexps odd value of array length! will be used default value."
 msgstr ""
 
-#: altyo_terminal.vala:775
+#: altyo_terminal.vala:777
 #, c-format
 msgid "terminal_url_regexps wrong value! will be used default value. err:%s"
 msgstr ""
 
-#: altyo_terminal.vala:916
+#: altyo_terminal.vala:918
 msgid "Copy link"
 msgstr ""
 
-#: altyo_terminal.vala:919
+#: altyo_terminal.vala:921
 msgid "Run link Ctrl+left mouse button"
 msgstr ""
 
-#: altyo_terminal.vala:955
+#: altyo_terminal.vala:957
 msgid "Quick settings"
 msgstr ""
 
-#: altyo_terminal.vala:986
+#: altyo_terminal.vala:988
 msgid "Current Terminal: Delete"
 msgstr ""
 
-#: altyo_terminal.vala:992 altyo_terminal.vala:1029
+#: altyo_terminal.vala:994 altyo_terminal.vala:1031
 #: data/preferences.glade:3074
 msgid "Auto"
 msgstr ""
 
-#: altyo_terminal.vala:998 altyo_terminal.vala:1035
+#: altyo_terminal.vala:1000 altyo_terminal.vala:1037
 #: data/preferences.glade:3077
 msgid "ASCII Backspace"
 msgstr ""
 
-#: altyo_terminal.vala:1004 altyo_terminal.vala:1041
+#: altyo_terminal.vala:1006 altyo_terminal.vala:1043
 #: data/preferences.glade:3080
 msgid "ASCII Delete"
 msgstr ""
 
-#: altyo_terminal.vala:1010 altyo_terminal.vala:1047
+#: altyo_terminal.vala:1012 altyo_terminal.vala:1049
 #: data/preferences.glade:3083
 msgid "Delete sequence"
 msgstr ""
 
-#: altyo_terminal.vala:1016 altyo_terminal.vala:1053
+#: altyo_terminal.vala:1018 altyo_terminal.vala:1055
 #: data/preferences.glade:3086
 msgid "TTY \"erase\""
 msgstr ""
 
-#: altyo_terminal.vala:1025
+#: altyo_terminal.vala:1027
 msgid "Current Terminal: Backspace"
 msgstr ""
 
-#: altyo_terminal.vala:1115
+#: altyo_terminal.vala:1117
 msgid "Copy terminal name"
 msgstr ""
 
-#: altyo_terminal.vala:1126
+#: altyo_terminal.vala:1128
 msgid "Copy terminal host name"
 msgstr ""
 
@@ -364,7 +404,7 @@ msgstr ""
 msgid "Looks good"
 msgstr ""
 
-#: altyo_settings.vala:884
+#: altyo_settings.vala:886
 #, c-format
 msgid ""
 "New style will not be saved!\n"
@@ -372,16 +412,16 @@ msgid ""
 "error:%s"
 msgstr ""
 
-#: altyo_settings.vala:886
+#: altyo_settings.vala:888
 msgid "AltYo CSS style error"
 msgstr ""
 
-#: altyo_settings.vala:919 altyo_settings.vala:929 altyo_settings.vala:973
+#: altyo_settings.vala:921 altyo_settings.vala:931 altyo_settings.vala:975
 #, c-format
 msgid "AltYo %s error"
 msgstr ""
 
-#: altyo_settings.vala:920 altyo_settings.vala:930 altyo_settings.vala:974
+#: altyo_settings.vala:922 altyo_settings.vala:932 altyo_settings.vala:976
 #, c-format
 msgid ""
 "New value of %s will not be saved!\n"

@@ -76,7 +76,7 @@ install: gen_mo
 	cp -a ./data/altyo.png $(DESTDIR)$(PREFIX)/share/icons
 
 gen_po:
-	xgettext -o ./po/altyo.po --from-code=UTF-8 -language=C -k_ $(VALA_FILES) $(GLADE_FILES)
+	xgettext -o ./po/altyo.po --from-code=UTF-8 -language=C --keyword=_ --keyword=N_ $(VALA_FILES) $(GLADE_FILES)
 	msgmerge -s -U ./po/ru/LC_MESSAGES/$(PRG_NAME).po  ./po/$(PRG_NAME).po
 
 gen_mo:

@@ -1,3 +1,15 @@
+altyo (0.3~rc9-linvinus1) quantal; urgency=low
+
+  * Update Readme.md
+  * fix: menu icons
+  * Update README.md
+  * update: English translation, misc fixes
+  * improvements: unlimited hotkeys for all opened tabs, two double-tripple vodka (from russian movie)
+  * update: Russian translation
+  * update: debian/control file
+
+ -- denis <linvinus@gmail.com>  Tue, 01 Oct 2013 08:42:21 +0400
+
 altyo (0.3~rc8-linvinus1) quantal; urgency=low
 
   * improvements: more user-friendly hotkeys

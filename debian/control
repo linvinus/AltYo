@@ -4,12 +4,12 @@ Priority: extra
 Maintainer: denis <linvinus@gmail.com>
 Build-Depends: debhelper (>= 8.0.0),valac-0.16,valac-0.16-vapi,libvte-2.90-dev,libgtk-3-dev,libglib2.0-bin
 Standards-Version: 3.9.2
-Homepage: http://linvinus.ru
-#Vcs-Git: git://git.debian.org/collab-maint/altyo.git
-#Vcs-Browser: http://git.debian.org/?p=collab-maint/altyo.git;a=summary
+Homepage: https://github.com/linvinus/AltYo
+Vcs-Git: https://github.com/linvinus/AltYo.git
+Vcs-Browser: https://github.com/linvinus/AltYo
 
 Package: altyo
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: AltYo - tilda analog (terminal emulator with first person shooter console likeness)
- AltYo - tilda analog (terminal emulator with first person shooter console likeness) , with many improvements, is written in vala, depends on libvte, gtk3. Supports multi-line tabs, support DnD tabs, fully customisable via text file.
+Description: AltYo - drop-down terminal emulator, written in vala, depends only on libvte and gtk3.
+ AltYo - drop-down terminal emulator, written in vala, depends only on libvte and gtk3.

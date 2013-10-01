@@ -645,8 +645,10 @@ public class VTTerminal : AYTab{
 		this.auto_restart=my_conf.get_boolean("terminal_auto_restart_shell",true);
 
 		#if ALTERNATE_SCREEN_SCROLL
-		//debian patch vte_terminal_set_alternate_screen_scroll
-		this.vte_term.set_alternate_screen_scroll(my_conf.get_boolean("terminal_set_alternate_screen_scroll",true));
+		if(my_conf.DISTR_ID==DISTRIB_ID.UBUNTU){
+			//debian patch vte_terminal_set_alternate_screen_scroll
+			this.vte_term.set_alternate_screen_scroll(my_conf.get_boolean("terminal_set_alternate_screen_scroll",true));
+		}
 		#endif
 
 		this.vte_term.set_scrollback_lines (my_conf.get_integer("terminal_scrollback_lines",512,(ref new_val)=>{

@@ -28,6 +28,11 @@ public enum VER{
 	rc
 	}
 
+public enum DISTRIB_ID{
+	UBUNTU,
+	OTHER
+	}
+	
 public delegate CFG_CHECK check_string(ref string s);
 public delegate CFG_CHECK check_string_list(ref string[] sl);
 public delegate CFG_CHECK check_integer(ref int i);
@@ -61,6 +66,7 @@ public class MySettings : Object {
 	public  bool standalone_mode = false;
 	public  bool readonly = false;
 	public string? default_path = null;
+	public DISTRIB_ID DISTR_ID=DISTRIB_ID.OTHER;
 
 	public signal void on_load();
 
@@ -80,7 +86,7 @@ public class MySettings : Object {
 		}
 		kf = new KeyFile();
 		this.load_config();
-		if(this.opened)
+		if(this.opened){
 			this.set_integer_list("profile_version",this.check_for_migrate(this.get_integer_list("profile_version", {0,0,0}, (ref new_val)=>{
 				if(new_val.length != 3){
 					new_val = {0,0,0};
@@ -88,6 +94,17 @@ public class MySettings : Object {
 				}
 				return CFG_CHECK.OK;
 				})) );
+			/* some options related only for ubuntu, so to run same binary 
+			 * try to guess linux distribution on which we are have runned,
+			 * guess only once, then save in config*/
+			string distr=this.get_string("distrib_id","");
+			if(distr==""){
+				distr=this.check_linux_distribution();
+				this.set_string("distrib_id",distr);
+			}
+			if(distr=="ubuntu")
+				this.DISTR_ID=DISTRIB_ID.UBUNTU;
+		}
 	}
 
 	public void load_config(){
@@ -190,6 +207,30 @@ public class MySettings : Object {
 		}
 
 		return version;
+	}
+	
+	private  string check_linux_distribution(){
+		string contents;
+		size_t length;
+		if( GLib.FileUtils.test("/etc/lsb-release",GLib.FileTest.EXISTS) ){
+			try{
+				GLib.FileUtils.get_contents("/etc/lsb-release",out contents,out length);
+				if(length>1 && Regex.match_simple(".*ubuntu.*",contents,GLib.RegexCompileFlags.CASELESS|GLib.RegexCompileFlags.MULTILINE)){
+					return "ubuntu";
+				}
+			} catch (FileError err) {
+			}
+		}else
+		if( GLib.FileUtils.test("/etc/issue",GLib.FileTest.EXISTS) ){
+			try{
+				GLib.FileUtils.get_contents("/etc/issue",out contents,out length);
+				if(length>1 && Regex.match_simple(".*ubuntu.*",contents,GLib.RegexCompileFlags.CASELESS|GLib.RegexCompileFlags.MULTILINE)){
+					return "ubuntu";
+				}
+			} catch (FileError err) {
+			}			
+		}
+		return "other";
 	}
 
 	public bool get_boolean (string key,bool? def,check_boolean? check_cb=null){

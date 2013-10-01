@@ -791,9 +791,11 @@ public class AYSettings : AYTab{
 						}
 				}
 		#if !ALTERNATE_SCREEN_SCROLL
-		//debian patch vte_terminal_set_alternate_screen_scroll
-		var ASS = builder.get_object ("terminal_set_alternate_screen_scroll") as Gtk.CheckButton;
-		ASS.sensitive=false;
+		if(my_conf.DISTR_ID!=DISTRIB_ID.UBUNTU){
+			//debian patch vte_terminal_set_alternate_screen_scroll
+			var ASS = builder.get_object ("terminal_set_alternate_screen_scroll") as Gtk.CheckButton;
+			ASS.sensitive=false;
+		}
 		#endif
 
 	}//get_from_conf

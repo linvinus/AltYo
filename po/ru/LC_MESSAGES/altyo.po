@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-30 17:14+0400\n"
+"POT-Creation-Date: 2013-10-01 08:33+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -94,7 +94,7 @@ msgstr "ASCII Delete"
 msgid "AYsettings"
 msgstr "Настройки"
 
-#: altyo_window.vala:1916
+#: altyo_window.vala:1919
 msgid "About"
 msgstr "О программе"
 
@@ -150,7 +150,7 @@ msgstr "Запускать команды при старте"
 msgid "Auto start with desktop session"
 msgstr "Запускать вместе с рабочим столом"
 
-#: altyo_window.vala:1948
+#: altyo_window.vala:1951
 msgid "Autohide"
 msgstr "Скрывать автоматически"
 
@@ -199,15 +199,15 @@ msgstr "В центре"
 msgid "Check css"
 msgstr "Проверить css"
 
-#: altyo_window.vala:1782
+#: altyo_window.vala:1783
 msgid "Close current tab"
 msgstr "Закрыть текущий терминал"
 
-#: altyo_window.vala:1782
+#: altyo_window.vala:1783
 msgid "Close tab"
 msgstr "Закрыть терминал"
 
-#: altyo_window.vala:1286
+#: altyo_window.vala:1287
 msgid "Close tab anyway?"
 msgstr "Закрыть терминал в любом случае?"
 
@@ -239,7 +239,7 @@ msgstr ""
 "Прокручивать задний фон вместе с текстом если для фонового изображения "
 "использется картинка из файла"
 
-#: altyo_window.vala:1821
+#: altyo_window.vala:1824
 msgid "Copy"
 msgstr "Копировать"
 
@@ -247,15 +247,15 @@ msgstr "Копировать"
 msgid "Copy link"
 msgstr "Копировать ссылку"
 
-#: altyo_window.vala:1821
+#: altyo_window.vala:1824
 msgid "Copy selected text"
 msgstr "Копировать выделенный текст"
 
-#: altyo_terminal.vala:1122
+#: altyo_terminal.vala:1126
 msgid "Copy terminal host name"
 msgstr "Скопировать host name"
 
-#: altyo_terminal.vala:1113
+#: altyo_terminal.vala:1115
 msgid "Copy terminal name"
 msgstr "Скопировать заголовок терминала"
 
@@ -301,7 +301,7 @@ msgstr "Клавиша Delete генерирует"
 msgid "Delete sequence"
 msgstr "Экранирующая последовательность"
 
-#: altyo_window.vala:1920
+#: altyo_window.vala:1923
 msgid "Disable sort tab"
 msgstr "Исключить из сортировки"
 
@@ -321,7 +321,7 @@ msgstr "Исключить из сохранения сессии"
 msgid "Fake transparency"
 msgstr "Ненастоящая прозрачность"
 
-#: altyo_window.vala:1845 data/preferences.glade:319
+#: altyo_window.vala:1848 data/preferences.glade:319
 msgid "Follow mouse cursor"
 msgstr "Следовать за мышью"
 
@@ -329,7 +329,7 @@ msgstr "Следовать за мышью"
 msgid "Font"
 msgstr "Шрифт"
 
-#: altyo_window.vala:1285
+#: altyo_window.vala:1286
 #, c-format
 msgid "Found important task \"%s\""
 msgstr "Запущена важная программа \"%s\""
@@ -382,7 +382,7 @@ msgstr "Выглядит хорошо"
 msgid "Match"
 msgstr "Регулярное выражение"
 
-#: altyo_window.vala:2242
+#: altyo_window.vala:2245
 msgid "Match case-sensitive"
 msgstr "Учитывать регистр"
 
@@ -394,11 +394,11 @@ msgstr "Учитывать регистр по умолчанию"
 msgid "Max tab width"
 msgstr "Максимальная ширина"
 
-#: altyo_window.vala:1952
+#: altyo_window.vala:1955
 msgid "Maximize - restore"
 msgstr "Развернуть на весь экран"
 
-#: altyo_window.vala:1952
+#: altyo_window.vala:1955
 msgid "Maximize window, or restore to normal size"
 msgstr "Развернуть окно на весь экран, или восстановить прежний размер"
 
@@ -421,7 +421,7 @@ msgstr ""
 "в строке %d  в позиции %d\n"
 "ошибка:%s"
 
-#: altyo_window.vala:1763
+#: altyo_window.vala:1764
 msgid "New tab"
 msgstr "Добавить терминал"
 
@@ -440,7 +440,7 @@ msgstr ""
 "Новое значение %s не будет сохранено!\n"
 "%s"
 
-#: altyo_window.vala:1787
+#: altyo_window.vala:1788
 msgid "Next tab"
 msgstr "Следующий терминал"
 
@@ -470,11 +470,11 @@ msgstr ""
 "После закрытия\n"
 "последней закладки"
 
-#: altyo_window.vala:1763
+#: altyo_window.vala:1764
 msgid "Open new tab"
 msgstr "Открыть новый терминал"
 
-#: altyo_window.vala:1970
+#: altyo_window.vala:1973
 msgid "Open new window"
 msgstr "Открыть новое окно"
 
@@ -482,11 +482,11 @@ msgstr "Открыть новое окно"
 msgid "Pango Text Attribute Markup Language"
 msgstr "Синтаксис языка разметки Pango"
 
-#: altyo_window.vala:1826
+#: altyo_window.vala:1829
 msgid "Paste"
 msgstr "Вставить"
 
-#: altyo_window.vala:1826
+#: altyo_window.vala:1829
 msgid "Paste from primary clipboard"
 msgstr "Вставить из основного буфера обмена"
 
@@ -516,7 +516,7 @@ msgstr "Не закрывать если"
 msgid "Previous key '%s' incorrect or busy"
 msgstr "Предыдущая комбинация '%s' уже занята, или неправильнго формата"
 
-#: altyo_window.vala:1792
+#: altyo_window.vala:1793
 msgid "Previous tab"
 msgstr "Предыдущий терминал"
 
@@ -536,15 +536,15 @@ msgstr ""
 msgid "Quick settings"
 msgstr "Быстрые настройки"
 
-#: altyo_window.vala:1901 data/preferences.glade:3165
+#: altyo_window.vala:1904 data/preferences.glade:3165
 msgid "Quit"
 msgstr "Выход"
 
-#: altyo_window.vala:1547
+#: altyo_window.vala:1548
 msgid "Really quit?"
 msgstr "Действительно выйти?"
 
-#: altyo_window.vala:1613
+#: altyo_window.vala:1614
 #, c-format
 msgid ""
 "Really reset to defaults?\n"
@@ -594,7 +594,7 @@ msgstr "Открыть ссылку Ctrl+левая кнопка мыши"
 msgid "Run this command instead user shell"
 msgstr "Запускать эту команду вместо оболочки пользователя"
 
-#: altyo_window.vala:1548
+#: altyo_window.vala:1549
 msgid "Save session"
 msgstr "Сохранить сессию"
 
@@ -618,27 +618,27 @@ msgstr "Прокручивать при нажатии клавиши"
 msgid "Scroll on output"
 msgstr "Прокручивать при выводе"
 
-#: altyo_window.vala:1831
+#: altyo_window.vala:1834
 msgid "Search"
 msgstr "Поиск"
 
-#: altyo_window.vala:2020
-msgid "Search in tab title"
-msgstr "Поиск в заголовке терминалов"
+#: altyo_window.vala:2023
+msgid "Search in terminals titles"
+msgstr "Поиск в заголовках терминалов"
 
 #: data/preferences.glade:2637
 msgid "Select-by-word characters"
 msgstr "Выбирающие слово символы"
 
-#: altyo_window.vala:1848
+#: altyo_window.vala:1851
 msgid "Settings"
 msgstr "Настройки"
 
-#: altyo_window.vala:1848
+#: altyo_window.vala:1851
 msgid "Settings..."
 msgstr "Настройки"
 
-#: altyo_window.vala:1214 altyo_window.vala:1365
+#: altyo_window.vala:1215 altyo_window.vala:1366
 msgid "Shell terminated."
 msgstr "Оболочка была закрыта"
 
@@ -646,15 +646,15 @@ msgstr "Оболочка была закрыта"
 msgid "Show scrollbar"
 msgstr "Показывать прокрутку"
 
-#: altyo_window.vala:1911
+#: altyo_window.vala:1914
 msgid "Show/Hide"
 msgstr "Показать/скрыть окно AltYo"
 
-#: altyo_window.vala:1837
+#: altyo_window.vala:1840
 msgid "Show/Hide Quick list"
 msgstr "Показать/скрыть быстрые команды"
 
-#: altyo_window.vala:1954
+#: altyo_window.vala:1957
 msgid ""
 "Sorry, your default height is 100%, window size cannot be reduced, please "
 "change default window height in preferences."
@@ -666,7 +666,7 @@ msgstr ""
 msgid "Sort by"
 msgstr "Сортировать по"
 
-#: altyo_window.vala:1966
+#: altyo_window.vala:1969
 msgid "Sort by hostname"
 msgstr "Выстроить по названию хоста"
 
@@ -682,7 +682,7 @@ msgstr "Запускать свёрнутым"
 msgid "Start maximized"
 msgstr "При старте окно во весь экран"
 
-#: altyo_window.vala:1928
+#: altyo_window.vala:1931
 msgid "Stay on top"
 msgstr "Поверх всех окон"
 
@@ -690,24 +690,24 @@ msgstr "Поверх всех окон"
 msgid "Stay on top by default"
 msgstr "Поверх всех окон"
 
-#: altyo_window.vala:1939
+#: altyo_window.vala:1942
 msgid "Stick"
 msgstr "Всегда на видимом рабочем месте"
 
-#: altyo_window.vala:1787
+#: altyo_window.vala:1788
 msgid "Switch to next tab"
 msgstr "Следующий терминал"
 
-#: altyo_window.vala:1792
+#: altyo_window.vala:1793
 msgid "Switch to previous tab"
 msgstr "Предыдущий терминал"
 
-#: altyo_window.vala:1798
+#: altyo_window.vala:1799
 #, c-format
 msgid "Switch to tab %d"
 msgstr "Переключиться в терминал № %d"
 
-#: altyo_window.vala:1798
+#: altyo_window.vala:1799
 #, c-format
 msgid "Switch to tab %d,double press switch to tab %d"
 msgstr ""
@@ -730,7 +730,7 @@ msgstr "Закладка"
 msgid "Tab bar background"
 msgstr "Рисовать задний фон в закладках"
 
-#: altyo_window.vala:2382
+#: altyo_window.vala:2387
 #, c-format
 msgid "Tab%d - AltYo"
 msgstr "Tab%d - AltYo"
@@ -775,11 +775,11 @@ msgstr "Цвет затенения"
 msgid "Title changed"
 msgstr "Изменениях заголовка"
 
-#: altyo_window.vala:1948
+#: altyo_window.vala:1951
 msgid "Toggle autohide"
 msgstr "Переключить состояние настройки автоматического скрытия"
 
-#: altyo_window.vala:1939
+#: altyo_window.vala:1942
 msgid "Toggle stick"
 msgstr "Переключить состояние настройки \"всегда на видимом рабочем месте\""
 
@@ -801,7 +801,7 @@ msgstr "Ширина"
 msgid "Window gravity north"
 msgstr "Окно вверху"
 
-#: altyo_window.vala:2231
+#: altyo_window.vala:2234
 msgid "Wrap search"
 msgstr "Искать циклически"
 
@@ -809,7 +809,7 @@ msgstr "Искать циклически"
 msgid "Wrap search by default"
 msgstr "Искать циклически по умолчанию"
 
-#: altyo_window.vala:1670
+#: altyo_window.vala:1671
 #, c-format
 msgid ""
 "You are trying to use key binding \"%s\"\n"
@@ -829,7 +829,7 @@ msgstr "Добавить"
 msgid "config.ini"
 msgstr "config.ini"
 
-#: altyo_window.vala:1671 altyo_window.vala:1955
+#: altyo_window.vala:1672 altyo_window.vala:1958
 msgid "error"
 msgstr "Ошибка"
 
@@ -916,15 +916,11 @@ msgstr ""
 "Неверное значение параметра tab_title_format_regex, будет использованно "
 "значение по умолчанию! ошибка:%s"
 
-#: altyo_window.vala:2270
-msgid "terminal name"
-msgstr "в заголовках терминала"
-
-#: altyo_window.vala:2257
+#: altyo_window.vala:2260
 msgid "terminal text"
 msgstr "в тексте терминала"
 
-#: altyo_window.vala:1262
+#: altyo_window.vala:1263
 #, c-format
 msgid ""
 "terminal_prevent_close_regex wrong value! will be used default value. err:%s"
@@ -932,7 +928,7 @@ msgstr ""
 "Неверное значение параметра terminal_prevent_close_regex, будет "
 "использованно значение по умолчанию! ошибка:%s"
 
-#: altyo_window.vala:2484
+#: altyo_window.vala:2489
 #, c-format
 msgid ""
 "terminal_session_exclude_regex wrong value! will be used default value. err:"
@@ -955,7 +951,11 @@ msgstr ""
 "Неверное значение параметра terminal_prevent_close_regex, будет "
 "использованно значение по умолчанию! ошибка:%s"
 
-#: altyo_window.vala:1589
+#: altyo_window.vala:2274
+msgid "terminals titles"
+msgstr "в заголовках терминалов"
+
+#: altyo_window.vala:1590
 msgid "willemw12@gmail.com"
 msgstr "Константинов Денис"
 
@@ -978,3 +978,6 @@ msgstr "Константинов Денис"
 
 #~ msgid "Temporary lock key bindings"
 #~ msgstr "Временно отключить все комбинации клавиш"
+
+#~ msgid "terminal name"
+#~ msgstr "в заголовках терминала"

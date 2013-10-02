@@ -51,14 +51,16 @@ VALA_FILES  = vapi/config.vapi \
 GLADE_FILES = data/preferences.glade
 
 
-default:
+default: data/altyo.c
 	#test -e ./altyo && rm ./altyo
-	glib-compile-resources --sourcedir=./data --generate-source ./data/altyo.gresource.xml
 	valac -o $(PRG_NAME) $(VALA_FLAGS) $(VALA_FILES)
 
-source:
+source: data/altyo.c
 	valac -C -H $(VALA_FLAGS)  $(VALA_FILES)
 
+data/altyo.c: data/altyo.gresource.xml data/altyo.svg data/preferences.glade
+	glib-compile-resources --sourcedir=./data --generate-source ./data/altyo.gresource.xml
+	
 clean:
 	rm *.c *.h || true
 	rm ./altyo || true

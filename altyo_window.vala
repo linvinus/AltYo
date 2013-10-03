@@ -417,24 +417,18 @@ public class VTMainWindow : Window{
 			this.current_state=WStates.HIDDEN;
 			return;
 		}
-
 		this.pull_active=true;
-		this.pull_animation_active=false;
-
-		this.pixwin.set_default_size(pull_w,pull_h);//important
-		this.pixwin.set_size_request (pull_w,pull_h);//important
-		this.pixwin.resize (pull_w,pull_h);//important
-		this.update_events();
 		debug("reparent to offscreen window");
 		//this.get_child().reparent(this.pixwin);//reparent to offscreen window
-			var ch=this.get_child();//.reparent(this);//reparent from offscreen window
-				this.remove(ch);
-				this.pixwin.add(ch);
+		var ch=this.get_child();//.reparent(this);//reparent from offscreen window
+		this.remove(ch);
+		this.pixwin.add(ch);
+		this.resize(this.pull_w,pull_h+1);//work around: force repainting window content in offscreenwindow for gtk3.8
 		debug("end reparent to offscreen window");
-		//correct size after unmaximize
-		//just to be shure that terminal will not change size
 
 		if(this.maximized){
+			//correct size after unmaximize
+			//just to be shure that terminal will not change size
 			this.ayobject.main_vbox.set_size_request(orig_w_main_vbox,orig_h_main_vbox);
 			this.update_events();
 
@@ -443,12 +437,7 @@ public class VTMainWindow : Window{
 			this.update_geometry_hints(0,this.pull_w,1,this.pull_w,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
 			this.unmaximize();/*not working in metacity on secondary monitor, seems metacity bug*/
 			this.move(this.pull_x,this.pull_y);
-		}else{
-			this.ayobject.main_vbox.set_size_request(this.orig_w_main_vbox,orig_h_main_vbox);
-			this.ayobject.tasks_notebook.set_size_request(orig_w_tasks_notebook,orig_h_tasks_notebook);
-			this.update_events();
 		}
-
 
 		debug("pull_up 0-%d  this.get_allocated_height=%d this.orig_h=%d",this.get_allocated_height()-this.pull_h, this.get_allocated_height(),this.pull_h);
 		debug("pull_up orig_h=%d orig_w=%d",this.pull_h,this.pull_w);

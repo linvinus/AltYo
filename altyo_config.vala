@@ -206,6 +206,30 @@ public class MySettings : Object {
 			version[VER.rc]=6;//update version
 		}
 
+		/*if was 0.3.6
+		 * update program_style option, gtk prior 3.8 have memory leak when text-shadow is used.
+		 * */
+		if(version[VER.major]==0 && version[VER.minor]==3 && version[VER.rc]<7){
+			if(Gtk.get_major_version()>=3 && Gtk.get_minor_version()<7){
+				try {
+					string old=kf.get_string(this.profile,"program_style");
+					if(old!=null && old!="" ){
+						Regex regex = new Regex ("VTToggleButton\\:active \\{ text-shadow\\: 1px 1px 2px #005555\\;\\}");
+						try {
+							string result = regex.replace(old,-1,0,"");
+							kf.set_string(this.profile,"program_style",result);
+							this.changed=true;
+						}catch (RegexError e) {
+							stdout.printf ("Error: %s\n", e.message);
+						}						
+							kf.set_integer(this.profile,"window_action_on_close_last_tab",1);//restart shell and hide
+					}
+				}catch (KeyFileError err) {}
+			}
+			
+			version[VER.rc]=7;//update version
+		}
+
 		return version;
 	}
 	

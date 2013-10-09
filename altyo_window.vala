@@ -683,7 +683,7 @@ public class VTMainWindow : Window{
 					 "#OffscreenWindow, VTMainWindow,#HVBox_dnd_window {border-width: 0px; border-style: solid; background-color: alpha(#000000,0.1);}"+
 					 "HVBox,#search_hbox{background-color: alpha(#000000,1.0);}"+
 					 "";
-		if(Gtk.get_major_version()>=3 && Gtk.get_minor_version()>=6)//special eyecandy if supported ;)
+		if(Gtk.get_major_version()>=3 && Gtk.get_minor_version()>6)//special eyecandy if supported ;)
 			style_str+= "VTToggleButton:active { text-shadow: 1px 1px 2px #005555;}";
 
 			//todo: bad performance on pull_up. when tab state is prelight then, on every animation step happens recursive size recalculation
@@ -1381,13 +1381,11 @@ public class AYObject :Object{
 					this.terms_notebook.set_current_page(this.terms_notebook.page_num(vt.hbox));
 
 					if (this.active_tab!=null){
-						this.active_tab.really_toggling=false;
-						this.active_tab.set_active(this.active_tab.really_toggling);
+						this.active_tab.active=false;
 						this.previous_active_tab=active_tab;
 					}
 					this.active_tab = tab_button;
-					this.active_tab.really_toggling=true;
-					this.active_tab.set_active(this.active_tab.really_toggling);
+					this.active_tab.active=true;
 					//vt.tbutton.set_title((this.children.index(vt)+1),null);//not necessary
 					if(vt is VTTerminal){
 						((VTTerminal)vt).vte_term.grab_focus();
@@ -1443,7 +1441,7 @@ public class AYObject :Object{
 			if (vt.tbutton == this.active_tab){
 				if (item_it.next!=null){
 					vt = item_it.next.data;
-					debug("tab_next %s",vt.tbutton.label.get_text());
+					debug("tab_next %s",vt.tbutton.tab_title);
 					this.activate_tab(vt.tbutton) ;
 					break;
 				}else{

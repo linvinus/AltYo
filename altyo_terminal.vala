@@ -51,9 +51,27 @@ public class TildaAuth:Object{
 	}
 }//class TildaAuth
 
-public class VTToggleButton : Gtk.ToggleButton {
-	public bool really_toggling {get;set;default = false;}
-	public Gtk.Label label;
+public class VTToggleButton : Gtk.Button{
+	bool _active = false;
+	public bool active {get{ return _active;}
+						set{
+							if(this._active != value){
+								if(this._active){
+									this.get_style_context().remove_class("aytab_active");
+									this.get_style_context().add_class("aytab_normal");
+								}else{
+									this.get_style_context().remove_class("aytab_normal");
+									this.get_style_context().add_class("aytab_active");
+								}
+								this._active=value;
+							}
+
+							//debug ("toggled = %s , %s ",this._active.to_string(),this.label.get_text());
+							this.update_state();
+						}
+						default = false;
+				}
+	private Gtk.Label label;
 	public unowned Object object;
 	public string tab_format  {get;set;}
 	public string tab_title_format  {get;set;}
@@ -64,9 +82,9 @@ public class VTToggleButton : Gtk.ToggleButton {
 
 	public string tab_title {get;set;default = null;}
 	public int    tab_index {get;set;default = -1;}
-	public string markup_normal  {get;set;}
-	public string markup_active  {get;set;}
-	public string markup_prelight  {get;set;}
+	private string markup_normal  {get;set;}
+	private string markup_active  {get;set;}
+	private string markup_prelight  {get;set;}
 	private bool force_update_tab_title {get;set;default = false;}
 	private bool _user_notify=false;
 	public bool user_notify {
@@ -110,44 +128,20 @@ public class VTToggleButton : Gtk.ToggleButton {
 		this.label.use_underline=false;
 		this.label.show();
 		this.add(this.label);
-		this.inconsistent=true;//prevent 2px shift//If the toggle button is in an \"in between\" state
-		this.draw_indicator=true;
 		this.label.mnemonic_widget=null;
 		this.user_notify=false;
+		this.get_style_context().remove_class("button");//don't use default button theme
 	}
 
-	public override void toggled () {
-		debug ("toggled = %s , %s ",this.really_toggling.to_string(),this.label.get_text());
-		this.active=this.really_toggling;
-		this.update_state();
-	}
-
- 	public override  bool draw (Cairo.Context cr){
-
-		int width = this.get_allocated_width ();
-		int height = this.get_allocated_height ();
-
-		var context = this.get_style_context();
-
-		var flags = this.get_state_flags();
-		if(this.active && (flags & Gtk.StateFlags.ACTIVE)!=Gtk.StateFlags.ACTIVE){
-			if( ((flags & Gtk.StateFlags.PRELIGHT)!=Gtk.StateFlags.PRELIGHT) )
-				this.set_state_flags(flags|Gtk.StateFlags.ACTIVE,true);//force state active
-		}
-
-		cr.save();
-		//draw background
-		context.render_background(cr,0, 0,
-					 width,
-					 height);
-		context.render_frame(cr,0, 0,
-					 width,
-					 height);
-		cr.stroke ();
-		cr.restore();
-		//draw label
-		this.propagate_draw(((Gtk.Widget)this.get_child ()),cr);
-	return false;
+	public override  bool draw (Cairo.Context cr){
+               var flags = this.get_state_flags();
+               if(this.active && (flags & Gtk.StateFlags.ACTIVE)!=Gtk.StateFlags.ACTIVE){
+                       if( ((flags & Gtk.StateFlags.PRELIGHT)!=Gtk.StateFlags.PRELIGHT) ){
+                               this.set_state_flags(flags|Gtk.StateFlags.ACTIVE,true);//force state active
+                               return true;
+						   }
+               }
+               return base.draw(cr);
 	}
 
 	public override bool enter_notify_event (Gdk.EventCrossing event) {
@@ -165,7 +159,7 @@ public class VTToggleButton : Gtk.ToggleButton {
 	}
 
 	public void update_state(){
-		if(this.active){
+		if(this._active){
 			this.user_notify=false;
 			this.set_state_flags(Gtk.StateFlags.ACTIVE,true);
 			this.label.set_markup(this.markup_active);
@@ -256,7 +250,7 @@ public class VTToggleButton : Gtk.ToggleButton {
 				this.label.set_markup("TAB: Error in regexp");
 			}
 		}
-		var context = this.get_style_context();
+		var context = this.get_style_context(); //todo: use this.label instead
         Gdk.RGBA color_f = context.get_color(StateFlags.NORMAL);
         Gdk.RGBA color_b = context.get_background_color(StateFlags.NORMAL);
 		this.markup_normal="<span foreground='#"+"%I02x".printf(((int)(color_f.red*255)))+"%I02x".printf(((int)(color_f.green*255)))+"%I02x".printf(((int)(color_f.blue*255)))+"' "+
@@ -367,7 +361,6 @@ public class AYTab : Object{
 		this.tbutton.has_focus = false; //encrease size
 		this.tbutton.set_use_underline(false);
 		this.tbutton.set_focus_on_click(false);
-		this.tbutton.set_relief(ReliefStyle.NONE); //подумать как улучшить вид
 		this.tbutton.set_has_window (false);
 		this.tbutton.tab_index=tab_index;
 		this.tbutton.show();

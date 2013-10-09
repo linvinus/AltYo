@@ -1,3 +1,12 @@
+altyo (0.3~rc10-linvinus1) quantal; urgency=low
+
+  * improvements: guess linux distribution on runtime, so same binary can be used on different hosts, designed special for debian
+  * update: Russian translation
+  * update: Makefile, compile resources only when needed
+  * fix: prevent flickering on pull_up with gtk3.8
+
+ -- denis <linvinus@gmail.com>  Wed, 09 Oct 2013 10:34:07 +0400
+
 altyo (0.3~rc9-linvinus1) quantal; urgency=low
 
   * Update Readme.md

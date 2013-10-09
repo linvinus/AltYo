@@ -48,11 +48,14 @@ small video presentation of available features:
   [![youtube altyo 0.3](http://img.youtube.com/vi/IEabsuFresk/0.jpg)](http://youtu.be/IEabsuFresk)
 * altyo 0.2 http://youtu.be/9W8m6T7HyVs and http://youtu.be/utxeh-SBTvI
 
-Source code available there https://github.com/linvinus/AltYo
+Installing
+----
+Packages for *Ubuntu and Debian* available there https://launchpad.net/~linvinus/+archive/altyo  
+Package for *Arch Linux* AUR https://aur.archlinux.org/packages/altyo-git/ (package created by willemw)
 
-Packages for ubuntu available there https://launchpad.net/~linvinus/+archive/altyo
+Source code available there https://github.com/linvinus/AltYo  
+How to install from sources is described in INSTALL file.
 
-Package for Arch Linux AUR https://aur.archlinux.org/packages/altyo-git/ (package created by willemw)
 Tips and tricks:
 ----
 1. You always may open new stand-alone terminal, in current directory, by pressing `<Ctrl><Shift>N` (default key binding)

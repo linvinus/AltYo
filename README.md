@@ -1,7 +1,7 @@
 AltYo
 =====
 
-AltYo - drop-down terminal emulator, written in vala, depends only on libvte, gtk3.
+AltYo - drop-down terminal emulator, written in vala, depends only on libvte and gtk3.
 
 Main program advantages.
 ------------------------
@@ -80,6 +80,9 @@ sorry, this keys is hardcoded.
 4. You may sort tabs by hostname (if tab title contain host name in the following form `<user>@<host>:<path>`)  
    To do that press right mouse button on tab title, then, in context menu, select "Sort by hostname"  
    Also, you may configure special hotkey for this action "Sort by hostname".
+5. Altyo is portable, you may copy executable file on your USB flash drive.  
+   All you need to run on target machine is installed Gtk 3.4 or newer and libvte 3.0 or newer.  
+   This libraries should be available on fresh distributives.
 
 
 FAQ:

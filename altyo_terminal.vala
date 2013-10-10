@@ -69,7 +69,6 @@ public class VTToggleButton : Gtk.Button{
 							//debug ("toggled = %s , %s ",this._active.to_string(),this.label.get_text());
 							this.update_state();
 						}
-						default = false;
 				}
 	private Gtk.Label label;
 	public unowned Object object;

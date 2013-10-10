@@ -1,3 +1,9 @@
+altyo (0.3~rc11-linvinus2) quantal; urgency=low
+
+  * fix: vala-16 compile error
+
+ -- denis <linvinus@gmail.com>  Thu, 10 Oct 2013 10:34:28 +0400
+
 altyo (0.3~rc11-linvinus1) quantal; urgency=low
 
   * Update README.md

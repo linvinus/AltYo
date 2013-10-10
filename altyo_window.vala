@@ -687,6 +687,10 @@ public class VTMainWindow : Window{
 		if(Gtk.get_major_version()>=3 && Gtk.get_minor_version()>6)//special eyecandy if supported ;)
 			style_str+= "VTToggleButton:active { text-shadow: 1px 1px 2px #005555;}";
 
+		//prevent  transparency of window background in  standalone mode
+		if(conf.standalone_mode)
+			style_str+= "#OffscreenWindow, VTMainWindow,#HVBox_dnd_window {background-color: alpha(#000000,1.0);}";
+
 			//todo: bad performance on pull_up. when tab state is prelight then, on every animation step happens recursive size recalculation
 			//style_str+= "VTToggleButton { transition: 400ms ease-in-out;} VTToggleButton:active { transition: 0ms ease-in-out;text-shadow: 1px 1px 2px #005555;} VTToggleButton:prelight {transition: 0ms ease-in-out;}";
 

@@ -132,15 +132,13 @@ public class VTToggleButton : Gtk.Button{
 		this.get_style_context().remove_class("button");//don't use default button theme
 	}
 
-	public override  bool draw (Cairo.Context cr){
+	public override void state_flags_changed (StateFlags previous_state_flags) {
                var flags = this.get_state_flags();
                if(this.active && (flags & Gtk.StateFlags.ACTIVE)!=Gtk.StateFlags.ACTIVE){
-                       if( ((flags & Gtk.StateFlags.PRELIGHT)!=Gtk.StateFlags.PRELIGHT) ){
-                               this.set_state_flags(flags|Gtk.StateFlags.ACTIVE,true);//force state active
-                               return true;
-						   }
+                               this.set_state_flags(flags|Gtk.StateFlags.ACTIVE,false);//force state active
+                               return;
                }
-               return base.draw(cr);
+               base.state_flags_changed(previous_state_flags);
 	}
 
 	public override bool enter_notify_event (Gdk.EventCrossing event) {

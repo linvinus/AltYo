@@ -2013,6 +2013,7 @@ Allow use mouse scroll in some programs,for example in less</property>
     _HOSTNAME_ - use match subpattern as host name.
     _PATH_ - use match subpattern as path.</property>
                                 <property name="use_markup">True</property>
+                                <property name="selectable">True</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>

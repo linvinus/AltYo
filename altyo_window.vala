@@ -47,6 +47,11 @@ public enum SEARCH_MODE{
 	SEARCH_IN_NAME
 	}
 
+public enum NEW_TAB_MODE{
+	RIGHT_NEXT,
+	FAR_RIGHT
+	}
+
 public delegate void MyCallBack(Gtk.Action a);
 
 public class VTMainWindow : Window{
@@ -1008,6 +1013,7 @@ public class AYObject :Object{
 	private AYSettings aysettings {get;set; default = null;}
 	private bool aysettings_shown=false;
 	private int action_on_close_last_tab=0;
+	private int new_tab_position=0;
 
 	public AYObject(VTMainWindow _MW ,MySettings _conf) {
 		debug("AYObject new");
@@ -1189,6 +1195,14 @@ public class AYObject :Object{
 				break;
 				}
 
+		/* 0 - NEW_TAB_MODE.RIGHT_NEXT
+		 * 1 - NEW_TAB_MODE.FAR_RIGHT
+		 * */
+		this.new_tab_position=this.conf.get_integer("window_new_tab_position",0,(ref new_val)=>{
+			if(new_val>1){ new_val=NEW_TAB_MODE.RIGHT_NEXT; return CFG_CHECK.REPLACE;}
+			if(new_val<0){ new_val=NEW_TAB_MODE.RIGHT_NEXT; return CFG_CHECK.REPLACE;}
+			return CFG_CHECK.OK;
+			});
 
 
 		this.setup_keyboard_accelerators();
@@ -1196,8 +1210,15 @@ public class AYObject :Object{
 
 	public VTTerminal add_tab(string? session_command=null,string? session_path=null,OnChildExitCallBack? on_exit=null) {
 		VTTerminal vt;
+		int index;//must be assigned!
+
+		if(this.new_tab_position==NEW_TAB_MODE.RIGHT_NEXT)
+			index=this.hvbox.children_index(this.active_tab)+1;
+		else
+			index=(int)this.children.length()+1;//NEW_TAB_MODE.FAR_RIGHT
+		
 		if(on_exit==null){
-			vt = new VTTerminal(this.conf,this.terms_notebook,(int)(this.children.length()+1),session_command,(session_path!=null?session_path:conf.default_path),(terminal)=>{		
+			vt = new VTTerminal(this.conf,this.terms_notebook,(int)(index),session_command,(session_path!=null?session_path:conf.default_path),(terminal)=>{		
 				/* if child exited (guess by ctrl+d) and it was last tab
 				 * and action_on_close_last_tab==quit then quit*/
 				if(this.children.length()==1 && this.action_on_close_last_tab==2){//quit
@@ -1217,19 +1238,22 @@ public class AYObject :Object{
 				
 			});
 		}else{
-			vt = new VTTerminal(this.conf,this.terms_notebook,(int)(this.children.length()+1),session_command,session_path,on_exit );
+			vt = new VTTerminal(this.conf,this.terms_notebook,(int)(index),session_command,session_path,on_exit );
 		}
-		children.append(vt);
+		this.children.insert( vt ,(int) index);
 
 		vt.vte_term.window_title_changed.connect( () => {
 			this.title_changed((Vte.Terminal)vt.vte_term);
         } );
 
 		vt.tbutton.button_press_event.connect(tab_button_press_event);
-		this.hvbox.add(vt.tbutton);
+		this.hvbox.insert( vt.tbutton ,(int) index);
 
 
 		this.activate_tab(vt.tbutton) ;//this.active_tab = this.hvbox.children_index(tbutton);
+
+		if(this.new_tab_position==NEW_TAB_MODE.RIGHT_NEXT)
+			this.update_tabs_title();
 
 		this.search_update();
 		return vt;

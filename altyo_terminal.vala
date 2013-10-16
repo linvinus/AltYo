@@ -372,7 +372,7 @@ public class AYTab : Object{
 		this.hbox.show();
 //~		this.scrollbar = new VScrollbar(((Scrollable)this.vte_term).get_vadjustment());
 //~		hbox.pack_start(scrollbar,false,false,0);
-		page_index = this.notebook.prepend_page (hbox,null);
+		page_index = this.notebook.insert_page (hbox,null,tab_index);
 
 		this.tbutton.object = this;
 		this.my_conf.on_load.connect(()=>{

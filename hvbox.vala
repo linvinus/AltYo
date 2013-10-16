@@ -575,7 +575,11 @@ public class HVBox : Container {
 	}
 
 	public override void add (Widget w){
-		debug("add\n");
+		this.insert (w, -1);
+	}
+	
+	public void insert (Widget w, int index){
+		debug("inser at %d\n",index);
 		unowned Widget widget = w;
 		widget.set_parent(this);
 		var item = new HVBoxItem(widget);
@@ -632,8 +636,9 @@ public class HVBox : Container {
 			  dnd_inprocess=false;
 		});
 
-
-		if(children.first()!=null)
+		if(index>0 && index<children.length())
+			children.insert(item,index);
+		else if(children.first()!=null)
 			children.append(item);
 		else
 			children.prepend(item);

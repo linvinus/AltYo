@@ -629,7 +629,8 @@ public class AYSettings : AYTab{
 				   key=="terminal_delete_binding" ||
 				   key=="terminal_backspace_binding" ||
 				   key=="terminal_notify_level" ||
-				   key=="window_action_on_close_last_tab" ){
+				   key=="window_action_on_close_last_tab" ||
+				   key=="window_new_tab_position" ){
 					var B = builder.get_object (key) as Gtk.ComboBox;
 						B.active=this.my_conf.get_integer(key,0);
 				}else{
@@ -833,7 +834,8 @@ public class AYSettings : AYTab{
 				   key=="terminal_delete_binding" ||
 				   key=="terminal_backspace_binding" ||
 				   key=="terminal_notify_level" ||
-				   key=="window_action_on_close_last_tab"){
+				   key=="window_action_on_close_last_tab" ||
+				   key=="window_new_tab_position"){
 					var B = builder.get_object (key) as Gtk.ComboBox;
 						if(B.active!=this.my_conf.get_integer(key,0))
 							this.my_conf.set_integer(key,B.active);

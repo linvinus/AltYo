@@ -110,3 +110,8 @@ FAQ:
 * A) this happen because they are running as standalone application,  
      but, for example, you may use following wrap around `bash -c "EDITOR=vim mc"`  
      in this example mc will runned with special environment variable
+
+Reviews about AltYo
+-------------------
+zenway.ru (Russian) http://zenway.ru/page/altyo  
+muhas.ru (Russian) http://muhas.ru/?p=202

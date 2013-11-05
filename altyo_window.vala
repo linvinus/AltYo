@@ -59,6 +59,7 @@ public class VTMainWindow : Window{
 	public AYObject ayobject;
 
 	public bool maximized=false;
+	public bool fullscreen_on_maximize=false;
 	private bool update_maximized_size=false;
 	public bool animation_enabled = true;
 	public int animation_speed=5;
@@ -172,10 +173,10 @@ public class VTMainWindow : Window{
 				this.update_position_size();
 				/*update maximize state according to config_maximized*/
 				if(!this.config_maximized && this.maximized){
-					this.unmaximize();
+					this.mainvt_unmaximize();
 				}else
 				if(this.config_maximized && !this.maximized){
-					this.maximize();
+					this.mainvt_maximize();
 				}
 			}
 			});
@@ -200,7 +201,7 @@ public class VTMainWindow : Window{
 				if(!this.start_maximized){
 					this.update_position_size();
 				}else{
-					this.maximize();
+					this.mainvt_maximize();
 					this.update_events();//process maximize event
 					this.update_geometry_hints(this.get_allocated_height(),this.get_allocated_width(),this.get_allocated_height(),this.get_allocated_width(),Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
 				}
@@ -293,7 +294,7 @@ public class VTMainWindow : Window{
 				if(this.pull_step==this.pull_steps){
 					debug("on_pull_down last step");
 					if(this.pull_maximized){
-						this.maximize();
+						this.mainvt_maximize();
 					}else{
 						this.resize (this.pull_w,pull_h);
 					}
@@ -332,7 +333,7 @@ public class VTMainWindow : Window{
 
 			debug("pull_down pull_maximized=%d",(int)this.pull_maximized);
 			if(this.pull_maximized)
-				this.maximize();
+				this.mainvt_maximize();
 			this.current_state=WStates.VISIBLE;
 			this.update_position_size(false);//reset size to -1
 			this.window_set_active();
@@ -440,7 +441,7 @@ public class VTMainWindow : Window{
 			/*reset geometry hints, allow min height =1
 			 * */
 			this.update_geometry_hints(0,this.pull_w,1,this.pull_w,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
-			this.unmaximize();/*not working in metacity on secondary monitor, seems metacity bug*/
+			this.mainvt_unmaximize();/*not working in metacity on secondary monitor, seems metacity bug*/
 			this.move(this.pull_x,this.pull_y);
 		}
 
@@ -788,6 +789,7 @@ public class VTMainWindow : Window{
 			int w = conf.get_integer("terminal_width",80);//if less 101 then it persentage
 			int h = conf.get_integer("terminal_height",50);//if less 101 then it persentage
 
+			this.fullscreen_on_maximize = conf.get_boolean("window_fullscreen_on_maximize",false);
 			var max_tmp = conf.get_boolean("window_start_maximized",false);
 
 			if(this.start_maximized!=max_tmp){
@@ -957,6 +959,22 @@ public class VTMainWindow : Window{
 			dialog.run();
 			this.window_set_active();
 	}//show_message_box
+	
+	
+	public void mainvt_maximize(){
+		this.maximize();
+		if(this.fullscreen_on_maximize){
+			this.fullscreen();
+		}
+	}
+
+	public void mainvt_unmaximize(){
+		if(this.fullscreen_on_maximize){
+			this.unfullscreen();
+		}
+		this.update_events();
+		this.unmaximize();
+	}
 
 }//class VTMainWindow
 
@@ -1976,9 +1994,10 @@ public class AYObject :Object{
 			}
 
 			if(this.main_window.maximized){
-				this.main_window.unmaximize();
+				this.main_window.mainvt_unmaximize();
+				
 			}else{
-				this.main_window.maximize();
+				this.main_window.mainvt_maximize();
 			}
         });
 

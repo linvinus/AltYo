@@ -446,6 +446,7 @@ public class VTTerminal : AYTab{
 	public  string session_path {get;set;default=null;}
 	private string? last_link;
 	private int?    last_tag;
+	private bool disable_terminal_popup=false;
 	
 
 	public VTTerminal(MySettings my_conf,Notebook notebook, int tab_index,string? session_command=null,string? session_path=null,OnChildExitCallBack? on_child_exit=null) {
@@ -816,6 +817,7 @@ public class VTTerminal : AYTab{
 				if(new_val<0){new_val=0;return CFG_CHECK.REPLACE;}
 			return CFG_CHECK.OK;
 			});
+		this.disable_terminal_popup=my_conf.get_boolean("terminal_disable_popup_menu",false);
 	}//configure
 
 	public bool vte_button_press_event(Widget widget,Gdk.EventButton event) {
@@ -823,7 +825,7 @@ public class VTTerminal : AYTab{
 			if(event.button==1 && (event.state & Gdk.ModifierType.CONTROL_MASK)==Gdk.ModifierType.CONTROL_MASK){
 				this.check_match(event);
 			}else
-			if(event.button== 3){//right mouse button
+			if(event.button== 3 && !this.disable_terminal_popup){//right mouse button
 				this.popup_menu(event);
 				return true;
 			}
@@ -887,9 +889,7 @@ public class VTTerminal : AYTab{
 		this.last_tag=null;
 	}
 
-	public void popup_menu(Gdk.EventButton event){
-		//debug("terminal popup_menu");
-		var menu = new Gtk.Menu();
+	public void create_popup_menu(Gtk.Menu menu){
 		//debug("popup_menu ref_count=%d",(int)menu.ref_count);
 		unowned Gtk.Widget parent;
 			parent = this.vte_term;
@@ -899,24 +899,6 @@ public class VTTerminal : AYTab{
 		Gtk.ActionGroup acg=vtw.ayobject.action_group;
 
 		Gtk.MenuItem menuitem;
-
-		this.last_link=null;
-		this.last_tag=null;
-		string? match=this.get_match((int)event.x,(int)event.y,out this.last_tag);
-		if(match!=null){
-			this.last_link=match;
-			menuitem = new Gtk.MenuItem.with_label (_("Copy link"));
-			menuitem.activate.connect(this.on_copy_link_activate);
-			menu.append(menuitem);
-			menuitem = new Gtk.MenuItem.with_label (_("Run link Ctrl+left mouse button"));
-			menuitem.activate.connect(this.on_run_link_activate);
-//~			var label=menuitem.get_child() as Gtk.Label;
-//~			label.set_justify( Gtk.Justification.RIGHT);
-//~			label.set_pattern( "___ ___");
-//~			((Gtk.Widget)menuitem).add_accelerator( "activate", vtw.ayobject.accel_group,
-//~                              0xfee9, Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE);
-			menu.append(menuitem);
-		}
 
 		menuitem = (Gtk.MenuItem)acg.get_action("terminal_copy_text").create_menu_item();
 		menu.append(menuitem);
@@ -1061,7 +1043,34 @@ public class VTTerminal : AYTab{
 			menu.append(menuitem);
 		}
 		menuitem = (Gtk.MenuItem)acg.get_action("altyo_exit").create_menu_item();
-		menu.append(menuitem);
+		menu.append(menuitem);		
+	}
+	
+	public void popup_menu(Gdk.EventButton event){
+		//debug("terminal popup_menu");
+		var menu = new Gtk.Menu();
+		
+		Gtk.MenuItem menuitem;
+		
+		this.last_link=null;
+		this.last_tag=null;
+		string? match=this.get_match((int)event.x,(int)event.y,out this.last_tag);
+		if(match!=null){
+			this.last_link=match;
+			menuitem = new Gtk.MenuItem.with_label (_("Copy link"));
+			menuitem.activate.connect(this.on_copy_link_activate);
+			menu.append(menuitem);
+			menuitem = new Gtk.MenuItem.with_label (_("Run link Ctrl+left mouse button"));
+			menuitem.activate.connect(this.on_run_link_activate);
+//~			var label=menuitem.get_child() as Gtk.Label;
+//~			label.set_justify( Gtk.Justification.RIGHT);
+//~			label.set_pattern( "___ ___");
+//~			((Gtk.Widget)menuitem).add_accelerator( "activate", vtw.ayobject.accel_group,
+//~                              0xfee9, Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE);
+			menu.append(menuitem);
+		}
+		
+		this.create_popup_menu(menu);
 
 		menu.deactivate.connect (this.on_deactivate);
 		menu.show_all();
@@ -1124,6 +1133,28 @@ public class VTTerminal : AYTab{
 				clipboard.set_text(this.tbutton.host_name,-1);
 				});		
 			menu.append(image_menuitem);
+		}
+		Gtk.CheckMenuItem chmenuitem;
+		
+		chmenuitem = new Gtk.CheckMenuItem.with_label (_("Disable key bindings"));
+		chmenuitem.set_active (!acg.get_sensitive());
+		chmenuitem.activate.connect(()=>{
+			acg.set_sensitive(!acg.get_sensitive());
+		});
+		menu.append(chmenuitem);
+		
+		chmenuitem = new Gtk.CheckMenuItem.with_label (_("Disable terminal menu"));
+		chmenuitem.set_active (this.disable_terminal_popup);
+		chmenuitem.activate.connect(()=>{
+			this.disable_terminal_popup=chmenuitem.get_active();
+		});
+		menu.append(chmenuitem);
+		if(this.disable_terminal_popup){
+			var submenu = new Gtk.Menu ();
+			menuitem = new Gtk.MenuItem.with_label (_("Terminal menu"));
+			menuitem.set_submenu(submenu);
+			menu.append(menuitem);				
+			this.create_popup_menu(submenu);
 		}
 
 		

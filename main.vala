@@ -201,17 +201,16 @@ int main (string[] args) {
 				if(Globals.exec_file_with_args!=null){
 					unowned List<weak Window> list = app.get_windows();
 					if(list!=null){
-						//var S = string.joinv (" ", Globals.exec_file_with_args);
-						string S ="";
+						VTMainWindow mwin = ((VTMainWindow)list.data);
+						
 						foreach(var s in Globals.exec_file_with_args){
 							debug("exec %s",s);
-							S+=" "+s;
+							if(Globals.path!=null){
+								mwin.conf.default_path=Globals.path;
+							}
+							mwin.ayobject.add_tab_with_title(s,s);
 						}
-						VTMainWindow mwin = ((VTMainWindow)list.data);
-						if(Globals.path!=null){
-							mwin.conf.default_path=Globals.path;
-						}
-						mwin.ayobject.add_tab_with_title(S,S);
+
 						if(mwin.current_state == WStates.HIDDEN)
 							mwin.pull_down();
 					}
@@ -258,13 +257,12 @@ int main (string[] args) {
 				main_win=win;
 
 				if(Globals.exec_file_with_args!=null){
-					string S ="";
 					foreach(var s in Globals.exec_file_with_args){
 						debug("exec %s",s);
-						S+=" "+s;
+						win.ayobject.add_tab_with_title(s,s);
 					}
 					
-					win.ayobject.add_tab_with_title(S,S);
+					
 				}
 				
 				sigaction_t action = sigaction_t ();

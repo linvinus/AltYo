@@ -953,6 +953,8 @@ public class VTTerminal : AYTab{
 				vtw.autohide=!vtw.autohide;//invert value, becouse it will inverted after set_active
 				action_autohide.set_active(!vtw.autohide);
 			}
+			menuitem = (Gtk.MenuItem)acg.get_action("terminal_set_encoding").create_menu_item();
+			submenu.append(menuitem);
 		}
 		/**************************************************************/
 

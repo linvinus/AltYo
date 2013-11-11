@@ -4,5 +4,6 @@
     <!--file alias="altyo.png" preprocess="to-pixdata">altyo.png</file-->
     <file alias="altyo.svg">altyo.svg</file>
     <file alias="preferences.glade" preprocess="xml-stripblanks">preferences.glade</file>
+    <file alias="encodings_list.glade" preprocess="xml-stripblanks">encodings_list.glade</file>
   </gresource>
 </gresources>

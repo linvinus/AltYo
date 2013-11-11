@@ -52,6 +52,11 @@ public enum NEW_TAB_MODE{
 	FAR_RIGHT
 	}
 
+public enum OPTIONS_TAB{
+	SEARCH,
+	ENCODINGS
+	}
+
 public delegate void MyCallBack(Gtk.Action a);
 
 public class VTMainWindow : Window{
@@ -1004,13 +1009,7 @@ public class AYObject :Object{
 	public Notebook tasks_notebook {get; set;}
 	public Notebook overlay_notebook {get; set;}
 	public HVBox hvbox {get;set;}
-	public Gtk.Box search_hbox  {get;set;}
-	public ComboBoxText search_text_combo {get;set;}
-	public CheckButton search_wrap_around {get;set;}
-	public CheckButton search_match_case {get;set;}
-	public Gtk.RadioButton search_mode_rbutton {get;set;}
-	public int search_history_length = 10;
-	public SEARCH_MODE search_in = SEARCH_MODE.SEARCH_IN_TEXT;
+	public QoptNotebook quick_options_notebook {get; set;}
 	public unowned VTToggleButton active_tab {get;set; default = null;}
 	public unowned VTToggleButton previous_active_tab {get;set; default = null;}
 	public unowned MySettings conf {get;set; default = null;}
@@ -1081,24 +1080,8 @@ public class AYObject :Object{
 		this.hvbox.can_default = false;
 		this.hvbox.has_focus = false;
 
-		this.search_hbox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);//new HBox(false,0);
-		this.search_hbox.halign=Gtk.Align.FILL;
-		this.search_hbox.valign=Gtk.Align.START;
-		this.search_hbox.expand=false;
-		this.search_hbox.name="search_hbox";
-		this.search_hbox.draw.connect((cr)=>{
-			int width = this.search_hbox.get_allocated_width ();
-			int height = this.search_hbox.get_allocated_height ();
-			var context = this.search_hbox.get_style_context();
-			render_background(context,cr, -1, -1,width+2, height+2);
-			this.search_hbox.foreach((widget)=>{
-				if(widget.parent==this.search_hbox)
-					this.search_hbox.propagate_draw(widget,cr);
-				});
-				return false;
-			});
-		this.create_search_box();
-
+		this.quick_options_notebook = new QoptNotebook(this);
+		
 		//this.main_vbox.pack_start(this.tasks_notebook,true,true,0);//maximum size
 
 		#if HAVE_QLIST
@@ -1121,13 +1104,13 @@ public class AYObject :Object{
 
 
 		//this.main_vbox.pack_start(notebook,true,true,0);//maximum size
-		this.main_vbox.pack_start(this.search_hbox,false,false,0);//minimum size
+		this.main_vbox.pack_start(this.quick_options_notebook,false,false,0);//minimum size
 		this.main_vbox.pack_start(hvbox,false,false,0);//minimum size
 
 		this.reconfigure();
 		this.main_vbox.show_all();
 
-		this.search_hbox.hide();//search hidden by default
+		this.quick_options_notebook.hide();//search hidden by default
 		//this.overlay_notebook.hide();//this.overlay_notebook hidden by default
 		this.tasks_notebook.set_current_page(TASKS.TERMINALS);//this.overlay_notebook hidden by default
 
@@ -1866,7 +1849,7 @@ public class AYObject :Object{
 
 		/* Find on <Ctrl><Shift>f */
 		this.add_window_accel("terminal_search_dialog", _("Search"), _("Search"), Gtk.Stock.FIND,"<Control><Shift>F",()=> {
-            this.search_show();
+            this.quick_options_notebook.search_show();
         });
 
 		/* QuickLIst <Ctrl><Shift>d */
@@ -2056,14 +2039,18 @@ public class AYObject :Object{
         });
 
         this.add_window_accel("terminal_search_in_tab_title",_("Search in terminals titles"), _("Search in terminals titles"), Gtk.Stock.FIND,"",()=> {
-				unowned SList <Gtk.RadioButton> rbutton_group = this.search_mode_rbutton.get_group ();
-				if(this.search_mode_rbutton.active){
+				unowned SList <Gtk.RadioButton> rbutton_group = this.quick_options_notebook.search_mode_rbutton.get_group ();
+				if(this.quick_options_notebook.search_mode_rbutton.active){
 					//set SEARCH_MODE.SEARCH_IN_NAME
 					var rb=rbutton_group.nth_data(0) as Gtk.RadioButton;
 					rb.set_active(true);
 				}
-				if(!((Entry)this.search_text_combo.get_child()).has_focus)
-					this.search_show();
+				if(!((Entry)this.quick_options_notebook.search_text_combo.get_child()).has_focus)
+					this.quick_options_notebook.search_show();
+        });
+        this.add_window_accel("terminal_set_encoding",_("Setup terminal encoding"), _("Setup terminal encoding"), Gtk.Stock.FIND,"",()=> {
+				if(!((Entry)this.quick_options_notebook.encodings_combo.get_child()).has_focus)
+					this.quick_options_notebook.encodings_show();
         });
         
 	}//setup_keyboard_accelerators
@@ -2078,7 +2065,7 @@ public class AYObject :Object{
 			//debug ("hvbox_size_changed start");
 			if(!this.main_window.maximized && this.main_window.get_realized()){
 				//debug ("hvbox_size_changed w=%d h=%d  task_w=%d task_h=%d term_h=%d mw_h=%d should_be_h=%d",width,height,this.tasks_notebook.get_allocated_width(),this.tasks_notebook.get_allocated_height(),this.terminal_height,this.main_window.get_allocated_height(),should_be_h) ;
-				var should_be_h = this.terminal_height+height + (this.search_hbox.get_visible()?this.search_hbox.get_allocated_height():0);
+				var should_be_h = this.terminal_height+height + (this.quick_options_notebook.get_visible()?this.quick_options_notebook.get_allocated_height():0);
 				if(this.main_window.get_allocated_height()>should_be_h+2||
 						this.terminal_width!=this.main_window.get_allocated_width()||
 						this.tasks_notebook.get_allocated_height()!=this.terminal_height){
@@ -2115,45 +2102,14 @@ public class AYObject :Object{
 		//this callback
 		return true;
 	}*/
-	public void search_update_pattern(VTTerminal vtt){
-					string? s_pattern = null;
-					GLib.RegexCompileFlags cflags = 0;
-					if( vtt.vte_term.search_get_gregex() != null ){
-						var rgx=vtt.vte_term.search_get_gregex();
-						s_pattern = rgx.get_pattern();
-						cflags=rgx.get_compile_flags();
-					}
-					string? new_pattern = this.search_text_combo.get_active_text();
-					debug(" new_pattern '%s' != '%s'", new_pattern,s_pattern);
-					bool needs_udatate = false;
-					//if((cflags & GLib.RegexCompileFlags.CASELESS)!=(int)(!vtt.match_case)) {
-						cflags = GLib.RegexCompileFlags.OPTIMIZE;
-						if(!vtt.match_case)
-							cflags |= GLib.RegexCompileFlags.CASELESS;
-						//needs_udatate=true;
-					//}
-
-
-
-					if( (s_pattern == null && new_pattern != null && new_pattern != "") ||
-						(s_pattern != null && new_pattern != null && s_pattern != new_pattern) ){
-							search_add_string(new_pattern);
-							needs_udatate=true;
-						}
-					if(needs_udatate){
-						var reg_exp = new GLib.Regex(new_pattern,cflags);
-						vtt.vte_term.search_set_gregex(reg_exp);
-					}
-	}
 	
-	public void search_in_tab_name(bool forward=true){
+	public void search_in_tab_name(string? new_pattern,bool forward=true){
 		
 		unowned List<unowned AYTab> item_it = null;
 		unowned AYTab vt = null;
 		
 		uint length = this.children.length();
 		
-		string? new_pattern = this.search_text_combo.get_active_text();
 		//skip search if pattern is empty, or if only one tab is open
 		if(new_pattern==null || new_pattern=="" || length<2) return; 
 
@@ -2196,223 +2152,6 @@ public class AYObject :Object{
 		}while(length>0);
 	}
 
-	public void create_search_box(){
-		this.search_text_combo = new ComboBoxText.with_entry ();
-		((Entry)this.search_text_combo.get_child()).key_press_event.connect((event)=>{
-			unowned AYTab ayt = ((AYTab)this.active_tab.object);
-			if(!(ayt is VTTerminal)) return false;
-			unowned VTTerminal vtt = ((VTTerminal) ayt);
-			var keyname = Gdk.keyval_name(event.keyval);
-			
-			if(       keyname == "1" && (event.state & Gdk.ModifierType.CONTROL_MASK ) == Gdk.ModifierType.CONTROL_MASK ){
-				this.search_wrap_around.activate();
-			}else if( keyname == "2" && (event.state & Gdk.ModifierType.CONTROL_MASK ) == Gdk.ModifierType.CONTROL_MASK ){
-				this.search_match_case.activate();
-			}else if( keyname == "3" && (event.state & Gdk.ModifierType.CONTROL_MASK ) == Gdk.ModifierType.CONTROL_MASK ){
-				/*change search mode*/
-				unowned SList <Gtk.RadioButton> rbutton_group = this.search_mode_rbutton.get_group ();
-				if(this.search_mode_rbutton.active){
-					var rb=rbutton_group.nth_data(0) as Gtk.RadioButton;
-					rb.set_active(true);
-				}else{
-					var rb=rbutton_group.nth_data(1) as Gtk.RadioButton;
-					rb.set_active(true);
-				}
-			}
-			if(this.search_in == SEARCH_MODE.SEARCH_IN_TEXT){
-				if( keyname == "Return"){
-						this.search_update_pattern(vtt);
-						vtt.vte_term.search_find_previous();
-						return true;
-					}else if( keyname == "Up" && (event.state & Gdk.ModifierType.CONTROL_MASK ) == Gdk.ModifierType.CONTROL_MASK ){
-						vtt.vte_term.search_find_previous();
-						return true;
-					}else if( keyname == "Down" && (event.state & Gdk.ModifierType.CONTROL_MASK ) == Gdk.ModifierType.CONTROL_MASK ){
-						vtt.vte_term.search_find_next();
-						return true;
-					}else if( keyname == "Escape"){
-						this.search_hide();
-						return true;
-					}
-			}else if(this.search_in == SEARCH_MODE.SEARCH_IN_NAME){
-				if( keyname == "Return"){
-						this.search_in_tab_name();
-						this.search_text_combo.grab_focus();//if tab was switched it grab focus, so regrab it for search entry
-						return true;
-					}else if( keyname == "Up" && (event.state & Gdk.ModifierType.CONTROL_MASK ) == Gdk.ModifierType.CONTROL_MASK ){
-						this.search_in_tab_name();
-						this.search_text_combo.grab_focus();//if tab was switched it grab focus, so regrab it for search entry
-						return true;
-					}else if( keyname == "Down" && (event.state & Gdk.ModifierType.CONTROL_MASK ) == Gdk.ModifierType.CONTROL_MASK ){
-						this.search_in_tab_name(false);//backward
-						this.search_text_combo.grab_focus();//if tab was switched it grab focus, so regrab it for search entry
-						return true;
-					}else if( keyname == "Escape"){
-						this.search_hide();
-						return true;
-					}
-			}
-			return false;
-			});//key_press_event
-			
-		this.search_text_combo.show();
-		this.search_hbox.pack_start(search_text_combo,false,false,0);
-
-		string[]? search_s_conf = this.conf.get_string_list("search_history",null);
-
-		if(search_s_conf!=null && search_s_conf.length<=this.search_history_length)
-			foreach(var s in search_s_conf){
-				this.search_text_combo.prepend_text(s);
-			}
-
-
-		this.search_wrap_around = new CheckButton.with_label(_("Wrap search"));
-		this.search_wrap_around.clicked.connect(()=>{
-			unowned AYTab vtt = ((AYTab)this.active_tab.object);
-			if(!(vtt is VTTerminal)) return;
-			((VTTerminal)vtt).vte_term.search_set_wrap_around(this.search_wrap_around.active);
-			this.search_text_combo.grab_focus();
-			});
-		this.search_wrap_around.show();
-		this.search_wrap_around.tooltip_text="Ctrl+1";
-		this.search_hbox.pack_start(this.search_wrap_around,false,false,0);
-
-		this.search_match_case = new CheckButton.with_label(_("Match case-sensitive"));
-		this.search_match_case.clicked.connect(()=>{
-			unowned AYTab vtt = ((AYTab)this.active_tab.object);
-			if(!(vtt is VTTerminal)) return;
-			((VTTerminal)vtt).match_case=this.search_match_case.active;
-			this.search_text_combo.grab_focus();
-			});
-		this.search_match_case.show();
-		this.search_match_case.tooltip_text="Ctrl+2";
-		this.search_hbox.pack_start(this.search_match_case,false,false,0);
-
-
-		Gtk.Box rbox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
-		Gtk.RadioButton rbutton;
-		
-		this.search_mode_rbutton = new Gtk.RadioButton.with_label_from_widget (null, _("terminal text"));
-		this.search_mode_rbutton.set_active (true);
-		this.search_mode_rbutton.tooltip_text="Ctrl+3";
-		rbox.pack_start (this.search_mode_rbutton, false, false, 0);
-		this.search_mode_rbutton.toggled.connect ((button)=>{
-			if(button.active){
-				debug("toggled=%s",button.label);
-				this.search_in=SEARCH_MODE.SEARCH_IN_TEXT;
-				this.search_wrap_around.sensitive=true;
-				this.search_match_case.sensitive=true;
-			}
-			this.search_text_combo.grab_focus();
-			});
-
-		rbutton = new Gtk.RadioButton.with_label_from_widget (this.search_mode_rbutton, _("terminals titles"));
-		rbutton.tooltip_text="Ctrl+3";
-		rbox.pack_start (rbutton, false, false, 0);
-		rbutton.toggled.connect ((button)=>{
-			if(button.active){
-				debug("toggled=%s",button.label);
-				this.search_in=SEARCH_MODE.SEARCH_IN_NAME;
-				this.search_wrap_around.sensitive=false;
-				this.search_match_case.sensitive=false;				
-			}
-			this.search_text_combo.grab_focus();
-			});
-		
-		this.search_hbox.pack_start(rbox,false,false,0);
-
-		var next_button = new Button();
-		Image img = new Image.from_stock ("gtk-go-up",Gtk.IconSize.SMALL_TOOLBAR);
-		next_button.add(img);
-		next_button.clicked.connect(()=>{
-			if(this.search_in == SEARCH_MODE.SEARCH_IN_TEXT){
-				unowned AYTab ayt = ((AYTab)this.active_tab.object);
-				if(!(ayt is VTTerminal)) return;
-				unowned VTTerminal vtt = (VTTerminal)ayt;
-				this.search_update_pattern(vtt);
-				vtt.vte_term.search_find_previous();
-			}else
-			if(this.search_in == SEARCH_MODE.SEARCH_IN_NAME){
-				this.search_in_tab_name(true);//forward
-				this.search_text_combo.grab_focus();//if tab was switched it grab focus, so regrab it for search entry				
-			}
-			});
-		next_button.set_focus_on_click(false);
-		next_button.tooltip_text="Ctrl+UP";
-		next_button.show();
-		this.search_hbox.pack_start(next_button,false,false,0);
-
-		var prev_button = new Button();
-		img = new Image.from_stock ("gtk-go-down",Gtk.IconSize.SMALL_TOOLBAR);
-		prev_button.add(img);
-		prev_button.clicked.connect(()=>{
-			if(this.search_in == SEARCH_MODE.SEARCH_IN_TEXT){
-				unowned AYTab ayt = ((AYTab)this.active_tab.object);
-				if(!(ayt is VTTerminal)) return;
-				unowned VTTerminal vtt = (VTTerminal)ayt;
-				this.search_update_pattern(vtt);
-				vtt.vte_term.search_find_next();
-			}else
-			if(this.search_in == SEARCH_MODE.SEARCH_IN_NAME){
-				this.search_in_tab_name(false);//backward
-				this.search_text_combo.grab_focus();//if tab was switched it grab focus, so regrab it for search entry				
-			}				
-			});
-		prev_button.set_focus_on_click(false);
-		prev_button.tooltip_text="Ctrl+Down";
-		prev_button.show();
-		this.search_hbox.pack_start(prev_button,false,false,0);
-
-		var hide_button = new Button();
-		img = new Image.from_stock ("gtk-close",Gtk.IconSize.SMALL_TOOLBAR);
-		hide_button.add(img);
-		hide_button.clicked.connect(()=>{
-			this.search_hide();
-			});
-		hide_button.set_focus_on_click(false);
-		hide_button.tooltip_text="Esc";
-		hide_button.show();
-		this.search_hbox.pack_end(hide_button,false,false,0);
-
-
-	}//create_search_box
-
-	public void search_show(){
-		unowned AYTab vtt = ((AYTab)this.active_tab.object);
-		if(!(vtt is VTTerminal)) return;
-		if(!((Entry)this.search_text_combo.get_child()).has_focus){
-
-			if(this.main_window.maximized){
-				var was_h=this.main_window.get_allocated_height();
-				var was_w=this.main_window.get_allocated_width();
-				var was_wn=this.tasks_notebook.get_allocated_width();
-				this.tasks_notebook.set_size_request(was_wn,-1);
-				this.search_hbox.show();
-				if(!this.conf.standalone_mode){
-					this.main_window.set_default_size(was_w,was_h);
-					this.main_window.resize (was_w,was_h);
-					this.main_window.queue_resize_no_redraw();
-				}
-			}else
-				this.search_hbox.show();
-
-			var term = ((VTTerminal)this.active_tab.object).vte_term;
-			if( term.get_has_selection()){
-				term.copy_clipboard();
-				var display = this.main_window.get_display ();
-				var clipboard = Clipboard.get_for_display (display, Gdk.SELECTION_CLIPBOARD);
-				// Get text from clipboard
-				string text = clipboard.wait_for_text ();
-				if(text != null && text != "")
-					((Entry)this.search_text_combo.get_child()).set_text(text);
-			}
-			this.search_update();
-			this.search_text_combo.grab_focus();
-		}else{
-			this.search_hide();
-		}
-	}
-
 	public void window_title_update(){
 		AYTab vtt = ((AYTab)this.active_tab.object);
 		if(vtt!=null) {
@@ -2422,32 +2161,21 @@ public class AYObject :Object{
 				this.main_window.title=_("Tab%d - AltYo").printf(this.children.index(vtt)+1);
 		}
 	}
+	
 	public void search_update(){
 		this.window_title_update();
-		if(this.search_hbox.visible){
+		if(this.quick_options_notebook.visible){
 			unowned AYTab vtt = ((AYTab)this.active_tab.object);
 			if(!(vtt is VTTerminal)) {
-				this.search_hide();
+				this.quick_options_notebook_hide();
 				return;
 			}
-
-			this.search_wrap_around.active=((VTTerminal)vtt).vte_term.search_get_wrap_around();
-			this.search_match_case.active=((VTTerminal)vtt).match_case;
+			this.quick_options_notebook.update_search(((VTTerminal)vtt));
+			this.quick_options_notebook.update_encoding(((VTTerminal)vtt));
 		}
-
-//~ 		Gdk.RGBA c = Gdk.RGBA();
-//~         c.parse("#AAAAAA");//black todo: make same color as vte
-//~         c.alpha = 1.0;//transparency
-//~         this.search_wrap_around.get_child ().override_color(StateFlags.NORMAL, c);
-//~         this.search_match_case.get_child ().override_color(StateFlags.NORMAL, c);
-//~         c.parse("#000000");//black todo: make same color as vte
-//~         this.search_wrap_around.override_background_color(StateFlags.PRELIGHT, c);
-//~         this.search_wrap_around.override_background_color(StateFlags.ACTIVE, c);
-//~         this.search_match_case.override_background_color(StateFlags.PRELIGHT, c);
-//~         this.search_match_case.override_background_color(StateFlags.ACTIVE, c);
 	}
 
-	public void search_hide(){
+	public void quick_options_notebook_hide(){
 		//prevent resizing of the terminal after closing the search
 		var should_be_h = this.terminal_height+this.hvbox.get_allocated_height();
 		if(this.main_window.get_allocated_height()>should_be_h+2){
@@ -2460,7 +2188,7 @@ public class AYObject :Object{
 			}
 			debug ("search_hide terminal_width=%d should_be_h=%d",terminal_width,should_be_h) ;
 		}
-		this.search_hbox.hide();
+		this.quick_options_notebook.hide();
 
 		unowned AYTab vtt = ((AYTab)this.active_tab.object);
 		if(vtt is VTTerminal) {
@@ -2468,52 +2196,9 @@ public class AYObject :Object{
 			((VTTerminal)vtt).vte_term.grab_focus();
 		}
 	}
-
-	public bool search_add_string(string text){
-		debug("search_add_string");
-		if(text != null && text != ""){
-			unowned TreeIter iter;
-			var index = 0;
-			//try to find in a list, and place item at start
-			if(this.search_text_combo.model.get_iter_first(out iter))
-				do{
-					unowned string s;
-					this.search_text_combo.model.get(iter,0,out s);
-					if(s == text){
-						this.search_text_combo.remove(index);
-						this.search_text_combo.prepend_text(text);
-						return true;
-						}
-					index++;
-				}while(this.search_text_combo.model.iter_next(ref iter));
-
-			var count = this.search_text_combo.model.iter_n_children(null);
-			if(count>this.search_history_length-1)//max count in a history
-				this.search_text_combo.remove(count-1);
-			this.search_text_combo.prepend_text(text);
-			return true;
-			}
-		return false;
-	}
-
-
-
+	
 	public void save_configuration(){
-		string[] search_s = new string [this.search_history_length];
-		unowned TreeIter iter;
-		var count = this.search_text_combo.model.iter_n_children(null);
-		//reverse index
-		int index = count-1;
-		if(this.search_text_combo.model.get_iter_first(out iter))
-			do{
-				unowned string s;
-				this.search_text_combo.model.get(iter,0,out s);
-				search_s[index]=s;
-				index--;
-			}while(this.search_text_combo.model.iter_next(ref iter) && index>=0);
-
-
-		this.conf.set_string_list("search_history",search_s);
+			this.quick_options_notebook.save_search_history();
 
 			var autostart_terminal_session=this.conf.get_string_list("terminal_autostart_session",null);
 
@@ -2601,3 +2286,460 @@ public class AYObject :Object{
 
 }//class AYObject
 
+public class QoptNotebook: Notebook{
+	private unowned AYObject ayobject;
+
+	public ComboBoxText search_text_combo {get;set;}
+	public CheckButton search_wrap_around {get;set;}
+	public CheckButton search_match_case {get;set;}
+	public Gtk.RadioButton search_mode_rbutton {get;set;}
+	public Gtk.ComboBox encodings_combo {get;set;}
+	public int search_history_length = 10;
+	public SEARCH_MODE search_in = SEARCH_MODE.SEARCH_IN_TEXT;
+
+	private unowned MySettings conf {get;set; default = null;}
+	
+	public QoptNotebook(AYObject ao) {
+		this.ayobject=ao;
+		this.conf=this.ayobject.conf;
+
+		//this.name="quick_options_notebook";
+		this.set_show_tabs(false);
+
+		this.insert_page(this.create_search_box(),null,OPTIONS_TAB.SEARCH);
+		this.insert_page(this.create_encogings_box(),null,OPTIONS_TAB.ENCODINGS);
+
+	}
+
+	public Gtk.Box create_search_box(){
+
+		var search_hbox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);//new HBox(false,0);
+		search_hbox.halign=Gtk.Align.FILL;
+		search_hbox.valign=Gtk.Align.START;
+		search_hbox.expand=false;
+		search_hbox.name="search_hbox";
+		search_hbox.draw.connect((cr)=>{
+			int width = search_hbox.get_allocated_width ();
+			int height = search_hbox.get_allocated_height ();
+			var context =search_hbox.get_style_context();
+			render_background(context,cr, -1, -1,width+2, height+2);
+			search_hbox.foreach((widget)=>{
+				if(widget.parent==search_hbox)
+					search_hbox.propagate_draw(widget,cr);
+				});
+				return false;
+			});
+			
+		this.search_text_combo = new ComboBoxText.with_entry ();
+		((Entry)this.search_text_combo.get_child()).key_press_event.connect((event)=>{
+			unowned AYTab ayt = ((AYTab)this.ayobject.active_tab.object);
+			if(!(ayt is VTTerminal)) return false;
+			unowned VTTerminal vtt = ((VTTerminal) ayt);
+			var keyname = Gdk.keyval_name(event.keyval);
+			
+			if(       keyname == "1" && (event.state & Gdk.ModifierType.CONTROL_MASK ) == Gdk.ModifierType.CONTROL_MASK ){
+				this.search_wrap_around.activate();
+			}else if( keyname == "2" && (event.state & Gdk.ModifierType.CONTROL_MASK ) == Gdk.ModifierType.CONTROL_MASK ){
+				this.search_match_case.activate();
+			}else if( keyname == "3" && (event.state & Gdk.ModifierType.CONTROL_MASK ) == Gdk.ModifierType.CONTROL_MASK ){
+				/*change search mode*/
+				unowned SList <Gtk.RadioButton> rbutton_group = this.search_mode_rbutton.get_group ();
+				if(this.search_mode_rbutton.active){
+					var rb=rbutton_group.nth_data(0) as Gtk.RadioButton;
+					rb.set_active(true);
+				}else{
+					var rb=rbutton_group.nth_data(1) as Gtk.RadioButton;
+					rb.set_active(true);
+				}
+			}
+			if(this.search_in == SEARCH_MODE.SEARCH_IN_TEXT){
+				if( keyname == "Return"){
+						this.search_update_pattern(vtt);
+						vtt.vte_term.search_find_previous();
+						return true;
+					}else if( keyname == "Up" && (event.state & Gdk.ModifierType.CONTROL_MASK ) == Gdk.ModifierType.CONTROL_MASK ){
+						vtt.vte_term.search_find_previous();
+						return true;
+					}else if( keyname == "Down" && (event.state & Gdk.ModifierType.CONTROL_MASK ) == Gdk.ModifierType.CONTROL_MASK ){
+						vtt.vte_term.search_find_next();
+						return true;
+					}else if( keyname == "Escape"){
+						this.ayobject.quick_options_notebook_hide();
+						return true;
+					}
+			}else if(this.search_in == SEARCH_MODE.SEARCH_IN_NAME){
+				if( keyname == "Return"){
+						this.ayobject.search_in_tab_name(this.search_text_combo.get_active_text());
+						this.search_text_combo.grab_focus();//if tab was switched it grab focus, so regrab it for search entry
+						return true;
+					}else if( keyname == "Up" && (event.state & Gdk.ModifierType.CONTROL_MASK ) == Gdk.ModifierType.CONTROL_MASK ){
+						this.ayobject.search_in_tab_name(this.search_text_combo.get_active_text());
+						this.search_text_combo.grab_focus();//if tab was switched it grab focus, so regrab it for search entry
+						return true;
+					}else if( keyname == "Down" && (event.state & Gdk.ModifierType.CONTROL_MASK ) == Gdk.ModifierType.CONTROL_MASK ){
+						this.ayobject.search_in_tab_name(this.search_text_combo.get_active_text(),false);//backward
+						this.search_text_combo.grab_focus();//if tab was switched it grab focus, so regrab it for search entry
+						return true;
+					}else if( keyname == "Escape"){
+						this.ayobject.quick_options_notebook_hide();
+						return true;
+					}
+			}
+			return false;
+			});//key_press_event
+			
+		this.search_text_combo.show();
+		search_hbox.pack_start(search_text_combo,false,false,0);
+
+		string[]? search_s_conf = this.conf.get_string_list("search_history",null);
+
+		if(search_s_conf!=null && search_s_conf.length<=this.search_history_length)
+			foreach(var s in search_s_conf){
+				this.search_text_combo.prepend_text(s);
+			}
+
+
+		this.search_wrap_around = new CheckButton.with_label(_("Wrap search"));
+		this.search_wrap_around.clicked.connect(()=>{
+			unowned AYTab vtt = ((AYTab)this.ayobject.active_tab.object);
+			if(!(vtt is VTTerminal)) return;
+			((VTTerminal)vtt).vte_term.search_set_wrap_around(this.search_wrap_around.active);
+			this.search_text_combo.grab_focus();
+			});
+		this.search_wrap_around.show();
+		this.search_wrap_around.tooltip_text="Ctrl+1";
+		search_hbox.pack_start(this.search_wrap_around,false,false,0);
+
+		this.search_match_case = new CheckButton.with_label(_("Match case-sensitive"));
+		this.search_match_case.clicked.connect(()=>{
+			unowned AYTab vtt = ((AYTab)this.ayobject.active_tab.object);
+			if(!(vtt is VTTerminal)) return;
+			((VTTerminal)vtt).match_case=this.search_match_case.active;
+			this.search_text_combo.grab_focus();
+			});
+		this.search_match_case.show();
+		this.search_match_case.tooltip_text="Ctrl+2";
+		search_hbox.pack_start(this.search_match_case,false,false,0);
+
+
+		Gtk.Box rbox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
+		Gtk.RadioButton rbutton;
+		
+		this.search_mode_rbutton = new Gtk.RadioButton.with_label_from_widget (null, _("terminal text"));
+		this.search_mode_rbutton.set_active (true);
+		this.search_mode_rbutton.tooltip_text="Ctrl+3";
+		rbox.pack_start (this.search_mode_rbutton, false, false, 0);
+		this.search_mode_rbutton.toggled.connect ((button)=>{
+			if(button.active){
+				debug("toggled=%s",button.label);
+				this.search_in=SEARCH_MODE.SEARCH_IN_TEXT;
+				this.search_wrap_around.sensitive=true;
+				this.search_match_case.sensitive=true;
+			}
+			this.search_text_combo.grab_focus();
+			});
+
+		rbutton = new Gtk.RadioButton.with_label_from_widget (this.search_mode_rbutton, _("terminals titles"));
+		rbutton.tooltip_text="Ctrl+3";
+		rbox.pack_start (rbutton, false, false, 0);
+		rbutton.toggled.connect ((button)=>{
+			if(button.active){
+				debug("toggled=%s",button.label);
+				this.search_in=SEARCH_MODE.SEARCH_IN_NAME;
+				this.search_wrap_around.sensitive=false;
+				this.search_match_case.sensitive=false;				
+			}
+			this.search_text_combo.grab_focus();
+			});
+		
+		search_hbox.pack_start(rbox,false,false,0);
+
+		var next_button = new Button();
+		Image img = new Image.from_stock ("gtk-go-up",Gtk.IconSize.SMALL_TOOLBAR);
+		next_button.add(img);
+		next_button.clicked.connect(()=>{
+			if(this.search_in == SEARCH_MODE.SEARCH_IN_TEXT){
+				unowned AYTab ayt = ((AYTab)this.ayobject.active_tab.object);
+				if(!(ayt is VTTerminal)) return;
+				unowned VTTerminal vtt = (VTTerminal)ayt;
+				this.search_update_pattern(vtt);
+				vtt.vte_term.search_find_previous();
+			}else
+			if(this.search_in == SEARCH_MODE.SEARCH_IN_NAME){
+				this.ayobject.search_in_tab_name(this.search_text_combo.get_active_text(),true);//forward
+				this.search_text_combo.grab_focus();//if tab was switched it grab focus, so regrab it for search entry				
+			}
+			});
+		next_button.set_focus_on_click(false);
+		next_button.tooltip_text="Ctrl+UP";
+		next_button.show();
+		search_hbox.pack_start(next_button,false,false,0);
+
+		var prev_button = new Button();
+		img = new Image.from_stock ("gtk-go-down",Gtk.IconSize.SMALL_TOOLBAR);
+		prev_button.add(img);
+		prev_button.clicked.connect(()=>{
+			if(this.search_in == SEARCH_MODE.SEARCH_IN_TEXT){
+				unowned AYTab ayt = ((AYTab)this.ayobject.active_tab.object);
+				if(!(ayt is VTTerminal)) return;
+				unowned VTTerminal vtt = (VTTerminal)ayt;
+				this.search_update_pattern(vtt);
+				vtt.vte_term.search_find_next();
+			}else
+			if(this.search_in == SEARCH_MODE.SEARCH_IN_NAME){
+				this.ayobject.search_in_tab_name(this.search_text_combo.get_active_text(),false);//backward
+				this.search_text_combo.grab_focus();//if tab was switched it grab focus, so regrab it for search entry				
+			}				
+			});
+		prev_button.set_focus_on_click(false);
+		prev_button.tooltip_text="Ctrl+Down";
+		prev_button.show();
+		search_hbox.pack_start(prev_button,false,false,0);
+
+		var hide_button = new Button();
+		img = new Image.from_stock ("gtk-close",Gtk.IconSize.SMALL_TOOLBAR);
+		hide_button.add(img);
+		hide_button.clicked.connect(()=>{
+			this.ayobject.quick_options_notebook_hide();
+			});
+		hide_button.set_focus_on_click(false);
+		hide_button.tooltip_text="Esc";
+		hide_button.show();
+		search_hbox.pack_end(hide_button,false,false,0);
+
+		return search_hbox;
+	}//create_search_box
+
+	private void show_page(OPTIONS_TAB page){
+			this.set_current_page(page);
+			if(this.ayobject.main_window.maximized){
+				var was_h=this.ayobject.main_window.get_allocated_height();
+				var was_w=this.ayobject.main_window.get_allocated_width();
+				var was_wn=this.ayobject.tasks_notebook.get_allocated_width();
+				this.ayobject.tasks_notebook.set_size_request(was_wn,-1);
+				this.show();
+				if(!this.conf.standalone_mode){
+					this.ayobject.main_window.set_default_size(was_w,was_h);
+					this.ayobject.main_window.resize (was_w,was_h);
+					this.ayobject.main_window.queue_resize_no_redraw();
+				}
+			}else
+				this.show();
+	}
+	public void search_show(){
+		unowned AYTab vtt = ((AYTab)this.ayobject.active_tab.object);
+		if(!(vtt is VTTerminal)) return;
+		if(!((Entry)this.search_text_combo.get_child()).has_focus){
+			this.show_page(OPTIONS_TAB.SEARCH);
+
+			var term = ((VTTerminal)this.ayobject.active_tab.object).vte_term;
+			if( term.get_has_selection()){
+				term.copy_clipboard();
+				var display = this.ayobject.main_window.get_display ();
+				var clipboard = Clipboard.get_for_display (display, Gdk.SELECTION_CLIPBOARD);
+				// Get text from clipboard
+				string text = clipboard.wait_for_text ();
+				if(text != null && text != "")
+					((Entry)this.search_text_combo.get_child()).set_text(text);
+			}
+			this.ayobject.search_update();
+			this.search_text_combo.grab_focus();
+		}else{
+			this.ayobject.quick_options_notebook_hide();
+		}
+	}
+
+	public bool search_add_string(string text){
+		debug("search_add_string");
+		if(text != null && text != ""){
+			unowned TreeIter iter;
+			var index = 0;
+			//try to find in a list, and place item at start
+			if(this.search_text_combo.model.get_iter_first(out iter))
+				do{
+					unowned string s;
+					this.search_text_combo.model.get(iter,0,out s);
+					if(s == text){
+						this.search_text_combo.remove(index);
+						this.search_text_combo.prepend_text(text);
+						return true;
+						}
+					index++;
+				}while(this.search_text_combo.model.iter_next(ref iter));
+
+			var count = this.search_text_combo.model.iter_n_children(null);
+			if(count>this.search_history_length-1)//max count in a history
+				this.search_text_combo.remove(count-1);
+			this.search_text_combo.prepend_text(text);
+			return true;
+			}
+		return false;
+	}
+
+	public void search_update_pattern(VTTerminal vtt){
+					string? s_pattern = null;
+					GLib.RegexCompileFlags cflags = 0;
+					if( vtt.vte_term.search_get_gregex() != null ){
+						var rgx=vtt.vte_term.search_get_gregex();
+						s_pattern = rgx.get_pattern();
+						cflags=rgx.get_compile_flags();
+					}
+					string? new_pattern = this.search_text_combo.get_active_text();
+					debug(" new_pattern '%s' != '%s'", new_pattern,s_pattern);
+					bool needs_udatate = false;
+					//if((cflags & GLib.RegexCompileFlags.CASELESS)!=(int)(!vtt.match_case)) {
+						cflags = GLib.RegexCompileFlags.OPTIMIZE;
+						if(!vtt.match_case)
+							cflags |= GLib.RegexCompileFlags.CASELESS;
+						//needs_udatate=true;
+					//}
+
+
+
+					if( (s_pattern == null && new_pattern != null && new_pattern != "") ||
+						(s_pattern != null && new_pattern != null && s_pattern != new_pattern) ){
+							search_add_string(new_pattern);
+							needs_udatate=true;
+						}
+					if(needs_udatate){
+						var reg_exp = new GLib.Regex(new_pattern,cflags);
+						vtt.vte_term.search_set_gregex(reg_exp);
+					}
+	}
+
+	public void save_search_history(){
+		string[] search_s = new string [this.search_history_length];
+		unowned TreeIter iter;
+		var count = this.search_text_combo.model.iter_n_children(null);
+		//reverse index
+		int index = count-1;
+		if(this.search_text_combo.model.get_iter_first(out iter))
+			do{
+				unowned string s;
+				this.search_text_combo.model.get(iter,0,out s);
+				search_s[index]=s;
+				index--;
+			}while(this.search_text_combo.model.iter_next(ref iter) && index>=0);
+
+
+		this.conf.set_string_list("search_history",search_s);
+	}
+
+
+	public Gtk.Box create_encogings_box(){
+		var encogings_box_hbox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);//new HBox(false,0);
+		encogings_box_hbox.halign=Gtk.Align.FILL;
+		encogings_box_hbox.valign=Gtk.Align.START;
+		encogings_box_hbox.expand=false;
+		encogings_box_hbox.name="encogings_box_hbox";
+		encogings_box_hbox.draw.connect((cr)=>{
+			int width = encogings_box_hbox.get_allocated_width ();
+			int height = encogings_box_hbox.get_allocated_height ();
+			var context =encogings_box_hbox.get_style_context();
+			render_background(context,cr, -1, -1,width+2, height+2);
+			encogings_box_hbox.foreach((widget)=>{
+				if(widget.parent==encogings_box_hbox)
+					encogings_box_hbox.propagate_draw(widget,cr);
+				});
+				return false;
+			});
+
+		var builder = new Gtk.Builder ();
+		builder.add_from_resource("/org/gnome/altyo/encodings_list.glade");
+			
+		this.encodings_combo = builder.get_object ("encodings_combobox") as Gtk.ComboBox;
+		encogings_box_hbox.pack_start(this.encodings_combo,false,false,0);
+		var encodinsg_store = builder.get_object ("encodings_liststore") as Gtk.ListStore;
+		encodinsg_store.set_sort_column_id(1,Gtk.SortType.ASCENDING);
+
+		((Entry)this.encodings_combo.get_child()).key_press_event.connect((event)=>{
+			var keyname = Gdk.keyval_name(event.keyval);
+			if( keyname == "Return"){
+				unowned AYTab vtt = ((AYTab)this.ayobject.active_tab.object);
+				if(!(vtt is VTTerminal)) return false;
+				this.apply_encoding(((VTTerminal)vtt));
+				return true;
+			}else if( keyname == "Escape"){
+				this.ayobject.quick_options_notebook_hide();
+				return true;
+			}
+			return false;
+		});
+
+		var apply_button = new Button();
+		var img = new Image.from_stock ("gtk-apply",Gtk.IconSize.SMALL_TOOLBAR);
+		apply_button.add(img);
+		apply_button.clicked.connect(()=>{
+			unowned AYTab vtt = ((AYTab)this.ayobject.active_tab.object);
+			if(!(vtt is VTTerminal)) return;
+			this.apply_encoding(((VTTerminal)vtt));
+			});
+		apply_button.set_focus_on_click(false);
+		apply_button.tooltip_text=_("Press enter to appy");
+		apply_button.show();
+		encogings_box_hbox.pack_start(apply_button,false,false,0);
+
+		var hide_button = new Button();
+		img = new Image.from_stock ("gtk-close",Gtk.IconSize.SMALL_TOOLBAR);
+		hide_button.add(img);
+		hide_button.clicked.connect(()=>{
+			this.ayobject.quick_options_notebook_hide();
+			});
+		hide_button.set_focus_on_click(false);
+		hide_button.tooltip_text="Esc";
+		hide_button.show();
+		encogings_box_hbox.pack_end(hide_button,false,false,0);
+		
+		return encogings_box_hbox;
+	}
+
+		public void encodings_show(){
+		AYTab vtt = ((AYTab)this.ayobject.active_tab.object);
+		if(!(vtt is VTTerminal)) return;
+		debug("this.quick_options_notebook show1");
+		if(!((Entry)this.encodings_combo.get_child()).has_focus){
+			this.show_page(OPTIONS_TAB.ENCODINGS);
+			this.update_encoding(((VTTerminal)vtt));
+			this.encodings_combo.grab_focus();
+		}else
+			this.ayobject.quick_options_notebook_hide();
+	}
+
+	public void update_encoding(VTTerminal vtt){
+
+			if(this.page!=OPTIONS_TAB.ENCODINGS) return;//don't update if unnecessary
+			
+			var term = vtt.vte_term;
+			unowned TreeIter iter;
+			string term_encoding ="";
+			term_encoding +=  term.get_encoding();//copy string
+			bool found=false;
+			//try to find encoding in a list
+			if(this.encodings_combo.model.get_iter_first(out iter))
+				do{
+					unowned string s;
+					this.encodings_combo.model.get(iter,0,out s);
+					if(s == term_encoding){
+						found=true;
+						break;
+						}
+				}while(this.encodings_combo.model.iter_next(ref iter));
+				
+			if(found)
+				this.encodings_combo.set_active_iter(iter);
+			else
+				((Entry)this.encodings_combo.get_child()).set_text(term_encoding);
+	}
+
+	public void update_search(VTTerminal vtt){
+			if(this.page!=OPTIONS_TAB.SEARCH) return;//don't update if unnecessary
+			this.search_wrap_around.active=((VTTerminal)vtt).vte_term.search_get_wrap_around();
+			this.search_match_case.active=((VTTerminal)vtt).match_case;
+	}
+	public void apply_encoding(VTTerminal vtt){
+				var term = vtt.vte_term;
+				var new_encoding = ((Entry)this.encodings_combo.get_child()).get_text();
+				term.set_encoding (new_encoding);
+				this.encodings_combo.grab_focus();
+	}
+}//class QoptNotebook 

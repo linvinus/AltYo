@@ -2663,8 +2663,15 @@ public class QoptNotebook: Notebook{
 		encodinsg_store.set_sort_column_id(1,Gtk.SortType.ASCENDING);
 		// Encodings autocompletion:
 		Gtk.EntryCompletion enc_completion = new Gtk.EntryCompletion ();
+
 		((Entry)this.encodings_combo.get_child()).set_completion(enc_completion);
+
 		enc_completion.set_model (encodinsg_store);
+
+		var completion_info= new CellRendererText();
+		enc_completion.pack_end(completion_info,false);
+		enc_completion.add_attribute(completion_info, "text", 1);
+
 		enc_completion.set_text_column (0);
 		
 		((Entry)this.encodings_combo.get_child()).key_press_event.connect((event)=>{

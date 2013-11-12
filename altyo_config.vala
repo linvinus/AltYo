@@ -230,6 +230,26 @@ public class MySettings : Object {
 			version[VER.rc]=7;//update version
 		}
 
+		/*if was 0.3.7
+		 * update program_style option, fix background for quick_options_notebook
+		 * */
+		if(version[VER.major]==0 && version[VER.minor]==3 && version[VER.rc]<8){
+				try {
+					string old=kf.get_string(this.profile,"program_style");
+					if(old!=null && old!="" ){
+						Regex regex = new Regex ("HVBox,#search_hbox\\{");
+						try {
+							string result = regex.replace(old,-1,0,"HVBox,#quick_options_notebook {");
+							kf.set_string(this.profile,"program_style",result);
+							this.changed=true;
+						}catch (RegexError e) {
+							stdout.printf ("Error: %s\n", e.message);
+						}						
+					}
+				}catch (KeyFileError err) {}
+			version[VER.rc]=8;//update version
+		}
+
 		return version;
 	}
 	

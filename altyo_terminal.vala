@@ -846,26 +846,6 @@ public class VTTerminal : AYTab{
 		return false; //true == ignore event
 	}
 	
-	public void on_delete_toggled(Gtk.CheckMenuItem c){
-		if(c.active){//ignore inactive changes
-			Gtk.RadioMenuItem r = (Gtk.RadioMenuItem)c;
-			unowned SList<Gtk.RadioMenuItem>  group = r.get_group();
-			int index= ((int)group.length())-1-group.index(r);//WTF? list is inverted
-			debug("on_delete_toggled %d",index);
-			this.vte_term.set_delete_binding ((Vte.TerminalEraseBinding)index);
-		}
-	}
-
-	public void on_backspace_toggled(Gtk.CheckMenuItem c){
-		if(c.active){//ignore inactive changes
-			Gtk.RadioMenuItem r = (Gtk.RadioMenuItem)c;
-			unowned SList<Gtk.RadioMenuItem>  group = r.get_group();
-			int index= ((int)group.length())-1-group.index(r);//WTF? list is inverted
-			debug("on_backspace_toggled %d",index);
-			this.vte_term.set_backspace_binding ((Vte.TerminalEraseBinding)index);
-		}
-	}
-
 	public void on_copy_link_activate(){
 		Gtk.Clipboard clipboard = Gtk.Clipboard.get_for_display (Gdk.Display.get_default (), Gdk.SELECTION_CLIPBOARD);
 		clipboard.set_text (this.last_link, -1);
@@ -929,110 +909,37 @@ public class VTTerminal : AYTab{
 		menuitem = new Gtk.MenuItem.with_label (_("Quick settings"));
 		menuitem.set_submenu(submenu);
 		menu.append(menuitem);
-		if(!this.my_conf.standalone_mode){
-			menuitem = (Gtk.MenuItem)acg.get_action("follow_the_mouse").create_menu_item();
+
+			menuitem = (Gtk.MenuItem)acg.get_action("window_terminal_quick_settings").create_menu_item();
 			submenu.append(menuitem);
-			var action_keepabove = acg.get_action("keep_above") as ToggleAction;
-			menuitem = (Gtk.MenuItem)action_keepabove.create_menu_item();
-			submenu.append(menuitem);
-			if(action_keepabove.active!=vtw.keep_above){
-				vtw.keep_above=!vtw.keep_above;//invert value, becouse it will inverted after set_active
-				action_keepabove.set_active(!vtw.keep_above);
+
+			if(!this.my_conf.standalone_mode){
+				menuitem = (Gtk.MenuItem)acg.get_action("follow_the_mouse").create_menu_item();
+				submenu.append(menuitem);
+				var action_keepabove = acg.get_action("keep_above") as ToggleAction;
+				menuitem = (Gtk.MenuItem)action_keepabove.create_menu_item();
+				submenu.append(menuitem);
+				if(action_keepabove.active!=vtw.keep_above){
+					vtw.keep_above=!vtw.keep_above;//invert value, becouse it will inverted after set_active
+					action_keepabove.set_active(!vtw.keep_above);
+				}
+				var action_stick = acg.get_action("window_toggle_stick") as ToggleAction;
+				menuitem = (Gtk.MenuItem)action_stick.create_menu_item();
+				submenu.append(menuitem);
+				if(action_stick.active!=vtw.orig_stick){
+					vtw.orig_stick=!vtw.orig_stick;//invert value, becouse it will inverted after set_active
+					action_stick.set_active(!vtw.orig_stick);
+				}
+				var action_autohide = acg.get_action("window_toggle_autohide") as ToggleAction;
+				menuitem = (Gtk.MenuItem)action_autohide.create_menu_item();
+				submenu.append(menuitem);
+				if(action_autohide.active!=vtw.autohide){
+					vtw.autohide=!vtw.autohide;//invert value, becouse it will inverted after set_active
+					action_autohide.set_active(!vtw.autohide);
+				}
 			}
-			var action_stick = acg.get_action("window_toggle_stick") as ToggleAction;
-			menuitem = (Gtk.MenuItem)action_stick.create_menu_item();
+			menuitem = (Gtk.MenuItem)acg.get_action("window_open_new_window").create_menu_item();
 			submenu.append(menuitem);
-			if(action_stick.active!=vtw.orig_stick){
-				vtw.orig_stick=!vtw.orig_stick;//invert value, becouse it will inverted after set_active
-				action_stick.set_active(!vtw.orig_stick);
-			}
-			var action_autohide = acg.get_action("window_toggle_autohide") as ToggleAction;
-			menuitem = (Gtk.MenuItem)action_autohide.create_menu_item();
-			submenu.append(menuitem);
-			if(action_autohide.active!=vtw.autohide){
-				vtw.autohide=!vtw.autohide;//invert value, becouse it will inverted after set_active
-				action_autohide.set_active(!vtw.autohide);
-			}
-			menuitem = (Gtk.MenuItem)acg.get_action("terminal_set_encoding").create_menu_item();
-			submenu.append(menuitem);
-		}
-		/**************************************************************/
-
-		var submenu2 = new Gtk.Menu ();
-		menuitem = new Gtk.MenuItem.with_label (_("Current Terminal: Delete"));
-		menuitem.set_submenu(submenu2);
-		submenu.append(menuitem);
-		
-		unowned SList<Gtk.RadioMenuItem> group=null;
-		Gtk.RadioMenuItem radio_menuitem;
-		radio_menuitem = new Gtk.RadioMenuItem.with_label (null, _("Auto"));
-		if(this.vte_term.delete_binding==0)radio_menuitem.set_active (true);
-		submenu2.add (radio_menuitem);
-		group = radio_menuitem.get_group();//why i need call this every time?
-		radio_menuitem.toggled.connect(this.on_delete_toggled);
-		
-		radio_menuitem = new Gtk.RadioMenuItem.with_label (group, _("ASCII Backspace"));
-		if(this.vte_term.delete_binding==1)radio_menuitem.set_active (true);
-		submenu2.add (radio_menuitem);
-		group = radio_menuitem.get_group();//why i need call this every time?
-		radio_menuitem.toggled.connect(this.on_delete_toggled);
-		
-		radio_menuitem = new Gtk.RadioMenuItem.with_label (group, _("ASCII Delete"));
-		if(this.vte_term.delete_binding==2)radio_menuitem.set_active (true);
-		submenu2.add (radio_menuitem);
-		group = radio_menuitem.get_group();//why i need call this every time?
-		radio_menuitem.toggled.connect(this.on_delete_toggled);
-		
-		radio_menuitem = new Gtk.RadioMenuItem.with_label (group, _("Delete sequence"));
-		if(this.vte_term.delete_binding==3)radio_menuitem.set_active (true);
-		submenu2.add (radio_menuitem);
-		group = radio_menuitem.get_group();//why i need call this every time?
-		radio_menuitem.toggled.connect(this.on_delete_toggled);
-
-		radio_menuitem = new Gtk.RadioMenuItem.with_label (group, _("TTY \"erase\""));
-		if(this.vte_term.delete_binding==4)radio_menuitem.set_active (true);
-		submenu2.add (radio_menuitem);
-		radio_menuitem.toggled.connect(this.on_delete_toggled);
-		
-		
-		/**************************************************************/
-
-		var submenu3 = new Gtk.Menu ();
-		menuitem = new Gtk.MenuItem.with_label (_("Current Terminal: Backspace"));
-		menuitem.set_submenu(submenu3);
-		submenu.append(menuitem);
-		
-		radio_menuitem = new Gtk.RadioMenuItem.with_label (null, _("Auto"));
-		if(this.vte_term.backspace_binding==0)radio_menuitem.set_active (true);
-		submenu3.add (radio_menuitem);
-		group = radio_menuitem.get_group();//why i need call this every time?
-		radio_menuitem.toggled.connect(this.on_backspace_toggled);
-		
-		radio_menuitem = new Gtk.RadioMenuItem.with_label (group, _("ASCII Backspace"));
-		if(this.vte_term.backspace_binding==1)radio_menuitem.set_active (true);
-		submenu3.add (radio_menuitem);
-		group = radio_menuitem.get_group();//why i need call this every time?
-		radio_menuitem.toggled.connect(this.on_backspace_toggled);
-		
-		radio_menuitem = new Gtk.RadioMenuItem.with_label (group, _("ASCII Delete"));
-		if(this.vte_term.backspace_binding==2)radio_menuitem.set_active (true);
-		submenu3.add (radio_menuitem);
-		group = radio_menuitem.get_group();//why i need call this every time?
-		radio_menuitem.toggled.connect(this.on_backspace_toggled);
-		
-		radio_menuitem = new Gtk.RadioMenuItem.with_label (group, _("Delete sequence"));
-		if(this.vte_term.backspace_binding==3)radio_menuitem.set_active (true);
-		submenu3.add (radio_menuitem);
-		group = radio_menuitem.get_group();//why i need call this every time?
-		radio_menuitem.toggled.connect(this.on_backspace_toggled);
-
-		radio_menuitem = new Gtk.RadioMenuItem.with_label (group, _("TTY \"erase\""));
-		if(this.vte_term.backspace_binding==4)radio_menuitem.set_active (true);
-		submenu3.add (radio_menuitem);
-		radio_menuitem.toggled.connect(this.on_backspace_toggled);
-		
-		
-		/**************************************************************/
 
 		menuitem = (Gtk.MenuItem)acg.get_action("altyo_about").create_menu_item();
 		menu.append(menuitem);

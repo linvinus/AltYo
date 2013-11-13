@@ -5,5 +5,6 @@
     <file alias="altyo.svg">altyo.svg</file>
     <file alias="preferences.glade" preprocess="xml-stripblanks">preferences.glade</file>
     <file alias="encodings_list.glade" preprocess="xml-stripblanks">encodings_list.glade</file>
+    <file alias="main_window_encodings_combo.glade" preprocess="xml-stripblanks">main_window_encodings_combo.glade</file>
   </gresource>
 </gresources>

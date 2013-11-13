@@ -27,6 +27,12 @@ public enum FIND_TTY{
 	PID
 	}
 
+public enum VTT_LOCK_SETTING{
+	ENCODING,
+	DELETE_BINDING,
+	BACKSPACE_BINDING
+	}
+	
 public delegate void OnChildExitCallBack(VTTerminal vt);
 
 public class TildaAuth:Object{
@@ -447,6 +453,7 @@ public class VTTerminal : AYTab{
 	private string? last_link;
 	private int?    last_tag;
 	private bool disable_terminal_popup=false;
+	private Array<VTT_LOCK_SETTING> lock_settings;
 	
 
 	public VTTerminal(MySettings my_conf,Notebook notebook, int tab_index,string? session_command=null,string? session_path=null,OnChildExitCallBack? on_child_exit=null) {
@@ -455,6 +462,7 @@ public class VTTerminal : AYTab{
 		this.notebook=notebook;
 		this.session_command=session_command;
 		this.session_path=session_path;
+		this.lock_settings	 = new Array<VTT_LOCK_SETTING> ();
 		
 		if(on_child_exit!=null)
 			this.on_child_exit=on_child_exit;
@@ -742,20 +750,32 @@ public class VTTerminal : AYTab{
 			return CFG_CHECK.OK;
 			});
 		this.vte_term.set_cursor_blink_mode ((Vte.TerminalCursorBlinkMode)cursor_blinkmode);
-		/*0-AUTO,1-BACKSPACE,2-DELETE,3-SEQUENCE,4-TTY*/
-		var delbinding  = my_conf.get_integer("terminal_delete_binding",0,(ref new_val)=>{
-			if(new_val>4){new_val=0;return CFG_CHECK.REPLACE;}
-			if(new_val<0){new_val=0;return CFG_CHECK.REPLACE;}
-			return CFG_CHECK.OK;
-			});
-		this.vte_term.set_delete_binding ((Vte.TerminalEraseBinding)delbinding);
-		/*0-AUTO,1-BACKSPACE,2-DELETE,3-SEQUENCE,4-TTY*/
-		var backspace  = my_conf.get_integer("terminal_backspace_binding",0,(ref new_val)=>{
-			if(new_val>4){new_val=0;return CFG_CHECK.REPLACE;}
-			if(new_val<0){new_val=0;return CFG_CHECK.REPLACE;}
-			return CFG_CHECK.OK;
-			});
-		this.vte_term.set_backspace_binding ((Vte.TerminalEraseBinding)delbinding);
+		if(!this.is_locked(VTT_LOCK_SETTING.DELETE_BINDING)){
+			/*0-AUTO,1-BACKSPACE,2-DELETE,3-SEQUENCE,4-TTY*/
+			var delbinding  = my_conf.get_integer("terminal_delete_binding",0,(ref new_val)=>{
+				if(new_val>4){new_val=0;return CFG_CHECK.REPLACE;}
+				if(new_val<0){new_val=0;return CFG_CHECK.REPLACE;}
+				return CFG_CHECK.OK;
+				});
+			this.vte_term.set_delete_binding ((Vte.TerminalEraseBinding)delbinding);
+		}
+
+		if(!this.is_locked(VTT_LOCK_SETTING.BACKSPACE_BINDING)){
+			/*0-AUTO,1-BACKSPACE,2-DELETE,3-SEQUENCE,4-TTY*/
+			var backspace  = my_conf.get_integer("terminal_backspace_binding",0,(ref new_val)=>{
+				if(new_val>4){new_val=0;return CFG_CHECK.REPLACE;}
+				if(new_val<0){new_val=0;return CFG_CHECK.REPLACE;}
+				return CFG_CHECK.OK;
+				});
+			this.vte_term.set_backspace_binding ((Vte.TerminalEraseBinding)backspace);
+		}
+
+		if(!this.is_locked(VTT_LOCK_SETTING.ENCODING)){
+			var s = my_conf.get_string("terminal_default_encoding","default");
+			if(s!="default"){
+				this.vte_term.set_encoding (s);
+			}
+		}
 
 		string[] url_regexps = my_conf.get_string_list("terminal_url_regexps",{"(\\\"\\s*)?((?i)http|https|ftp|sftp)\\://([a-zA-Z0-9\\-]+(\\.)?)+(:[0-9]+)?(/([a-zA-Z0-9\\(\\)\\[\\]\\{\\};\\!\\*'\"`\\:@&=\\+\\$\\,/\\?#\\-\\_\\.\\~%\\^<>\\|\\\\])*)?","xdg-open"},(ref new_val)=>{
 			if(new_val!=null && (new_val.length % 2)!=0){
@@ -1412,4 +1432,20 @@ public class VTTerminal : AYTab{
 		}*/
 	//tauth.unref();//not needed
 	}//run_command
+
+	public void lock_setting(VTT_LOCK_SETTING l){
+		if(!this.is_locked(l))
+			this.lock_settings.append_val(l);
+	}
+
+	public bool is_locked(VTT_LOCK_SETTING locked_s){
+		bool ret=false;
+		//foreach(var l in this.lock_settings){
+		for (int i = 0; i < this.lock_settings.length ; i++) {
+			if( locked_s == this.lock_settings.index(i) ){
+				ret=true;
+				}
+		}
+		return ret;
+	}
 }

@@ -2648,6 +2648,7 @@ public class QoptNotebook: Notebook{
 
 		var builder = new Gtk.Builder ();
 		builder.add_from_resource("/org/gnome/altyo/encodings_list.glade");
+		builder.add_from_resource("/org/gnome/altyo/main_window_encodings_combo.glade");
 		builder.connect_signals(this);
 			
 		this.encodings_combo = builder.get_object ("encodings_combobox") as Gtk.ComboBox;
@@ -2786,6 +2787,7 @@ public class QoptNotebook: Notebook{
 
 	public void apply_encoding(VTTerminal vtt){
 		var term = vtt.vte_term;
+		vtt.lock_setting(VTT_LOCK_SETTING.ENCODING);
 		var new_encoding = ((Entry)this.encodings_combo.get_child()).get_text();
 		term.set_encoding (new_encoding);
 		this.encodings_combo.grab_focus();
@@ -2795,6 +2797,7 @@ public class QoptNotebook: Notebook{
 	public void on_terminal_delete_binding_combo_changed(Gtk.ComboBox w){
 		AYTab vtt = ((AYTab)this.ayobject.active_tab.object);
 		if(!(vtt is VTTerminal)) return;
+		((VTTerminal)vtt).lock_setting(VTT_LOCK_SETTING.DELETE_BINDING);
 		var term = ((VTTerminal)vtt).vte_term;
 		term.delete_binding = (Vte.TerminalEraseBinding)this.delete_binding_combo.get_active();
 	}
@@ -2803,6 +2806,7 @@ public class QoptNotebook: Notebook{
 	public void on_terminal_backspace_combo_changed(Gtk.ComboBox w){
 		AYTab vtt = ((AYTab)this.ayobject.active_tab.object);
 		if(!(vtt is VTTerminal)) return;
+		((VTTerminal)vtt).lock_setting(VTT_LOCK_SETTING.BACKSPACE_BINDING);
 		var term = ((VTTerminal)vtt).vte_term;
 		term.backspace_binding = (Vte.TerminalEraseBinding) this.terminal_backspace_combo.get_active();
 	}

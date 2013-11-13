@@ -299,21 +299,6 @@
       </row>
     </data>
   </object>
-  <object class="GtkComboBox" id="encodings_combobox">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="model">encodings_liststore</property>
-    <property name="has_entry">True</property>
-    <property name="entry_text_column">0</property>
-    <property name="popup_fixed_width">False</property>
-    <property name="id_column">1</property>
-    <child>
-      <object class="GtkCellRendererText" id="cellrenderertext1"/>
-      <attributes>
-        <attribute name="text">1</attribute>
-      </attributes>
-    </child>
-  </object>
   <object class="GtkListStore" id="terminal_delete_binding_liststore">
     <columns>
       <!-- column-name gchararray1 -->
@@ -336,42 +321,5 @@
         <col id="0" translatable="yes">TTY "erase"</col>
       </row>
     </data>
-  </object>
-  <object class="GtkComboBox" id="terminal_backspace_binding">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="has_tooltip">True</property>
-    <property name="tooltip_text" translatable="yes">Backspace key binding</property>
-    <property name="model">terminal_delete_binding_liststore</property>
-    <property name="popup_fixed_width">False</property>
-    <signal name="changed" handler="qopt_notebook_on_terminal_backspace_combo_changed" swapped="no"/>
-    <signal name="popdown" handler="qopt_notebook_on_terminal_combos_popupdown" swapped="no"/>
-    <child>
-      <object class="GtkCellRendererText" id="cellrenderertext8">
-        <property name="ellipsize">end</property>
-      </object>
-      <attributes>
-        <attribute name="text">0</attribute>
-      </attributes>
-    </child>
-  </object>
-  <object class="GtkComboBox" id="terminal_delete_binding">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="has_tooltip">True</property>
-    <property name="tooltip_text" translatable="yes">Delete key binding</property>
-    <property name="model">terminal_delete_binding_liststore</property>
-    <property name="popup_fixed_width">False</property>
-    <property name="id_column">0</property>
-    <signal name="changed" handler="qopt_notebook_on_terminal_delete_binding_combo_changed" swapped="no"/>
-    <signal name="popdown" handler="qopt_notebook_on_terminal_combos_popupdown" swapped="no"/>
-    <child>
-      <object class="GtkCellRendererText" id="cellrenderertext6">
-        <property name="ellipsize">end</property>
-      </object>
-      <attributes>
-        <attribute name="text">0</attribute>
-      </attributes>
-    </child>
   </object>
 </interface>

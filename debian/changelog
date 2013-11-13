@@ -1,3 +1,26 @@
+altyo (0.3~rc12-linvinus1) quantal; urgency=low
+
+  * improvements: prevent blinking of tabs on mouse click
+  * improvement: prevent  transparency of window background in  standalone mode
+  * improvement: allow text-selection in help text
+  * new: option window_new_tab_position, two variants - right next after the current active tab - or at the far right end.
+  * improvements: add graphical option for option window_new_tab_position
+  * Update README.md
+  * new: option window_fullscreen_on_maximize
+  * improvements: multiple --exec options will open multiple tabs
+  * improvements: new option terminal_disable_popup_menu, and possibility to disable key bindings.
+  * improvements: initial support of terminal encodings
+  * improvements: terminal encodings part 2,
+                  - move terminal options from popup menu to new quick dialog
+                  - encodings autocompletion
+                  - draw background under QoptNotebook
+  * improvement: more friendly encodings autocompletion
+  * improvements: terminal encodings part 3
+  * improvements: terminal encodings part 4, gui settings
+  * update: Russian translation
+
+ -- denis <linvinus@gmail.com>  Thu, 14 Nov 2013 00:14:36 +0400
+
 altyo (0.3~rc11.1-linvinus2) quantal; urgency=low
 
   * fix: vala-16 compile error

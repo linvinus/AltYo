@@ -204,84 +204,11 @@
       </row>
     </data>
   </object>
-  <object class="GtkListStore" id="terminal_delete_binding_liststore">
-    <columns>
-      <!-- column-name gchararray1 -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Auto</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">ASCII Backspace</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">ASCII Delete</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Delete sequence</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">TTY "erase"</col>
-      </row>
-    </data>
-  </object>
   <object class="GtkAdjustment" id="terminal_height_adjustment">
     <property name="lower">1</property>
     <property name="upper">10000</property>
     <property name="step_increment">10</property>
     <property name="page_increment">100</property>
-  </object>
-  <object class="GtkListStore" id="terminal_notify_level_liststore">
-    <columns>
-      <!-- column-name gchararray1 -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Never</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Contents changed</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Title changed</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Any changes</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkAdjustment" id="terminal_opacity_adjustment">
-    <property name="upper">1</property>
-    <property name="step_increment">0.10000000000000001</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="terminal_scrollback_lines_adjustment">
-    <property name="lower">-1</property>
-    <property name="upper">100000</property>
-    <property name="step_increment">10</property>
-    <property name="page_increment">100</property>
-  </object>
-  <object class="GtkAdjustment" id="terminal_timeout_before_notify_adjustment">
-    <property name="upper">1440</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkListStore" id="terminal_url_regexps">
-    <columns>
-      <!-- column-name match -->
-      <column type="gchararray"/>
-      <!-- column-name run -->
-      <column type="gchararray"/>
-      <!-- column-name tooltip -->
-      <column type="gchararray"/>
-      <!-- column-name match_color -->
-      <column type="GdkRGBA"/>
-      <!-- column-name match_s -->
-      <column type="gboolean"/>
-    </columns>
   </object>
   <object class="GtkScrolledWindow" id="settings-scrolledwindow">
     <property name="visible">True</property>
@@ -1156,7 +1083,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">22</property>
+                                        <property name="top_attach">23</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1169,7 +1096,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">22</property>
+                                        <property name="top_attach">23</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1183,7 +1110,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">23</property>
+                                        <property name="top_attach">24</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1196,7 +1123,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">23</property>
+                                        <property name="top_attach">24</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1210,7 +1137,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">25</property>
+                                        <property name="top_attach">26</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1224,7 +1151,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">26</property>
+                                        <property name="top_attach">27</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1243,7 +1170,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">26</property>
+                                        <property name="top_attach">27</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1257,7 +1184,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">27</property>
+                                        <property name="top_attach">28</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1275,7 +1202,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">27</property>
+                                        <property name="top_attach">28</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1318,7 +1245,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">25</property>
+                                        <property name="top_attach">26</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1332,7 +1259,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">28</property>
+                                        <property name="top_attach">29</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1347,7 +1274,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">28</property>
+                                        <property name="top_attach">29</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1361,7 +1288,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">29</property>
+                                        <property name="top_attach">30</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1375,7 +1302,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">24</property>
+                                        <property name="top_attach">25</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1388,7 +1315,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">24</property>
+                                        <property name="top_attach">25</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1430,7 +1357,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">21</property>
+                                        <property name="top_attach">22</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1442,7 +1369,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">21</property>
+                                        <property name="top_attach">22</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1485,7 +1412,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">14</property>
+                                        <property name="top_attach">15</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1504,7 +1431,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">14</property>
+                                        <property name="top_attach">15</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1518,7 +1445,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">15</property>
+                                        <property name="top_attach">16</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1537,7 +1464,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">15</property>
+                                        <property name="top_attach">16</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1551,7 +1478,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">16</property>
+                                        <property name="top_attach">17</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1560,7 +1487,6 @@ otherwise - gravity south</property>
                                       <object class="GtkComboBox" id="terminal_delete_binding">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="model">terminal_delete_binding_liststore</property>
                                         <child>
                                           <object class="GtkCellRendererText" id="cellrenderertext6"/>
                                           <attributes>
@@ -1570,7 +1496,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">16</property>
+                                        <property name="top_attach">17</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1584,7 +1510,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">17</property>
+                                        <property name="top_attach">18</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1593,7 +1519,6 @@ otherwise - gravity south</property>
                                       <object class="GtkComboBox" id="terminal_backspace_binding">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="model">terminal_delete_binding_liststore</property>
                                         <child>
                                           <object class="GtkCellRendererText" id="cellrenderertext8"/>
                                           <attributes>
@@ -1603,7 +1528,7 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">17</property>
+                                        <property name="top_attach">18</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1842,7 +1767,7 @@ Allow use mouse scroll in some programs,for example in less</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">29</property>
+                                        <property name="top_attach">30</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1862,7 +1787,7 @@ Allow use mouse scroll in some programs,for example in less</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">18</property>
+                                        <property name="top_attach">19</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1876,7 +1801,7 @@ Allow use mouse scroll in some programs,for example in less</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">18</property>
+                                        <property name="top_attach">19</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1890,7 +1815,7 @@ Allow use mouse scroll in some programs,for example in less</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">19</property>
+                                        <property name="top_attach">20</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1904,7 +1829,7 @@ Allow use mouse scroll in some programs,for example in less</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">19</property>
+                                        <property name="top_attach">20</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1918,7 +1843,7 @@ Allow use mouse scroll in some programs,for example in less</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">20</property>
+                                        <property name="top_attach">21</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1937,7 +1862,7 @@ Allow use mouse scroll in some programs,for example in less</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">20</property>
+                                        <property name="top_attach">21</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -1967,6 +1892,41 @@ Allow use mouse scroll in some programs,for example in less</property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">3</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="label64">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="xalign">0</property>
+                                        <property name="label" translatable="yes">Default encoding</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">14</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkComboBox" id="terminal_default_encoding">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="has_entry">True</property>
+                                        <property name="entry_text_column">0</property>
+                                        <property name="popup_fixed_width">False</property>
+                                        <child>
+                                          <object class="GtkCellRendererText" id="cellrenderertext13"/>
+                                          <attributes>
+                                            <attribute name="text">1</attribute>
+                                          </attributes>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">14</property>
                                         <property name="width">1</property>
                                         <property name="height">1</property>
                                       </packing>
@@ -3220,6 +3180,56 @@ Allow use mouse scroll in some programs,for example in less</property>
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkListStore" id="terminal_notify_level_liststore">
+    <columns>
+      <!-- column-name gchararray1 -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Never</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Contents changed</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Title changed</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Any changes</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkAdjustment" id="terminal_opacity_adjustment">
+    <property name="upper">1</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="terminal_scrollback_lines_adjustment">
+    <property name="lower">-1</property>
+    <property name="upper">100000</property>
+    <property name="step_increment">10</property>
+    <property name="page_increment">100</property>
+  </object>
+  <object class="GtkAdjustment" id="terminal_timeout_before_notify_adjustment">
+    <property name="upper">1440</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkListStore" id="terminal_url_regexps">
+    <columns>
+      <!-- column-name match -->
+      <column type="gchararray"/>
+      <!-- column-name run -->
+      <column type="gchararray"/>
+      <!-- column-name tooltip -->
+      <column type="gchararray"/>
+      <!-- column-name match_color -->
+      <column type="GdkRGBA"/>
+      <!-- column-name match_s -->
+      <column type="gboolean"/>
+    </columns>
   </object>
   <object class="GtkAdjustment" id="terminal_width_adjustment">
     <property name="lower">1</property>

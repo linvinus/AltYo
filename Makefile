@@ -58,7 +58,7 @@ default: data/altyo.c
 source: data/altyo.c
 	valac -C -H $(VALA_FLAGS)  $(VALA_FILES)
 
-data/altyo.c: data/altyo.gresource.xml data/altyo.svg data/preferences.glade data/encodings_list.glade
+data/altyo.c: data/altyo.gresource.xml data/altyo.svg data/preferences.glade data/encodings_list.glade data/main_window_encodings_combo.glade
 	glib-compile-resources --sourcedir=./data --generate-source ./data/altyo.gresource.xml
 	
 clean:

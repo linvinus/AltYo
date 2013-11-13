@@ -771,10 +771,13 @@ public class VTTerminal : AYTab{
 		}
 
 		if(!this.is_locked(VTT_LOCK_SETTING.ENCODING)){
+			/* default - is special value
+			 * */
 			var s = my_conf.get_string("terminal_default_encoding","default");
 			if(s!="default"){
 				this.vte_term.set_encoding (s);
-			}
+			}else
+				this.vte_term.set_encoding (null);//reset to default
 		}
 
 		string[] url_regexps = my_conf.get_string_list("terminal_url_regexps",{"(\\\"\\s*)?((?i)http|https|ftp|sftp)\\://([a-zA-Z0-9\\-]+(\\.)?)+(:[0-9]+)?(/([a-zA-Z0-9\\(\\)\\[\\]\\{\\};\\!\\*'\"`\\:@&=\\+\\$\\,/\\?#\\-\\_\\.\\~%\\^<>\\|\\\\])*)?","xdg-open"},(ref new_val)=>{

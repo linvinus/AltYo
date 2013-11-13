@@ -2662,6 +2662,7 @@ public class QoptNotebook: Notebook{
 		
 		var encodinsg_store = builder.get_object ("encodings_liststore") as Gtk.ListStore;
 		encodinsg_store.set_sort_column_id(1,Gtk.SortType.ASCENDING);
+		this.encodings_combo.model=encodinsg_store;
 		// Encodings autocompletion:
 		Gtk.EntryCompletion enc_completion = new Gtk.EntryCompletion ();
 
@@ -2688,7 +2689,12 @@ public class QoptNotebook: Notebook{
 			}
 			return false;
 		});
-
+		//connect model from encodings_list.glade to main_window_encodings_combo.glade
+		var del_combo = builder.get_object ("terminal_delete_binding") as Gtk.ComboBox;
+		del_combo.model= builder.get_object ("terminal_delete_binding_liststore") as Gtk.ListStore;
+		var bps_combo = builder.get_object ("terminal_backspace_binding") as Gtk.ComboBox;
+		bps_combo.model= builder.get_object ("terminal_delete_binding_liststore") as Gtk.ListStore;
+				
 		var apply_button = new Button();
 		var img = new Image.from_stock ("gtk-apply",Gtk.IconSize.SMALL_TOOLBAR);
 		apply_button.add(img);

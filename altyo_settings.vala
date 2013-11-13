@@ -31,7 +31,19 @@ public class AYSettings : AYTab{
 		this.builder = new Gtk.Builder ();
  			try {
 				this.builder.add_from_resource ("/org/gnome/altyo/preferences.glade");
+				this.builder.add_from_resource("/org/gnome/altyo/encodings_list.glade");
 				this.keybindings_store = builder.get_object ("keybindings_store") as Gtk.ListStore;
+
+				var encodings_combo = builder.get_object ("terminal_default_encoding") as Gtk.ComboBox;
+				var encodinsg_store = this.builder.get_object ("encodings_liststore") as Gtk.ListStore;
+				encodinsg_store.set_sort_column_id(1,Gtk.SortType.ASCENDING);
+				encodings_combo.model=encodinsg_store;
+				//connect model from encodings_list.glade to preferences.glade
+				var del_combo = builder.get_object ("terminal_delete_binding") as Gtk.ComboBox;
+				del_combo.model= this.builder.get_object ("terminal_delete_binding_liststore") as Gtk.ListStore;
+				var bps_combo = builder.get_object ("terminal_backspace_binding") as Gtk.ComboBox;
+				bps_combo.model= this.builder.get_object ("terminal_delete_binding_liststore") as Gtk.ListStore;
+				
 				this.builder.connect_signals(this);
 				var B = builder.get_object ("settings-scrolledwindow") as Gtk.Widget;
 				this.hbox.add(B);
@@ -705,6 +717,27 @@ public class AYSettings : AYTab{
 								return false;//continue
 							});
 					
+						}else
+						if(key=="terminal_default_encoding"){
+							unowned TreeIter iter;
+							string term_encoding = this.my_conf.get_string(key,"");
+							var encodings_combo = builder.get_object ("terminal_default_encoding") as Gtk.ComboBox;
+							bool found=false;
+							//try to find encoding in a list
+							if(encodings_combo.model.get_iter_first(out iter))
+								do{
+									unowned string s;
+									encodings_combo.model.get(iter,0,out s);
+									if(s == term_encoding){
+										found=true;
+										break;
+										}
+								}while(encodings_combo.model.iter_next(ref iter));
+								
+							if(found)
+								encodings_combo.set_active_iter(iter);
+							else
+								((Entry)encodings_combo.get_child()).set_text(term_encoding);							
 						}else{
 							var B = builder.get_object (key) as Gtk.Entry;
 							if(B!=null){
@@ -910,7 +943,20 @@ public class AYSettings : AYTab{
 									if(val!="none")
 										this.ayobject.tab_sort();
 									}
-							}					
+							}
+						}else
+						if(key=="terminal_default_encoding"){
+							unowned TreeIter iter;
+							var encodings_combo = builder.get_object ("terminal_default_encoding") as Gtk.ComboBox;
+							var new_encoding = ((Entry)encodings_combo.get_child()).get_text();
+							if(new_encoding==""){
+								if(this.my_conf.get_string(key,new_encoding)!="default"){
+									this.my_conf.set_string(key,"default");
+									((Entry)encodings_combo.get_child()).set_text("default");
+								}
+							}else if(new_encoding!="default"){
+								this.my_conf.set_string(key,new_encoding);
+							}
 						}else{
 							var B = builder.get_object (key) as Gtk.Entry;
 							if(B!=null){

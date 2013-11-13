@@ -48,7 +48,7 @@ VALA_FILES  = vapi/config.vapi \
 #VALA_FLAGS += --pkg gnome-keyring-1 -D HAVE_QLIST
 #VALA_FILES += 	altyo_quick_connectios.vala
 
-GLADE_FILES = data/preferences.glade
+GLADE_FILES = data/preferences.glade data/encodings_list.glade data/main_window_encodings_combo.glade
 
 
 default: data/altyo.c
@@ -58,7 +58,7 @@ default: data/altyo.c
 source: data/altyo.c
 	valac -C -H $(VALA_FLAGS)  $(VALA_FILES)
 
-data/altyo.c: data/altyo.gresource.xml data/altyo.svg data/preferences.glade data/encodings_list.glade data/main_window_encodings_combo.glade
+data/altyo.c: data/altyo.gresource.xml data/altyo.svg $(GLADE_FILES)
 	glib-compile-resources --sourcedir=./data --generate-source ./data/altyo.gresource.xml
 	
 clean:

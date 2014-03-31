@@ -792,8 +792,18 @@ public class VTMainWindow : Window{
 			rectangle=gscreen.get_monitor_workarea(current_monitor);
 
 
-			int w = conf.get_integer("terminal_width",80);//if less 101 then it persentage
-			int h = conf.get_integer("terminal_height",50);//if less 101 then it persentage
+			int w = conf.get_integer("terminal_width",80,(ref new_val)=>{
+				if(new_val<1){new_val=80;return CFG_CHECK.REPLACE;}
+				return CFG_CHECK.OK;
+			});//if less 101 then it persentage
+			int h = conf.get_integer("terminal_height",50,(ref new_val)=>{
+				if(new_val<1){new_val=50;return CFG_CHECK.REPLACE;}
+				return CFG_CHECK.OK;
+			});//if less 101 then it persentage
+			int pos_y = conf.get_integer("window_position_y",-1,(ref new_val)=>{
+				if(new_val<-1){new_val=-1;return CFG_CHECK.REPLACE;}
+				return CFG_CHECK.OK;
+			});//if less 101 then it persentage
 
 			this.fullscreen_on_maximize = conf.get_boolean("window_fullscreen_on_maximize",false);
 			var max_tmp = conf.get_boolean("window_start_maximized",false);
@@ -828,22 +838,25 @@ public class VTMainWindow : Window{
 			if(this.position>3)this.position=1;
 
 			switch(this.position){
-				case 0:
+				case 0://left
 					this.orig_x=rectangle.x;
 				break;
-				case 1:
+				case 1://center
 					this.orig_x=rectangle.x+((rectangle.width/2)-(this.ayobject.terminal_width/2));
 				break;
-				case 2:
+				case 2://right
 					this.orig_x=rectangle.x+(rectangle.width-this.ayobject.terminal_width);
 				break;
 			}
 
 			//this.orig_x=rectangle.x;
-			if(this.gravity_north_west)
-				this.orig_y=rectangle.y;
-			else
-				this.orig_y=rectangle.y+rectangle.height;
+			if(pos_y < 0){// auto position
+				if(this.gravity_north_west)
+					this.orig_y=rectangle.y;
+				else
+					this.orig_y=rectangle.y+rectangle.height;
+			}else //manual position
+				this.orig_y = pos_y;
 
 			//this.tasks_notebook.set_size_request(this.terminal_width,this.terminal_height);
 			//we can't change height , otherwise vte will change

@@ -1,3 +1,10 @@
+altyo (0.3~rc13-linvinus1) quantal; urgency=low
+
+  * improvement: add possibility to adjust vertical position on secondary screen,  gdk_screen_get_monitor_workarea returns workarea only for the primary monitor.
+  * UPDATE: Russian translation
+
+ -- denis <linvinus@gmail.com>  Wed, 02 Apr 2014 21:29:11 +0400
+
 altyo (0.3~rc12-linvinus1) quantal; urgency=low
 
   * improvements: prevent blinking of tabs on mouse click

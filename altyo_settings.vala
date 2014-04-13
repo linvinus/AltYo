@@ -16,6 +16,7 @@ public class AYSettings : AYTab{
 	public AYObject ayobject {get;set;default=null;}
 	private Gtk.ListStore keybindings_store;
 	private string autorun_file;
+	private string monitor_name;/*save monitor name on which settings was opened*/
 	public AYSettings(MySettings my_conf,Notebook notebook, int tab_index,AYObject ayo) {
 		base(my_conf, notebook, tab_index);
 		this.tbutton.set_title(tab_index, _("AYsettings") );
@@ -615,7 +616,11 @@ public class AYSettings : AYTab{
 	}
 	
 	public void get_from_conf() {
-
+		unowned Gdk.Screen gscreen = this.ayobject.main_window.get_screen ();
+        int win_x,win_y;
+        this.ayobject.main_window.get_position (out win_x, out win_y);	
+		this.monitor_name = gscreen.get_monitor_plug_name(gscreen.get_monitor_at_point (win_x,win_y));
+		
 		var keys = this.my_conf.get_profile_keys();
 		foreach(var key in keys){
 			switch(this.my_conf.get_key_type(key)){
@@ -635,8 +640,7 @@ public class AYSettings : AYTab{
 					}else debug(" no gui for key %s",key);
 				break;
 				case CFG_TYPE.TYPE_INTEGER:
-				if(key=="position" ||
-				   key=="terminal_cursorshape" ||
+				if(key=="terminal_cursorshape" ||
 				   key=="terminal_cursor_blinkmode" ||
 				   key=="terminal_delete_binding" ||
 				   key=="terminal_backspace_binding" ||
@@ -645,6 +649,18 @@ public class AYSettings : AYTab{
 				   key=="window_new_tab_position" ){
 					var B = builder.get_object (key) as Gtk.ComboBox;
 						B.active=this.my_conf.get_integer(key,0);
+				}else if(key=="window_position_x_%s".printf(this.monitor_name) ){
+					string unikey = key.substring(0,key.index_of (this.monitor_name)-1);//window_position_x_VGA-0 -> window_position_x
+					var B = builder.get_object (unikey) as Gtk.ComboBox;
+						B.active=this.my_conf.get_integer(key,0);					
+				}else if(key=="terminal_width_%s".printf(this.monitor_name) ||
+					   key=="terminal_height_%s".printf(this.monitor_name) ||
+					   key=="window_position_y_%s".printf(this.monitor_name) ) {
+						   string unikey = key.substring(0,key.index_of (this.monitor_name)-1);//terminal_width_VGA-0 -> terminal_width
+							var B = builder.get_object (unikey) as Gtk.SpinButton;
+							if(B!=null){
+								B.value=this.my_conf.get_integer(key,0);
+							}else debug(" no gui for key %s",key);
 				}else{
 					var B = builder.get_object (key) as Gtk.SpinButton;
 					if(B!=null){
@@ -655,7 +671,7 @@ public class AYSettings : AYTab{
 				case CFG_TYPE.TYPE_STRING:
 						if(key=="window_default_monitor"){
 							var store = builder.get_object (key+"_liststore") as Gtk.ListStore;
-							unowned Gdk.Screen gscreen = this.ayobject.main_window.get_screen ();
+							
 							for(var i=0;i<gscreen.get_n_monitors ();i++){
 								TreeIter? data_iter=null;
 								store.append (out data_iter);
@@ -666,10 +682,9 @@ public class AYSettings : AYTab{
 							var combo = builder.get_object (key) as Gtk.ComboBox;
 							var entry = combo.get_child() as Gtk.Entry;
 							entry.text=this.my_conf.get_string(key,"");
-							int x,y;
-							this.ayobject.main_window.get_position (out x, out y);
+
 							var curr_monitor = builder.get_object (key+"_label") as Gtk.Label;
-							curr_monitor.label = gscreen.get_monitor_plug_name(gscreen.get_monitor_at_point (x,y));
+							curr_monitor.label = this.monitor_name;
 						}else
 						if(key=="terminal_font"){
 							var B = builder.get_object (key) as Gtk.FontButton;
@@ -861,8 +876,7 @@ public class AYSettings : AYTab{
 					}else debug(" no gui for key %s",key);
 				break;
 				case CFG_TYPE.TYPE_INTEGER:
-				if(key=="position" ||
-				   key=="terminal_cursorshape" ||
+				if(key=="terminal_cursorshape" ||
 				   key=="terminal_cursor_blinkmode" ||
 				   key=="terminal_delete_binding" ||
 				   key=="terminal_backspace_binding" ||
@@ -872,6 +886,20 @@ public class AYSettings : AYTab{
 					var B = builder.get_object (key) as Gtk.ComboBox;
 						if(B.active!=this.my_conf.get_integer(key,0))
 							this.my_conf.set_integer(key,B.active);
+				}else if(key=="window_position_x_%s".printf(this.monitor_name) ){
+					string unikey = key.substring(0,key.index_of (this.monitor_name)-1);//window_position_x_VGA-0 -> window_position_x
+					var B = builder.get_object (unikey) as Gtk.ComboBox;
+						if(B.active!=this.my_conf.get_integer(key,0))
+							this.my_conf.set_integer(key,B.active);
+				}else if(key=="terminal_width_%s".printf(this.monitor_name) ||
+					   key=="terminal_height_%s".printf(this.monitor_name) ||
+					   key=="window_position_y_%s".printf(this.monitor_name) ) {
+						   string unikey = key.substring(0,key.index_of (this.monitor_name)-1);//terminal_width_VGA-0 -> terminal_width
+							var B = builder.get_object (unikey) as Gtk.SpinButton;
+							if(B!=null){
+								if(B.value!=this.my_conf.get_integer(key,0))
+									this.my_conf.set_integer(key,(int)B.value);
+							}else debug(" no gui for key %s",key);
 				}else{
 					var B = builder.get_object (key) as Gtk.SpinButton;
 					if(B!=null){

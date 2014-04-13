@@ -249,6 +249,26 @@ public class MySettings : Object {
 				}catch (KeyFileError err) {}
 			version[VER.rc]=8;//update version
 		}
+		/*if was 0.3.8
+		 * now window position and size is unique for each monitor
+		 * */
+		if(version[VER.major]==0 && version[VER.minor]==3 && version[VER.rc]<9){
+			try {
+				string monitor=kf.get_string(this.profile,"window_default_monitor");
+
+				kf.set_integer(this.profile,"terminal_width_%s".printf(monitor),kf.get_integer(this.profile,"terminal_width"));
+				kf.set_integer(this.profile,"terminal_height_%s".printf(monitor),kf.get_integer(this.profile,"terminal_height"));
+				kf.set_integer(this.profile,"window_position_y_%s".printf(monitor),kf.get_integer(this.profile,"window_position_y"));
+				kf.set_integer(this.profile,"window_position_x_%s".printf(monitor),kf.get_integer(this.profile,"position"));
+				
+				kf.remove_key(this.profile,"terminal_height");
+				kf.remove_key(this.profile,"terminal_width");
+				kf.remove_key(this.profile,"window_position_y");
+				kf.remove_key(this.profile,"position");
+			}catch (KeyFileError err) {}
+			
+			version[VER.rc]=9;//update version
+		}
 
 		return version;
 	}

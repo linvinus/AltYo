@@ -227,7 +227,7 @@ public class VTMainWindow : Window{
 			this.window_set_active();
 		}
 		GLib.Idle.add(this.ayobject.create_tabs);
-		
+
 		debug("end win show");
 
 	}
@@ -545,6 +545,19 @@ public class VTMainWindow : Window{
 					this.update_geometry_hints(event.height,event.width,event.height,event.width,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
 			}
 		}
+		
+		/*update position and size when window has moved on another monitor*/
+		if(event.type==13 &&this.current_state==WStates.VISIBLE && !this.pull_animation_active){
+			unowned Gdk.Screen gscreen = this.get_screen ();
+			int current_monitor = gscreen.get_monitor_at_point (event.x,event.y);
+			if(this.orig_monitor != current_monitor){
+				/*event on monitor changed*/
+				this.orig_x=event.x;
+				this.orig_y=event.y;
+				this.configure_position();
+				this.update_position_size();
+			}
+		}
 	return ret;
 	}
 
@@ -718,11 +731,6 @@ public class VTMainWindow : Window{
 			css_main.load_from_data (style_str,-1);
 			Gtk.StyleContext.add_provider_for_screen(this.get_screen(),css_main,Gtk.STYLE_PROVIDER_PRIORITY_USER);
 		}
-		this.position  = conf.get_integer("position",1,(ref new_val)=>{
-			if(new_val>3){new_val=this.position;return CFG_CHECK.REPLACE;}
-			if(new_val<0){new_val=this.position;return CFG_CHECK.REPLACE;}
-			return CFG_CHECK.OK;
-			});
 
 		this.animation_enabled=conf.get_boolean("animation_enabled",true);
 		this.pull_steps=conf.get_integer("animation_pull_steps",10,(ref new_val)=>{
@@ -775,6 +783,7 @@ public class VTMainWindow : Window{
 			unowned Gdk.Screen gscreen = this.get_screen ();
 			debug("x=%d,y=%d",this.orig_x,this.orig_y);
 			int current_monitor;
+
 			if(this.mouse_follow){
 				X.Display display = new X.Display();
 				X.Event event = X.Event();
@@ -787,24 +796,36 @@ public class VTMainWindow : Window{
 				current_monitor = gscreen.get_monitor_at_point (event.xbutton.x,event.xbutton.y);
 			}else
 			    current_monitor = gscreen.get_monitor_at_point (this.orig_x,this.orig_y);
-			debug("monitor name %s",gscreen.get_monitor_plug_name (current_monitor));
+
+			if(this.orig_monitor != current_monitor)
+				this.orig_monitor=current_monitor;
+			    
+			string monitor_name = gscreen.get_monitor_plug_name (current_monitor);
+			debug("monitor name %s",monitor_name);
 			Gdk.Rectangle rectangle;
 			rectangle=gscreen.get_monitor_workarea(current_monitor);
 
-
-			int w = conf.get_integer("terminal_width",80,(ref new_val)=>{
-				if(new_val<1){new_val=80;return CFG_CHECK.REPLACE;}
+			/*get width,height,window_position_x,window_position_y for current monitor*/
+			int w = conf.get_integer("terminal_width_%s".printf(monitor_name),80,(ref new_val)=>{
+				if(new_val < 1){new_val = 80; return CFG_CHECK.REPLACE;}
 				return CFG_CHECK.OK;
 			});//if less 101 then it persentage
-			int h = conf.get_integer("terminal_height",50,(ref new_val)=>{
-				if(new_val<1){new_val=50;return CFG_CHECK.REPLACE;}
+		
+			int h = conf.get_integer("terminal_height_%s".printf(monitor_name),50,(ref new_val)=>{
+				if(new_val < 1){new_val = 50; return CFG_CHECK.REPLACE;}
 				return CFG_CHECK.OK;
 			});//if less 101 then it persentage
-			int pos_y = conf.get_integer("window_position_y",-1,(ref new_val)=>{
+			
+			int pos_y = conf.get_integer("window_position_y_%s".printf(monitor_name),-1,(ref new_val)=>{
 				if(new_val<-1){new_val=-1;return CFG_CHECK.REPLACE;}
 				return CFG_CHECK.OK;
 			});//if less 101 then it persentage
 
+			this.position  = conf.get_integer("window_position_x_%s".printf(monitor_name),1,(ref new_val)=>{
+				if(new_val>3 || new_val<0){new_val=1;return CFG_CHECK.REPLACE;}
+				return CFG_CHECK.OK;
+				});
+			
 			this.fullscreen_on_maximize = conf.get_boolean("window_fullscreen_on_maximize",false);
 			var max_tmp = conf.get_boolean("window_start_maximized",false);
 
@@ -834,8 +855,6 @@ public class VTMainWindow : Window{
 					this.ayobject.terminal_height=h;
 				}
 			}
-
-			if(this.position>3)this.position=1;
 
 			switch(this.position){
 				case 0://left
@@ -1182,15 +1201,19 @@ public class AYObject :Object{
 			if(new_val<0){ new_val=0; return CFG_CHECK.REPLACE;}
 			return CFG_CHECK.OK;
 			});
-
-		this.terminal_width = conf.get_integer("terminal_width",80,(ref new_val)=>{
-			if(new_val<1){new_val=this.terminal_width;return CFG_CHECK.REPLACE;}
-			return CFG_CHECK.OK;
-			});
-		this.terminal_height = conf.get_integer("terminal_height",50,(ref new_val)=>{
-			if(new_val<1){new_val=this.terminal_height;return CFG_CHECK.REPLACE;}
-			return CFG_CHECK.OK;
-			});
+			
+// this.terminal_width and
+// this.terminal_height will be updated in VTMainWindow.configure_position
+//
+//~		this.terminal_width = conf.get_integer("terminal_width_%s".printf(monitor_name),80,(ref new_val)=>{
+//~			if(new_val<1){new_val=this.terminal_width;return CFG_CHECK.REPLACE;}
+//~			return CFG_CHECK.OK;
+//~			});
+//~			
+//~		this.terminal_height = conf.get_integer("terminal_height_%s".printf(monitor_name),50,(ref new_val)=>{
+//~			if(new_val<1){new_val=this.terminal_height;return CFG_CHECK.REPLACE;}
+//~			return CFG_CHECK.OK;
+//~			});
 
 		this.hvbox.background_only_behind_widgets= !conf.get_boolean("tab_box_have_background",false);
 

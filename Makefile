@@ -74,8 +74,10 @@ install: gen_mo
 	cp -a ./data/altyo_standalone.desktop $(DESTDIR)$(PREFIX)/share/applications
 	test -z "$(DESTDIR)$(PREFIX)/share/locale/ru/LC_MESSAGES" || mkdir -p "$(DESTDIR)$(PREFIX)/share/locale/ru/LC_MESSAGES";
 	cp -a ./po/ru/LC_MESSAGES/altyo.mo $(DESTDIR)$(PREFIX)/share/locale/ru/LC_MESSAGES
-	test -z "$(DESTDIR)$(PREFIX)/share/icons" || mkdir -p "$(DESTDIR)$(PREFIX)/share/icons";
-	cp -a ./data/altyo.png $(DESTDIR)$(PREFIX)/share/icons
+	test -z "$(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps" || mkdir -p "$(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps";
+	cp -a ./data/altyo.png $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps
+	test -z "$(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps" || mkdir -p "$(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps";
+	cp -a ./data/altyo.svg $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps
 
 gen_po:
 	xgettext -o ./po/altyo.po --from-code=UTF-8 -language=C --keyword=_ --keyword=N_ $(VALA_FILES) $(GLADE_FILES)

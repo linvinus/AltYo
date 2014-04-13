@@ -19,12 +19,12 @@ LINUX.DISTRIB.ID=ubuntu
 endif
 
 CHANGELOG_TAG=${shell grep -m 1 "^altyo" ./debian/changelog | sed 's/.*(//' | sed 's/).*$$//'| sed 's/~/_/' | sed 's/:/%/'}
-GIT_HASH=${shell git log -1 --pretty=format:%h}
-
+GIT_HASH=${shell which git >/dev/null && git log -1 --pretty=format:%h}
+VALA_FLAGS ?= 
 VALA_FLAGS += -v
 VALA_FLAGS += --disable-warnings
 #VALA_FLAGS += -g --save-temps -X -O0
-VALA_FLAGS += -X -DGETTEXT_PACKAGE=\"$(PRG_NAME)\" -X -DVERSION=\"0.2\" -X -DAY_GIT_HASH=\"$(GIT_HASH)\"
+VALA_FLAGS += -X -DGETTEXT_PACKAGE=\"$(PRG_NAME)\" -X -DAY_GIT_HASH=\"$(GIT_HASH)\" -X -DAY_CHANGELOG_TAG=\"$(CHANGELOG_TAG)\"
 #\ -I.\ -include\ "./config.h" -v
 ifeq ($(LINUX.DISTRIB.ID),ubuntu)
 #debian specific possibility

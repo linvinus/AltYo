@@ -8,6 +8,16 @@
 
 # Uncomment this to turn on verbose mode.
 export DH_VERBOSE=1
+export VALA_FLAGS= -g
 
 %:
 	dh $@ 
+
+override_dh_strip:
+	# Stripped symbols go into -dbg package
+	dh_strip --dbg-package=altyo-dbg
+
+override_dh_auto_install:
+	dh_auto_install --destdir=debian/altyo
+
+.PHONY: override_dh_auto_install override_dh_strip

@@ -13,3 +13,11 @@ Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: AltYo - drop-down terminal emulator, written in vala, depends only on libvte and gtk3.
  AltYo - drop-down terminal emulator, written in vala, depends only on libvte and gtk3.
+
+Package: altyo-dbg
+Architecture: any
+Section: debug
+Priority: extra
+Depends: altyo (= ${binary:Version}), ${misc:Depends}
+Description: debugging symbols for AltYo
+ AltYo - drop-down terminal emulator, written in vala, depends only on libvte and gtk3.

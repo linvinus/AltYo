@@ -246,6 +246,7 @@ int main (string[] args) {
 
 				configure_debug(conf);
 				debug("git_hash=%s",AY_GIT_HASH);
+				debug("changelog_tag=%s",AY_CHANGELOG_TAG);
 
 				conf.on_load.connect(()=>{
 					configure_debug(conf);

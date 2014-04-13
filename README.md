@@ -21,6 +21,7 @@ Main program advantages.
 * You may use css to styling program (thanks to gtk3)
 * Multi monitor support.  
   * You can setup, on which monitor start by default.  
+  * Individual window size and position for each monitor.
   * Program have mode "Follow the mouse", in this mode, after hiding, window will shown on same monitor with mouse pointer.
 * Tiling window manager support (usual window).  
      Use `--standalone` command line option to run in tiling window manager,  

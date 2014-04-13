@@ -68,13 +68,13 @@ struct Globals{
 					{ "reload", 'r', 0, OptionArg.NONE, ref Globals.reload,N_("Reload configuration"), null },
 					{ "cfg", 'c', 0, OptionArg.FILENAME, ref Globals.cmd_conf_file,N_("Read configuration from file"), N_("/path/to/config.ini") },
 					/*The option takes a string argument, multiple uses of the option are collected into an array of strings. */
-					{ "exec", 'e', 0, OptionArg.STRING_ARRAY, ref Globals.exec_file_with_args,N_("run command in new tab"), N_("\"command arg1 argN...\"") },
-					{ "toggle", 0, 0, OptionArg.NONE, ref Globals.toggle,N_("show/hide window"), null },
+					{ "exec", 'e', 0, OptionArg.STRING_ARRAY, ref Globals.exec_file_with_args,N_("Run command in new tab"), N_("\"command arg1 argN...\"") },
+					{ "toggle", 0, 0, OptionArg.NONE, ref Globals.toggle,N_("Show/hide window"), null },
 					{ "id", 0, 0, OptionArg.STRING, ref Globals.app_id,N_("Set application id, none means disable application id"),"org.gtk.altyo_my,none" },
 					{ "disable_hotkey", 0, 0, OptionArg.NONE, ref Globals.disable_hotkey,N_("Disable main hotkey"),null},
 					{ "standalone", 0, 0, OptionArg.NONE, ref Globals.standalone_mode,N_("Disable control of window dimension, and set --id=none"),null},
 					{ "default_path", 0, 0, OptionArg.STRING, ref Globals.path,N_("Set/update default path"),"/home/user/special" },
-					{ "config_readonly", 0, 0, OptionArg.NONE, ref Globals.config_readonly, null, null },
+					{ "config_readonly", 0, 0, OptionArg.NONE, ref Globals.config_readonly, N_("Lock any configuration changes"), null },
 					{ null }
 			};
 

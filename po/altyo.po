@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-02 21:23+0400\n"
+"POT-Creation-Date: 2014-04-13 12:18+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,7 +30,7 @@ msgid "/path/to/config.ini"
 msgstr ""
 
 #: main.vala:71
-msgid "run command in new tab"
+msgid "Run command in new tab"
 msgstr ""
 
 #: main.vala:71
@@ -38,7 +38,7 @@ msgid "\"command arg1 argN...\""
 msgstr ""
 
 #: main.vala:72
-msgid "show/hide window"
+msgid "Show/hide window"
 msgstr ""
 
 #: main.vala:73
@@ -55,6 +55,10 @@ msgstr ""
 
 #: main.vala:76
 msgid "Set/update default path"
+msgstr ""
+
+#: main.vala:77
+msgid "Lock any configuration changes"
 msgstr ""
 
 #: altyo_terminal.vala:401

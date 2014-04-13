@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-02 21:23+0400\n"
+"POT-Creation-Date: 2014-04-13 12:18+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -511,6 +511,10 @@ msgstr "Корейский"
 msgid "Left"
 msgstr "Слева"
 
+#: main.vala:77
+msgid "Lock any configuration changes"
+msgstr "Заблокировать любые изменения конфигурации"
+
 #: data/preferences.glade:1931
 msgid "Look and feel"
 msgstr "Внешний вид и поведение"
@@ -757,6 +761,10 @@ msgstr "Румынский"
 msgid "Run"
 msgstr "Запустить"
 
+#: main.vala:71
+msgid "Run command in new tab"
+msgstr "Запустить команду в новой закладке"
+
 #: altyo_terminal.vala:995
 msgid "Run link Ctrl+left mouse button"
 msgstr "Открыть ссылку Ctrl+левая кнопка мыши"
@@ -832,6 +840,10 @@ msgstr "Показать/скрыть окно AltYo"
 #: altyo_window.vala:1871
 msgid "Show/Hide Quick list"
 msgstr "Показать/скрыть быстрые команды"
+
+#: main.vala:72
+msgid "Show/hide window"
+msgstr "Показать/скрыть окно"
 
 #: altyo_window.vala:1988
 msgid ""
@@ -1103,14 +1115,6 @@ msgstr "px"
 #: data/preferences.glade:113
 msgid "remove"
 msgstr "Удалить"
-
-#: main.vala:71
-msgid "run command in new tab"
-msgstr "запустить команду в новой закладке"
-
-#: main.vala:72
-msgid "show/hide window"
-msgstr "показать/скрыть окно"
 
 #: data/preferences.glade:2227
 msgid ""

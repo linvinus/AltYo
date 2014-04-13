@@ -1,3 +1,12 @@
+altyo (0.3~rc14-linvinus1) quantal; urgency=low
+
+  * improvement: install application icon according to XDG specification http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html#install_icons
+  * improvements: 	now window position and size is unique for each monitor,
+			automatically update position and size when window has moved on another monitor
+  * update: Russian translation
+
+ -- denis <linvinus@gmail.com>  Sun, 13 Apr 2014 17:54:33 +0400
+
 altyo (0.3~rc13-linvinus1) quantal; urgency=low
 
   * improvement: add possibility to adjust vertical position on secondary screen,  gdk_screen_get_monitor_workarea returns workarea only for the primary monitor.

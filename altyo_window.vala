@@ -522,7 +522,7 @@ public class VTMainWindow : Window{
 						this.update_maximized_size=true;
 					}
 				}else{//unmaximize
-				debug("new state unmaximize");
+					debug("new state unmaximize");
 					if(this.maximized){
 						this.maximized = false;
 						this.config_maximized=false;
@@ -556,7 +556,7 @@ public class VTMainWindow : Window{
 			}
 		}
 		
-		/*update position and size when window has moved on another monitor*/
+		/*update position and size when window has moved to another monitor*/
 		if(event.type==13 && this.current_state==WStates.VISIBLE && !this.pull_animation_active && !this.pull_active){
 			unowned Gdk.Screen gscreen = this.get_screen ();
 			int current_monitor = gscreen.get_monitor_at_point (event.x,event.y);
@@ -816,6 +816,10 @@ public class VTMainWindow : Window{
 			string monitor_name = gscreen.get_monitor_plug_name (current_monitor);
 			debug("monitor name %s",monitor_name);
 			Gdk.Rectangle rectangle;
+			
+			/* gdk_screen_get_monitor_workarea returns workarea only for the primary monitor.
+			 * and only when primary monitor is on the left side
+			 * */
 			rectangle=gscreen.get_monitor_workarea(current_monitor);
 
 			/*get width,height,window_position_x,window_position_y for current monitor*/
@@ -852,8 +856,7 @@ public class VTMainWindow : Window{
 			/*calculate window size according to config_maximized*/
 			if(this.config_maximized){
 				/*used in pull_up, only if start hidden*/
-				this.ayobject.terminal_width=(int)rectangle.width;
-				this.ayobject.terminal_height=(int)rectangle.height;
+				pos_y = (int)rectangle.height/4;//workaroud, for bug with gdk_screen_get_monitor_workarea when window_start_maximized==true
 			}else{
 
 				if(w<101){
@@ -887,13 +890,14 @@ public class VTMainWindow : Window{
 					this.orig_y=rectangle.y;
 				else
 					this.orig_y=rectangle.y+rectangle.height;
-			}else //manual position
+			}else{ //manual position
 				this.orig_y = pos_y;
+			}
 
 			//this.tasks_notebook.set_size_request(this.terminal_width,this.terminal_height);
 			//we can't change height , otherwise vte will change
 			//this.tasks_notebook.set_size_request(terminal_width,this.terminal_height);
-			debug("new2 x=%d,y=%d",this.orig_x,this.orig_y);
+			debug("new2 x=%d,y=%d w=%d h=%d",this.orig_x,this.orig_y,rectangle.width,rectangle.height);
 	}//configure_position
 
 

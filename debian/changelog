@@ -1,3 +1,9 @@
+altyo (0.3~rc15-linvinus1) quantal; urgency=low
+
+  * improvement: duild altyo-dbg package, print more debugging marks
+
+ -- denis <linvinus@gmail.com>  Mon, 14 Apr 2014 10:05:47 +0400
+
 altyo (0.3~rc14-linvinus1) quantal; urgency=low
 
   * improvement: install application icon according to XDG specification http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html#install_icons

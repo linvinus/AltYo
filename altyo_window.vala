@@ -381,6 +381,7 @@ public class VTMainWindow : Window{
 				//debug("ff=%d this.pull_step=%d h=%d",ff,this.pull_step,h);
 				//debug("on_pull_down h=%d",h);
 				if(h==0)h=1;//set minimum height
+				this.unfullscreen();//force unfullscreen, some WMs sets fullscreen state if window size equal to fullscreen
 				this.resize(this.pull_w,h);
 				this.pull_step++;
 //~ 				this.update_events();
@@ -431,29 +432,31 @@ public class VTMainWindow : Window{
 			return;
 		}
 		this.pull_active=true;
-		debug("reparent to offscreen window");
+		//debug("reparent to offscreen window");
 		//this.get_child().reparent(this.pixwin);//reparent to offscreen window
 		var ch=this.get_child();//.reparent(this);//reparent from offscreen window
 		this.remove(ch);
 		this.pixwin.add(ch);
-		this.resize(this.pull_w,pull_h-1);//work around: force repainting window content in offscreenwindow for gtk3.8
-		debug("end reparent to offscreen window");
+		//debug("end reparent to offscreen window");
 
 		if(this.maximized){
 			//correct size after unmaximize
 			//just to be shure that terminal will not change size
 			this.ayobject.main_vbox.set_size_request(orig_w_main_vbox,orig_h_main_vbox);
-			this.update_events();
+			//this.update_events();
 
 			/*reset geometry hints, allow min height =1
 			 * */
 			this.update_geometry_hints(0,this.pull_w,1,this.pull_w,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
+			
 			this.mainvt_unmaximize();/*not working in metacity on secondary monitor, seems metacity bug*/
+			this.resize(this.pull_w,this.pull_h-1);
 			this.move(this.pull_x,this.pull_y);
-		}
+		}else
+			this.resize(this.pull_w,this.pull_h-1);//work around: force repainting window content in offscreenwindow for gtk3.8
 
-		debug("pull_up 0-%d  this.get_allocated_height=%d this.orig_h=%d",this.get_allocated_height()-this.pull_h, this.get_allocated_height(),this.pull_h);
-		debug("pull_up orig_h=%d orig_w=%d",this.pull_h,this.pull_w);
+		//debug("pull_up 0-%d  this.get_allocated_height=%d this.orig_h=%d",this.get_allocated_height()-this.pull_h, this.get_allocated_height(),this.pull_h);
+		//debug("pull_up orig_h=%d orig_w=%d",this.pull_h,this.pull_w);
 		if (this.get_allocated_height()>1)
 			this.pull_step=0;
 		else
@@ -506,6 +509,7 @@ public class VTMainWindow : Window{
 			//ignore maximize event when pull active
 			if( (event.changed_mask & Gdk.WindowState.MAXIMIZED)==Gdk.WindowState.MAXIMIZED ){//maximize state change
 				if((Gdk.WindowState.MAXIMIZED & event.new_window_state)== Gdk.WindowState.MAXIMIZED){//maximize
+					debug("new state maximize");
 					if(!this.maximized){
 						this.maximized = true;
 						this.config_maximized=true;
@@ -515,6 +519,7 @@ public class VTMainWindow : Window{
 						this.update_maximized_size=true;
 					}
 				}else{//unmaximize
+				debug("new state unmaximize");
 					if(this.maximized){
 						this.maximized = false;
 						this.config_maximized=false;
@@ -648,6 +653,7 @@ public class VTMainWindow : Window{
 				/* update position only in unmaximized mode
 				 * */
 				if(!this.maximized && !this.config_maximized){
+						this.unfullscreen();//force unfullscreen, some WMs sets fullscreen state if window size equal to fullscreen
 						int hvbox_h,hvbox_h_ignore;
 						this.ayobject.hvbox.get_preferred_height_for_width(this.ayobject.terminal_width,out hvbox_h,out hvbox_h_ignore);
 						//int hvbox_h=this.ayobject.hvbox.get_allocated_height();
@@ -1002,6 +1008,7 @@ public class VTMainWindow : Window{
 	
 	
 	public void mainvt_maximize(){
+		debug("mainvt_maximize");
 		this.maximize();
 		if(this.fullscreen_on_maximize){
 			this.fullscreen();
@@ -1009,9 +1016,10 @@ public class VTMainWindow : Window{
 	}
 
 	public void mainvt_unmaximize(){
-		if(this.fullscreen_on_maximize){
-			this.unfullscreen();
-		}
+		debug("mainvt_unmaximize");
+		//do not forget to call this.update_geometry_hints
+		//with appropriate size
+		this.unfullscreen();//force unfullscreen, some WMs sets fullscreen state if window size equal to fullscreen
 		this.update_events();
 		this.unmaximize();
 	}
@@ -2016,6 +2024,7 @@ public class AYObject :Object{
 			}
 
 			if(this.main_window.maximized){
+				this.main_window.update_geometry_hints(0,0,1,1,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
 				this.main_window.mainvt_unmaximize();
 				
 			}else{

@@ -1246,7 +1246,7 @@ public class AYObject :Object{
 		/* 0 - NEW_TAB_MODE.RIGHT_NEXT
 		 * 1 - NEW_TAB_MODE.FAR_RIGHT
 		 * */
-		this.new_tab_position=this.conf.get_integer("window_new_tab_position",0,(ref new_val)=>{
+		this.new_tab_position=this.conf.get_integer("window_new_tab_position",1,(ref new_val)=>{
 			if(new_val>1){ new_val=NEW_TAB_MODE.RIGHT_NEXT; return CFG_CHECK.REPLACE;}
 			if(new_val<0){ new_val=NEW_TAB_MODE.RIGHT_NEXT; return CFG_CHECK.REPLACE;}
 			return CFG_CHECK.OK;

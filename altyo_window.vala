@@ -289,8 +289,9 @@ public class VTMainWindow : Window{
 				//int arith_progress2=(int)( ((float)(1+tmp)/2.0)*this.pull_step); //bubble
 				int arith_progress2=(int)( ((float)(1+tmp)/2.0)*(tmp));
 				int h=(this.pull_h-(this.pull_h/arith_progress)*(arith_progress2) );
+				if(h==0)h=1;//set minimum height
 
-				this.resize(this.pull_w,h+1);
+				this.resize(this.pull_w,h);
 				this.display_sync();
 				this.pull_step++;
 				return true;//continue animation
@@ -379,7 +380,8 @@ public class VTMainWindow : Window{
 				int h=(this.pull_h-(this.pull_h/arith_progress)*(arith_progress2) );
 				//debug("ff=%d this.pull_step=%d h=%d",ff,this.pull_step,h);
 				//debug("on_pull_down h=%d",h);
-				this.resize(this.pull_w,h+1);
+				if(h==0)h=1;//set minimum height
+				this.resize(this.pull_w,h);
 				this.pull_step++;
 //~ 				this.update_events();
 				this.display_sync();
@@ -434,7 +436,7 @@ public class VTMainWindow : Window{
 		var ch=this.get_child();//.reparent(this);//reparent from offscreen window
 		this.remove(ch);
 		this.pixwin.add(ch);
-		this.resize(this.pull_w,pull_h+1);//work around: force repainting window content in offscreenwindow for gtk3.8
+		this.resize(this.pull_w,pull_h-1);//work around: force repainting window content in offscreenwindow for gtk3.8
 		debug("end reparent to offscreen window");
 
 		if(this.maximized){

@@ -381,7 +381,10 @@ public class VTMainWindow : Window{
 				//debug("ff=%d this.pull_step=%d h=%d",ff,this.pull_step,h);
 				//debug("on_pull_down h=%d",h);
 				if(h==0)h=1;//set minimum height
-				this.unfullscreen();//force unfullscreen, some WMs sets fullscreen state if window size equal to fullscreen
+				/* object Gdk.Window have option "state" with current window state
+				 * we will check is window still in fullscreen satate*/
+				if( (this.get_window().get_state() & Gdk.WindowState.FULLSCREEN) == Gdk.WindowState.FULLSCREEN)
+					this.unfullscreen();//force unfullscreen, some WMs sets fullscreen state if window size equal to fullscreen
 				this.resize(this.pull_w,h);
 				this.pull_step++;
 //~ 				this.update_events();
@@ -449,7 +452,7 @@ public class VTMainWindow : Window{
 			 * */
 			this.update_geometry_hints(0,this.pull_w,1,this.pull_w,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
 			
-			this.mainvt_unmaximize();/*not working in metacity on secondary monitor, seems metacity bug*/
+			this.mainvt_unmaximize();
 			this.resize(this.pull_w,this.pull_h-1);
 			this.move(this.pull_x,this.pull_y);
 		}else
@@ -554,7 +557,7 @@ public class VTMainWindow : Window{
 		}
 		
 		/*update position and size when window has moved on another monitor*/
-		if(event.type==13 &&this.current_state==WStates.VISIBLE && !this.pull_animation_active){
+		if(event.type==13 && this.current_state==WStates.VISIBLE && !this.pull_animation_active && !this.pull_active){
 			unowned Gdk.Screen gscreen = this.get_screen ();
 			int current_monitor = gscreen.get_monitor_at_point (event.x,event.y);
 			if(this.orig_monitor != current_monitor){
@@ -653,7 +656,9 @@ public class VTMainWindow : Window{
 				/* update position only in unmaximized mode
 				 * */
 				if(!this.maximized && !this.config_maximized){
-						this.unfullscreen();//force unfullscreen, some WMs sets fullscreen state if window size equal to fullscreen
+						if( (this.get_window().get_state() & Gdk.WindowState.FULLSCREEN) == Gdk.WindowState.FULLSCREEN)
+							this.unfullscreen();//force unfullscreen, some WMs sets fullscreen state if window size equal to fullscreen
+							
 						int hvbox_h,hvbox_h_ignore;
 						this.ayobject.hvbox.get_preferred_height_for_width(this.ayobject.terminal_width,out hvbox_h,out hvbox_h_ignore);
 						//int hvbox_h=this.ayobject.hvbox.get_allocated_height();
@@ -1017,10 +1022,12 @@ public class VTMainWindow : Window{
 
 	public void mainvt_unmaximize(){
 		debug("mainvt_unmaximize");
-		//do not forget to call this.update_geometry_hints
-		//with appropriate size
-		this.unfullscreen();//force unfullscreen, some WMs sets fullscreen state if window size equal to fullscreen
-		this.update_events();
+		/* do not forget to call this.update_geometry_hints
+		 * with appropriate size*/
+		
+		if( (this.get_window().get_state() & Gdk.WindowState.FULLSCREEN) == Gdk.WindowState.FULLSCREEN)
+			this.unfullscreen();//force unfullscreen, some WMs sets fullscreen state if window size equal to fullscreen
+		
 		this.unmaximize();
 	}
 
@@ -1191,6 +1198,7 @@ public class AYObject :Object{
 		if(this.children.length()==0)
 			this.add_tab();
 
+		
 		return false;
 	}
 
@@ -1246,7 +1254,7 @@ public class AYObject :Object{
 		/* 0 - NEW_TAB_MODE.RIGHT_NEXT
 		 * 1 - NEW_TAB_MODE.FAR_RIGHT
 		 * */
-		this.new_tab_position=this.conf.get_integer("window_new_tab_position",1,(ref new_val)=>{
+		this.new_tab_position=this.conf.get_integer("window_new_tab_position",NEW_TAB_MODE.FAR_RIGHT,(ref new_val)=>{
 			if(new_val>1){ new_val=NEW_TAB_MODE.FAR_RIGHT; return CFG_CHECK.REPLACE;}
 			if(new_val<0){ new_val=NEW_TAB_MODE.FAR_RIGHT; return CFG_CHECK.REPLACE;}
 			return CFG_CHECK.OK;
@@ -2023,10 +2031,10 @@ public class AYObject :Object{
 				return;
 			}
 
-			if(this.main_window.maximized){
+			if(this.main_window.maximized ||
+			(this.main_window.get_window().get_state() & Gdk.WindowState.FULLSCREEN) == Gdk.WindowState.FULLSCREEN){
 				this.main_window.update_geometry_hints(0,0,1,1,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
 				this.main_window.mainvt_unmaximize();
-				
 			}else{
 				this.main_window.mainvt_maximize();
 			}

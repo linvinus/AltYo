@@ -1,3 +1,12 @@
+altyo (0.3~rc16-linvinus1) quantal; urgency=low
+
+  * fix: do not increase height after unfullscreen, otherwise window manager will move window on another monitor, where window can be shown without overlaps.
+  * fix: force unfullscreen in some cases
+  * improvement: set window_new_tab_position = far right, by default
+  * fix: set initial window position inside monitor_workarea when window_start_maximized==start, otherwise window manager will move window to another monitor
+
+ -- denis <linvinus@gmail.com>  Mon, 14 Apr 2014 22:04:20 +0400
+
 altyo (0.3~rc15-linvinus1) quantal; urgency=low
 
   * improvement: duild altyo-dbg package, print more debugging marks

@@ -436,10 +436,14 @@ public class HVBox : Container {
 				widget.get_preferred_width (out allocation.width, out ingnore_h);
 
 				if(allocation.width>orig_pos_w_max){
-					widget.width_request=orig_pos_w_max;//set width_request for VTToggleButton
+					widget.width_request=orig_pos_w_max;//set width_request (maximum width) for VTToggleButton
 					widget.get_preferred_width (out allocation.width, out ingnore_h);//now width shuld be limited to the maximum
 					if(allocation.width>orig_pos_w_max)
 						allocation.width=orig_pos_w_max;//just ensure that width is limited
+				}else
+				if(allocation.width<orig_pos_w_max && widget.width_request>0){
+					widget.width_request=-1;//reset maximum width 
+					widget.get_preferred_width (out allocation.width, out ingnore_h);//now width shuld be unlimited
 				}
 
 				if(!item.ignore)//skip but remember size

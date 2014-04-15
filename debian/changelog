@@ -1,3 +1,13 @@
+altyo (0.3~rc17-linvinus1) quantal; urgency=low
+
+  * improvements: support hot plugging of monitors, improve auto update position and size when move across monitors
+  * improvement: improve migration from profile_version=0;3;8;
+  * improvement: ignore monitors_changed event in standalone mode
+  * fix: wrong tab width in some cases
+  * improvement: ignore monitors_changed event in maximized mode
+
+ -- denis <linvinus@gmail.com>  Tue, 15 Apr 2014 17:51:58 +0400
+
 altyo (0.3~rc16-linvinus1) quantal; urgency=low
 
   * fix: do not increase height after unfullscreen, otherwise window manager will move window on another monitor, where window can be shown without overlaps.

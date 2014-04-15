@@ -596,7 +596,7 @@ public class VTMainWindow : Window{
 		this.get_position (out x, out y);
 		var now = new DateTime.now_local();
 		TimeSpan tdelta = now.difference(this.on_monitors_changed_start_time);
-		if(x!=this.orig_x &&  tdelta < (1000000*30)){ //timeout 30 seconds
+		if(x!=this.orig_x &&  tdelta < (1000000*30) && this.current_state==WStates.VISIBLE && !this.maximized){ //timeout 30 seconds
 			this.update_position_size();
 			return true; //continue
 		}else

@@ -255,11 +255,12 @@ public class MySettings : Object {
 		if(version[VER.major]==0 && version[VER.minor]==3 && version[VER.rc]<9){
 			try {
 				string monitor=kf.get_string(this.profile,"window_default_monitor");
-
-				kf.set_integer(this.profile,"terminal_width_%s".printf(monitor),kf.get_integer(this.profile,"terminal_width"));
-				kf.set_integer(this.profile,"terminal_height_%s".printf(monitor),kf.get_integer(this.profile,"terminal_height"));
-				kf.set_integer(this.profile,"window_position_y_%s".printf(monitor),kf.get_integer(this.profile,"window_position_y"));
-				kf.set_integer(this.profile,"window_position_x_%s".printf(monitor),kf.get_integer(this.profile,"position"));
+				if(monitor!=null && monitor!=""){
+					kf.set_integer(this.profile,"terminal_width_%s".printf(monitor),kf.get_integer(this.profile,"terminal_width"));
+					kf.set_integer(this.profile,"terminal_height_%s".printf(monitor),kf.get_integer(this.profile,"terminal_height"));
+					kf.set_integer(this.profile,"window_position_y_%s".printf(monitor),kf.get_integer(this.profile,"window_position_y"));
+					kf.set_integer(this.profile,"window_position_x_%s".printf(monitor),kf.get_integer(this.profile,"position"));
+				}
 				
 				kf.remove_key(this.profile,"terminal_height");
 				kf.remove_key(this.profile,"terminal_width");

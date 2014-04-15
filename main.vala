@@ -241,7 +241,7 @@ int main (string[] args) {
 
 				if(!conf.opened){
 					printf("Unable to open configuration file!\n");
-					exit(1);
+					Posix.exit(1);
 				}
 
 				configure_debug(conf);

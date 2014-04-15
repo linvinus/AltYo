@@ -228,10 +228,12 @@ public class VTMainWindow : Window{
 			this.window_set_active();
 		}
 		GLib.Idle.add(this.ayobject.create_tabs);
-		unowned Gdk.Screen gscreen = this.get_screen ();
-		gscreen.monitors_changed.connect (()=>{
-				GLib.Timeout.add(1000,this.on_monitors_changed);//wait for some time until the monitor is configured
-			});
+		if(!this.conf.standalone_mode){
+			unowned Gdk.Screen gscreen = this.get_screen ();
+			gscreen.monitors_changed.connect (()=>{
+					GLib.Timeout.add(1000,this.on_monitors_changed);//wait for some time until the monitor is configured
+				});
+		}
 		debug("end win show");
 
 	}
@@ -571,7 +573,7 @@ public class VTMainWindow : Window{
 		}
 		
 		/*update position and size when window has moved to another monitor*/
-		if(event.type==13 && this.current_state==WStates.VISIBLE && !this.pull_animation_active && !this.pull_active){
+		if( !this.conf.standalone_mode && event.type==13 && this.current_state==WStates.VISIBLE && !this.pull_animation_active && !this.pull_active){
 			unowned Gdk.Screen gscreen = this.get_screen ();
 			int current_monitor = gscreen.get_monitor_at_point (event.x,event.y);
 			if(this.orig_monitor != current_monitor){

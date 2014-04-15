@@ -2071,12 +2071,6 @@ public class AYObject :Object{
         });
 
 		this.add_window_toggle_accel("toggle_maximize", _("Maximize - restore"), _("Maximize window, or restore to normal size"), Gtk.Stock.EDIT,"",()=> {
-			if(conf.get_integer("terminal_height",50)==100){
-				var s = _("Sorry, your default height is 100%, window size cannot be reduced, please change default window height in preferences.");
-				this.main_window.show_message_box(_("error"),s);
-				return;
-			}
-
 			if(this.main_window.maximized ||
 			(this.main_window.get_window().get_state() & Gdk.WindowState.FULLSCREEN) == Gdk.WindowState.FULLSCREEN){
 				this.main_window.update_geometry_hints(0,0,1,1,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);

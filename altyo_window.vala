@@ -103,6 +103,7 @@ public class VTMainWindow : Window{
 
 	private uint32 last_focus_out_event_time;
 	private unowned Gdk.Window ignore_last_active_window = null;
+	private DateTime on_monitors_changed_start_time = null;
 
 	public VTMainWindow(WindowType type) {
 		Object(type:type);
@@ -227,9 +228,22 @@ public class VTMainWindow : Window{
 			this.window_set_active();
 		}
 		GLib.Idle.add(this.ayobject.create_tabs);
-
+		unowned Gdk.Screen gscreen = this.get_screen ();
+		gscreen.monitors_changed.connect (()=>{
+				GLib.Timeout.add(1000,this.on_monitors_changed);//wait for some time until the monitor is configured
+			});
 		debug("end win show");
 
+	}
+	
+	public bool on_monitors_changed(){
+		debug("gscreen.monitors_changed");
+		if(this.current_state == WStates.VISIBLE){
+			this.check_monitor_and_configure_position();//check if was attached window_default_monitor
+			if( this.configure_position() )
+				this.update_position_size();
+		}
+		return false; //stop the timer
 	}
 
 	private void check_monitor_and_configure_position(){
@@ -243,7 +257,7 @@ public class VTMainWindow : Window{
 
 				var current_monitor = gscreen.get_monitor_at_point (this.orig_x,this.orig_y);
 				var current_monitor_name = gscreen.get_monitor_plug_name (current_monitor);
-				if(current_monitor_name!=cfg_monitor){
+				if(current_monitor_name!=null && current_monitor_name!=cfg_monitor){
 					for(var i=0;i<gscreen.get_n_monitors ();i++){
 						if(gscreen.get_monitor_plug_name(i)==cfg_monitor){
 							debug("found monitor name %s",gscreen.get_monitor_plug_name (i));
@@ -562,13 +576,29 @@ public class VTMainWindow : Window{
 			int current_monitor = gscreen.get_monitor_at_point (event.x,event.y);
 			if(this.orig_monitor != current_monitor){
 				/*event on monitor changed*/
-				this.orig_x=event.x;
-				this.orig_y=event.y;
-				this.configure_position();
-				this.update_position_size();
+				this.orig_x=event.x;//set coordinates in new monitor
+				this.orig_y=event.y;//set coordinates in new monitor
+				this.configure_position();//configure position for new monitor
+				/* if window was dragged by mouse, then window_resize and window_move will not working until user release mouse button
+				 * we don't have resize/move events, so we do not know when the user is finished moving
+				 */ 
+				this.on_monitors_changed_start_time = new DateTime.now_local();
+				GLib.Timeout.add(500,this.on_monitor_changed_force_new_position);//every 0.5s
 			}
 		}
 	return ret;
+	}
+	
+	public bool on_monitor_changed_force_new_position(){
+		int x,y;
+		this.get_position (out x, out y);
+		var now = new DateTime.now_local();
+		TimeSpan tdelta = now.difference(this.on_monitors_changed_start_time);
+		if(x!=this.orig_x &&  tdelta < (1000000*30)){ //timeout 30 seconds
+			this.update_position_size();
+			return true; //continue
+		}else
+			return false; //stop
 	}
 
 	public void update_geometry_hints(int base_height,int base_width,int min_height,int min_width,Gdk.WindowHints mask){
@@ -792,7 +822,7 @@ public class VTMainWindow : Window{
 		this.autohide  = conf.get_boolean("window_autohide",false);
 	}//reconfigure
 
-	public void configure_position(){
+	public bool configure_position(){
 			unowned Gdk.Screen gscreen = this.get_screen ();
 			debug("x=%d,y=%d",this.orig_x,this.orig_y);
 			int current_monitor;
@@ -813,7 +843,13 @@ public class VTMainWindow : Window{
 			if(this.orig_monitor != current_monitor)
 				this.orig_monitor=current_monitor;
 			    
-			string monitor_name = gscreen.get_monitor_plug_name (current_monitor);
+			string? monitor_name = gscreen.get_monitor_plug_name (current_monitor);
+			
+			if(monitor_name==null){
+				//monitor_name="unknown";
+				return false;
+			}
+				
 			debug("monitor name %s",monitor_name);
 			Gdk.Rectangle rectangle;
 			
@@ -821,6 +857,7 @@ public class VTMainWindow : Window{
 			 * and only when primary monitor is on the left side
 			 * */
 			rectangle=gscreen.get_monitor_workarea(current_monitor);
+			debug("monitor_workarea x=%d,y=%d w=%d h=%d",rectangle.x,rectangle.y,rectangle.width,rectangle.height);
 
 			/*get width,height,window_position_x,window_position_y for current monitor*/
 			int w = conf.get_integer("terminal_width_%s".printf(monitor_name),80,(ref new_val)=>{
@@ -842,6 +879,8 @@ public class VTMainWindow : Window{
 				if(new_val>3 || new_val<0){new_val=1;return CFG_CHECK.REPLACE;}
 				return CFG_CHECK.OK;
 				});
+			
+			debug("settings for monitor x=%d,y=%d w=%d h=%d",this.position,pos_y,w,h);
 			
 			this.fullscreen_on_maximize = conf.get_boolean("window_fullscreen_on_maximize",false);
 			var max_tmp = conf.get_boolean("window_start_maximized",false);
@@ -897,7 +936,8 @@ public class VTMainWindow : Window{
 			//this.tasks_notebook.set_size_request(this.terminal_width,this.terminal_height);
 			//we can't change height , otherwise vte will change
 			//this.tasks_notebook.set_size_request(terminal_width,this.terminal_height);
-			debug("new2 x=%d,y=%d w=%d h=%d",this.orig_x,this.orig_y,rectangle.width,rectangle.height);
+			debug("configure_position end x=%d,y=%d term_w=%d term_h=%d",this.orig_x,this.orig_y,this.ayobject.terminal_width,this.ayobject.terminal_height);
+			return true;
 	}//configure_position
 
 

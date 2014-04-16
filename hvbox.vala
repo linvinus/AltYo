@@ -328,7 +328,7 @@ public class HVBox : Container {
 //~         return r;
 //~     }
 
-		public void update_size(){
+		private void update_size(){
 			debug("update_size\n");
 			//this.parent.set_size_request (2,2);
 			//this.parent.parent.set_size_request (2,2);

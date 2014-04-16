@@ -395,7 +395,7 @@ public class VTMainWindow : Window{
 
 				int h=(this.pull_h-(this.pull_h/arith_progress)*(arith_progress2) );
 				//debug("ff=%d this.pull_step=%d h=%d",ff,this.pull_step,h);
-				//debug("on_pull_down h=%d",h);
+				debug("on_pull_up h=%d",h);
 				if(h==0)h=1;//set minimum height
 				/* object Gdk.Window have option "state" with current window state
 				 * we will check is window still in fullscreen satate*/
@@ -482,7 +482,7 @@ public class VTMainWindow : Window{
 			this.pull_step=this.pull_steps;//skip animation
 		this.pull_animation_active=true;
 		this.ayobject.clear_prelight_state();
-		GLib.Timeout.add(this.animation_speed,this.on_pull_up);
+		GLib.Timeout.add(/*this.animation_speed*/1000,this.on_pull_up);
 	}
 
 	/*public void fake_pullup(){
@@ -684,48 +684,31 @@ public class VTMainWindow : Window{
 				 * */
 				this.ayobject.on_maximize(this.maximized||this.conf.standalone_mode);
 				if(this.conf.standalone_mode) return;
+//~				if(this.maximized && this.halign!=Gtk.Align.FILL){
+					this.halign=Gtk.Align.FILL;
+					this.valign=Gtk.Align.FILL;
+//~				}else{
+//~					this.halign=Gtk.Align.START;
+//~					this.valign=Gtk.Align.START;
+//~				}
+				//this.valign=Gtk.Align.START;
 
 				/* update position only in unmaximized mode
 				 * */
 				if(!this.maximized && !this.config_maximized){
-						if( (this.get_window().get_state() & Gdk.WindowState.FULLSCREEN) == Gdk.WindowState.FULLSCREEN)
-							this.unfullscreen();//force unfullscreen, some WMs sets fullscreen state if window size equal to fullscreen
-							
-						int hvbox_h,hvbox_h_ignore;
-						this.ayobject.hvbox.get_preferred_height_for_width(this.ayobject.terminal_width,out hvbox_h,out hvbox_h_ignore);
-						//int hvbox_h=this.ayobject.hvbox.get_allocated_height();
-						var should_be_h = this.ayobject.terminal_height+hvbox_h;
+					if( (this.get_window().get_state() & Gdk.WindowState.FULLSCREEN) == Gdk.WindowState.FULLSCREEN)
+						this.unfullscreen();//force unfullscreen, some WMs sets fullscreen state if window size equal to fullscreen
 
-						if(this.get_allocated_height()>should_be_h+2||
-						this.ayobject.terminal_width!=this.get_allocated_width()||
-						this.ayobject.tasks_notebook.get_allocated_height()!=this.ayobject.terminal_height){
-							this.ayobject.tasks_notebook.set_size_request(this.ayobject.terminal_width,this.ayobject.terminal_height);
-
-							this.ayobject.hvbox.set_default_width(this.ayobject.terminal_width);
-							this.ayobject.hvbox.set_size_request(this.ayobject.terminal_width,hvbox_h);
-
-							this.ayobject.main_vbox.set_size_request(this.ayobject.terminal_width,should_be_h);
-							this.set_default_size(this.ayobject.terminal_width,should_be_h);
-							this.resize(this.ayobject.terminal_width,should_be_h);
-							if(force_sync)
-								this.update_events();
-							this.move (this.orig_x,this.orig_y);
-							/* inform window manager where window should be placed*/
-							/* gem.win_gravity=Gdk.Gravity.NORTH; not working for multi-seat systems =( ,
-							 * use move_resize instead */
-							if(this.visible)
-								this.get_window().move_resize(this.orig_x,this.orig_y,this.ayobject.terminal_width,should_be_h);
-							if(force_sync)
-								this.display_sync();
-							debug ("update_position_size should_be_h=%d terminal_width=%d x=%d y=%d",should_be_h,this.ayobject.terminal_width,this.orig_x,this.orig_y) ;
-						}else
-							this.move (this.orig_x,this.orig_y);
+					this.ayobject.tasks_notebook.width_request=this.ayobject.terminal_width;
+					this.ayobject.tasks_notebook.height_request=this.ayobject.terminal_height;
+					this.ayobject.main_vbox.width_request=this.ayobject.terminal_width;
+					int should_be_h=0;
+					this.move (this.orig_x,this.orig_y);
+					debug ("update_position_size should_be_h=%d terminal_width=%d x=%d y=%d",should_be_h,this.ayobject.terminal_width,this.orig_x,this.orig_y) ;
 				}else{
-					this.ayobject.hvbox.set_size_request(-1,-1);//reset size
-					this.ayobject.quick_options_notebook.set_size_request(-1,-1);
-					this.ayobject.tasks_notebook.set_size_request(-1,-1);//reset size
-					this.ayobject.main_vbox.set_size_request(-1,-1);//reset size
-					this.set_size_request(-1,-1);//reset size
+					this.ayobject.tasks_notebook.width_request=-1;
+					this.ayobject.tasks_notebook.height_request=-1;
+					this.ayobject.main_vbox.width_request=-1;
 				}
 	}
 	public void reconfigure(){
@@ -1077,6 +1060,41 @@ public class VTMainWindow : Window{
 		this.unmaximize();
 	}
 
+	public override void get_preferred_height_for_width (int width,out int minimum_height, out int natural_height) {
+		int hvbox_h,hvbox_h_ignore,should_be_h=0;
+		base.get_preferred_height_for_width (width,out minimum_height, out natural_height);
+		debug("WINDOW get_preferred_height width=%d minimum_height=%d, natural_height=%d  should_be_h=%d get_allocated_height=%d",width,minimum_height, natural_height,should_be_h,this.get_allocated_height());
+		if( !this.pull_animation_active && !this.pull_active && !this.maximized && !this.config_maximized && this.ayobject!=null){
+			should_be_h=this.ayobject.get_altyo_height();
+			int allocated_height=this.get_allocated_height();
+			if(allocated_height>should_be_h){
+				if( (this.get_window().get_state() & Gdk.WindowState.FULLSCREEN) == Gdk.WindowState.FULLSCREEN)
+					this.unfullscreen();//force unfullscreen, some WMs sets fullscreen state if window size equal to fullscreen				
+				minimum_height=natural_height=should_be_h;
+				this.ayobject.main_vbox.set_size_request(this.ayobject.terminal_width,should_be_h);
+				this.set_size_request(this.ayobject.terminal_width,should_be_h);
+				this.resize(this.ayobject.terminal_width,should_be_h);
+				/* inform window manager where window should be placed*/
+				/* gem.win_gravity=Gdk.Gravity.NORTH; not working for multi-seat systems =( ,
+				 * use move_resize instead */
+				if(this.visible)
+					this.get_window().move_resize(this.orig_x,this.orig_y,this.ayobject.terminal_width,should_be_h);				
+				debug("WINDOW get_preferred_height resize!!! %d",minimum_height);
+			}
+		}
+		
+	}//get_preferred_height_for_width
+
+	public override void get_preferred_width (out int minimum_width, out int natural_width) {
+		base.get_preferred_width(out minimum_width, out natural_width);
+		if( !this.pull_animation_active && !this.pull_active && !this.maximized && !this.config_maximized && this.ayobject!=null){
+			//int allocated_width=this.get_allocated_width();
+			if( this.ayobject.terminal_width >0 && this.ayobject.terminal_width !=  minimum_width){
+				natural_width=minimum_width = this.ayobject.terminal_width;
+			}
+		}
+	}//get_preferred_width
+	
 }//class VTMainWindow
 
 /*********************************************************************/
@@ -1170,7 +1188,7 @@ public class AYObject :Object{
 		this.hvbox.expand=false;
 
 		this.hvbox.child_reordered.connect(this.move_tab);
-		this.hvbox.size_changed.connect(this.hvbox_size_changed);
+//~		this.hvbox.size_changed.connect(this.hvbox_size_changed);
 
 		this.hvbox.can_focus=false;//vte shoud have focus
 		this.hvbox.can_default = false;
@@ -2154,29 +2172,6 @@ public class AYObject :Object{
 
 
 
-	public void hvbox_size_changed(int width, int height,bool on_size_request){
-			if(this.conf.standalone_mode) return;
-			
-			if(this.main_window.pull_active || this.main_window.pull_animation_active) return;
-			//debug ("hvbox_size_changed start");
-			if(!this.main_window.maximized && this.main_window.get_realized()){
-				//debug ("hvbox_size_changed w=%d h=%d  task_w=%d task_h=%d term_h=%d mw_h=%d should_be_h=%d",width,height,this.tasks_notebook.get_allocated_width(),this.tasks_notebook.get_allocated_height(),this.terminal_height,this.main_window.get_allocated_height(),should_be_h) ;
-				var should_be_h = this.terminal_height+height + (this.quick_options_notebook.get_visible()?this.quick_options_notebook.get_allocated_height():0);
-				if(this.main_window.get_allocated_height()>should_be_h+2||
-						this.terminal_width!=this.main_window.get_allocated_width()||
-						this.tasks_notebook.get_allocated_height()!=this.terminal_height){
-
-					this.hvbox.set_default_width(this.terminal_width);
-					this.tasks_notebook.set_size_request(this.terminal_width,this.terminal_height);
-					//this.terms_notebook.set_size_request(this.terminal_width,this.terminal_height);
-					this.main_vbox.set_size_request(this.terminal_width,should_be_h);
-//~ 					this.main_window.set_default_size(this.terminal_width,should_be_h);
-					this.main_window.resize (this.terminal_width,should_be_h);
-					this.main_window.queue_resize_no_redraw();
-					debug ("hvbox_size_changed terminal_width=%d should_be_h=%d",terminal_width,should_be_h) ;
-				}
-			}
-	}
 
 	public void ccopy() {
 				unowned AYTab vtt = ((AYTab)this.active_tab.object);
@@ -2378,6 +2373,19 @@ public class AYObject :Object{
 				yatab.tbutton.update_state();//clear PRELIGHT
 			}
 		}
+	}
+
+	public int get_altyo_height(){
+		int hvbox_h,hvbox_h_ignore,should_be_h=this.terminal_height;
+		this.hvbox.width_request=this.terminal_width;
+		this.hvbox.get_preferred_height_for_width(this.terminal_width,out hvbox_h,out hvbox_h_ignore);
+		should_be_h+=hvbox_h;
+		if(this.quick_options_notebook.visible){
+			this.quick_options_notebook.get_preferred_height_for_width(this.terminal_width,out hvbox_h,out hvbox_h_ignore);
+			should_be_h+=hvbox_h;
+		}
+		debug("get_altyo_height terminal_width=%d should_be_h=%d",this.terminal_width,should_be_h);
+		return should_be_h;
 	}
 
 }//class AYObject
@@ -2916,4 +2924,5 @@ public class QoptNotebook: Notebook{
 		//escape keybinding
 		this.encodings_combo.grab_focus();
 	}
+
 }//class QoptNotebook 

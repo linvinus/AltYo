@@ -35,11 +35,11 @@ private class HVBoxItem : Object{
 public class HVBox : Container {
 
     private int height = 28;
-    private int self_minimum_width = 0;
-    private int self_natural_width = 0;//store available width
-    private int self_natural_height = 0;
-    private int self_width = 0;
-    private int initial_size = 0;
+//~    private int self_minimum_width = 0;
+//~    private int self_natural_width = 0;//store available width
+//~    private int self_natural_height = 0;
+//~    private int self_width = 0;
+//~    private int initial_size = 0;
     private int cur_level = 0;
 
     private Gtk.SizeRequestMode mode = Gtk.SizeRequestMode.HEIGHT_FOR_WIDTH;
@@ -478,14 +478,11 @@ public class HVBox : Container {
 			max_w=int.max(o_minimum_width,max_w);
 			sum_w+=o_minimum_width;
 		}
-		if (max_w == 0){
-			max_w =sum_w= 80;
-		}
-		if(sum_w>this.self_natural_width){//limit max child widget size
-			sum_w=max_w=this.self_natural_width;
-			}
-		this.self_minimum_width=o_minimum_width=this.self_width=max_w;
+		o_minimum_width=max_w;
 		o_natural_width=sum_w;
+		if(this.width_request>0 && sum_w>this.width_request){//limit max child widget size
+			o_minimum_width=o_natural_width=this.width_request;
+			}
  		//debug("get_preferred_width self_nat=%d self_min=%d  minimum=%d natural=%d\n",this.self_natural_width,this.self_minimum_width,o_minimum_width,o_natural_width);
 	}
 
@@ -507,34 +504,35 @@ public class HVBox : Container {
 	}
 
  	public override void get_preferred_height_for_width (int width,out int minimum_height, out int natural_height) {
+		debug("get_preferred_height_for1 width=%d min=%d natural=%d",width,minimum_height,natural_height);
 		hvbox_get_preferred_height_for_width (width,out minimum_height, out natural_height);
 	}
 	public void hvbox_get_preferred_height_for_width (int width,out int minimum_height, out int natural_height) {
 
 		/*workaround for min_height, if actual available width more than self minimum width*/
-		if(this.self_minimum_width == width && initial_size <10){
-			initial_size++;
-		}
-
-		if( this.self_minimum_width!=width || initial_size >2){
-			this.self_natural_width=width;
-			initial_size=0;
-			this._get_preferred_height_for_width(this.self_natural_width,out minimum_height, out natural_height);
-		}else{
-			this._get_preferred_height_for_width(this.self_natural_width,out minimum_height, out natural_height);
-			}
+//~		if(this.self_minimum_width == width && initial_size <10){
+//~			initial_size++;
+//~		}
+//~
+//~		if( this.self_minimum_width!=width || initial_size >2){
+//~			this.self_natural_width=width;
+//~			initial_size=0;
+//~			this._get_preferred_height_for_width(this.self_natural_width,out minimum_height, out natural_height);
+//~		}else{
+			this._get_preferred_height_for_width(width,out minimum_height, out natural_height);
+//~			}
 		Gtk.StyleContext context = this.get_style_context();
 		Gtk.Border border=context.get_border(StateFlags.NORMAL);
 		minimum_height+=border.bottom;
 		natural_height+=border.bottom;
 
-		if(!this.size_changed_send){
-			this.size_changed_send=true;
-			size_changed(width, minimum_height,true);//important!
-			this.size_changed_send=false;
-		}
-		this.self_natural_height = natural_height;
-		debug("get_preferred_height_for width=%d min=%d natural=%d",width,minimum_height,natural_height);
+//~		if(!this.size_changed_send){
+//~			this.size_changed_send=true;
+//~			size_changed(width, minimum_height,true);//important!
+//~			this.size_changed_send=false;
+//~		}
+//~		this.self_natural_height = natural_height;
+		debug("get_preferred_height_for2 width=%d min=%d natural=%d",width,minimum_height,natural_height);
  		//debug("get_preferred_height_for_width=%d != %d self_min=%d  minimum=%d natural=%d\n",width,this.self_natural_width,this.self_minimum_width,minimum_height,natural_height);
 	}
 
@@ -876,11 +874,11 @@ public class HVBox : Container {
 		return false;
 	}
 
-	public void set_default_width(int new_width){
-		this.initial_size=0;
-		this.self_minimum_width=new_width;
-		this.self_natural_width=new_width;
-		this.update_size();
-	}
+//~	public void set_default_width(int new_width){
+//~		this.initial_size=0;
+//~		this.self_minimum_width=new_width;
+//~		this.self_natural_width=new_width;
+//~		this.update_size();
+//~	}
 
 }

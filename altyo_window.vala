@@ -281,9 +281,7 @@ public class VTMainWindow : Window{
 			this.ayobject.on_maximize(false);
 			//this.ayobject.on_maximize(true);
 			this.update_position_size(false);
-			int hvbox_h, hvbox_h_ignore;
-			this.ayobject.hvbox.get_preferred_height_for_width(this.ayobject.terminal_width,out hvbox_h,out hvbox_h_ignore);
-			var should_be_h = this.ayobject.terminal_height+hvbox_h;			
+			var should_be_h = this.ayobject.get_altyo_height();			
 			this.show();
 			this.resize(this.ayobject.terminal_width,should_be_h);
 			
@@ -618,17 +616,12 @@ public class VTMainWindow : Window{
 			if( (event.changed_mask & Gdk.WindowState.MAXIMIZED)==Gdk.WindowState.MAXIMIZED ){//maximize state change
 				if((Gdk.WindowState.MAXIMIZED & event.new_window_state)== Gdk.WindowState.MAXIMIZED){//maximize
 					debug("new state maximize");
-//~ 					if(!this.maximized){
 						this._maximized = true;
 						this.config_maximized=true;
-//~ 						this.configure_position();
-//~ 						this.ayobject.hvbox.update_size();
 						this.update_position_size();
 						this.update_maximized_size=true;
-//~ 					}
 				}else{//unmaximize
 					debug("new state unmaximize");
-//~ 					if(this.maximized){
 						this._maximized = false;
 						this.config_maximized=false;
 						/* reset geometry hints
@@ -637,8 +630,6 @@ public class VTMainWindow : Window{
 						this.configure_position();
 						this.update_geometry_hints(0,0,0,0,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
 						this.update_position_size();
-						//this.update_maximized_size=true;
-//~ 					}
 				}
 			}
 		}
@@ -1105,14 +1096,6 @@ public class VTMainWindow : Window{
 				 * */
 				this.ayobject.on_maximize(this.maximized||this.conf.standalone_mode);
 				if(this.conf.standalone_mode) return;
-//~				if(this.maximized && this.halign!=Gtk.Align.FILL){
-//~ 					this.halign=Gtk.Align.FILL;
-//~ 					this.valign=Gtk.Align.FILL;
-//~				}else{
-//~					this.halign=Gtk.Align.START;
-//~					this.valign=Gtk.Align.START;
-//~				}
-				//this.valign=Gtk.Align.START;
 
 				/* update position only in unmaximized mode
 				 * */
@@ -1122,7 +1105,6 @@ public class VTMainWindow : Window{
 					this.fullscreened=false;
 					this.ayobject.tasks_notebook.width_request=this.ayobject.terminal_width;
 					this.ayobject.tasks_notebook.height_request=this.ayobject.terminal_height;
-//~ 					this.ayobject.main_vbox.width_request=this.ayobject.terminal_width;
 					int should_be_h=0;
 					this.move (this.orig_x,this.orig_y);
 					debug ("update_position_size should_be_h=%d terminal_width=%d x=%d y=%d",should_be_h,this.ayobject.terminal_width,this.orig_x,this.orig_y) ;

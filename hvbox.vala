@@ -35,11 +35,6 @@ private class HVBoxItem : Object{
 public class HVBox : Container {
 
     private int height = 28;
-//~    private int self_minimum_width = 0;
-//~    private int self_natural_width = 0;//store available width
-//~    private int self_natural_height = 0;
-//~    private int self_width = 0;
-//~    private int initial_size = 0;
     private int cur_level = 0;
 
     private Gtk.SizeRequestMode mode = Gtk.SizeRequestMode.HEIGHT_FOR_WIDTH;
@@ -57,8 +52,6 @@ public class HVBox : Container {
 	public bool background_only_behind_widgets { get; set; default = true; }
 	public bool minimize_size { get; set; default = true; }
     public signal void child_reordered(Widget child, uint new_index);
-    public signal void size_changed(int width, int height,bool on_size_request);
-    private bool size_changed_send { get; set; default = false; }
 //~ 	public static enum DragInfo {
 //~ 	TEXT_URI_LIST
 //~ 	}
@@ -328,24 +321,6 @@ public class HVBox : Container {
 //~         return r;
 //~     }
 
-		private void update_size(){
-			debug("update_size\n");
-			//this.parent.set_size_request (2,2);
-			//this.parent.parent.set_size_request (2,2);
-			this.set_size_request (1,1);
-			this.set_property("width-request",2);
-			this.set_property("height-request",2);
-			//this.get_requisition();
-			//return;
-	//~ 		Gtk.Window HVBParent = this.get_window ();
-			/*HVBParent.set_size_request (1,1);
-			HVBParent.set_property("width-request",2);
-			HVBParent.set_property("height-request",2);
-			HVBParent.get_requisition();*/
-		}
-
-
-
 		private int get_line_height (ref unowned List<HVBoxItem> first_item=null,int width, bool get_max_natural_height = false) {
 
 			if(first_item==null)
@@ -504,35 +479,16 @@ public class HVBox : Container {
 	}
 
  	public override void get_preferred_height_for_width (int width,out int minimum_height, out int natural_height) {
-		debug("get_preferred_height_for1 width=%d min=%d natural=%d",width,minimum_height,natural_height);
 		hvbox_get_preferred_height_for_width (width,out minimum_height, out natural_height);
 	}
 	public void hvbox_get_preferred_height_for_width (int width,out int minimum_height, out int natural_height) {
 
-		/*workaround for min_height, if actual available width more than self minimum width*/
-//~		if(this.self_minimum_width == width && initial_size <10){
-//~			initial_size++;
-//~		}
-//~
-//~		if( this.self_minimum_width!=width || initial_size >2){
-//~			this.self_natural_width=width;
-//~			initial_size=0;
-//~			this._get_preferred_height_for_width(this.self_natural_width,out minimum_height, out natural_height);
-//~		}else{
-			this._get_preferred_height_for_width(width,out minimum_height, out natural_height);
-//~			}
+		this._get_preferred_height_for_width(width,out minimum_height, out natural_height);
+
 		Gtk.StyleContext context = this.get_style_context();
 		Gtk.Border border=context.get_border(StateFlags.NORMAL);
 		minimum_height+=border.bottom;
 		natural_height+=border.bottom;
-
-//~		if(!this.size_changed_send){
-//~			this.size_changed_send=true;
-//~			size_changed(width, minimum_height,true);//important!
-//~			this.size_changed_send=false;
-//~		}
-//~		this.self_natural_height = natural_height;
-		debug("get_preferred_height_for2 width=%d min=%d natural=%d",width,minimum_height,natural_height);
  		//debug("get_preferred_height_for_width=%d != %d self_min=%d  minimum=%d natural=%d\n",width,this.self_natural_width,this.self_minimum_width,minimum_height,natural_height);
 	}
 
@@ -633,7 +589,6 @@ public class HVBox : Container {
 			  widget.set_parent (this);
 			  dnd_window.destroy();
 			  item.ignore=false;
-			  this.update_size();
 			  drag_end(context);
 			  dnd_inprocess=false;
 		});
@@ -874,11 +829,6 @@ public class HVBox : Container {
 		return false;
 	}
 
-//~	public void set_default_width(int new_width){
-//~		this.initial_size=0;
-//~		this.self_minimum_width=new_width;
-//~		this.self_natural_width=new_width;
-//~		this.update_size();
-//~	}
+
 
 }

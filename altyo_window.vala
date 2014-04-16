@@ -65,7 +65,8 @@ public class VTMainWindow : Window{
 
 	private bool _maximized=false;//cached value
 	public bool maximized {
-        get { 
+        get {
+			
 			var win = this.get_window();
 			if( win!=null ){
 				if( (win.get_state() & Gdk.WindowState.MAXIMIZED) == Gdk.WindowState.MAXIMIZED){
@@ -78,25 +79,51 @@ public class VTMainWindow : Window{
 			}else
 				return _maximized;
 		}
+
         set {
 			if(value == true){
 				debug("mainvt_maximize");
+//~ 				if(this.visible && !this.maximized)
+					
 				this.maximize();
 				if(this.fullscreen_on_maximize){
-					this.fullscreen();
+					this.fullscreened=true;
 				}				
 			}else{
 				debug("mainvt_unmaximize");
 				/* do not forget to call this.update_geometry_hints
 				 * with appropriate size*/
-				
-				if( (this.get_window().get_state() & Gdk.WindowState.FULLSCREEN) == Gdk.WindowState.FULLSCREEN)
-					this.unfullscreen();//force unfullscreen, some WMs sets fullscreen state if window size equal to fullscreen
-				
-				this.unmaximize();				
+				this.fullscreened=false;
+				if(this.maximized)
+					this.unmaximize();				
 			}
 		}		
 	}//public bool maximized
+	
+	private bool _fullscreened=false;
+	public bool fullscreened {
+		get{
+			var win = this.get_window();
+			if( win!=null ){
+				if( (win.get_state() & Gdk.WindowState.FULLSCREEN) == Gdk.WindowState.FULLSCREEN ){
+					_fullscreened=true;
+					return true; 
+				}else{
+					_fullscreened=false;
+					return false;
+				}
+			}else
+				return _fullscreened;			
+		}
+		set{
+			if(value == true){
+				this.fullscreen();
+			}else{
+				if(this.fullscreened)
+					this.unfullscreen();
+			}
+		}
+	}//public bool fullscreen
 	
 	public bool fullscreen_on_maximize=false;
 	private bool update_maximized_size=false;
@@ -105,6 +132,7 @@ public class VTMainWindow : Window{
 	public int pull_steps=20;
 	public bool pull_animation_active = false;
 	public bool pull_active = false;
+	public bool pull_update_maximize_size = false; /*used to update size on pull down*/
 	public WStates current_state {get;set; default = WStates.VISIBLE;}
 	public unowned MySettings conf {get;set; default = null;}
 	public bool keep_above=true;
@@ -348,9 +376,15 @@ public class VTMainWindow : Window{
 			}else{
 
 				if(this.pull_step==this.pull_steps){
-					debug("on_pull_down last step");
+					debug("on_pull_down last step %d",(int)this.maximized);
 					if(this.pull_maximized){
-						this.maximized=true;
+						if(this.maximized){
+							/*could happen when start hidden+maximized*/
+							this.update_geometry_hints(this.get_allocated_height(),this.get_allocated_width(),this.get_allocated_height(),this.get_allocated_width(),Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
+						}else{
+							this.pull_update_maximize_size=true;
+							this.maximized=true;
+						}
 					}else{
 						this.resize (this.pull_w,pull_h);
 					}
@@ -365,6 +399,7 @@ public class VTMainWindow : Window{
 				this.pull_animation_active=false;
 				this.pull_active=false;
 				this.current_state=WStates.VISIBLE;
+				debug("on_pull_down very last step");
 				this.update_position_size();
 				this.window_set_active();
 				return false;
@@ -429,12 +464,11 @@ public class VTMainWindow : Window{
 
 				int h=(this.pull_h-(this.pull_h/arith_progress)*(arith_progress2) );
 				//debug("ff=%d this.pull_step=%d h=%d",ff,this.pull_step,h);
-				debug("on_pull_up h=%d",h);
+//~ 				debug("on_pull_up h=%d",h);
 				if(h==0)h=1;//set minimum height
 				/* object Gdk.Window have option "state" with current window state
 				 * we will check is window still in fullscreen satate*/
-				if( (this.get_window().get_state() & Gdk.WindowState.FULLSCREEN) == Gdk.WindowState.FULLSCREEN)
-					this.unfullscreen();//force unfullscreen, some WMs sets fullscreen state if window size equal to fullscreen
+				this.fullscreened=false;//force unfullscreen, some WMs sets fullscreen state if window size equal to fullscreen
 				this.resize(this.pull_w,h);
 				this.pull_step++;
 //~ 				this.update_events();
@@ -559,8 +593,23 @@ public class VTMainWindow : Window{
 
 	public override bool window_state_event (Gdk.EventWindowState event){
 //~ 	public bool window_state_event2 (Gdk.EventWindowState event){
-		debug("window_state_event type=%d new_state=%d mask=%d",(int)event.type,(int)event.new_window_state,(int)event.changed_mask);
+//~ 		debug("window_state_event type=%d new_state=%d mask=%d",(int)event.type,(int)event.new_window_state,(int)event.changed_mask);
 		 var ret=base.window_state_event(event);
+		if(this.pull_update_maximize_size){
+			/*special case
+			 * pull_down + last step + maximize*/
+			if( (event.changed_mask & Gdk.WindowState.MAXIMIZED)==Gdk.WindowState.MAXIMIZED ){//maximize state change
+				if((Gdk.WindowState.MAXIMIZED & event.new_window_state)== Gdk.WindowState.MAXIMIZED){//maximize
+						this._maximized = true;
+						this.config_maximized=true;
+						this.update_maximized_size=true;
+						this.pull_update_maximize_size=false;
+						this.current_state=WStates.VISIBLE;
+						debug("window_state_event request update_maximized_size");
+				}			
+			}
+		}
+		 
 		if(!this.pull_active && !this.pull_animation_active && !this.conf.standalone_mode){
 				debug("window_state_event !!!!!!!!! this.maximized=%d",(int)this.maximized);
 			//ignore maximize event when pull active
@@ -605,6 +654,7 @@ public class VTMainWindow : Window{
 				/* update hints, so first pull up ,after maximize, will be smooth
 				 * this size will be after unmaximize (pull_up call unmaximize)
 				 * */
+					debug("update_maximized_size successful");
 					this.update_maximized_size=false;
 					this.update_geometry_hints(event.height,event.width,event.height,event.width,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
 			}
@@ -715,7 +765,7 @@ public class VTMainWindow : Window{
 			window.get_display().sync();
 		}
 	}
-
+	
 	public void update_position_size(bool force_sync=true){
 				debug ("update_position_size start maximized=%d config_maximized=%d",(int)this.maximized ,(int)this.config_maximized);
 				/*update terminal align policy
@@ -734,9 +784,7 @@ public class VTMainWindow : Window{
 				/* update position only in unmaximized mode
 				 * */
 				if(!this.maximized /*&& !this.config_maximized*/){
-					if( (this.get_window().get_state() & Gdk.WindowState.FULLSCREEN) == Gdk.WindowState.FULLSCREEN)
-						this.unfullscreen();//force unfullscreen, some WMs sets fullscreen state if window size equal to fullscreen
-
+					this.fullscreened=false;
 					this.ayobject.tasks_notebook.width_request=this.ayobject.terminal_width;
 					this.ayobject.tasks_notebook.height_request=this.ayobject.terminal_height;
 //~ 					this.ayobject.main_vbox.width_request=this.ayobject.terminal_width;
@@ -1089,8 +1137,7 @@ public class VTMainWindow : Window{
 			should_be_h=this.ayobject.get_altyo_height();
 			int allocated_height=this.get_allocated_height();
 			if(allocated_height>should_be_h){
-				if( (this.get_window().get_state() & Gdk.WindowState.FULLSCREEN) == Gdk.WindowState.FULLSCREEN)
-					this.unfullscreen();//force unfullscreen, some WMs sets fullscreen state if window size equal to fullscreen				
+				this.fullscreened=false;//force unfullscreen, some WMs sets fullscreen state if window size equal to fullscreen				
 				minimum_height=natural_height=should_be_h;
 				this.ayobject.main_vbox.set_size_request(this.ayobject.terminal_width,should_be_h);
 				this.set_size_request(this.ayobject.terminal_width,should_be_h);
@@ -2111,7 +2158,7 @@ public class AYObject :Object{
 
 		this.add_window_toggle_accel("toggle_maximize", _("Maximize - restore"), _("Maximize window, or restore to normal size"), Gtk.Stock.EDIT,"",()=> {
 			if(this.main_window.maximized ||
-			(this.main_window.get_window().get_state() & Gdk.WindowState.FULLSCREEN) == Gdk.WindowState.FULLSCREEN){
+			   this.main_window.fullscreened ){
 				this.main_window.update_geometry_hints(0,0,1,1,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
 				this.main_window.maximized=false;
 			}else{

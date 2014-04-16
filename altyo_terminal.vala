@@ -378,6 +378,9 @@ public class AYTab : Object{
 		
 
 		this.hbox = new HBox(false, 0);
+		this.hbox.halign=Gtk.Align.FILL;
+		this.hbox.valign=Gtk.Align.FILL;
+		this.hbox.expand=false;		
 		//this.hbox.pack_start(this.vte_term,true,true,0);
 		//this.vte_term.grab_focus();
 		//this.vte_term.can_default=true;
@@ -475,9 +478,9 @@ public class VTTerminal : AYTab{
 
 		this.match_tags = new HashTable<int, string> (direct_hash, direct_equal);
 		this.vte_term = new Vte.Terminal();
-//~		this.vte_term.halign=Gtk.Align.START;
-//~		this.vte_term.valign=Gtk.Align.START;
-//~		this.vte_term.expand=false;
+		this.vte_term.halign=Gtk.Align.FILL;
+		this.vte_term.valign=Gtk.Align.FILL;
+		this.vte_term.expand=false;
 		/*this.vte_term.size_allocate.connect((allocation)=>{
 			debug("[screen %p] size-alloc   %d : %d at (%d, %d)\n",
                          this.vte_term, allocation.width, allocation.height, allocation.x, allocation.y);

@@ -528,6 +528,8 @@ public class VTMainWindow : Window{
 		//debug("end reparent to offscreen window");
 //~ 		this.ayobject.tasks_notebook.width_request=-1;
 		this.height_request=-1;//allow main window resize
+		this.halign=Gtk.Align.FILL;//allow main window resize
+		this.valign=Gtk.Align.FILL;//allow main window resize		
 //~ 		this.ayobject.main_vbox.width_request=-1;
 		if(this.maximized){
 			//correct size after unmaximize
@@ -766,37 +768,7 @@ public class VTMainWindow : Window{
 		}
 	}
 	
-	public void update_position_size(bool force_sync=true){
-				debug ("update_position_size start maximized=%d config_maximized=%d",(int)this.maximized ,(int)this.config_maximized);
-				/*update terminal align policy
-				 * */
-				this.ayobject.on_maximize(this.maximized||this.conf.standalone_mode);
-				if(this.conf.standalone_mode) return;
-//~				if(this.maximized && this.halign!=Gtk.Align.FILL){
-//~ 					this.halign=Gtk.Align.FILL;
-//~ 					this.valign=Gtk.Align.FILL;
-//~				}else{
-//~					this.halign=Gtk.Align.START;
-//~					this.valign=Gtk.Align.START;
-//~				}
-				//this.valign=Gtk.Align.START;
 
-				/* update position only in unmaximized mode
-				 * */
-				if(!this.maximized /*&& !this.config_maximized*/){
-					this.fullscreened=false;
-					this.ayobject.tasks_notebook.width_request=this.ayobject.terminal_width;
-					this.ayobject.tasks_notebook.height_request=this.ayobject.terminal_height;
-//~ 					this.ayobject.main_vbox.width_request=this.ayobject.terminal_width;
-					int should_be_h=0;
-					this.move (this.orig_x,this.orig_y);
-					debug ("update_position_size should_be_h=%d terminal_width=%d x=%d y=%d",should_be_h,this.ayobject.terminal_width,this.orig_x,this.orig_y) ;
-				}else{
-					this.ayobject.tasks_notebook.width_request=-1;
-					this.ayobject.tasks_notebook.height_request=-1;
-					this.ayobject.main_vbox.width_request=-1;
-				}
-	}
 	
 	public void reconfigure(){
 		debug("reconfigure VTWindow");
@@ -1127,7 +1099,41 @@ public class VTMainWindow : Window{
 			this.window_set_active();
 	}//show_message_box
 	
-	
+	public void update_position_size(bool force_sync=true){
+				debug ("update_position_size start maximized=%d config_maximized=%d",(int)this.maximized ,(int)this.config_maximized);
+				/*update terminal align policy
+				 * */
+				this.ayobject.on_maximize(this.maximized||this.conf.standalone_mode);
+				if(this.conf.standalone_mode) return;
+//~				if(this.maximized && this.halign!=Gtk.Align.FILL){
+//~ 					this.halign=Gtk.Align.FILL;
+//~ 					this.valign=Gtk.Align.FILL;
+//~				}else{
+//~					this.halign=Gtk.Align.START;
+//~					this.valign=Gtk.Align.START;
+//~				}
+				//this.valign=Gtk.Align.START;
+
+				/* update position only in unmaximized mode
+				 * */
+				if(!this.maximized /*&& !this.config_maximized*/){
+					this.halign=Gtk.Align.START;//lock window size
+					this.valign=Gtk.Align.START;//lock window size					
+					this.fullscreened=false;
+					this.ayobject.tasks_notebook.width_request=this.ayobject.terminal_width;
+					this.ayobject.tasks_notebook.height_request=this.ayobject.terminal_height;
+//~ 					this.ayobject.main_vbox.width_request=this.ayobject.terminal_width;
+					int should_be_h=0;
+					this.move (this.orig_x,this.orig_y);
+					debug ("update_position_size should_be_h=%d terminal_width=%d x=%d y=%d",should_be_h,this.ayobject.terminal_width,this.orig_x,this.orig_y) ;
+				}else{
+					this.halign=Gtk.Align.FILL;
+					this.valign=Gtk.Align.FILL;
+					this.ayobject.tasks_notebook.width_request=-1;
+					this.ayobject.tasks_notebook.height_request=-1;
+					this.ayobject.main_vbox.width_request=-1;
+				}
+	}	
 
 	public override void get_preferred_height_for_width (int width,out int minimum_height, out int natural_height) {
 		int hvbox_h,hvbox_h_ignore,should_be_h=0;

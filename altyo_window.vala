@@ -1205,7 +1205,7 @@ public class VTMainWindow : Window{
 
 	public override void get_preferred_width (out int minimum_width, out int natural_width) {
 		base.get_preferred_width(out minimum_width, out natural_width);
-		if( !this.pull_animation_active && !this.pull_active && !this.maximized && this.ayobject!=null){
+		if( this.allow_update_size && this.ayobject!=null){
 			//int allocated_width=this.get_allocated_width();
 			if( this.ayobject.terminal_width >0 && this.ayobject.terminal_width !=  minimum_width){
 				natural_width=minimum_width = this.ayobject.terminal_width;

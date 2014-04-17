@@ -57,6 +57,7 @@ public enum OPTIONS_TAB{
 	ENCODINGS
 	}
 public enum MYWINStates{
+	NULL,
 	MAXIMIZED,
 	FULLSCREEN
 	}
@@ -66,7 +67,7 @@ public class VTMainWindow : Window{
 	public OffscreenWindow pixwin;
 	public AYObject ayobject;
 	
-	private int my_window_state;//cached value
+	private int my_window_state;
 	private bool _maximized=false;//cached value
 	public bool maximized {
         get {
@@ -630,24 +631,9 @@ public class VTMainWindow : Window{
 
 	public override bool window_state_event (Gdk.EventWindowState event){
 //~	public bool window_state_event2 (Gdk.EventWindowState event){
-//~ 	public bool window_state_event2 (Gdk.EventWindowState event){
 //~ 		debug("window_state_event type=%d new_state=%d mask=%d",(int)event.type,(int)event.new_window_state,(int)event.changed_mask);
 		var ret=base.window_state_event(event);
-		if(this.pull_update_maximize_size){
-			/*special case
-			 * pull_down + last step + maximize*/
-			if( (event.changed_mask & Gdk.WindowState.MAXIMIZED)==Gdk.WindowState.MAXIMIZED ){//maximize state change
-				if((Gdk.WindowState.MAXIMIZED & event.new_window_state)== Gdk.WindowState.MAXIMIZED){//maximize
-//~ 						this._maximized = true;
-//~ 						this.config_maximized=true;
-//~ 						this.update_maximized_size=true;
-						this.pull_update_maximize_size=false;
-//~ 						this.current_state=WStates.VISIBLE;
-						debug("window_state_event request update_maximized_size");
-				}			
-			}
-		}
-		 
+	 
 		if(!this.pull_active && !this.pull_animation_active && !this.conf.standalone_mode){
 				debug("window_state_event !!!!!!!!! this.maximized=%d event.changed_mask=%d",(int)this.maximized,event.changed_mask);
 			//ignore maximize event when pull active
@@ -719,14 +705,14 @@ public class VTMainWindow : Window{
 			int current_monitor = gscreen.get_monitor_at_point (event.x,event.y);
 			if(this.orig_monitor != current_monitor){
 				/*event on monitor changed*/
-//~				this.orig_x=event.x;//set coordinates in new monitor
-//~				this.orig_y=event.y;//set coordinates in new monitor
-//~				this.configure_position();//configure position for new monitor
+				this.orig_x=event.x;//set coordinates in new monitor
+				this.orig_y=event.y;//set coordinates in new monitor
+				this.configure_position();//configure position for new monitor
 				/* if window was dragged by mouse, then window_resize and window_move will not working until user release mouse button
 				 * we don't have resize/move events, so we do not know when the user is finished moving
 				 */ 
 				this.on_monitors_changed_start_time = new DateTime.now_local();
-//~				GLib.Timeout.add(500,this.on_monitor_changed_force_new_position);//every 0.5s
+				GLib.Timeout.add(500,this.on_monitor_changed_force_new_position);//every 0.5s
 			}
 		}
 	return ret;
@@ -979,17 +965,17 @@ public class VTMainWindow : Window{
 			debug("settings for monitor x=%d,y=%d w=%d h=%d",this.position,pos_y,w,h);
 			
 			this.fullscreen_on_maximize = conf.get_boolean("window_fullscreen_on_maximize",false);
-//~ 			var max_tmp = conf.get_boolean("window_start_maximized",false);
+			var max_tmp = conf.get_boolean("window_start_maximized",false);
 //~ 
-//~ 			if(this.start_maximized!=max_tmp){
-//~ 				this.start_maximized=max_tmp;//start_maximized store previous state of max_tmp
-//~ 				this.config_maximized=max_tmp;//config_maximized store window state, which is should be
-//~ 			}
+			if(this.start_maximized!=max_tmp){
+				this.start_maximized=max_tmp;//start_maximized store previous state of max_tmp
+				this.config_maximized=max_tmp;//config_maximized store window state, which is should be
+			}
 			if(h==100)
-				this.config_maximized=true;
+				this.maximized=true;
 
 			/*calculate window size according to config_maximized*/
-			if(this.config_maximized){
+			if(this.maximized){
 				/*used in pull_up, only if start hidden*/
 				pos_y = (int)rectangle.height/4;//workaroud, for bug with gdk_screen_get_monitor_workarea when window_start_maximized==true
 			}else{
@@ -1152,7 +1138,7 @@ public class VTMainWindow : Window{
 	}//show_message_box
 	
 	public void update_position_size(bool force_sync=true){
-				debug ("update_position_size start maximized=%d config_maximized=%d",(int)this.maximized ,(int)this.config_maximized);
+				debug ("update_position_size start maximized=%d this.my_window_state=%d",(int)this.maximized,this.my_window_state);
 				/*update terminal align policy
 				 * */
 				this.ayobject.on_maximize(this.maximized||this.conf.standalone_mode);
@@ -1160,7 +1146,7 @@ public class VTMainWindow : Window{
 
 				/* update position only in unmaximized mode
 				 * */
-				if(!this.maximized /*&& !this.config_maximized*/){			
+				if((this.my_window_state & MYWINStates.MAXIMIZED) == 0){
 					this.fullscreened=false;
 					debug("terminal w=%d h=%d",this.ayobject.terminal_width,this.ayobject.terminal_height);
 					this.ayobject.tasks_notebook.width_request=this.ayobject.terminal_width;
@@ -1214,38 +1200,12 @@ public class VTMainWindow : Window{
 				debug("WINDOW get_preferred_height resize!!! %d",minimum_height);
 			}
 		}
-		if( (this.maximized || this.fullscreened) && !this.config_maximized){
-			this.ayobject.tasks_notebook.width_request=-1;
-			this.ayobject.tasks_notebook.height_request=-1;
-			this.ayobject.main_vbox.width_request=-1;			
-			this.ayobject.main_vbox.height_request=-1;			
-			this.height_request=-1;//allow main window resize
-			this.halign=Gtk.Align.FILL;//allow main window resize
-			this.valign=Gtk.Align.FILL;//allow main window resize		
-//~ 		this.ayobject.main_vbox.width_request=-1;
-		
-			//correct size after unmaximize
-			//just to be shure that terminal will not change size
-//~ 			this.ayobject.main_vbox.set_size_request(orig_w_main_vbox,orig_h_main_vbox);
-			//this.update_events();
-
-			/*reset geometry hints, allow min height =1
-			 * */
-//~			this.update_geometry_hints(0,this.pull_w,1,this.pull_w,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
-			
-//~			this.maximized=false;
-//~			should_be_h=this.ayobject.get_altyo_height();
-//~			this.resize(this.ayobject.terminal_width,should_be_h-1);
-//~			this.move(this.pull_x,this.pull_y);
-//~			debug("WINDOW get_preferred_height resize!!!2 %d",should_be_h);
-		}
-		
 		
 	}//get_preferred_height_for_width
 
 	public override void get_preferred_width (out int minimum_width, out int natural_width) {
 		base.get_preferred_width(out minimum_width, out natural_width);
-		if( !this.pull_animation_active && !this.pull_active && !this.maximized /*&& !this.config_maximized*/ && this.ayobject!=null){
+		if( !this.pull_animation_active && !this.pull_active && !this.maximized && this.ayobject!=null){
 			//int allocated_width=this.get_allocated_width();
 			if( this.ayobject.terminal_width >0 && this.ayobject.terminal_width !=  minimum_width){
 				natural_width=minimum_width = this.ayobject.terminal_width;

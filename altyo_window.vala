@@ -90,7 +90,6 @@ public class VTMainWindow : Window{
 				debug("mainvt_maximize");
 				this.my_window_state |= MYWINStates.MAXIMIZED;
 //~ 				if(this.visible && !this.maximized)
-				this.update_maximized_size=true;
 				this.maximize();
 				if(this.fullscreen_on_maximize){
 					this.fullscreened=true;
@@ -98,8 +97,6 @@ public class VTMainWindow : Window{
 			}else{
 				debug("mainvt_unmaximize");
 				this.my_window_state &= ~(MYWINStates.MAXIMIZED);
-				this.update_minimized_size=true;
-				this.update_geometry_hints(1,1,10,10,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
 				/* do not forget to call this.update_geometry_hints
 				 * with appropriate size*/
 				this.fullscreened=false;
@@ -404,7 +401,7 @@ public class VTMainWindow : Window{
 				int h=(this.pull_h-(this.pull_h/arith_progress)*(arith_progress2) );
 				if(h==0)h=1;//set minimum height
 
-				this.resize(this.pull_w,h);
+				this.resize_to_geometry(this.pull_w,h);
 				this.display_sync();
 				this.pull_step++;
 				return true;//continue animation
@@ -421,7 +418,7 @@ public class VTMainWindow : Window{
 							this.maximized=true;
 						}
 					}else{
-						this.resize (this.pull_w,pull_h);
+						this.resize_to_geometry (this.pull_w,pull_h);
 					}
 					this.display_sync();
 					this.pull_step++;
@@ -447,7 +444,7 @@ public class VTMainWindow : Window{
 		if(!this.animation_enabled ||
 			this.pixwin.get_child()==null){//prevent error if start hidden
 			this.configure_position();
-			this.resize (this.pull_w,this.pull_h);//start height
+			this.resize_to_geometry (this.pull_w,this.pull_h);//start height
 			this.show();
 			if((this.mouse_follow || !this.gravity_north_west) && !this.pull_maximized){
 				this.move (this.orig_x,this.orig_y);//new position
@@ -470,7 +467,7 @@ public class VTMainWindow : Window{
 		this.pull_animation_active=true;
 		if(!this.pull_maximized)
 			this.configure_position();
-		this.resize (this.pull_w,2);//start height
+		this.resize_to_geometry (this.pull_w,2);//start height
 		this.show();
 		this.display_sync();
 		this.current_state=WStates.VISIBLE;
@@ -504,7 +501,7 @@ public class VTMainWindow : Window{
 				/* object Gdk.Window have option "state" with current window state
 				 * we will check is window still in fullscreen satate*/
 				this.fullscreened=false;//force unfullscreen, some WMs sets fullscreen state if window size equal to fullscreen
-				this.resize(this.pull_w,h);
+				this.resize_to_geometry(this.pull_w,h);
 				this.pull_step++;
 //~ 				this.update_events();
 				this.display_sync();
@@ -576,12 +573,12 @@ public class VTMainWindow : Window{
 			/*reset geometry hints, allow min height =1
 			 * */
 //~ 			this.update_geometry_hints(0,this.pull_w,1,this.pull_w,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
-			
+			this.move(this.pull_x,this.pull_y);
 			this.maximized=false;
-			this.resize(this.pull_w,this.pull_h-1);
+			//this.resize_to_geometry(this.pull_w,this.pull_h-1);
 			this.move(this.pull_x,this.pull_y);
 		}else
-			this.resize(this.pull_w,this.pull_h-1);//work around: force repainting window content in offscreenwindow for gtk3.8
+			this.resize_to_geometry(this.pull_w,this.pull_h-1);//work around: force repainting window content in offscreenwindow for gtk3.8
 
 		//debug("pull_up 0-%d  this.get_allocated_height=%d this.orig_h=%d",this.get_allocated_height()-this.pull_h, this.get_allocated_height(),this.pull_h);
 		//debug("pull_up orig_h=%d orig_w=%d",this.pull_h,this.pull_w);
@@ -650,16 +647,10 @@ public class VTMainWindow : Window{
 				}else{//unmaximize
 					debug("new state unmaximize");
 //~ 					this.update_geometry_hints(0,0,0,0,Gdk.WindowHints.MIN_SIZE|Gdk.WindowHints.BASE_SIZE);
-					this.maximized = false;//force unmaximize (sometimes configure_event is not occurs)
-//~ 					this.resize (10,10);
-//~						this.config_maximized=false;
-						/* reset geometry hints
-						 * allow resize from maximized size
-						 * */
-//~ 						 this.update_minimized_size=true;
-//~						this.configure_position();
-						
-//~						this.update_position_size();
+					this.update_minimized_size=true;
+					//this.maximized = false;//force unmaximize (sometimes configure_event is not occurs)
+					this.configure_position();
+					GLib.Idle.add(this.update_position_size_for_glib);//querying resize
 				}
 			}
 		}
@@ -680,11 +671,14 @@ public class VTMainWindow : Window{
 				 * */
 					debug("update_maximized_size successful");
 					this.update_maximized_size=false;
-//~  					this.update_geometry_hints(0,0,event.height,event.width,Gdk.WindowHints.MIN_SIZE);
 					this.configure_position();
 					this.update_position_size();
-					this.set_default_size(event.width,event.height);
-					this.resize (event.width,event.height);
+					this.move(event.x,event.y);
+//~  					this.update_geometry_hints(0,0,event.height,event.width,Gdk.WindowHints.MIN_SIZE);
+					this.height_request=event.height-event.y;//this size will be userd after unmaximize
+					this.width_request=event.width-event.x;//this size will be userd after unmaximize
+			
+					
 					return ret;
 			}
 			if(update_minimized_size){
@@ -692,9 +686,8 @@ public class VTMainWindow : Window{
 				 * this size will be after unmaximize (pull_up call unmaximize)
 				 * */
 					debug("update_minimized_size successful");
-					this.update_minimized_size=false;
-					this.configure_position();
-					this.update_position_size();
+					this.update_minimized_size=false;			
+					this.move (this.orig_x,this.orig_y);
 					return ret;
 			}
 		}
@@ -1137,6 +1130,10 @@ public class VTMainWindow : Window{
 			this.window_set_active();
 	}//show_message_box
 	
+	public bool update_position_size_for_glib(){
+		this.update_position_size();
+		return false;
+	}
 	public void update_position_size(bool force_sync=true){
 				debug ("update_position_size start maximized=%d this.my_window_state=%d",(int)this.maximized,this.my_window_state);
 				/*update terminal align policy
@@ -1149,57 +1146,64 @@ public class VTMainWindow : Window{
 				if((this.my_window_state & MYWINStates.MAXIMIZED) == 0){
 					this.fullscreened=false;
 					debug("terminal w=%d h=%d",this.ayobject.terminal_width,this.ayobject.terminal_height);
+					this.freeze_notify();
 					this.ayobject.tasks_notebook.width_request=this.ayobject.terminal_width;
 					this.ayobject.tasks_notebook.height_request=this.ayobject.terminal_height;
-					this.update_events();
+					//this.update_events();
 					int should_be_h=this.ayobject.get_altyo_height();
 					int allocated_height=this.get_allocated_height();
 					if(allocated_height>should_be_h){
 						this.ayobject.main_vbox.set_size_request(this.ayobject.terminal_width,should_be_h);
 						this.set_size_request(this.ayobject.terminal_width,should_be_h);
-						this.resize(this.ayobject.terminal_width,should_be_h);
+						this.thaw_notify ();
+						this.resize_to_geometry(this.ayobject.terminal_width,should_be_h);
+						this.update_events();//update size right now
+						this.move (this.orig_x,this.orig_y);
 						/* inform window manager where window should be placed*/
 						/* gem.win_gravity=Gdk.Gravity.NORTH; not working for multi-seat systems =( ,
 						 * use move_resize instead */
-						if(this.visible)
-							this.get_window().move_resize(this.orig_x,this.orig_y,this.ayobject.terminal_width,should_be_h);				
+//~						if(this.visible)
+//~							this.get_window().move_resize(this.orig_x,this.orig_y,this.ayobject.terminal_width,should_be_h);				
 						debug("WINDOW update_position_size resize!!! %d",should_be_h);
-					}else			
+					}else{
+						this.thaw_notify ();
 						this.move (this.orig_x,this.orig_y);
+					}
 						
 					this.halign=Gtk.Align.START;//lock window size
 					this.valign=Gtk.Align.START;//lock window size						
 					debug ("update_position_size should_be_h=%d terminal_width=%d x=%d y=%d",should_be_h,this.ayobject.terminal_width,this.orig_x,this.orig_y) ;
 				}else{
+					this.freeze_notify ();
 					this.halign=Gtk.Align.FILL;
 					this.valign=Gtk.Align.FILL;
 					this.ayobject.tasks_notebook.width_request=-1;
 					this.ayobject.tasks_notebook.height_request=-1;
 					this.ayobject.main_vbox.width_request=-1;
+					this.thaw_notify ();
+					debug("update_position_size maximized mode");
 				}
 	}	
 
 	public override void get_preferred_height_for_width (int width,out int minimum_height, out int natural_height) {
 		int hvbox_h,hvbox_h_ignore,should_be_h=0;
 		base.get_preferred_height_for_width (width,out minimum_height, out natural_height);
-		debug("WINDOW get_preferred_height width=%d minimum_height=%d, natural_height=%d  should_be_h=%d get_allocated_height=%d",width,minimum_height, natural_height,should_be_h,this.get_allocated_height());
-		if( this.allow_update_size &&  this.ayobject!=null){
+		if( this.allow_update_size &&  this.ayobject!=null && (this.my_window_state & MYWINStates.MAXIMIZED) == 0 ){
 			should_be_h=this.ayobject.get_altyo_height();
+			debug("WINDOW get_preferred_height_for_width width=%d minimum_height=%d, natural_height=%d  should_be_h=%d get_allocated_height=%d",width,minimum_height, natural_height,should_be_h,this.get_allocated_height());
 			int allocated_height=this.get_allocated_height();
 			if(allocated_height>should_be_h){
 				this.fullscreened=false;//force unfullscreen, some WMs sets fullscreen state if window size equal to fullscreen				
 				minimum_height=natural_height=should_be_h;
+				this.freeze_notify();
 				this.ayobject.main_vbox.set_size_request(this.ayobject.terminal_width,should_be_h);
 				this.set_size_request(this.ayobject.terminal_width,should_be_h);
-				this.resize(this.ayobject.terminal_width,should_be_h);
-				/* inform window manager where window should be placed*/
-				/* gem.win_gravity=Gdk.Gravity.NORTH; not working for multi-seat systems =( ,
-				 * use move_resize instead */
-				if(this.visible)
-					this.get_window().move_resize(this.orig_x,this.orig_y,this.ayobject.terminal_width,should_be_h);				
-				debug("WINDOW get_preferred_height resize!!! %d",minimum_height);
+				this.resize_to_geometry(this.ayobject.terminal_width,should_be_h);
+				this.thaw_notify ();			
+				debug("WINDOW get_preferred_height_for_width resize!!! %d",minimum_height);
 			}
-		}
+		}else
+			debug("WINDOW get_preferred_height_for_width width=%d minimum_height=%d, natural_height=%d  get_allocated_height=%d",width,minimum_height, natural_height,this.get_allocated_height());
 		
 	}//get_preferred_height_for_width
 

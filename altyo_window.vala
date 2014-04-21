@@ -472,7 +472,6 @@ public class VTMainWindow : Window{
 		this.pull_animation_active=true;
 		if(!this.pull_maximized)
 			this.configure_position();
-		this.resize (this.pull_w,2);//start height
 		this.set_default_size(this.pull_w,2);//Default size - used only the FIRST time we map a window
 		this.show();
 		this.display_sync();
@@ -637,9 +636,11 @@ public class VTMainWindow : Window{
 				if(!this.pull_active && !this.pull_animation_active && !this.conf.standalone_mode){
 					if((Gdk.WindowState.MAXIMIZED & event.new_window_state)== Gdk.WindowState.MAXIMIZED){//maximize
 						debug("new state maximize");
+						this.my_window_state |= MYWINStates.MAXIMIZED;
 						this.update_position_size();							
 					}else{//unmaximize
 						debug("new state unmaximize");
+						this.my_window_state &= ~MYWINStates.MAXIMIZED;
 						this.configure_position();
 						this.update_position_size();
 					}
@@ -655,13 +656,14 @@ public class VTMainWindow : Window{
 //~ 		debug("configure_event");
 //~ 		debug("event.type=%d window=%d x=%d y=%d width=%d height=%d",event.type,(int)event.window,event.x,event.y,event.width,event.height);
 		var ret=base.configure_event(event);
-	
-		/*update position and size when window has moved to another monitor*/
+		
 		if(this.allow_update_size && this.wait_for_window_position_update>0){
-				debug("configure_event this.wait_for_window_position_update=%d",(int)this.wait_for_window_position_update);
+				if(this.update_position_size_for_glib_timer_id == 0)
+					this.update_position_size_for_glib_timer_id=GLib.Timeout.add(50,this.update_position_size_for_glib);//recheck position after 50ms			
 				return ret;
 		}
-		 
+		
+		/*update position and size when window has moved to another monitor*/ 
 		if(this.allow_update_size){
 			unowned Gdk.Screen gscreen = this.get_screen ();
 			int current_monitor = gscreen.get_monitor_at_point (event.x,event.y);
@@ -675,7 +677,7 @@ public class VTMainWindow : Window{
 				
 				if(this.on_monitor_changed_force_new_position_glib_timer_id != 0)
  					GLib.Source.remove(this.on_monitor_changed_force_new_position_glib_timer_id);
-				this.on_monitor_changed_force_new_position_glib_timer_id=GLib.Timeout.add(1000,this.on_monitor_changed_force_new_position);//every 0.5s
+				this.on_monitor_changed_force_new_position_glib_timer_id=GLib.Timeout.add(500,this.on_monitor_changed_force_new_position);//every 0.5s
 			}
 		}
 	return ret;
@@ -685,13 +687,19 @@ public class VTMainWindow : Window{
 		debug("on_monitor_changed_force_new_position");
 		int x,y;
 		this.get_position (out x, out y);
+		if(!this.allow_update_size)
+			return false; //stop
+			
+		if(this.orig_x == x && this.orig_y == y)
+			return false; //stop
+			
 		this.orig_x=x;//set coordinates in new monitor
 		this.orig_y=y;//set coordinates in new monitor
 		this.configure_position();//configure position for new monitor
 
 		var now = new DateTime.now_local();
 		TimeSpan tdelta = now.difference(this.on_monitors_changed_start_time);
-		if(x!=this.orig_x &&  tdelta < (1000000*30) && this.current_state==WStates.VISIBLE && !this.maximized){ //timeout 30 seconds
+		if(x!=this.orig_x &&  tdelta < (1000000*30) && this.allow_update_size){ //timeout 30 seconds
 			this.update_position_size();
 			return true; //continue
 		}else{
@@ -1160,6 +1168,8 @@ public class VTMainWindow : Window{
 					this.move(this.orig_x,this.orig_y);
 					this.wait_for_window_position_update--;
 					debug("check_size this.wait_for_window_position_update=%d",(int)this.wait_for_window_position_update);
+					if(this.update_position_size_for_glib_timer_id == 0)
+						this.update_position_size_for_glib_timer_id=GLib.Timeout.add(50,this.update_position_size_for_glib);//recheck size after 50ms
 				}else
 					this.wait_for_window_position_update=0;
 			}

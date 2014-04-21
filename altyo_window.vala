@@ -552,9 +552,10 @@ public class VTMainWindow : Window{
 			return;
 		}
 		this.pull_active=true;
+
 		this.height_request=-1;//allow main window resize
 		this.halign=Gtk.Align.FILL;//allow main window resize
-		this.valign=Gtk.Align.FILL;//allow main window resize		
+		this.valign=Gtk.Align.FILL;//allow main window resize				
 
 		//debug("reparent to offscreen window");
 		//this.get_child().reparent(this.pixwin);//reparent to offscreen window
@@ -562,13 +563,21 @@ public class VTMainWindow : Window{
 		this.remove(ch);
 		this.pixwin.set_size_request(pull_w,pull_h);
 		this.pixwin.add(ch);
+
 		//debug("end reparent to offscreen window");
 
 		if(this.maximized){
+			//set main_vbox size after unmaximize
+			this.ayobject.main_vbox.height_request = this.orig_h_main_vbox;
+			this.ayobject.main_vbox.width_request = this.orig_w_main_vbox;
+			this.width_request=this.pull_w;
+			this.height_request=this.pull_h;
+			this.check_resize();//container
+			
 			this.maximized=false;
 			this.move(this.pull_x,this.pull_y);
 		}else
-			this.resize(this.pull_w,this.pull_h-1);//work around: force repainting window content in offscreenwindow for gtk3.8
+			this.check_resize();
 
 		//debug("pull_up 0-%d  this.get_allocated_height=%d this.orig_h=%d",this.get_allocated_height()-this.pull_h, this.get_allocated_height(),this.pull_h);
 		//debug("pull_up orig_h=%d orig_w=%d",this.pull_h,this.pull_w);

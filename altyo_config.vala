@@ -110,7 +110,7 @@ public class MySettings : Object {
 	public void load_config(){
 		debug("loading config...");
 		if(!GLib.FileUtils.test(this.conf_file,GLib.FileTest.EXISTS) )
-					GLib.DirUtils.create(GLib.Path.get_dirname(this.conf_file),502);//755
+					GLib.DirUtils.create_with_parents(GLib.Path.get_dirname(this.conf_file),502);//755
 
 				try {
 						kf.load_from_file(this.conf_file, KeyFileFlags.KEEP_COMMENTS);

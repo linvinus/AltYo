@@ -1089,6 +1089,7 @@ public class AYSettings : AYTab{
 		if(B!=null){
 			if(B.active){
 				if(!GLib.FileUtils.test(this.autorun_file,GLib.FileTest.EXISTS)){
+					GLib.DirUtils.create_with_parents(GLib.Path.get_dirname(this.autorun_file),502);//755 create autostart dir if not exist
 					try{
 						string autorun_content = """
 [Desktop Entry]

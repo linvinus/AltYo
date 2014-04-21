@@ -321,11 +321,12 @@ public class VTMainWindow : Window{
 			this.set_wmclass("altyo-tiling","Altyo");
 			this.set_decorated (true);
 			this.ayobject.on_maximize(false);
-			//this.ayobject.on_maximize(true);
-			this.update_position_size(false);
-			var should_be_h = this.ayobject.get_altyo_height();			
+			this.ayobject.on_maximize(true);
+			//this.update_position_size(false);
+			var should_be_h = this.ayobject.get_altyo_height(this.conf.standalone_mode);
+			this.set_default_size(this.ayobject.terminal_width,should_be_h);
 			this.show();
-			this.resize(this.ayobject.terminal_width,should_be_h);
+			
 			
 			this.window_set_active();
 		}
@@ -1108,10 +1109,17 @@ public class VTMainWindow : Window{
 
 	public void update_position_size(bool force_sync=true){
 				debug ("update_position_size start maximized=%d this.my_window_state=%d",(int)this.maximized,this.my_window_state);
-				/*update terminal align policy
-				 * */
-				this.ayobject.on_maximize(this.maximized||this.conf.standalone_mode);
-				if(this.conf.standalone_mode) return;
+
+				if(this.conf.standalone_mode){
+					this.width_request=-1;//allow main window resize
+					this.height_request=-1;//allow main window resize
+					this.halign=Gtk.Align.FILL;//allow main window resize
+					this.valign=Gtk.Align.FILL;//allow main window resize	
+					 return;
+				 }else
+					this.ayobject.on_maximize(this.maximized);	//update terminal align policy
+
+
 
 				/* update position only in unmaximized mode
 				 * */
@@ -1126,7 +1134,6 @@ public class VTMainWindow : Window{
 						this.ayobject.main_vbox.set_size_request(this.ayobject.terminal_width,should_be_h);
 						this.set_size_request(this.ayobject.terminal_width,should_be_h);
 						this.resize(this.ayobject.terminal_width,should_be_h);
-						//this.update_events();
 						this.move (this.orig_x,this.orig_y);
 						this.wait_for_window_position_update=5;//wait while movement will be confirmed in configure_event 
 						debug("WINDOW update_position_size resize!!! %d",should_be_h);
@@ -1159,6 +1166,7 @@ public class VTMainWindow : Window{
 	
 	private void check_size(){
 		int hvbox_h,hvbox_h_ignore,should_be_h=0,x,y;
+		debug("check_size resize");
 		if( this.allow_update_size &&  this.ayobject!=null && (this.my_window_state & MYWINStates.MAXIMIZED) == 0 ){
 			should_be_h=this.ayobject.get_altyo_height();
 			int allocated_height=this.get_allocated_height();
@@ -1182,7 +1190,7 @@ public class VTMainWindow : Window{
 				}else
 					this.wait_for_window_position_update=0;
 			}
-		}	
+		}
 	}
 	
 	public override void get_preferred_height_for_width (int width,out int minimum_height, out int natural_height) {
@@ -1674,7 +1682,6 @@ public class AYObject :Object{
 			//reindex all tabs
 			if(vt.tbutton.set_title((int)(this.children.index(vt)+1),null)){
 				this.hvbox.queue_draw();
-				this.main_window.update_events();
 			}
 		}
 	}
@@ -1727,7 +1734,6 @@ public class AYObject :Object{
 				var tab_index =  this.children.index(vt)+1;
 				if(vt.tbutton.set_title(tab_index, s )){
 					this.hvbox.queue_draw();
-					this.main_window.update_events();
 					this.window_title_update();
 				}
 				if( (this.tab_sort_order==TAB_SORT_ORDER.HOSTNAME) &&
@@ -2465,9 +2471,10 @@ public class AYObject :Object{
 		}
 	}
 
-	public int get_altyo_height(){
+	public int get_altyo_height(bool standalone_mode=false){
 		int hvbox_h,hvbox_h_ignore,should_be_h=this.terminal_height;
-		this.hvbox.width_request=this.terminal_width;
+		if(!standalone_mode)
+			this.hvbox.width_request=this.terminal_width;
 		this.hvbox.get_preferred_height_for_width(this.terminal_width,out hvbox_h,out hvbox_h_ignore);
 		should_be_h+=hvbox_h;
 		if(this.quick_options_notebook.visible){

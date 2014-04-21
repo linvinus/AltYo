@@ -1682,6 +1682,7 @@ public class AYObject :Object{
 			//reindex all tabs
 			if(vt.tbutton.set_title((int)(this.children.index(vt)+1),null)){
 				this.hvbox.queue_draw();
+				this.main_window.update_events();
 			}
 		}
 	}
@@ -1734,6 +1735,7 @@ public class AYObject :Object{
 				var tab_index =  this.children.index(vt)+1;
 				if(vt.tbutton.set_title(tab_index, s )){
 					this.hvbox.queue_draw();
+					this.main_window.update_events();
 					this.window_title_update();
 				}
 				if( (this.tab_sort_order==TAB_SORT_ORDER.HOSTNAME) &&

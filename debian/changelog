@@ -1,3 +1,16 @@
+altyo (0.4~rc1-linvinus1) quantal; urgency=low
+
+  * rewritten size control system
+  * fix: 'exit' is an ambiguous reference between `Gtk.exit' and `Posix.exit'
+  * fix maximize-restore
+  * small fixes
+  * Fix: create autostart dir if it doesn't exist
+  * improve on monitor changed event, auto update position
+  * fix size after unmaximize
+  * fix standalone mode
+
+ -- denis <linvinus@gmail.com>  Tue, 22 Apr 2014 20:36:18 +0400
+
 altyo (0.3~rc17-linvinus1) quantal; urgency=low
 
   * improvements: support hot plugging of monitors, improve auto update position and size when move across monitors

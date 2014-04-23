@@ -108,8 +108,6 @@ public class VTMainWindow : Window{
 					this.wait_for_window_position_update=5;
 					this.width_request=-1;//allow main window resize
 					this.height_request=-1;//allow main window resize
-					this.halign=Gtk.Align.FILL;//allow main window resize
-					this.valign=Gtk.Align.FILL;//allow main window resize					
 					this.unmaximize();
 				}
 			}
@@ -555,8 +553,6 @@ public class VTMainWindow : Window{
 		this.pull_active=true;
 
 		this.height_request=-1;//allow main window resize
-		this.halign=Gtk.Align.FILL;//allow main window resize
-		this.valign=Gtk.Align.FILL;//allow main window resize				
 
 		//debug("reparent to offscreen window");
 		//this.get_child().reparent(this.pixwin);//reparent to offscreen window
@@ -564,13 +560,13 @@ public class VTMainWindow : Window{
 		this.remove(ch);
 		this.pixwin.set_size_request(pull_w,pull_h);
 		this.pixwin.add(ch);
-
+		//set main_vbox size same as original,otherwise draw will be broken
+		this.ayobject.main_vbox.height_request = this.orig_h_main_vbox;
+		this.ayobject.main_vbox.width_request = this.orig_w_main_vbox;
 		//debug("end reparent to offscreen window");
 
 		if(this.maximized){
 			//set main_vbox size after unmaximize
-			this.ayobject.main_vbox.height_request = this.orig_h_main_vbox;
-			this.ayobject.main_vbox.width_request = this.orig_w_main_vbox;
 			this.width_request=this.pull_w;
 			this.height_request=this.pull_h;
 			this.check_resize();//container
@@ -984,9 +980,6 @@ public class VTMainWindow : Window{
 				this.orig_y = pos_y;
 			}
 
-			//this.tasks_notebook.set_size_request(this.terminal_width,this.terminal_height);
-			//we can't change height , otherwise vte will change
-			//this.tasks_notebook.set_size_request(terminal_width,this.terminal_height);
 			debug("configure_position end x=%d,y=%d term_w=%d term_h=%d",this.orig_x,this.orig_y,this.ayobject.terminal_width,this.ayobject.terminal_height);
 			return true;
 	}//configure_position
@@ -1113,8 +1106,6 @@ public class VTMainWindow : Window{
 				if(this.conf.standalone_mode){
 					this.width_request=-1;//allow main window resize
 					this.height_request=-1;//allow main window resize
-					this.halign=Gtk.Align.FILL;//allow main window resize
-					this.valign=Gtk.Align.FILL;//allow main window resize	
 					 return;
 				 }else
 					this.ayobject.on_maximize(this.maximized);	//update terminal align policy
@@ -1126,13 +1117,14 @@ public class VTMainWindow : Window{
 				if((this.my_window_state & MYWINStates.MAXIMIZED) == 0){
 					this.fullscreened=false;
 					debug("terminal w=%d h=%d",this.ayobject.terminal_width,this.ayobject.terminal_height);
+					/*set terminal size in non maximized mode*/
+					this.ayobject.main_vbox.width_request=-1;
+					this.ayobject.main_vbox.height_request=-1;					
 					this.ayobject.tasks_notebook.width_request=this.ayobject.terminal_width;
 					this.ayobject.tasks_notebook.height_request=this.ayobject.terminal_height;
 					int should_be_h=this.ayobject.get_altyo_height();
 					int allocated_height=this.get_allocated_height();
 					if(allocated_height>should_be_h){
-						this.ayobject.main_vbox.set_size_request(this.ayobject.terminal_width,should_be_h);
-						this.set_size_request(this.ayobject.terminal_width,should_be_h);
 						this.resize(this.ayobject.terminal_width,should_be_h);
 						this.move (this.orig_x,this.orig_y);
 						this.wait_for_window_position_update=5;//wait while movement will be confirmed in configure_event 
@@ -1141,18 +1133,12 @@ public class VTMainWindow : Window{
 						this.move (this.orig_x,this.orig_y);
 					}
 						
-					this.halign=Gtk.Align.START;//lock window size
-					this.valign=Gtk.Align.START;//lock window size						
 					debug ("update_position_size should_be_h=%d terminal_width=%d x=%d y=%d",should_be_h,this.ayobject.terminal_width,this.orig_x,this.orig_y) ;
 				}else{
-					this.halign=Gtk.Align.FILL;
-					this.valign=Gtk.Align.FILL;
 					this.ayobject.tasks_notebook.width_request=-1;
 					this.ayobject.tasks_notebook.height_request=-1;
 					this.ayobject.main_vbox.width_request=-1;
 					this.ayobject.main_vbox.height_request=-1;
-					this.set_size_request(-1,-1);
-					this.resize(1,1);//force resize if window height more than monitor height
 					this.check_resize();
 					debug("update_position_size maximized mode");
 				}
@@ -1160,26 +1146,15 @@ public class VTMainWindow : Window{
 	
 	public bool update_position_size_for_glib(){
 		this.update_position_size_for_glib_timer_id=0;
-		this.check_size();
+		this.check_position();
 		return false;
 	}
 	
-	private void check_size(){
-		int hvbox_h,hvbox_h_ignore,should_be_h=0,x,y;
-		debug("check_size resize");
-		if( this.allow_update_size &&  this.ayobject!=null && (this.my_window_state & MYWINStates.MAXIMIZED) == 0 ){
-			should_be_h=this.ayobject.get_altyo_height();
-			int allocated_height=this.get_allocated_height();
-			int allocated_width=this.get_allocated_width();
-			if(allocated_height>should_be_h || allocated_width>this.ayobject.terminal_width){
-				this.ayobject.main_vbox.set_size_request(this.ayobject.terminal_width,should_be_h);
-				this.set_size_request(this.ayobject.terminal_width,should_be_h);
-				this.resize(this.ayobject.terminal_width,should_be_h);
-				debug("check_size resize!!! %d",should_be_h);
-				if(this.update_position_size_for_glib_timer_id == 0)
-					this.update_position_size_for_glib_timer_id=GLib.Timeout.add(50,this.update_position_size_for_glib);//recheck size after 50ms
-			}else
+	private void check_position(){
+		debug("check_position");
+		if( this.allow_update_size && (this.my_window_state & MYWINStates.MAXIMIZED) == 0 ){
 			if(this.wait_for_window_position_update>0){
+				int x,y;
 				this.get_position(out x,out y);
 				if(x != this.orig_x /*|| event.y != this.orig_y*/){
 					this.move(this.orig_x,this.orig_y);
@@ -1187,17 +1162,37 @@ public class VTMainWindow : Window{
 					debug("check_size this.wait_for_window_position_update=%d",(int)this.wait_for_window_position_update);
 					if(this.update_position_size_for_glib_timer_id == 0)
 						this.update_position_size_for_glib_timer_id=GLib.Timeout.add(50,this.update_position_size_for_glib);//recheck size after 50ms
+					return; //prevent GLib.Source.remove
 				}else
 					this.wait_for_window_position_update=0;
 			}
 		}
+		
+		/*stop timer if not needed*/
+		if(this.update_position_size_for_glib_timer_id!=0 && GLib.Source.remove(this.update_position_size_for_glib_timer_id))
+			this.update_position_size_for_glib_timer_id=0;
 	}
 	
+	/* get_preferred_height_for_width -> allow_update_size? is it necessary? -> resize() -> get_preferred_height_for_width (new limited size)
+	 * */
 	public override void get_preferred_height_for_width (int width,out int minimum_height, out int natural_height) {
-		this.check_size();
 		base.get_preferred_height_for_width (width,out minimum_height, out natural_height);
-		debug("WINDOW get_preferred_height_for_width width=%d minimum_height=%d, natural_height=%d  get_allocated_height=%d",width,minimum_height, natural_height,this.get_allocated_height());
-		
+		natural_height=minimum_height;//always minimize height!
+		if(this.allow_update_size) {
+			//constrain window size in non maximized mode
+			int allocated_height=this.get_allocated_height();
+			int allocated_width=this.get_allocated_width();
+			
+			if( (allocated_height>minimum_height || allocated_width>this.ayobject.terminal_width) && this.ayobject!=null ){
+				/* queueing resize, if set_size_request is used nowhere, then resize should be completed in one step
+				 * simple, powerfull and fast*/
+				this.resize(this.ayobject.terminal_width,minimum_height);
+				debug("get_preferred_height_for_width resize!");
+			}
+			if(this.wait_for_window_position_update>0)
+				this.check_position();
+		}
+//~		debug("WINDOW get_preferred_height_for_width width=%d minimum_height=%d, natural_height=%d  get_allocated_height=%d",width,minimum_height, natural_height,this.get_allocated_height());
 	}//get_preferred_height_for_width
 
 }//class VTMainWindow
@@ -1284,8 +1279,6 @@ public class AYObject :Object{
 		this.tasks_notebook.switch_page.connect(on_switch_task);
 
 		this.save_session    = conf.get_boolean("autosave_session",false);
-		if(!this.conf.standalone_mode)
-			this.tasks_notebook.set_size_request(terminal_width,this.terminal_height);
 
 		this.hvbox = new HVBox();
 		this.hvbox.halign=Gtk.Align.FILL;
@@ -2730,7 +2723,6 @@ public class QoptNotebook: Notebook{
 				var was_h=this.ayobject.main_window.get_allocated_height();
 				var was_w=this.ayobject.main_window.get_allocated_width();
 				var was_wn=this.ayobject.tasks_notebook.get_allocated_width();
-				this.ayobject.tasks_notebook.set_size_request(was_wn,-1);
 				this.show();
 			}else
 				this.show();

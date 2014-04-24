@@ -1,3 +1,9 @@
+altyo (0.4~rc2-linvinus1) quantal; urgency=low
+
+  * improvement: finally, after three years of development i have found simple way how to constrain window size in gtk3! amazing!
+
+ -- denis <linvinus@gmail.com>  Thu, 24 Apr 2014 22:45:10 +0400
+
 altyo (0.4~rc1-linvinus1) quantal; urgency=low
 
   * rewritten size control system

@@ -963,8 +963,10 @@ public class VTTerminal : AYTab{
 				submenu.append(menuitem);
 
 			}
-			menuitem = (Gtk.MenuItem)acg.get_action("window_open_new_window").create_menu_item();
-			submenu.append(menuitem);
+			if(!this.my_conf.standalone_mode){
+				menuitem = (Gtk.MenuItem)acg.get_action("window_open_new_window").create_menu_item();
+				submenu.append(menuitem);
+			}
 
 		menuitem = new Gtk.MenuItem.with_label (_("Quick settings"));
 		menuitem.set_submenu(submenu);
@@ -1018,6 +1020,12 @@ public class VTTerminal : AYTab{
 		//debug("popup_menu ref_count=%d",(int)menu.ref_count);
 	}
 
+	private ulong get_action_handler_id(Gtk.Action action){
+		Type type = action.get_type();
+		uint sig_id=GLib.Signal.lookup("activate",type);
+		return GLib.SignalHandler.find(action,GLib.SignalMatchType.ID,sig_id,0,null,null,null);		
+	}
+
 	public void popup_tab_menu(Gdk.EventButton event){
 		//debug("terminal popup_menu");
 		var menu = new Gtk.Menu();
@@ -1038,7 +1046,12 @@ public class VTTerminal : AYTab{
 
 		if(vtw.ayobject.tab_sort_order==TAB_SORT_ORDER.HOSTNAME && vtw.ayobject.active_tab==this.tbutton){
 			var action_sort=acg.get_action("disable_sort_tab") as ToggleAction;
+			
+			var handler_id = this.get_action_handler_id(action_sort);
+			GLib.SignalHandler.block(action_sort,handler_id);//prevent emit signal
 			action_sort.set_active(this.tbutton.do_not_sort);
+			GLib.SignalHandler.unblock(action_sort,handler_id);
+			
 			menuitem = (Gtk.MenuItem)action_sort.create_menu_item();
 			menu.append(menuitem);
 		}
@@ -1088,11 +1101,17 @@ public class VTTerminal : AYTab{
 			this.disable_terminal_popup=chmenuitem.get_active();
 		});
 		menu.append(chmenuitem);
-		
-		var lock_tab=acg.get_action("lock_tab") as ToggleAction;
-		lock_tab.set_active(this.tbutton.prevent_close);
-		menuitem = (Gtk.MenuItem)lock_tab.create_menu_item();
-		menu.append(menuitem);
+
+		if(vtw.ayobject.active_tab==this.tbutton){
+			var lock_tab=acg.get_action("lock_tab") as ToggleAction;
+			var handler_id = this.get_action_handler_id(lock_tab);
+			GLib.SignalHandler.block(lock_tab,handler_id);//prevent emit signal
+			lock_tab.set_active(this.tbutton.prevent_close);
+			GLib.SignalHandler.unblock(lock_tab,handler_id);
+			
+			menuitem = (Gtk.MenuItem)lock_tab.create_menu_item();
+			menu.append(menuitem);
+		}
 
 		if(this.disable_terminal_popup){
 			var submenu = new Gtk.Menu ();

@@ -84,6 +84,7 @@ public class VTToggleButton : Gtk.Button{
 	public string host_name {get;set;default = null;}
 	public bool do_not_sort  {get;set;default = false;}
 	public int  conf_max_width {get;set;default = -1;}
+	public bool prevent_close=false;
 
 	public string tab_title {get;set;default = null;}
 	public int    tab_index {get;set;default = -1;}
@@ -256,7 +257,7 @@ public class VTToggleButton : Gtk.Button{
 		var context = this.get_style_context(); //todo: use this.label instead
         Gdk.RGBA color_f = context.get_color(StateFlags.NORMAL);
         Gdk.RGBA color_b = context.get_background_color(StateFlags.NORMAL);
-		this.markup_normal="<span foreground='#"+"%I02x".printf(((int)(color_f.red*255)))+"%I02x".printf(((int)(color_f.green*255)))+"%I02x".printf(((int)(color_f.blue*255)))+"' "+
+		this.markup_normal=(this.prevent_close ? "[!] " : "")+"<span foreground='#"+"%I02x".printf(((int)(color_f.red*255)))+"%I02x".printf(((int)(color_f.green*255)))+"%I02x".printf(((int)(color_f.blue*255)))+"' "+
 		/*"background='#"+"%I02x".printf(((int)(color_b.red*255)))+"%I02x".printf(((int)(color_b.green*255)))+"%I02x".printf(((int)(color_b.blue*255)))+"' "+*/
 		">"+result2+"</span>";
 		//this.label.set_markup(this.markup_normal);
@@ -265,13 +266,13 @@ public class VTToggleButton : Gtk.Button{
 		//result = grx_prelight.replace_literal(result,(ssize_t) result.size(), 0, "background" );
         color_f = context.get_color(StateFlags.ACTIVE);
         color_b = context.get_background_color(StateFlags.ACTIVE);
-		this.markup_active="<span foreground='#"+"%I02x".printf(((int)(color_f.red*255)))+"%I02x".printf(((int)(color_f.green*255)))+"%I02x".printf(((int)(color_f.blue*255)))+"' "+
+		this.markup_active=(this.prevent_close ? "[!] " : "")+"<span foreground='#"+"%I02x".printf(((int)(color_f.red*255)))+"%I02x".printf(((int)(color_f.green*255)))+"%I02x".printf(((int)(color_f.blue*255)))+"' "+
 		/*"background='#"+"%I02x".printf(((int)(color_b.red*255)))+"%I02x".printf(((int)(color_b.green*255)))+"%I02x".printf(((int)(color_b.blue*255)))+"' "+*/
 		">"+result2+"</span>";
 
         color_f = context.get_color(StateFlags.PRELIGHT);
         color_b = context.get_background_color(StateFlags.PRELIGHT);
-		this.markup_prelight="<span foreground='#"+"%I02x".printf(((int)(color_f.red*255)))+"%I02x".printf(((int)(color_f.green*255)))+"%I02x".printf(((int)(color_f.blue*255)))+"' "+
+		this.markup_prelight=(this.prevent_close ? "[!] " : "")+"<span foreground='#"+"%I02x".printf(((int)(color_f.red*255)))+"%I02x".printf(((int)(color_f.green*255)))+"%I02x".printf(((int)(color_f.blue*255)))+"' "+
 		/*"background='#"+"%I02x".printf(((int)(color_b.red*255)))+"%I02x".printf(((int)(color_b.green*255)))+"%I02x".printf(((int)(color_b.blue*255)))+"' "+*/
 		">"+result2+"</span>";
 		//this.markup_prelight = result;//"<i>"+result+"</i>";
@@ -938,9 +939,6 @@ public class VTTerminal : AYTab{
 
 		/**************************************************************/
 		var submenu = new Gtk.Menu ();
-		menuitem = new Gtk.MenuItem.with_label (_("Quick settings"));
-		menuitem.set_submenu(submenu);
-		menu.append(menuitem);
 
 			menuitem = (Gtk.MenuItem)acg.get_action("window_terminal_quick_settings").create_menu_item();
 			submenu.append(menuitem);
@@ -948,31 +946,30 @@ public class VTTerminal : AYTab{
 			if(!this.my_conf.standalone_mode){
 				menuitem = (Gtk.MenuItem)acg.get_action("follow_the_mouse").create_menu_item();
 				submenu.append(menuitem);
+				
 				var action_keepabove = acg.get_action("keep_above") as ToggleAction;
+				action_keepabove.set_active(vtw.keep_above);
 				menuitem = (Gtk.MenuItem)action_keepabove.create_menu_item();
 				submenu.append(menuitem);
-				if(action_keepabove.active!=vtw.keep_above){
-					vtw.keep_above=!vtw.keep_above;//invert value, becouse it will inverted after set_active
-					action_keepabove.set_active(!vtw.keep_above);
-				}
+
 				var action_stick = acg.get_action("window_toggle_stick") as ToggleAction;
+				action_stick.set_active(vtw.orig_stick);
 				menuitem = (Gtk.MenuItem)action_stick.create_menu_item();
 				submenu.append(menuitem);
-				if(action_stick.active!=vtw.orig_stick){
-					vtw.orig_stick=!vtw.orig_stick;//invert value, becouse it will inverted after set_active
-					action_stick.set_active(!vtw.orig_stick);
-				}
+
 				var action_autohide = acg.get_action("window_toggle_autohide") as ToggleAction;
+				action_autohide.set_active(vtw.autohide);
 				menuitem = (Gtk.MenuItem)action_autohide.create_menu_item();
 				submenu.append(menuitem);
-				if(action_autohide.active!=vtw.autohide){
-					vtw.autohide=!vtw.autohide;//invert value, becouse it will inverted after set_active
-					action_autohide.set_active(!vtw.autohide);
-				}
+
 			}
 			menuitem = (Gtk.MenuItem)acg.get_action("window_open_new_window").create_menu_item();
 			submenu.append(menuitem);
 
+		menuitem = new Gtk.MenuItem.with_label (_("Quick settings"));
+		menuitem.set_submenu(submenu);
+		menu.append(menuitem);
+		
 		menuitem = (Gtk.MenuItem)acg.get_action("altyo_about").create_menu_item();
 		menu.append(menuitem);
 
@@ -1041,22 +1038,20 @@ public class VTTerminal : AYTab{
 
 		if(vtw.ayobject.tab_sort_order==TAB_SORT_ORDER.HOSTNAME && vtw.ayobject.active_tab==this.tbutton){
 			var action_sort=acg.get_action("disable_sort_tab") as ToggleAction;
-			if(action_sort.active!=this.tbutton.do_not_sort){
-				//invert value, because it will inverted after set_active
-				//Gtk.Action.block_activate don't working :(
-				this.tbutton.do_not_sort=!this.tbutton.do_not_sort;
-				action_sort.set_active(!this.tbutton.do_not_sort);
-			}
-
-			menuitem = (Gtk.MenuItem)acg.get_action("disable_sort_tab").create_menu_item();
+			action_sort.set_active(this.tbutton.do_not_sort);
+			menuitem = (Gtk.MenuItem)action_sort.create_menu_item();
 			menu.append(menuitem);
 		}
+		Gtk.Settings settings = Gtk.Settings.get_default();
 		
 		Gtk.ImageMenuItem image_menuitem;
 		Gtk.Image image;
 		image_menuitem = new Gtk.ImageMenuItem.with_label (_("Copy terminal name"));
-		image = new Gtk.Image.from_icon_name ("gtk-copy", Gtk.IconSize.MENU);
-		image_menuitem.set_image(image);
+		if(settings.gtk_menu_images){
+			//show images only if it not disabled globally
+			image = new Gtk.Image.from_icon_name ("gtk-copy", Gtk.IconSize.MENU);
+			image_menuitem.set_image(image);
+		}
 		image_menuitem.activate.connect(()=>{
 			Gdk.Display display = vtw.get_display ();
 			Gtk.Clipboard clipboard = Gtk.Clipboard.get_for_display (display, Gdk.SELECTION_CLIPBOARD);
@@ -1066,8 +1061,11 @@ public class VTTerminal : AYTab{
 
 		if(this.tbutton.host_name!=null && this.tbutton.host_name!=""){
 			image_menuitem = new Gtk.ImageMenuItem.with_label (_("Copy terminal host name"));
-			image = new Gtk.Image.from_icon_name ("gtk-copy", Gtk.IconSize.MENU);
-			image_menuitem.set_image(image);
+			if(settings.gtk_menu_images){
+				//show images only if it not disabled globally
+				image = new Gtk.Image.from_icon_name ("gtk-copy", Gtk.IconSize.MENU);
+				image_menuitem.set_image(image);
+			}
 			image_menuitem.activate.connect(()=>{
 				Gdk.Display display = vtw.get_display ();
 				Gtk.Clipboard clipboard = Gtk.Clipboard.get_for_display (display, Gdk.SELECTION_CLIPBOARD);
@@ -1090,6 +1088,12 @@ public class VTTerminal : AYTab{
 			this.disable_terminal_popup=chmenuitem.get_active();
 		});
 		menu.append(chmenuitem);
+		
+		var lock_tab=acg.get_action("lock_tab") as ToggleAction;
+		lock_tab.set_active(this.tbutton.prevent_close);
+		menuitem = (Gtk.MenuItem)lock_tab.create_menu_item();
+		menu.append(menuitem);
+
 		if(this.disable_terminal_popup){
 			var submenu = new Gtk.Menu ();
 			menuitem = new Gtk.MenuItem.with_label (_("Terminal menu"));

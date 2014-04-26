@@ -1484,6 +1484,35 @@ public class AYObject :Object{
 		return vt;
 	}
 
+	private bool confirm_close_tab(string question){
+		bool close=true;
+		var dialog = new MessageDialog (null, (DialogFlags.DESTROY_WITH_PARENT | DialogFlags.MODAL), MessageType.QUESTION, ButtonsType.YES_NO, question);
+		dialog.response.connect ((response_id) => {
+			if(response_id == Gtk.ResponseType.YES){
+				close=true;
+				dialog.destroy ();
+			}else{
+				close=false;
+				dialog.destroy ();
+			}
+		});
+
+		dialog.close.connect ((response_id) => {
+			this.main_window.window_set_active();
+			dialog.destroy ();
+		});
+		dialog.focus_out_event.connect (() => {
+			return true; //same bug as discribed in this.focus_out_event
+			});
+		dialog.set_transient_for(this.main_window);
+		dialog.show ();
+		dialog.grab_focus();
+		this.main_window.hotkey.send_net_active_window(dialog.get_window ());
+		dialog.run();
+		this.main_window.window_set_active();
+		return close;
+	}
+
 	public void close_tab (int tab_position){
 		unowned VTToggleButton tab_button=(VTToggleButton)this.hvbox.children_nth(tab_position);
 		if(tab_button==null) return;
@@ -1493,6 +1522,13 @@ public class AYObject :Object{
 		if(vtt is VTTerminal){
 			bool close=true;
 			VTTerminal vt=(VTTerminal)vtt;
+			if(vt.tbutton.prevent_close){
+				if(!this.confirm_close_tab(_("Tab is locked, are you sure you want to close?"))){
+					return;//prevent close
+				}else
+					vt.tbutton.prevent_close=false;
+			}
+			
 			var prevent_s = this.conf.get_string("terminal_prevent_close_regex","",(ref new_val)=>{
 			string err;
 			if(!this.conf.check_regex(new_val,out err)){
@@ -1521,30 +1557,9 @@ public class AYObject :Object{
 				if(grx_exclude!=null && grx_exclude.match_all(ch,0,null)){
 					var q=_("Found important task \"%s\"").printf(ch);
 					q+="\n"+_("Close tab anyway?");
-					var dialog = new MessageDialog (null, (DialogFlags.DESTROY_WITH_PARENT | DialogFlags.MODAL), MessageType.QUESTION, ButtonsType.YES_NO, q);
-					dialog.response.connect ((response_id) => {
-						if(response_id == Gtk.ResponseType.YES){
-							close=true;
-							dialog.destroy ();
-						}else{
-							close=false;
-							dialog.destroy ();
-						}
-					});
-
-					dialog.close.connect ((response_id) => {
-						this.main_window.window_set_active();
-						dialog.destroy ();
-					});
-					dialog.focus_out_event.connect (() => {
-						return true; //same bug as discribed in this.focus_out_event
-						});
-					dialog.set_transient_for(this.main_window);
-					dialog.show ();
-					dialog.grab_focus();
-					this.main_window.hotkey.send_net_active_window(dialog.get_window ());
-					dialog.run();
-					this.main_window.window_set_active();
+					if(!this.confirm_close_tab(q)){
+						close=false;
+					}
 				}
 				if(!close)
 					return;//prevent close
@@ -2079,8 +2094,8 @@ public class AYObject :Object{
         });
         #endif
 
-		this.add_window_toggle_accel("follow_the_mouse", _("Follow mouse cursor"), _("Follow mouse cursor"), Gtk.Stock.EDIT,"",()=> {
-				this.main_window.mouse_follow = !this.main_window.mouse_follow;
+		this.add_window_toggle_accel("follow_the_mouse", _("Follow mouse cursor"), _("Follow mouse cursor"), Gtk.Stock.EDIT,"",(action)=> {
+				this.main_window.mouse_follow = ((ToggleAction)action).active;
         });
 		this.add_window_accel("open_settings", _("Settings..."), _("Settings"), Gtk.Stock.EDIT,"",()=> {
 				this.conf.save(true);//force save before edit
@@ -2162,8 +2177,8 @@ public class AYObject :Object{
 			}
         });
 
-		this.add_window_toggle_accel("keep_above", _("Stay on top"), _("Stay on top"), Gtk.Stock.EDIT,"",()=> {
-			this.main_window.keep_above=!this.main_window.keep_above;
+		this.add_window_toggle_accel("keep_above", _("Stay on top"), _("Stay on top"), Gtk.Stock.EDIT,"",(action)=> {
+			this.main_window.keep_above=((ToggleAction)action).active;
 			debug("action keep_above %d",(int)this.main_window.keep_above);
 			if(this.main_window.keep_above && !this.conf.standalone_mode){
 				this.main_window.skip_taskbar_hint = true;
@@ -2173,8 +2188,8 @@ public class AYObject :Object{
 				this.main_window.set_keep_above(false);
 			}
         });
-		this.add_window_toggle_accel("window_toggle_stick", _("Stick"), _("Toggle stick"), Gtk.Stock.EDIT,"",()=> {
-			this.main_window.orig_stick=!this.main_window.orig_stick;
+		this.add_window_toggle_accel("window_toggle_stick", _("Stick"), _("Toggle stick"), Gtk.Stock.EDIT,"",(action)=> {
+			this.main_window.orig_stick=((ToggleAction)action).active;
 			//debug("action keep_above %d",(int)this.main_window.keep_above);
 			if(this.main_window.orig_stick && !this.conf.standalone_mode){
 				this.main_window.stick();
@@ -2182,8 +2197,8 @@ public class AYObject :Object{
 				this.main_window.unstick();
 			}
         });
-		this.add_window_toggle_accel("window_toggle_autohide", _("Autohide"), _("Toggle autohide"), Gtk.Stock.EDIT,"",()=> {
-			this.main_window.autohide=!this.main_window.autohide;
+		this.add_window_toggle_accel("window_toggle_autohide", _("Autohide"), _("Toggle autohide"), Gtk.Stock.EDIT,"",(action)=> {
+			this.main_window.autohide=((ToggleAction)action).active;
         });
 
 		this.add_window_toggle_accel("toggle_maximize", _("Maximize - restore"), _("Maximize window, or restore to normal size"), Gtk.Stock.EDIT,"",()=> {
@@ -2264,6 +2279,14 @@ public class AYObject :Object{
 					this.quick_options_notebook.encodings_show();
         });
         
+		this.add_window_toggle_accel("lock_tab", _("Lock tab"), _("Lock tab"), Gtk.Stock.DIALOG_AUTHENTICATION,"",()=> {
+			debug("lock_tab");
+			if(this.active_tab!=null){
+				this.active_tab.prevent_close=!this.active_tab.prevent_close;
+				this.active_tab.reconfigure();
+				//((Gtk.ToggleAction)
+			}
+        });        
 	}//setup_keyboard_accelerators
 
 

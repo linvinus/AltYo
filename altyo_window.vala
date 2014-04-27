@@ -1525,8 +1525,10 @@ public class AYObject :Object{
 			if(vt.tbutton.prevent_close){
 				if(!this.confirm_close_tab(_("Tab is locked, are you sure you want to close?"))){
 					return;//prevent close
-				}else
+				}else{
 					vt.tbutton.prevent_close=false;
+					vt.tbutton.reconfigure();
+				}
 			}
 			
 			var prevent_s = this.conf.get_string("terminal_prevent_close_regex","",(ref new_val)=>{

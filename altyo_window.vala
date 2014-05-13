@@ -1291,6 +1291,16 @@ public class AYObject :Object{
 		this.hvbox.can_focus=false;//vte shoud have focus
 		this.hvbox.can_default = false;
 		this.hvbox.has_focus = false;
+		
+		//double click on empty space will open new tab
+		this.main_window.add_events(Gdk.EventMask.BUTTON_PRESS_MASK);
+		this.main_window.button_press_event.connect((event)=>{
+			if(event.type==Gdk.EventType.@2BUTTON_PRESS){
+				this.add_tab();
+				return false;
+				}
+			return true;
+			});
 
 		this.quick_options_notebook = new QoptNotebook(this);
 		

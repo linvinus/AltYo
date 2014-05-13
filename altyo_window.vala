@@ -1297,9 +1297,9 @@ public class AYObject :Object{
 		this.main_window.button_press_event.connect((event)=>{
 			if(event.type==Gdk.EventType.@2BUTTON_PRESS){
 				this.add_tab();
-				return false;
+				return true;//stop other handlers
 				}
-			return true;
+			return false;//continue
 			});
 
 		this.quick_options_notebook = new QoptNotebook(this);

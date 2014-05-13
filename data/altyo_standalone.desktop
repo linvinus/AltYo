@@ -4,4 +4,4 @@ Exec=altyo --standalone
 Icon=altyo.png
 Terminal=false
 Type=Application
-Categories=GTK;Utility;TerminalEmulator
+Categories=GTK;Utility;TerminalEmulator;

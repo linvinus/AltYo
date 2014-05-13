@@ -1636,11 +1636,16 @@ public class AYObject :Object{
 
 	public bool tab_button_press_event(Widget widget,Gdk.EventButton event) {
 		if(event.type==Gdk.EventType.BUTTON_PRESS){
-			if(event.button== 1){
+			if(event.button == 1){
 				VTToggleButton tbutton = (VTToggleButton) widget;
 				if ( this.active_tab != tbutton)
-					activate_tab(tbutton);
+					this.activate_tab(tbutton);
 
+			}
+			if(event.button == 2){//middle mouse button
+				VTToggleButton tbutton = (VTToggleButton) widget;
+				this.close_tab(this.hvbox.children_index(tbutton));
+				return true;//stop
 			}
 		}
 		return false; //true == ignore event

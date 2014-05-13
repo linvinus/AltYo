@@ -534,25 +534,52 @@ public class VTTerminal : AYTab{
 	}
 
 	public bool start_command(string? session_command = null,string? session_path=null){
-		string? command = this.my_conf.get_string("custom_command","");
+		PtyFlags pty_flags = PtyFlags.DEFAULT;
+		GLib.SpawnFlags sflags = 0;
+		string? command = null;
+		string[] argvp;
+		
+		bool run_as_login_shell = this.my_conf.get_boolean("terminal_run_as_login_shell",false);
 
-		if(command == null || command == "")
-			command = GLib.Environment.get_variable ("SHELL");
+		if(!run_as_login_shell){
+			pty_flags |= PtyFlags.NO_LASTLOG;
+		}
 
-		if(command==null)
-			command = "/bin/sh";
+		if(!this.my_conf.get_boolean("terminal_update_login_records",false)){
+			pty_flags |= PtyFlags.NO_UTMP | PtyFlags.NO_WTMP;
+		}
 
-		if(session_command!=null && session_command != "" && command!=session_command)
-			command=session_command;
-			//command+=" -c \""+session_command+"; "+command+"\"";
+		if(session_command != null && session_command != ""){
+			command = session_command;
+			sflags |= GLib.SpawnFlags.SEARCH_PATH;
+			try {
+				GLib.Shell.parse_argv(command,out argvp);
+			}catch (ShellError e) {
+				error("Error: %s", e.message);
+			}
+		}else{
+			command = this.my_conf.get_string("custom_command","");
+			if(command == null || command == "")
+				command = GLib.Environment.get_variable ("SHELL");
+
+			if(command==null)
+				command = "/bin/sh";
+			
+			try {
+				GLib.Shell.parse_argv(command,out argvp);
+			}catch (ShellError e) {
+				error("Error: %s", e.message);
+			}
+				
+			if(run_as_login_shell){
+				sflags |= GLib.SpawnFlags.FILE_AND_ARGV_ZERO;
+				argvp+="-%s".printf(GLib.Path.get_basename(command));
+			}else
+				sflags |= GLib.SpawnFlags.SEARCH_PATH;
+		}
 
 		debug("run command:%s",command);
-
-		string[] argvp;
-		if(!GLib.Shell.parse_argv(command,out argvp))
-			error("Error: Shell not found!"); //todo gui err
-
-		PtyFlags pty_flags = PtyFlags.DEFAULT;
+		
 		string path="";
 		if(session_path==null || session_path==""){
 			path = GLib.Environment.get_current_dir();
@@ -562,7 +589,7 @@ public class VTTerminal : AYTab{
 		if(path==null)
 			path="/";
 
-		GLib.SpawnFlags sflags = GLib.SpawnFlags.SEARCH_PATH;
+		
 		/*(Vte.PtyFlags pty_flags,
 		 *  string? working_directory,
 		 *  string[] argv,

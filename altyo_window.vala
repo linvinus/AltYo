@@ -1235,6 +1235,7 @@ public class AYObject :Object{
 
 
 	private List<unowned AYTab> children;
+	private List<unowned AYTab> children_removed;
 	public int terminal_width {get;set; default = 80;}
 	public int terminal_height {get;set; default = 50;}
 	private int hvbox_height_old {get;set; default = 0;}
@@ -1522,6 +1523,11 @@ public class AYObject :Object{
 		this.main_window.window_set_active();
 		return close;
 	}
+	
+	public void on_tab_remove_timeout(AYTab vtt){
+		debug("removing %s",vtt.tbutton.tab_title);
+		this.children_removed.remove(vtt);
+	}
 
 	public void close_tab (int tab_position){
 		unowned VTToggleButton tab_button=(VTToggleButton)this.hvbox.children_nth(tab_position);
@@ -1588,6 +1594,20 @@ public class AYObject :Object{
 			this.active_tab=null;
 
 		this.children.remove(vtt);
+		/* 1) remove AYTab from children
+		 * 2) append to children_removed
+		 * 3) run timer
+		 * 4.1) if timer finished
+		 * 4.1.1) remove from children_removed
+		 * 4.1.2) destroy object
+		 * 
+		 * 4.2) if user want to restore tab before timer was finished
+		 * 4.2.1) restore tab on previous position
+		 * 
+		 * */
+		this.children_removed.append(vtt);
+		vtt.on_remove_timeout.connect(this.on_tab_remove_timeout);
+		vtt.start_remove_timer();
 
 //~ 		try {
 //~ 			//if vte was in swap it may took long time, so run it in separate thread
@@ -1597,15 +1617,16 @@ public class AYObject :Object{
 //~ 		} catch (Error e) {
 //~ 			debug ("close_tab thread %s\n", e.message);
 			bool switch_to_previous=false;
-			if(vtt is VTTerminal)
-				((VTTerminal)vtt).destroy();
-			else
+//~ 			if(vtt is VTTerminal)
+//~ 				((VTTerminal)vtt).destroy();
+//~ 			else
 			if(vtt is AYSettings){
-				((AYSettings)vtt).destroy();
+//~ 				((AYSettings)vtt).destroy();
 				this.aysettings_shown=false;
 				switch_to_previous=true;
-			}else
-				vtt.destroy();
+			}
+//~ 			else
+//~ 				vtt.destroy();
 //~ 		}
 
 

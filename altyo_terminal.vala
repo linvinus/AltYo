@@ -360,6 +360,9 @@ public class AYTab : Object{
 	public int page_index {get; set; default = -1;}
 	public Notebook notebook {get; set; default = null;}
 	public unowned MySettings my_conf {get; set; default = null;}
+	private uint remove_timer = 0;
+	public signal void on_remove_timeout(AYTab self);
+	
 	public AYTab(MySettings my_conf,Notebook notebook, int tab_index) {
 		this.my_conf=my_conf;
 		this.notebook=notebook;
@@ -448,6 +451,23 @@ public class AYTab : Object{
 			});
 
 		this.tbutton.reconfigure();
+	}
+	
+	public bool timer_on_remove_timeout(){
+		this.on_remove_timeout(this);
+		this.destroy();
+		return false;//stop timer
+	}
+	
+	public void start_remove_timer(){		
+		if(this.remove_timer!=0)
+			GLib.Source.remove(this.remove_timer);
+		this.remove_timer=GLib.Timeout.add_seconds(3,this.timer_on_remove_timeout);
+	}//start_remove_timer
+
+	public void stop_remove_timer(){		
+		if(this.remove_timer!=0)
+			GLib.Source.remove(this.remove_timer);
 	}
 }
 

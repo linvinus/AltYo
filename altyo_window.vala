@@ -1246,6 +1246,7 @@ public class AYObject :Object{
 	private bool aysettings_shown=false;
 	private int action_on_close_last_tab=0;
 	private int new_tab_position=0;
+	private bool lock_tab_remove=false;//prevent tab destroying while popup is shown
 
 	public AYObject(VTMainWindow _MW ,MySettings _conf) {
 		debug("AYObject new");
@@ -1523,12 +1524,15 @@ public class AYObject :Object{
 		this.main_window.window_set_active();
 		return close;
 	}
-	
-	public void on_tab_remove_timeout(AYTab vtt){
-		debug("removing %s",vtt.tbutton.tab_title);
-		this.children_removed.remove(vtt);
-	}
 
+	public bool on_tab_remove_timeout(AYTab vtt){
+		if(!this.lock_tab_remove)
+			this.children_removed.remove(vtt);
+		else
+			return true;//wait some time
+		return false;//successfully removed		
+	}
+	
 	public void close_tab (int tab_position){
 		unowned VTToggleButton tab_button=(VTToggleButton)this.hvbox.children_nth(tab_position);
 		if(tab_button==null) return;
@@ -1594,40 +1598,33 @@ public class AYObject :Object{
 			this.active_tab=null;
 
 		this.children.remove(vtt);
-		/* 1) remove AYTab from children
-		 * 2) append to children_removed
-		 * 3) run timer
-		 * 4.1) if timer finished
-		 * 4.1.1) remove from children_removed
-		 * 4.1.2) destroy object
-		 * 
-		 * 4.2) if user want to restore tab before timer was finished
-		 * 4.2.1) restore tab on previous position
-		 * 
-		 * */
-		this.children_removed.append(vtt);
-		vtt.on_remove_timeout.connect(this.on_tab_remove_timeout);
-		vtt.start_remove_timer();
 
-//~ 		try {
-//~ 			//if vte was in swap it may took long time, so run it in separate thread
-//~ 			//GLib.Thread<void*> thread_a =
-//~ 			//GLib.Thread<weak void*>thread_a =
-//~ 			GLib.Thread.create<void*>(()=>{debug ("close_tab close in thread\n"); vtt.destroy(); return null;},false);//vtt.destroy() also destroys tab_button
-//~ 		} catch (Error e) {
-//~ 			debug ("close_tab thread %s\n", e.message);
-			bool switch_to_previous=false;
-//~ 			if(vtt is VTTerminal)
-//~ 				((VTTerminal)vtt).destroy();
-//~ 			else
-			if(vtt is AYSettings){
-//~ 				((AYSettings)vtt).destroy();
-				this.aysettings_shown=false;
-				switch_to_previous=true;
-			}
-//~ 			else
-//~ 				vtt.destroy();
-//~ 		}
+
+		bool switch_to_previous=false;
+		if(vtt is VTTerminal){
+			/* delayed remove
+			 * 
+			 * 1) remove AYTab from children
+			 * 2) append to children_removed
+			 * 3) run timer
+			 * 4.1) if timer finished and not lock_tab_remove
+			 * 4.1.1) remove from children_removed
+			 * 4.1.2) destroy object
+			 * 
+			 * 4.2) if user want to restore tab before timer was finished
+			 * 4.2.1) restore tab on previous position
+			 * 
+			 * */
+			this.children_removed.append(vtt);
+			vtt.on_remove_timeout.connect(this.on_tab_remove_timeout);
+			vtt.start_remove_timer(); 				
+		}else
+		if(vtt is AYSettings){
+			((AYSettings)vtt).destroy();
+			this.aysettings_shown=false;
+			switch_to_previous=true;
+		}else
+			vtt.destroy();
 
 
 		if(this.children.length()>0){
@@ -2326,21 +2323,10 @@ public class AYObject :Object{
 			}
         });
         
-		this.add_window_accel("restore_tab", _("Restore tab"), _("Restore tab"), Gtk.Stock.GO_UP,"<Control><Shift>R",()=>{
+		this.add_window_accel("restore_tab", _("Restore tab"), _("Restore last closed tab"), Gtk.Stock.GO_UP,"<Control><Shift>R",()=>{
 			unowned List<unowned AYTab>? element = this.children_removed.last ();
 			if(element!=null){
-					AYTab vt = element.data;
-					vt.stop_remove_timer();
-					int index = vt.tbutton.tab_index-1;
-					
-					debug("restore index %d",index);
-					this.hvbox.insert( vt.tbutton ,(int) index);
-					this.children.insert(vt,index);
-					
-					this.update_tabs_title();
-					this.search_update();					
-					this.activate_tab(vt.tbutton) ;//this.active_tab = this.hvbox.children_index(tbutton);
-					this.children_removed.remove(vt);
+				this.restore_tab(element.data);
 			}
 			
 		});              
@@ -2558,6 +2544,52 @@ public class AYObject :Object{
 		}
 		debug("get_altyo_height terminal_width=%d should_be_h=%d",this.terminal_width,should_be_h);
 		return should_be_h;
+	}
+
+	public void create_popup_menu_for_removed_tabs(Gtk.Menu menu){
+		Gtk.MenuItem menuitem;
+		if(this.children_removed.length()>0){
+			var submenu = new Gtk.Menu ();
+			menuitem = new Gtk.MenuItem.with_label (_("Restore tabs"));
+			menuitem.set_submenu(submenu);
+			menu.append(menuitem);
+			
+			menuitem = (Gtk.MenuItem)this.action_group.get_action("restore_tab").create_menu_item();
+			submenu.append(menuitem);
+			menuitem = new Gtk.SeparatorMenuItem();
+			submenu.append(menuitem);
+					
+			foreach(var tab in this.children_removed){
+				string s = ( tab.tbutton.tab_title != null ? tab.tbutton.tab_title : _("index %d").printf(tab.tbutton.tab_index) );
+				menuitem = new Gtk.MenuItem.with_label (_("Restore tab: %s").printf(s));
+				menuitem.activate.connect(()=>{
+					debug("trying to restore tab %s",menuitem.label);
+					this.restore_tab(tab);
+					});
+				submenu.append(menuitem);
+			}
+			menu.deactivate.connect (()=>{
+				this.lock_tab_remove=false;//allow tabs destroying 
+				});
+			this.lock_tab_remove=true;
+		}
+	}//create_popup_menu_for_removed_tabs
+
+	public void restore_tab(AYTab vt){
+		if(this.children_removed.find(vt)!=null){
+			vt.stop_remove_timer();
+			int index = vt.tbutton.tab_index-1;
+			
+			debug("restore tab index %d",index);
+			this.hvbox.insert( vt.tbutton ,(int) index);
+			this.children.insert(vt,index);
+			
+			this.update_tabs_title();
+			this.search_update();					
+			this.activate_tab(vt.tbutton) ;
+			this.children_removed.remove(vt);
+			vt.on_remove_timeout.disconnect(this.on_tab_remove_timeout);
+		}
 	}
 
 }//class AYObject

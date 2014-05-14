@@ -361,7 +361,8 @@ public class AYTab : Object{
 	public Notebook notebook {get; set; default = null;}
 	public unowned MySettings my_conf {get; set; default = null;}
 	private uint remove_timer = 0;
-	public signal void on_remove_timeout(AYTab self);
+	public signal bool on_remove_timeout(AYTab self);
+	private uint destroe_delay = 0;
 	
 	public AYTab(MySettings my_conf,Notebook notebook, int tab_index) {
 		this.my_conf=my_conf;
@@ -450,11 +451,18 @@ public class AYTab : Object{
 			return CFG_CHECK.OK;
 			});
 
+		this.destroe_delay = my_conf.get_integer("window_tab_destroy_delay",10,(ref new_val)=>{
+			if(new_val<0){new_val=0;return CFG_CHECK.REPLACE;}
+			return CFG_CHECK.OK;
+			});
+			
 		this.tbutton.reconfigure();
 	}
 	
 	public bool timer_on_remove_timeout(){
-		this.on_remove_timeout(this);
+		if(this.on_remove_timeout(this))
+			return true;//wait some time
+		debug("tab destroyed");
 		this.destroy();
 		return false;//stop timer
 	}
@@ -462,12 +470,13 @@ public class AYTab : Object{
 	public void start_remove_timer(){		
 		if(this.remove_timer!=0)
 			GLib.Source.remove(this.remove_timer);
-		this.remove_timer=GLib.Timeout.add_seconds(3,this.timer_on_remove_timeout);
+		this.remove_timer=GLib.Timeout.add_seconds(this.destroe_delay,this.timer_on_remove_timeout);
 	}//start_remove_timer
 
 	public void stop_remove_timer(){		
 		if(this.remove_timer!=0)
 			GLib.Source.remove(this.remove_timer);
+		this.remove_timer=0;
 	}
 }
 
@@ -976,6 +985,9 @@ public class VTTerminal : AYTab{
 			menuitem = (Gtk.MenuItem)acg.get_action("window_open_new_window").create_menu_item();
 			menu.append(menuitem);
 		}
+		
+		vtw.ayobject.create_popup_menu_for_removed_tabs(menu);
+					
 		menuitem = (Gtk.MenuItem)acg.get_action("terminal_search_dialog").create_menu_item();
 		menu.append(menuitem);
 

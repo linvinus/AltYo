@@ -1297,10 +1297,16 @@ public class AYObject :Object{
 		//double click on empty space will open new tab
 		this.main_window.add_events(Gdk.EventMask.BUTTON_PRESS_MASK);
 		this.main_window.button_press_event.connect((event)=>{
+			int dest_x,dest_y;
 			if(event.type==Gdk.EventType.@2BUTTON_PRESS){
-				this.add_tab();
-				return true;//stop other handlers
+				this.hvbox.translate_coordinates(this.main_window,0,0,out dest_x, out dest_y);
+				//check is event was inside hvbox
+				if( (event.x>dest_x && event.x < (dest_x + this.hvbox.get_allocated_width())) &&
+					(event.y>dest_y && event.y < (dest_y + this.hvbox.get_allocated_height())) ){
+					this.add_tab();
+					return true;//stop other handlers
 				}
+			}
 			return false;//continue
 			});
 

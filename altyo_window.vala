@@ -2324,7 +2324,26 @@ public class AYObject :Object{
 				this.active_tab.reconfigure();
 				//((Gtk.ToggleAction)
 			}
-        });        
+        });
+        
+		this.add_window_accel("restore_tab", _("Restore tab"), _("Restore tab"), Gtk.Stock.GO_UP,"<Control><Shift>R",()=>{
+			unowned List<unowned AYTab>? element = this.children_removed.last ();
+			if(element!=null){
+					AYTab vt = element.data;
+					vt.stop_remove_timer();
+					int index = vt.tbutton.tab_index-1;
+					
+					debug("restore index %d",index);
+					this.hvbox.insert( vt.tbutton ,(int) index);
+					this.children.insert(vt,index);
+					
+					this.update_tabs_title();
+					this.search_update();					
+					this.activate_tab(vt.tbutton) ;//this.active_tab = this.hvbox.children_index(tbutton);
+					this.children_removed.remove(vt);
+			}
+			
+		});              
 	}//setup_keyboard_accelerators
 
 

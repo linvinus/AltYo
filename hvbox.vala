@@ -593,12 +593,8 @@ public class HVBox : Container {
 			  dnd_inprocess=false;
 		});
 
-		if(index>0 && index<children.length())
-			children.insert(item,index);
-		else if(children.first()!=null)
-			children.append(item);
-		else
-			children.prepend(item);
+		children.insert(item,index);
+
 		this.queue_resize();
 	}
 

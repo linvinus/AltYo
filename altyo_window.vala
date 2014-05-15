@@ -1246,7 +1246,6 @@ public class AYObject :Object{
 	private bool aysettings_shown=false;
 	private int action_on_close_last_tab=0;
 	private int new_tab_position=0;
-	private bool lock_tab_remove=false;//prevent tab destroying while popup is shown
 
 	public AYObject(VTMainWindow _MW ,MySettings _conf) {
 		debug("AYObject new");
@@ -1531,12 +1530,8 @@ public class AYObject :Object{
 		return close;
 	}
 
-	public bool on_tab_remove_timeout(AYTab vtt){
-		if(!this.lock_tab_remove)
+	public void on_tab_remove_timeout(AYTab vtt){
 			this.children_removed.remove(vtt);
-		else
-			return true;//wait some time
-		return false;//successfully removed		
 	}
 	
 	public void close_tab (int tab_position){
@@ -2566,6 +2561,7 @@ public class AYObject :Object{
 			submenu.append(menuitem);
 					
 			foreach(var tab in this.children_removed){
+				tab.stop_remove_timer();//disable timer while popup shown
 				string s = ( tab.tbutton.tab_title != null ? tab.tbutton.tab_title : _("index %d").printf(tab.tbutton.tab_index) );
 				menuitem = new Gtk.MenuItem.with_label (_("Restore tab: %s").printf(s));
 				menuitem.activate.connect(()=>{
@@ -2575,9 +2571,10 @@ public class AYObject :Object{
 				submenu.append(menuitem);
 			}
 			menu.deactivate.connect (()=>{
-				this.lock_tab_remove=false;//allow tabs destroying 
+				foreach(var tab in this.children_removed){
+					tab.start_remove_timer();//re enable timer
+				}
 				});
-			this.lock_tab_remove=true;
 		}
 	}//create_popup_menu_for_removed_tabs
 

@@ -361,7 +361,7 @@ public class AYTab : Object{
 	public Notebook notebook {get; set; default = null;}
 	public unowned MySettings my_conf {get; set; default = null;}
 	private uint remove_timer = 0;
-	public signal bool on_remove_timeout(AYTab self);
+	public signal void on_remove_timeout(AYTab self);
 	private uint destroe_delay = 0;
 	
 	public AYTab(MySettings my_conf,Notebook notebook, int tab_index) {
@@ -460,8 +460,7 @@ public class AYTab : Object{
 	}
 	
 	public bool timer_on_remove_timeout(){
-		if(this.on_remove_timeout(this))
-			return true;//wait some time
+		this.on_remove_timeout(this);
 		debug("tab destroyed");
 		this.destroy();
 		return false;//stop timer

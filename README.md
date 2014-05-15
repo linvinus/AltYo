@@ -15,7 +15,7 @@ Main program advantages.
 * Autostart with desktop session.
 * Autostart programs,for example, start mocp and mutt in new tabs by default.
 * Program will warn you if you try to close the terminal with an important program(ssh,wget pattern is customizable), even if program runned in the background.
-* Delayed "Close tab", you have 10 second before tab will actually closed, so if you change your mind, press `<Ctrl><Shift>R` to restore tab, also you may restore tab from terminal popup menu.
+* Delayed "Close tab", you have 10 seconds before tab will actually closed, so if you change your mind, press `<Ctrl><Shift>R` to restore tab, also you may restore tab from terminal popup menu.
 * You may "Lock" important tab, program will ask you to confirm close tab. ("Lock tab" is available from context menu on tab button)
 * All options can be configured via graphical settings dialog.
 * Program will warn you if you setup incorrect setting value, if settings is absent in config file, program will use default value.

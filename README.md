@@ -15,6 +15,8 @@ Main program advantages.
 * Autostart with desktop session.
 * Autostart programs,for example, start mocp and mutt in new tabs by default.
 * Program will warn you if you try to close the terminal with an important program(ssh,wget pattern is customizable), even if program runned in the background.
+* Delayed "Close tab", you have 10 second before tab will actually closed, so if you change your mind, press `<Ctrl><Shift>R` to restore tab, also you may restore tab from terminal popup menu.
+* You may "Lock" important tab, program will ask you to confirm close tab. ("Lock tab" is available from context menu on tab button)
 * All options can be configured via graphical settings dialog.
 * Program will warn you if you setup incorrect setting value, if settings is absent in config file, program will use default value.
 * Hotkey for ~~the first 20~~ unlimited tabs (double press of `alt+5` will switch to 15 tab, triple press will switch to 25 tab and so on)
@@ -84,7 +86,8 @@ sorry, this keys is hardcoded.
 5. Altyo is portable, you may copy executable file on your USB flash drive.  
    All you need to run on target machine is installed Gtk 3.4 or newer and libvte 3.0 or newer.  
    This libraries should be available on fresh distributives.
-
+6. Double click on empty space in tab bar will open new tab.
+7. Middle click on tab button will close tab.
 
 FAQ:
 ----

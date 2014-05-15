@@ -1242,7 +1242,7 @@ public class AYObject :Object{
 	//public bool maximized {get; set; default = false;}
 	//private bool quit_dialog {get; set; default = false;}
 
-	private AYSettings aysettings {get;set; default = null;}
+	private AYSettings aysettings;
 	private bool aysettings_shown=false;
 	private int action_on_close_last_tab=0;
 	private int new_tab_position=0;
@@ -1622,6 +1622,7 @@ public class AYObject :Object{
 		}else
 		if(vtt is AYSettings){
 			((AYSettings)vtt).destroy();
+			this.aysettings=null;
 			this.aysettings_shown=false;
 			switch_to_previous=true;
 		}else
@@ -2476,7 +2477,6 @@ public class AYObject :Object{
 					}
 					if(!cont && tmp!="" && !grx_exclude.match_all(tmp,0,null) && this.save_session)
 						terminal_session+=tmp;
-					((VTTerminal)vt).destroy();
 				}
 			}
 			//g_list_free(this.children);

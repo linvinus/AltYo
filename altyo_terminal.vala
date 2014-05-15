@@ -137,6 +137,7 @@ public class VTToggleButton : Gtk.Button{
 		this.label.mnemonic_widget=null;
 		this.user_notify=false;
 		this.get_style_context().remove_class("button");//don't use default button theme
+		this.destroy.connect(()=>{ debug("VTToggleButton destroyed");	});
 	}
 
 	public override void state_flags_changed (StateFlags previous_state_flags) {
@@ -354,15 +355,16 @@ public class VTToggleButton : Gtk.Button{
 }//private class VTToggleButton
 
 public class AYTab : Object{
-	public HBox hbox {get; set; default = null;}
-	public Scrollbar scrollbar {get; set; default = null;}
-	public VTToggleButton tbutton {get; set; default = null;}
-	public int page_index {get; set; default = -1;}
-	public Notebook notebook {get; set; default = null;}
-	public unowned MySettings my_conf {get; set; default = null;}
+	public HBox hbox;
+	public Scrollbar scrollbar;
+	public VTToggleButton tbutton;
+	public int page_index = -1;
+	public Notebook notebook;
+	public unowned MySettings my_conf;
 	private uint remove_timer = 0;
 	public signal void on_remove_timeout(AYTab self);
 	private uint destroe_delay = 0;
+	public signal void on_destroy ();
 	
 	public AYTab(MySettings my_conf,Notebook notebook, int tab_index) {
 		this.my_conf=my_conf;
@@ -395,18 +397,22 @@ public class AYTab : Object{
 		page_index = this.notebook.insert_page (hbox,null,tab_index);
 
 		this.tbutton.object = this;
+		
 		this.my_conf.on_load.connect(()=>{
 			this.configure(this.my_conf);
 			});
+			
+		this.hbox.destroy.connect(()=>{ debug("AYTab hbox destroyed"); });
 	}
+	
 	public void destroy(){
+		this.on_destroy();//emit signal
 		this.hbox.hide();
 		this.notebook.remove_page(this.notebook.page_num(this.hbox));
-		//this.tbutton.label.destroy();
-		//this.tbutton.destroy();
-		//this.vte_term.destroy();
 		this.hbox.destroy();//destroy all widgets and unref self
 	}
+
+//~ 	public override void dispose(){	debug("AYTab dispose");	}
 
 	private void configure(MySettings my_conf){
 		this.tbutton.tab_format = my_conf.get_string("tab_format","[ _INDEX_ ]",(ref new_val)=>{
@@ -428,7 +434,6 @@ public class AYTab : Object{
 
 			return CFG_CHECK.OK;
 			});
-
 		this.tbutton.tab_title_regex = my_conf.get_string_list("tab_title_format_regex",{"^(mc) \\[","<span>_REPLACE_ </span>","([\\w\\.]+)@","<span font_weight='bold' foreground='#EEEEEE'>_USER_</span>@","@([\\w\\.\\-]+)\\]?:(?!/{2})","@<span font_weight='bold' foreground='#FFF000'>_HOSTNAME_</span>:","([^:]*)$","<span>_PATH_</span>"},(ref new_val)=>{
 			if(new_val!=null && (new_val.length % 2)!=0){
 				debug(_("tab_title_format_regex odd value of array length! will be used default value."));
@@ -460,8 +465,8 @@ public class AYTab : Object{
 	}
 	
 	public bool timer_on_remove_timeout(){
+		debug("tab will be destroyed");
 		this.on_remove_timeout(this);
-		debug("tab destroyed");
 		this.destroy();
 		return false;//stop timer
 	}
@@ -542,8 +547,13 @@ public class VTTerminal : AYTab{
 		this.start_shell();
 				
 		this.hbox.show();
+		this.vte_term.destroy.connect(()=>{	debug("VTTerminal vte_term destroyed");	});
+		this.on_destroy.connect(()=>{
+			this.vte_term.child_exited.disconnect(this.child_exited);
+			debug("VTTerminal destroyed");
+			});
 	}
-	
+			
 	public void start_shell(){
 		if(!this.start_command(this.session_command,this.session_path)){
 			if(!this.start_command()){//try without session
@@ -556,10 +566,6 @@ public class VTTerminal : AYTab{
 		}		
 	}
 
-	public void destroy() {
-		this.vte_term.child_exited.disconnect(this.child_exited);
-		base.destroy();
-	}
 
 	public bool start_command(string? session_command = null,string? session_path=null){
 		PtyFlags pty_flags = PtyFlags.DEFAULT;

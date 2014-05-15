@@ -26,6 +26,9 @@ private class HVBoxItem : Object{
 	public HVBoxItem(Widget W){
 			this.widget = W;
 		}
+//~	~HVBoxItem(){
+//~		debug("~HVBoxItem");
+//~	}
 //	public void destroy(){
 //~ 		base.destroy();
 //            delete (void*) this;
@@ -540,7 +543,8 @@ public class HVBox : Container {
 		debug("inser at %d\n",index);
 		unowned Widget widget = w;
 		widget.set_parent(this);
-		var item = new HVBoxItem(widget);
+		HVBoxItem item = new HVBoxItem(widget);
+		unowned HVBoxItem item_ptr = item;//use in closure to avoid unnecessary ref()
 
 
 		drag_source_set (widget, Gdk.ModifierType.BUTTON1_MASK, target_entries, Gdk.DragAction.MOVE);
@@ -558,7 +562,7 @@ public class HVBox : Container {
 			  dnd_window.add (widget);
 			  dnd_window.show();
 
-			  item.ignore=true;
+			  item_ptr.ignore=true;
 
 			  dnd_window.draw.connect ((cr)=>{widget.draw(cr); return true;});
 
@@ -576,7 +580,7 @@ public class HVBox : Container {
 					//workaround for vala 0.14 selection_data.set uchar[]
  					uchar[] adata = new uchar[sizeof(void *)];//should work on x86_64 too
  					ulong* pdata = (ulong *)(&adata[0]);//should work on x86_64 too
-					HVBoxItem** pitem=&item;//should work on x86_64 too
+					HVBoxItem** pitem=&item_ptr;//should work on x86_64 too
 					*pdata=pitem;
 					selection_data.set (target,8,(uchar[])adata);
 //~ 					base.drag_data_get(context, selection_data, info, time) ;
@@ -588,7 +592,7 @@ public class HVBox : Container {
 			  dnd_window.remove (widget);
 			  widget.set_parent (this);
 			  dnd_window.destroy();
-			  item.ignore=false;
+			  item_ptr.ignore=false;
 			  drag_end(context);
 			  dnd_inprocess=false;
 		});
@@ -609,6 +613,7 @@ public class HVBox : Container {
 					hvbox_get_preferred_height_for_width(this.get_allocated_width(),out minimum_height, out natural_height);
 					this.queue_resize();//and redraw
 				}
+				item.unref();//destroy
 				return;
 				//possible problem not optimized exit
 //~ 				item.destroy();
@@ -617,7 +622,8 @@ public class HVBox : Container {
 		}
 	}
 
-	public int children_index (Widget widget){
+	public int children_index (Widget? widget){
+		if(widget is Gtk.Widget)
 		foreach( HVBoxItem item in this.children){
 			if (item.widget==widget)
 				return children.index(item) ;

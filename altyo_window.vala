@@ -2931,7 +2931,7 @@ public class QoptNotebook: Notebook{
 		int index = count-1;
 		if(this.search_text_combo.model.get_iter_first(out iter))
 			do{
-				unowned string s;
+				string s;
 				this.search_text_combo.model.get(iter,0,out s);
 				search_s[index]=s;
 				index--;

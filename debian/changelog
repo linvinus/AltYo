@@ -1,3 +1,16 @@
+altyo (0.4~rc3-linvinus1) quantal; urgency=low
+
+  * new: feature "Lock tab" - asks user before closing the tab. 
+  * improvement: in popup menu handling
+  * fix: Categories in desktop file
+  * improvement: double click on empty space in tab bar will open new tab
+  * improvement: possibility to close tab by middle mouse button
+  * new: options for terminal "Run command as a login shell" and "Update login records when command is launched"
+  * new: possibility, delayed "close tab", actual tab destroy will be after 10 seconds, so user may change his mind, and restore tab.
+  * update: Russian translation
+
+ -- denis <linvinus@gmail.com>  Thu, 15 May 2014 09:41:33 +0400
+
 altyo (0.4~rc2-linvinus1) quantal; urgency=low
 
   * improvement: finally, after three years of development i have found simple way how to constrain window size in gtk3! amazing!

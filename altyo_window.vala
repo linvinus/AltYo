@@ -1087,10 +1087,10 @@ public class VTMainWindow : Window{
 			dialog_box.pack_start(aLabel,false,false,0);
 			aLabel.show();
 			dialog.response.connect ((response_id) => {
-				if(response_id == Gtk.ResponseType.OK){
-					dialog.destroy ();
-				}
+				dialog.destroy ();
 			});
+
+			
 			dialog.set_transient_for(this);
 			dialog.show_all();
 			dialog.grab_focus();
@@ -1505,19 +1505,13 @@ public class AYObject :Object{
 		bool close=true;
 		var dialog = new MessageDialog (null, (DialogFlags.DESTROY_WITH_PARENT | DialogFlags.MODAL), MessageType.QUESTION, ButtonsType.YES_NO, question);
 		dialog.response.connect ((response_id) => {
-			if(response_id == Gtk.ResponseType.YES){
+			if(response_id == Gtk.ResponseType.YES)
 				close=true;
-				dialog.destroy ();
-			}else{
+			else
 				close=false;
-				dialog.destroy ();
-			}
-		});
-
-		dialog.close.connect ((response_id) => {
-			this.main_window.window_set_active();
 			dialog.destroy ();
 		});
+
 		dialog.focus_out_event.connect (() => {
 			return true; //same bug as discribed in this.focus_out_event
 			});
@@ -1844,16 +1838,15 @@ public class AYObject :Object{
 					dialog.destroy ();
 					this.main_window.allow_close=true;
 					this.main_window.destroy();
-				}else{
+				}else
 					this.main_window.allow_close=false;
-					this.main_window.window_set_active();
-					dialog.destroy ();
-				}
+
+				this.main_window.window_set_active();
+				dialog.destroy ();
 			});
 
 			dialog.close.connect ((response_id) => {
 				this.main_window.window_set_active();
-				dialog.destroy ();
 			});
 			dialog.focus_out_event.connect (() => {
 				return true; //same bug as discribed in this.focus_out_event
@@ -1863,6 +1856,7 @@ public class AYObject :Object{
 			dialog.grab_focus();
 			this.main_window.hotkey.send_net_active_window(dialog.get_window ());
 			dialog.run();
+			this.main_window.window_set_active();
 	}
 
 
@@ -1882,7 +1876,6 @@ public class AYObject :Object{
 
 			dialog.close.connect ((response_id) => {
 				this.main_window.window_set_active();
-				dialog.destroy ();
 			});
 			dialog.focus_out_event.connect (() => {
 				return true; //same bug as discribed in this.focus_out_event
@@ -1926,8 +1919,44 @@ public class AYObject :Object{
 			dialog.grab_focus();
 			this.main_window.hotkey.send_net_active_window(dialog.get_window ());
 			dialog.run();
+			this.main_window.window_set_active();
 	}
+	
+	public void set_custom_title_dialog(VTToggleButton tab){
+			var dialog = new MessageDialog (null, (DialogFlags.DESTROY_WITH_PARENT | DialogFlags.MODAL), MessageType.QUESTION, ButtonsType.YES_NO, _("Setup custom title?"));
+			var entry = new Gtk.Entry();
+			entry.set_text ( ( tab.tab_custom_title==null ? _("new custom title") : tab.tab_custom_title) );
+			entry.activate.connect(()=>{
+					tab.tab_custom_title = entry.get_text();
+					this.main_window.window_set_active();					
+					dialog.destroy ();				
+			});
 
+			var dialog_box = ((Gtk.Box)dialog.get_content_area ());
+			dialog_box.pack_start(entry,false,false,0);
+			entry.show();
+			dialog.response.connect ((response_id) => {
+				if(response_id == Gtk.ResponseType.YES){
+					tab.tab_custom_title = entry.get_text();
+				}else{
+					tab.tab_custom_title=null;
+				}
+				this.main_window.window_set_active();
+				dialog.destroy ();
+			});
+		
+			dialog.focus_out_event.connect (() => {
+				return true; //same bug as discribed in this.focus_out_event
+				});
+				
+			dialog.set_transient_for(this.main_window);
+			dialog.show ();
+			dialog.grab_focus();
+			this.main_window.hotkey.send_net_active_window(dialog.get_window ());
+			dialog.run();
+			this.main_window.window_set_active();
+	}
+	
 	public bool update_action_keybinding(Gtk.Action action, uint accelerator_key,Gdk.ModifierType accelerator_mods, bool force=false){
 				//if current accel don't equal to parsed, then try to update
 				
@@ -2019,7 +2048,7 @@ public class AYObject :Object{
 		
 		//we can't connect cb dirrectly to action.activate
 		//so, using lambda again =(
-		action.activate.connect(()=>{cb(action);});
+		action.activate.connect_after(()=>{cb(action);});
 
 		//add action into action_group to make a single repository
 		this.action_group.add_action_with_accel (action,"");//create accel path
@@ -2301,15 +2330,16 @@ public class AYObject :Object{
 			}
         });
 
-        this.add_window_accel("terminal_search_in_tab_title",_("Search in terminals titles"), _("Search in terminals titles"), Gtk.Stock.FIND,"",()=> {
+        this.add_window_accel("terminal_search_in_tab_title",_("Search in terminals titles"), _("Search in terminals titles"), Gtk.Stock.FIND,"<Control><Shift>D",()=> {
 				unowned SList <Gtk.RadioButton> rbutton_group = this.quick_options_notebook.search_mode_rbutton.get_group ();
+				if(!((Entry)this.quick_options_notebook.search_text_combo.get_child()).has_focus)
+					this.quick_options_notebook.search_show();
+
 				if(this.quick_options_notebook.search_mode_rbutton.active){
 					//set SEARCH_MODE.SEARCH_IN_NAME
 					var rb=rbutton_group.nth_data(0) as Gtk.RadioButton;
 					rb.set_active(true);
 				}
-				if(!((Entry)this.quick_options_notebook.search_text_combo.get_child()).has_focus)
-					this.quick_options_notebook.search_show();
         });
         this.add_window_accel("window_terminal_quick_settings",_("Terminal quick settings"), _("Terminal quick settings"), Gtk.Stock.EDIT,"",()=> {
 				if(!((Entry)this.quick_options_notebook.encodings_combo.get_child()).has_focus)
@@ -2331,7 +2361,14 @@ public class AYObject :Object{
 				this.restore_tab(element.data);
 			}
 			
-		});              
+		});
+		
+		this.add_window_toggle_accel("tab_custom_title", _("Custom title"), _("Custom title"), Gtk.Stock.DIALOG_AUTHENTICATION,"<Control><Shift>I",()=> {
+			debug("tab_custom_title");
+			if(this.active_tab!=null){
+				this.set_custom_title_dialog(this.active_tab);
+			}
+        });		
 	}//setup_keyboard_accelerators
 
 

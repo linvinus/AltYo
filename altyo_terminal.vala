@@ -81,6 +81,18 @@ public class VTToggleButton : Gtk.Button{
 	public bool prevent_close=false;
 
 	public string tab_title {get;set;default = null;}
+	private string? _tab_custom_title = null;
+	public string? tab_custom_title {
+		get { return _tab_custom_title;}
+		set{
+			_tab_custom_title=value;
+			this.force_update_tab_title = true;
+			this.set_title(this.tab_index,null);		
+		}
+	}
+	public bool tab_custom_title_enabled {
+		get{ return _tab_custom_title!=null; }
+	}
 	public int    tab_index {get;set;default = -1;}
 	private string markup_normal  {get;set;}
 	private string markup_active  {get;set;}
@@ -184,19 +196,27 @@ public class VTToggleButton : Gtk.Button{
 		   this.notify_on_title_change && 
 		   this.tab_title != null && 
 		   this.tab_title != title && 
+		   this.tab_custom_title_enabled == false && 
 		   this.user_notify == false &&
 		   this.tab_index == tab_index)//ignore DnD index change
 			this.user_notify=true;
-
+			
+		string? new_title=null;
+		
 		if(title!=null && title!="")
 			this.tab_title = title;
+		
+		if(this.tab_custom_title_enabled)
+			new_title = this.tab_custom_title;
+		else
+			new_title = this.tab_title;
 
 		this.tab_index = tab_index;
 		string result2="";
-		if((this.tab_title!=null && this.tab_title!="") ){
+		if((new_title!=null && new_title!="") ){
 			try{
 				GLib.Regex grx_arr;
-				string reg_title=GLib.Markup.escape_text(this.tab_title,-1);//replace < > with &lt; &gt;
+				string reg_title=GLib.Markup.escape_text(new_title,-1);//replace < > with &lt; &gt;
 				bool done[4]={false,false,false,false};
 				for(int i=0; i<this.tab_title_regex.length-1;i+=2){
 					grx_arr = new GLib.Regex(this.tab_title_regex[i]);
@@ -1083,10 +1103,19 @@ public class VTTerminal : AYTab{
 		//debug("popup_menu ref_count=%d",(int)menu.ref_count);
 	}
 
-	private ulong get_action_handler_id(Gtk.Action action){
+	private void force_action_state(Gtk.ToggleAction action, bool new_state){
 		Type type = action.get_type();
 		uint sig_id=GLib.Signal.lookup("activate",type);
-		return GLib.SignalHandler.find(action,GLib.SignalMatchType.ID,sig_id,0,null,null,null);		
+		var handler_id =  GLib.SignalHandler.find(action,GLib.SignalMatchType.ID,sig_id,0,null,null,null);		
+		GLib.SignalHandler.block(action,handler_id);//prevent emit signal
+		action.set_active(new_state);
+		GLib.SignalHandler.unblock(action,handler_id);
+	}
+	
+	private void stop_signal_emission(Gtk.Action action){
+		Type type = action.get_type();
+		uint sig_id=GLib.Signal.lookup("activate",type);
+		GLib.Signal.stop_emission(action,sig_id,0);		
 	}
 
 	public void popup_tab_menu(Gdk.EventButton event){
@@ -1107,13 +1136,21 @@ public class VTTerminal : AYTab{
 		menuitem = (Gtk.MenuItem)acg.get_action("terminal_search_in_tab_title").create_menu_item();
 		menu.append(menuitem);
 
-		if(vtw.ayobject.tab_sort_order==TAB_SORT_ORDER.HOSTNAME && vtw.ayobject.active_tab==this.tbutton){
+		if(vtw.ayobject.tab_sort_order==TAB_SORT_ORDER.HOSTNAME ){
 			var action_sort=acg.get_action("disable_sort_tab") as ToggleAction;
 			
-			var handler_id = this.get_action_handler_id(action_sort);
-			GLib.SignalHandler.block(action_sort,handler_id);//prevent emit signal
-			action_sort.set_active(this.tbutton.do_not_sort);
-			GLib.SignalHandler.unblock(action_sort,handler_id);
+			this.force_action_state(action_sort,this.tbutton.do_not_sort);
+
+			//override default action handler
+			var action_sort_activate_id = action_sort.activate.connect(()=>{
+				debug("disable_sort_tab.activate");
+				this.tbutton.do_not_sort=!this.tbutton.do_not_sort;
+				this.stop_signal_emission(action_sort);
+				});
+			//restore default action handler
+			menu.destroy.connect(()=>{ 
+				GLib.SignalHandler.disconnect(action_sort,action_sort_activate_id); 
+				});
 			
 			menuitem = (Gtk.MenuItem)action_sort.create_menu_item();
 			menu.append(menuitem);
@@ -1165,16 +1202,38 @@ public class VTTerminal : AYTab{
 		});
 		menu.append(chmenuitem);
 
-		if(vtw.ayobject.active_tab==this.tbutton){
-			var lock_tab=acg.get_action("lock_tab") as ToggleAction;
-			var handler_id = this.get_action_handler_id(lock_tab);
-			GLib.SignalHandler.block(lock_tab,handler_id);//prevent emit signal
-			lock_tab.set_active(this.tbutton.prevent_close);
-			GLib.SignalHandler.unblock(lock_tab,handler_id);
-			
-			menuitem = (Gtk.MenuItem)lock_tab.create_menu_item();
-			menu.append(menuitem);
-		}
+		var lock_tab=acg.get_action("lock_tab") as ToggleAction;
+		this.force_action_state(lock_tab,this.tbutton.prevent_close);
+		//override default action handler
+		var lock_tab_activate_id = lock_tab.activate.connect(()=>{
+			debug("lock_tab.activate");
+			this.tbutton.prevent_close=!this.tbutton.prevent_close;
+			this.tbutton.reconfigure();
+			this.stop_signal_emission(lock_tab);
+			});
+		//restore default action handler
+		menu.destroy.connect(()=>{ 
+			GLib.SignalHandler.disconnect(lock_tab,lock_tab_activate_id); 
+			});
+		menuitem = (Gtk.MenuItem)lock_tab.create_menu_item();
+		menu.append(menuitem);
+
+		var custom_title=acg.get_action("tab_custom_title") as ToggleAction;
+		this.force_action_state(custom_title,this.tbutton.tab_custom_title_enabled);
+		//override default action handler
+		var custom_title_activate_id = custom_title.activate.connect(()=>{
+			debug("custom_title.activate");
+			vtw.ayobject.set_custom_title_dialog(this.tbutton);
+			this.stop_signal_emission(custom_title);
+			});
+		//restore default action handler
+		menu.destroy.connect(()=>{ 
+			GLib.SignalHandler.disconnect(custom_title,custom_title_activate_id); 
+			});
+		
+		menuitem = (Gtk.MenuItem)custom_title.create_menu_item();
+		menu.append(menuitem);
+
 
 		if(this.disable_terminal_popup){
 			var submenu = new Gtk.Menu ();

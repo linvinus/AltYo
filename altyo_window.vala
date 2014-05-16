@@ -1835,19 +1835,14 @@ public class AYObject :Object{
 			dialog.response.connect ((response_id) => {
 				if(response_id == Gtk.ResponseType.YES){
 					this.save_session=checkbox.active;
-					dialog.destroy ();
 					this.main_window.allow_close=true;
 					this.main_window.destroy();
 				}else
 					this.main_window.allow_close=false;
 
-				this.main_window.window_set_active();
 				dialog.destroy ();
 			});
 
-			dialog.close.connect ((response_id) => {
-				this.main_window.window_set_active();
-			});
 			dialog.focus_out_event.connect (() => {
 				return true; //same bug as discribed in this.focus_out_event
 				});
@@ -1856,7 +1851,8 @@ public class AYObject :Object{
 			dialog.grab_focus();
 			this.main_window.hotkey.send_net_active_window(dialog.get_window ());
 			dialog.run();
-			this.main_window.window_set_active();
+			if(!this.main_window.allow_close)
+				this.main_window.window_set_active();
 	}
 
 
@@ -1874,9 +1870,6 @@ public class AYObject :Object{
 					dialog.destroy ();
 			});
 
-			dialog.close.connect ((response_id) => {
-				this.main_window.window_set_active();
-			});
 			dialog.focus_out_event.connect (() => {
 				return true; //same bug as discribed in this.focus_out_event
 				});

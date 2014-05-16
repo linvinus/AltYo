@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-14 23:51+0400\n"
+"POT-Creation-Date: 2014-05-16 18:43+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -61,65 +61,65 @@ msgstr ""
 msgid "Lock any configuration changes"
 msgstr ""
 
-#: altyo_terminal.vala:415
+#: altyo_terminal.vala:440
 #, c-format
 msgid "tab_format wrong value! will be used default value. err:%s"
 msgstr ""
 
-#: altyo_terminal.vala:425
+#: altyo_terminal.vala:450
 #, c-format
 msgid "tab_title_format wrong value! will be used default value. err:%s"
 msgstr ""
 
-#: altyo_terminal.vala:434
+#: altyo_terminal.vala:458
 msgid ""
 "tab_title_format_regex odd value of array length! will be used default value."
 msgstr ""
 
-#: altyo_terminal.vala:441
+#: altyo_terminal.vala:465
 #, c-format
 msgid "tab_title_format_regex wrong value! will be used default value. err:%s"
 msgstr ""
 
-#: altyo_terminal.vala:851
+#: altyo_terminal.vala:875
 msgid ""
 "terminal_url_regexps odd value of array length! will be used default value."
 msgstr ""
 
-#: altyo_terminal.vala:857
+#: altyo_terminal.vala:881
 #, c-format
 msgid "terminal_url_regexps wrong value! will be used default value. err:%s"
 msgstr ""
 
-#: altyo_terminal.vala:1030
+#: altyo_terminal.vala:1054
 msgid "Quick settings"
 msgstr ""
 
-#: altyo_terminal.vala:1059
+#: altyo_terminal.vala:1083
 msgid "Copy link"
 msgstr ""
 
-#: altyo_terminal.vala:1062
+#: altyo_terminal.vala:1086
 msgid "Run link Ctrl+left mouse button"
 msgstr ""
 
-#: altyo_terminal.vala:1121
+#: altyo_terminal.vala:1162
 msgid "Copy terminal name"
 msgstr ""
 
-#: altyo_terminal.vala:1135
+#: altyo_terminal.vala:1176
 msgid "Copy terminal host name"
 msgstr ""
 
-#: altyo_terminal.vala:1150
+#: altyo_terminal.vala:1191
 msgid "Disable key bindings"
 msgstr ""
 
-#: altyo_terminal.vala:1157
+#: altyo_terminal.vala:1198
 msgid "Disable terminal menu"
 msgstr ""
 
-#: altyo_terminal.vala:1177
+#: altyo_terminal.vala:1240
 msgid "Terminal menu"
 msgstr ""
 
@@ -140,49 +140,57 @@ msgstr ""
 msgid "Grab another key."
 msgstr ""
 
-#: altyo_window.vala:1466 altyo_window.vala:1653
+#: altyo_window.vala:1465 altyo_window.vala:1643
 msgid "Shell terminated."
 msgstr ""
 
-#: altyo_window.vala:1552
+#: altyo_window.vala:1541
 msgid "Tab is locked, are you sure you want to close?"
 msgstr ""
 
-#: altyo_window.vala:1563
+#: altyo_window.vala:1552
 #, c-format
 msgid ""
 "terminal_prevent_close_regex wrong value! will be used default value. err:%s"
 msgstr ""
 
-#: altyo_window.vala:1586
+#: altyo_window.vala:1575
 #, c-format
 msgid "Found important task \"%s\""
 msgstr ""
 
-#: altyo_window.vala:1587
+#: altyo_window.vala:1576
 msgid "Close tab anyway?"
 msgstr ""
 
-#: altyo_window.vala:1838
+#: altyo_window.vala:1828
 msgid "Really quit?"
 msgstr ""
 
-#: altyo_window.vala:1839
+#: altyo_window.vala:1829
 msgid "Save session"
 msgstr ""
 
-#: altyo_window.vala:1880
+#: altyo_window.vala:1866
 msgid "willemw12@gmail.com"
 msgstr ""
 
-#: altyo_window.vala:1904
+#: altyo_window.vala:1886
 #, c-format
 msgid ""
 "Really reset to defaults?\n"
 "Current settings will be saved in backup file %s.bak"
 msgstr ""
 
-#: altyo_window.vala:1961
+#: altyo_window.vala:1919
+msgid "Setup custom title?"
+msgstr ""
+
+#: altyo_window.vala:1921
+msgid "new custom title"
+msgstr ""
+
+#: altyo_window.vala:1979
 #, c-format
 msgid ""
 "You are trying to use key binding \"%s\"\n"
@@ -190,219 +198,223 @@ msgid ""
 "but, same key binding already binded to the action \"%s\""
 msgstr ""
 
-#: altyo_window.vala:1962
+#: altyo_window.vala:1980
 msgid "error"
 msgstr ""
 
-#: altyo_window.vala:2054
+#: altyo_window.vala:2072
 msgid "New tab"
 msgstr ""
 
-#: altyo_window.vala:2054
+#: altyo_window.vala:2072
 msgid "Open new tab"
 msgstr ""
 
-#: altyo_window.vala:2073
+#: altyo_window.vala:2091
 msgid "Close tab"
 msgstr ""
 
-#: altyo_window.vala:2073
+#: altyo_window.vala:2091
 msgid "Close current tab"
 msgstr ""
 
-#: altyo_window.vala:2078
+#: altyo_window.vala:2096
 msgid "Next tab"
 msgstr ""
 
-#: altyo_window.vala:2078
+#: altyo_window.vala:2096
 msgid "Switch to next tab"
 msgstr ""
 
-#: altyo_window.vala:2083
+#: altyo_window.vala:2101
 msgid "Previous tab"
 msgstr ""
 
-#: altyo_window.vala:2083
+#: altyo_window.vala:2101
 msgid "Switch to previous tab"
 msgstr ""
 
-#: altyo_window.vala:2089
+#: altyo_window.vala:2107
 #, c-format
 msgid "Switch to tab %d"
 msgstr ""
 
-#: altyo_window.vala:2089
+#: altyo_window.vala:2107
 #, c-format
 msgid "Switch to tab %d,double press switch to tab %d"
 msgstr ""
 
-#: altyo_window.vala:2114
+#: altyo_window.vala:2132
 msgid "Copy"
 msgstr ""
 
-#: altyo_window.vala:2114
+#: altyo_window.vala:2132
 msgid "Copy selected text"
 msgstr ""
 
-#: altyo_window.vala:2119
+#: altyo_window.vala:2137
 msgid "Paste"
 msgstr ""
 
-#: altyo_window.vala:2119
+#: altyo_window.vala:2137
 msgid "Paste from primary clipboard"
 msgstr ""
 
-#: altyo_window.vala:2124
+#: altyo_window.vala:2142
 msgid "Search"
 msgstr ""
 
-#: altyo_window.vala:2130
+#: altyo_window.vala:2148
 msgid "Show/Hide Quick list"
 msgstr ""
 
-#: altyo_window.vala:2138 data/preferences.glade:396
+#: altyo_window.vala:2156 data/preferences.glade:396
 msgid "Follow mouse cursor"
 msgstr ""
 
-#: altyo_window.vala:2141
+#: altyo_window.vala:2159
 msgid "Settings..."
 msgstr ""
 
-#: altyo_window.vala:2141
+#: altyo_window.vala:2159
 msgid "Settings"
 msgstr ""
 
-#: altyo_window.vala:2194 data/preferences.glade:3398
+#: altyo_window.vala:2212 data/preferences.glade:3398
 msgid "Quit"
 msgstr ""
 
-#: altyo_window.vala:2204
+#: altyo_window.vala:2222
 msgid "Show/Hide"
 msgstr ""
 
-#: altyo_window.vala:2209
+#: altyo_window.vala:2227
 msgid "About"
 msgstr ""
 
-#: altyo_window.vala:2213
+#: altyo_window.vala:2231
 msgid "Disable sort tab"
 msgstr ""
 
-#: altyo_window.vala:2221
+#: altyo_window.vala:2239
 msgid "Stay on top"
 msgstr ""
 
-#: altyo_window.vala:2232
+#: altyo_window.vala:2250
 msgid "Stick"
 msgstr ""
 
-#: altyo_window.vala:2232
+#: altyo_window.vala:2250
 msgid "Toggle stick"
 msgstr ""
 
-#: altyo_window.vala:2241
+#: altyo_window.vala:2259
 msgid "Autohide"
 msgstr ""
 
-#: altyo_window.vala:2241
+#: altyo_window.vala:2259
 msgid "Toggle autohide"
 msgstr ""
 
-#: altyo_window.vala:2245
+#: altyo_window.vala:2263
 msgid "Maximize - restore"
 msgstr ""
 
-#: altyo_window.vala:2245
+#: altyo_window.vala:2263
 msgid "Maximize window, or restore to normal size"
 msgstr ""
 
-#: altyo_window.vala:2254
+#: altyo_window.vala:2272
 msgid "Sort by hostname"
 msgstr ""
 
-#: altyo_window.vala:2258
+#: altyo_window.vala:2276
 msgid "Open new window"
 msgstr ""
 
-#: altyo_window.vala:2308
+#: altyo_window.vala:2326
 msgid "Search in terminals titles"
 msgstr ""
 
-#: altyo_window.vala:2318
+#: altyo_window.vala:2337
 msgid "Terminal quick settings"
 msgstr ""
 
-#: altyo_window.vala:2323
+#: altyo_window.vala:2342
 msgid "Lock tab"
 msgstr ""
 
-#: altyo_window.vala:2332
+#: altyo_window.vala:2351
 msgid "Restore tab"
 msgstr ""
 
-#: altyo_window.vala:2332
+#: altyo_window.vala:2351
 msgid "Restore last closed tab"
 msgstr ""
 
-#: altyo_window.vala:2421
+#: altyo_window.vala:2359
+msgid "Custom title"
+msgstr ""
+
+#: altyo_window.vala:2447
 #, c-format
 msgid "Tab%d - AltYo"
 msgstr ""
 
-#: altyo_window.vala:2463
+#: altyo_window.vala:2489
 #, c-format
 msgid ""
 "terminal_session_exclude_regex wrong value! will be used default value. err:"
 "%s"
 msgstr ""
 
-#: altyo_window.vala:2559
+#: altyo_window.vala:2584
 msgid "Restore tabs"
 msgstr ""
 
-#: altyo_window.vala:2569
+#: altyo_window.vala:2595
 #, c-format
 msgid "index %d"
 msgstr ""
 
-#: altyo_window.vala:2570
+#: altyo_window.vala:2596
 #, c-format
 msgid "Restore tab: %s"
 msgstr ""
 
-#: altyo_window.vala:2723
+#: altyo_window.vala:2750
 msgid "Wrap search"
 msgstr ""
 
-#: altyo_window.vala:2735
+#: altyo_window.vala:2762
 msgid "Match case-sensitive"
 msgstr ""
 
-#: altyo_window.vala:2751
+#: altyo_window.vala:2778
 msgid "terminal text"
 msgstr ""
 
-#: altyo_window.vala:2766
+#: altyo_window.vala:2793
 msgid "terminals titles"
 msgstr ""
 
-#: altyo_window.vala:2799
+#: altyo_window.vala:2826
 msgid "Find previous"
 msgstr ""
 
-#: altyo_window.vala:2820
+#: altyo_window.vala:2847
 msgid "Find next"
 msgstr ""
 
-#: altyo_window.vala:2831
+#: altyo_window.vala:2858
 msgid "Close search dialog"
 msgstr ""
 
-#: altyo_window.vala:3014
+#: altyo_window.vala:3041
 msgid "Press enter to appy"
 msgstr ""
 
-#: altyo_window.vala:3040
+#: altyo_window.vala:3067
 msgid "Close dialog"
 msgstr ""
 

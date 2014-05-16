@@ -62,18 +62,12 @@ public class VTToggleButton : Gtk.Button{
 	public bool active {get{ return _active;}
 						set{
 							if(this._active != value){
-								if(this._active){
-									this.get_style_context().remove_class("aytab_active");
-									this.get_style_context().add_class("aytab_normal");
-								}else{
-									this.get_style_context().remove_class("aytab_normal");
-									this.get_style_context().add_class("aytab_active");
-								}
-								this._active=value;
+								unowned Gtk.StyleContext context = this.get_style_context();
+								context.invalidate();
+								this._active=value;								
+								this.update_state();
 							}
-
 							//debug ("toggled = %s , %s ",this._active.to_string(),this.label.get_text());
-							this.update_state();
 						}
 				}
 	private Gtk.Label label;
@@ -136,7 +130,9 @@ public class VTToggleButton : Gtk.Button{
 		this.add(this.label);
 		this.label.mnemonic_widget=null;
 		this.user_notify=false;
-		this.get_style_context().remove_class("button");//don't use default button theme
+		unowned Gtk.StyleContext context = this.get_style_context();
+		context.remove_class("button");//don't use default button theme
+		context.add_class("aytab");
 		this.destroy.connect(()=>{ debug("VTToggleButton destroyed");	});
 	}
 
@@ -255,7 +251,9 @@ public class VTToggleButton : Gtk.Button{
 				this.label.set_markup("TAB: Error in regexp");
 			}
 		}
-		var context = this.get_style_context(); //todo: use this.label instead
+		
+		unowned Gtk.StyleContext context = this.get_style_context(); //todo: use this.label instead
+
         Gdk.RGBA color_f = context.get_color(StateFlags.NORMAL);
         Gdk.RGBA color_b = context.get_background_color(StateFlags.NORMAL);
 		this.markup_normal=(this.prevent_close ? "[!] " : "")+"<span foreground='#"+"%I02x".printf(((int)(color_f.red*255)))+"%I02x".printf(((int)(color_f.green*255)))+"%I02x".printf(((int)(color_f.blue*255)))+"' "+
@@ -283,7 +281,6 @@ public class VTToggleButton : Gtk.Button{
 		else
 			this.label.set_markup(this.markup_normal);
 
-		this.label.show();
 		return true;
 	}
 
@@ -331,6 +328,8 @@ public class VTToggleButton : Gtk.Button{
 	}
 
 	public void reconfigure(){
+		unowned Gtk.StyleContext context = this.get_style_context();
+		context.invalidate();		
 		this.force_update_tab_title=true;
 		this.set_title(this.tab_index,this.tab_title);//force update title
 	}

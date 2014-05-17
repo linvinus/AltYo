@@ -1210,6 +1210,7 @@ public class VTTerminal : AYTab{
 			debug("lock_tab.activate");
 			this.tbutton.prevent_close=!this.tbutton.prevent_close;
 			this.tbutton.reconfigure();
+			vtw.ayobject.hvbox.queue_draw();//redraw border
 			this.stop_signal_emission(lock_tab);
 			});
 		//restore default action handler

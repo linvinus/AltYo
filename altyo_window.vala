@@ -1936,6 +1936,7 @@ public class AYObject :Object{
 				}else{
 					tab.tab_custom_title=null;
 				}
+				this.hvbox.queue_draw();//redraw border
 				this.main_window.window_set_active();
 				dialog.destroy ();
 			});

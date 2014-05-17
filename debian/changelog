@@ -1,3 +1,15 @@
+altyo (0.4~rc4-linvinus1) quantal; urgency=low
+
+  * Update README.md
+  * improve memory management
+  * fix: misc problems with style handling
+  * new: ability to set custom title 
+  * new: dafult keybindings <Ctrl><Shift>D - search in titles, <Ctrl><Shift>I - set custom title
+  * fix: segfault on quit
+  * update: Russian translation
+
+ -- denis <linvinus@gmail.com>  Sat, 17 May 2014 10:23:54 +0400
+
 altyo (0.4~rc3-linvinus1) quantal; urgency=low
 
   * new: feature "Lock tab" - asks user before closing the tab. 

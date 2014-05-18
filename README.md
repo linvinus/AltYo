@@ -99,10 +99,11 @@ FAQ:
 ```
 
 * Q) when resizing terminal, lines break, if you are running Zsh
-* A) bug is described there https://bbs.archlinux.org/viewtopic.php?pid=1246865
-  you need to apply patch (https://bbs.archlinux.org/viewtopic.php?pid=1246865#p1246865).
+* A) bug is described there https://bugzilla.gnome.org/show_bug.cgi?id=708213 and there https://bbs.archlinux.org/viewtopic.php?pid=1246865
+  ~~you need to apply patch (https://bbs.archlinux.org/viewtopic.php?pid=1246865#p1246865).
   to resolve that.
-  for ubuntu users, patched vte available in this ppa https://launchpad.net/~linvinus/+archive/vte
+  for ubuntu users, patched vte available in this ppa https://launchpad.net/~linvinus/+archive/vte~~  
+  this bug resolved in vte 0.36
 
 * Q) Window gravity south, not working under xfwm4
 * A) it is xfwm4 bug https://bugzilla.xfce.org/show_bug.cgi?id=3634
@@ -114,6 +115,13 @@ FAQ:
 * A) this happen because they are running as standalone application,  
      but, for example, you may use following wrap around `bash -c "EDITOR=vim mc"`  
      in this example mc will runned with special environment variable
+
+* Q) F11 (maximize) not working in lubuntu (with openbox)
+* A) you need to remove following lines in ~/.config/openbox/lubuntu-rc.xml  
+  `<keybind key="F11">  
+  <action name="ToggleFullscreen"/>  
+  </keybind>`
+
 
 Reviews about AltYo
 -------------------

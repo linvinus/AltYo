@@ -69,6 +69,7 @@ public class VTMainWindow : Window{
 	
 	private int my_window_state;
 	private bool wait_window_manager=false;
+	private bool not_configured=true;//prevent some errors while starting
 	private uint wait_for_window_position_update=0;
 	private uint on_monitor_changed_force_new_position_glib_timer_id=0;
 	private uint update_position_size_for_glib_timer_id=0;
@@ -160,6 +161,7 @@ public class VTMainWindow : Window{
 			   !this.fullscreened &&
 			   !this.pull_animation_active && 
 			   !this.pull_active &&
+			   !this.not_configured &&
 			   !this.wait_window_manager)
 				return true;
 			else
@@ -256,6 +258,7 @@ public class VTMainWindow : Window{
 		this.hotkey = new PanelHotkey ();
 		this.hotkey.on_active_window_change.connect(this.check_focusout);
 		this.reconfigure();//window
+		this.not_configured=false;
 
 		this.ayobject= new AYObject(this,conf);
 		this.add(this.ayobject.main_vbox);
@@ -853,7 +856,10 @@ public class VTMainWindow : Window{
 					}else{
 						grave=this.hotkey.bind (new_key);//currently we have no actions, try to bind
 					}
-				}while(grave==null);
+				}while(grave==null && !this.allow_close);
+				
+				if(this.allow_close) return;//possible on destroying
+				
 				this.conf.set_accel_string("main_hotkey",new_key);
 				grave.on_trigged.connect(this.toggle_window);
 			}
@@ -1006,7 +1012,7 @@ public class VTMainWindow : Window{
 			if(this.prev_focus!=null)
 				this.prev_focus.grab_focus();
 			else
-				if(this.ayobject.active_tab!=null)
+				if(this.ayobject!=null && this.ayobject.active_tab!=null)//this.ayobject==null possible at startup
 					this.ayobject.activate_tab(this.ayobject.active_tab);
 		}
 	}
@@ -1022,14 +1028,6 @@ public class VTMainWindow : Window{
 			var dialog_box = ((Gtk.Box)dialog.get_content_area ());
 			dialog_box.pack_start(aLabel,false,false,0);
 			aLabel.show();
-			dialog.response.connect ((response_id) => {
-				if(response_id == Gtk.ResponseType.OK){
-					dialog.destroy ();
-				}else{
-					this.window_set_active();
-					dialog.destroy ();
-				}
-			});
 
 			var grab_another_key = new Button.with_label(_("Grab another key."));
 			grab_another_key.clicked.connect(()=>{
@@ -1076,8 +1074,10 @@ public class VTMainWindow : Window{
 					else
 						return true; //true == ignore event
 				});//tab_button_press_event
-			dialog.run();
-			this.window_set_active();
+			int result = dialog.run();
+			dialog.destroy ();
+			if(result != Gtk.ResponseType.NONE)
+				this.window_set_active();
 			return accelerator_name;
 	}
 
@@ -1087,17 +1087,14 @@ public class VTMainWindow : Window{
 			var dialog_box = ((Gtk.Box)dialog.get_content_area ());
 			dialog_box.pack_start(aLabel,false,false,0);
 			aLabel.show();
-			dialog.response.connect ((response_id) => {
-				dialog.destroy ();
-			});
-
-			
 			dialog.set_transient_for(this);
 			dialog.show_all();
 			dialog.grab_focus();
 			this.hotkey.send_net_active_window(dialog.get_window ());
-			dialog.run();
-			this.window_set_active();
+			int result = dialog.run();
+			dialog.destroy ();
+			if(result != Gtk.ResponseType.NONE)
+				this.window_set_active();
 	}//show_message_box
 	
 
@@ -1510,7 +1507,6 @@ public class AYObject :Object{
 				close=true;
 			else
 				close=false;
-			dialog.destroy ();
 		});
 
 		dialog.focus_out_event.connect (() => {
@@ -1520,8 +1516,10 @@ public class AYObject :Object{
 		dialog.show ();
 		dialog.grab_focus();
 		this.main_window.hotkey.send_net_active_window(dialog.get_window ());
-		dialog.run();
-		this.main_window.window_set_active();
+		int result = dialog.run();
+		dialog.destroy ();
+		if(result != Gtk.ResponseType.NONE)
+			this.main_window.window_set_active();
 		return close;
 	}
 
@@ -1840,8 +1838,6 @@ public class AYObject :Object{
 					this.main_window.destroy();
 				}else
 					this.main_window.allow_close=false;
-
-				dialog.destroy ();
 			});
 
 			dialog.focus_out_event.connect (() => {
@@ -1851,8 +1847,9 @@ public class AYObject :Object{
 			dialog.show ();
 			dialog.grab_focus();
 			this.main_window.hotkey.send_net_active_window(dialog.get_window ());
-			dialog.run();
-			if(!this.main_window.allow_close)
+			int result = dialog.run();
+			dialog.destroy ();
+			if(result != Gtk.ResponseType.NONE)
 				this.main_window.window_set_active();
 	}
 
@@ -1868,21 +1865,19 @@ public class AYObject :Object{
 			Image img = new Image.from_resource ("/org/gnome/altyo/altyo.svg");
 			dialog.set_logo(img.pixbuf);
 
-			dialog.response.connect ((response_id) => {
-					this.main_window.window_set_active();
-					dialog.destroy ();
-			});
-
 			dialog.focus_out_event.connect (() => {
 				return true; //same bug as discribed in this.focus_out_event
 				});
 			dialog.set_transient_for(this.main_window);
 			dialog.show_all();
 			dialog.grab_focus();
+			dialog.set_destroy_with_parent(true);
 			this.main_window.hotkey.send_net_active_window(dialog.get_window ());
-			dialog.run();
-			this.main_window.window_set_active();
+			int result = dialog.run();
+			dialog.destroy ();
 			debug("ShowAbout end");
+			if(result != Gtk.ResponseType.NONE)
+				this.main_window.window_set_active();			
 	}
 
 	public void show_reset_to_defaults_dialog(){
@@ -1892,7 +1887,6 @@ public class AYObject :Object{
 			dialog.response.connect ((response_id) => {
 				if(response_id == Gtk.ResponseType.YES){
 					//this.conf.
-					dialog.destroy ();
 					this.action_group.set_sensitive(true);//activate
 					this.action_group.get_action("open_settings").activate();//close
 					this.conf.reset_to_defaults();//make empty config
@@ -1902,8 +1896,6 @@ public class AYObject :Object{
 					}					
 					this.conf.reload_config();
 					this.action_group.get_action("open_settings").activate();//open
-				}else{
-					dialog.destroy ();
 				}
 			});
 
@@ -1914,8 +1906,10 @@ public class AYObject :Object{
 			dialog.show ();
 			dialog.grab_focus();
 			this.main_window.hotkey.send_net_active_window(dialog.get_window ());
-			dialog.run();
-			this.main_window.window_set_active();
+			int result = dialog.run();
+			dialog.destroy ();
+			if(result != Gtk.ResponseType.NONE)
+				this.main_window.window_set_active();			
 	}
 	
 	public void set_custom_title_dialog(VTToggleButton tab){
@@ -1923,9 +1917,7 @@ public class AYObject :Object{
 			var entry = new Gtk.Entry();
 			entry.set_text ( ( tab.tab_custom_title==null ? _("new custom title") : tab.tab_custom_title) );
 			entry.activate.connect(()=>{
-					tab.tab_custom_title = entry.get_text();
-					this.main_window.window_set_active();					
-					dialog.destroy ();				
+					dialog.response (Gtk.ResponseType.YES);
 			});
 
 			var dialog_box = ((Gtk.Box)dialog.get_content_area ());
@@ -1938,8 +1930,6 @@ public class AYObject :Object{
 					tab.tab_custom_title=null;
 				}
 				this.hvbox.queue_draw();//redraw border
-				this.main_window.window_set_active();
-				dialog.destroy ();
 			});
 		
 			dialog.focus_out_event.connect (() => {
@@ -1950,8 +1940,10 @@ public class AYObject :Object{
 			dialog.show ();
 			dialog.grab_focus();
 			this.main_window.hotkey.send_net_active_window(dialog.get_window ());
-			dialog.run();
-			this.main_window.window_set_active();
+			int result = dialog.run();
+			dialog.destroy ();
+			if(result != Gtk.ResponseType.NONE)
+				this.main_window.window_set_active();			
 	}
 	
 	public bool update_action_keybinding(Gtk.Action action, uint accelerator_key,Gdk.ModifierType accelerator_mods, bool force=false){

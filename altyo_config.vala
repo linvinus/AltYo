@@ -270,7 +270,18 @@ public class MySettings : Object {
 			
 			version[VER.rc]=9;//update version
 		}
-
+		/*if was 0.3.9
+		 * update program_style option, fix background for settings tab
+		 * */
+		if(version[VER.major]==0 && version[VER.minor]==3 && version[VER.rc]<10){
+				try {
+					string old=kf.get_string(this.profile,"program_style");
+					if(old!=null && old!="" ){
+						kf.set_string(this.profile,"program_style",old+" #settings-scrolledwindow{ background-color: @bg_color;} ");
+					}
+				}catch (KeyFileError err) {}
+			version[VER.rc]=10;//update version
+		}		
 		return version;
 	}
 	

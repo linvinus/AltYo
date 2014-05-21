@@ -798,6 +798,7 @@ public class VTMainWindow : Window{
 					 "HVBox {border-width: 0px 2px 2px 2px; border-color: #3C3B37;border-style: solid; background-color: #000000;}"+
 					 "#OffscreenWindow, VTMainWindow,#HVBox_dnd_window {border-width: 0px; border-style: solid; background-color: alpha(#000000,0.1);}"+
 					 "HVBox,#quick_options_notebook{background-color: alpha(#000000,1.0);}"+
+					 "#settings-scrolledwindow{ background-color: @bg_color;}"+
 					 "";
 		if(Gtk.get_major_version()>=3 && Gtk.get_minor_version()>6)//special eyecandy if supported ;)
 			style_str+= "VTToggleButton:active { text-shadow: 1px 1px 2px #005555;}";

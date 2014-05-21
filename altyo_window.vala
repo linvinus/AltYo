@@ -2123,8 +2123,11 @@ public class AYObject :Object{
 					}
 
 					this.double_hotkey_last_time=now;
+					uint index = j+this.double_hotkey_level-1;
+					if(index >= children.length())
+						index = children.length()-1;//switch to last tab
 
-					unowned AYTab vt = children.nth_data(j+this.double_hotkey_level-1);
+					unowned AYTab vt = children.nth_data(index);
 					if(vt != null)
 						this.activate_tab(vt.tbutton);
 			});

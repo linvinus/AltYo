@@ -1232,8 +1232,8 @@ public class AYObject :Object{
 	public TAB_SORT_ORDER tab_sort_order {get;set; default = TAB_SORT_ORDER.NONE;}
 
 
-	private List<unowned AYTab> children;
-	private List<unowned AYTab> children_removed;
+	private GLib.List<unowned AYTab> children;
+	private GLib.List<unowned AYTab> children_removed;
 	public int terminal_width {get;set; default = 80;}
 	public int terminal_height {get;set; default = 50;}
 	private int hvbox_height_old {get;set; default = 0;}
@@ -2352,7 +2352,7 @@ public class AYObject :Object{
 			}
         });
         
-		this.add_window_accel("restore_tab", _("Restore tab"), _("Restore last closed tab"), Gtk.Stock.GO_UP,"<Control><Shift>R",()=>{
+		this.add_window_accel("restore_tab", _("Restore closed tab"), _("Restore last closed tab"), Gtk.Stock.GO_UP,"<Control><Shift>R",()=>{
 			unowned List<unowned AYTab>? element = this.children_removed.last ();
 			if(element!=null){
 				this.restore_tab(element.data);
@@ -2591,18 +2591,28 @@ public class AYObject :Object{
 			
 			menuitem = (Gtk.MenuItem)this.action_group.get_action("restore_tab").create_menu_item();
 			submenu.append(menuitem);
+
+			menuitem = new Gtk.MenuItem.with_label (_("Restore all closed tabs"));
+			menuitem.activate.connect(()=>{
+				do{
+					this.restore_tab(this.children_removed.nth_data(this.children_removed.length()-1));
+				}while(this.children_removed.length()>0);
+				});		
+			submenu.append(menuitem);
+
 			menuitem = new Gtk.SeparatorMenuItem();
 			submenu.append(menuitem);
-					
+			int index=1;
 			foreach(var tab in this.children_removed){
 				tab.stop_remove_timer();//disable timer while popup shown
 				string s = ( tab.tbutton.tab_title != null ? tab.tbutton.tab_title : _("index %d").printf(tab.tbutton.tab_index) );
-				menuitem = new Gtk.MenuItem.with_label (_("Restore tab: %s").printf(s));
+				menuitem = new Gtk.MenuItem.with_label (_("%d: %s").printf(index,s));
 				menuitem.activate.connect(()=>{
 					debug("trying to restore tab %s",menuitem.label);
 					this.restore_tab(tab);
 					});
 				submenu.append(menuitem);
+				index++;
 			}
 			menu.deactivate.connect (()=>{
 				foreach(var tab in this.children_removed){

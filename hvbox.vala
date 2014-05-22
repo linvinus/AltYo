@@ -233,7 +233,7 @@ public class HVBox : Container {
 					unowned Widget widget = item.widget;
 
 					var ingnore_h = 0;
-					widget.get_preferred_width (out allocation.width, out ingnore_h);
+					allocation.width=widget.get_allocated_width();
 
 					debug("\torig2 size_allocate position=%d x=%d y=%d w=%d h=%d\n",this.children.position(line_item),allocation.x,allocation.y,allocation.width,allocation.height);
 

@@ -62,8 +62,6 @@ public class VTToggleButton : Gtk.Button{
 	public bool active {get{ return _active;}
 						set{
 							if(this._active != value){
-								unowned Gtk.StyleContext context = this.get_style_context();
-								context.invalidate();
 								this._active=value;								
 								this.update_state();
 							}
@@ -274,7 +272,8 @@ public class VTToggleButton : Gtk.Button{
 		}
 		
 		unowned Gtk.StyleContext context = this.get_style_context(); //todo: use this.label instead
-
+		context.invalidate();//fix wrong colors
+		
         Gdk.RGBA color_f = context.get_color(StateFlags.NORMAL);
         Gdk.RGBA color_b = context.get_background_color(StateFlags.NORMAL);
 		this.markup_normal=(this.prevent_close ? "[!] " : "")+"<span foreground='#"+"%I02x".printf(((int)(color_f.red*255)))+"%I02x".printf(((int)(color_f.green*255)))+"%I02x".printf(((int)(color_f.blue*255)))+"' "+

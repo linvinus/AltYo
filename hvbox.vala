@@ -598,7 +598,6 @@ public class HVBox : Container {
 
 		item.drag_end_id = widget.drag_end.connect ((context) => {
 			  debug ("drag end");
-			  this.child_reordered(item.widget,this.children.index(item));
 			  this.last_dnd_item=null;
 			  this.last_dnd_above_item=null;
 			  dnd_window.remove (widget);
@@ -607,6 +606,7 @@ public class HVBox : Container {
 			  item.ignore=false;
 			  drag_end(context);
 			  dnd_inprocess=false;
+			  this.child_reordered(item.widget,this.children.index(item));
 		});
 
 		children.insert(item,index);

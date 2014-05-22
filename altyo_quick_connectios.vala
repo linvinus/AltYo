@@ -74,7 +74,7 @@ public class QConnect  {
 
 public class QConnections {
 	private MySettings conf;
-	public List<QConnect> children;
+	public List<unowned QConnect> children;
 
 	//constructor
 	public QConnections(MySettings conf) {

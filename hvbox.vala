@@ -23,12 +23,15 @@ private class HVBoxItem : Object{
 	public unowned Widget widget;
 	public int max_width = -1;
 	public bool ignore = false;
+	public ulong drag_begin_id = 0;
+	public ulong drag_data_get_id = 0;
+	public ulong drag_end_id = 0;
 	public HVBoxItem(Widget W){
 			this.widget = W;
 		}
-//~	~HVBoxItem(){
-//~		debug("~HVBoxItem");
-//~	}
+	~HVBoxItem(){
+		debug("~HVBoxItem");
+	}
 //	public void destroy(){
 //~ 		base.destroy();
 //            delete (void*) this;
@@ -42,7 +45,7 @@ public class HVBox : Container {
 
     private Gtk.SizeRequestMode mode = Gtk.SizeRequestMode.HEIGHT_FOR_WIDTH;
 
-    private List<HVBoxItem> children;
+    private GLib.List<unowned HVBoxItem> children;//child will be destroyed as soon as it will be removed from List
     //private Window HVBParent;
 
     private bool drop_data_ready { get; set; default = false; }
@@ -55,6 +58,11 @@ public class HVBox : Container {
 	public bool background_only_behind_widgets { get; set; default = true; }
 	public bool minimize_size { get; set; default = true; }
     public signal void child_reordered(Widget child, uint new_index);
+    public signal void on_dnd_above_changed(Widget dnd_widget,Widget above);
+    private int last_dnd_x = 0;
+    private int last_dnd_y = 0;
+    private unowned HVBoxItem last_dnd_above_item = null;
+    private unowned HVBoxItem last_dnd_item = null;
 //~ 	public static enum DragInfo {
 //~ 	TEXT_URI_LIST
 //~ 	}
@@ -91,7 +99,8 @@ public class HVBox : Container {
 									int y,
 									uint time) {
 	//debug("drag_motion drop_data_ready=%s\n",drop_data_ready.to_string());
-
+		this.last_dnd_x=x;
+		this.last_dnd_y=y;
 
 		/* request drop data on demand */
 		if (!drop_data_ready) {
@@ -196,7 +205,7 @@ public class HVBox : Container {
 
 			unowned HVBoxItem** pitem=(HVBoxItem**)data[0];
 			if(pitem==null || !(*pitem is HVBoxItem) )return;
-			HVBoxItem dnd_item=*pitem;
+			unowned HVBoxItem dnd_item=*pitem;
 
 		debug ("data = %d %s",(int)(pitem),dnd_item.widget.get_type().name());
 
@@ -206,7 +215,7 @@ public class HVBox : Container {
 		var dnd_done = false;
 		var allocation = Gtk.Allocation();//don't use new for struct
 		var width = this.get_allocated_width();
-		Gtk.StyleContext style_context = this.get_style_context();
+		unowned Gtk.StyleContext style_context = this.get_style_context();
 		Gtk.Border border=style_context.get_border(StateFlags.NORMAL);
 
 		allocation.x=0;
@@ -245,7 +254,6 @@ public class HVBox : Container {
 						this.children.remove(dnd_item);
 						var new_pos=this.children.position(line_item)+1;
 						this.children.insert( dnd_item , new_pos);
-						this.child_reordered(dnd_item.widget,new_pos);
 						dnd_done=true;
 						debug("Found at EOL! Xx=%d Yy=%d\n",x,y);
 						break;
@@ -258,12 +266,12 @@ public class HVBox : Container {
 							break;
 							}
 						var old_pos=this.children.index(dnd_item);
-						this.children.remove(dnd_item);
 						var new_pos=this.children.position(line_item);
+						this.children.remove(dnd_item);
+
 						if(old_pos==new_pos)
 							new_pos++;
 						this.children.insert( dnd_item , new_pos);
-						this.child_reordered(dnd_item.widget,new_pos);
 						//this.children.append(item2);
 						dnd_done=true;
 						break;
@@ -283,7 +291,6 @@ public class HVBox : Container {
 					this.children.remove(dnd_item);
 					//this.children.insert( item2 , this.children.position(item));
 					this.children.append(dnd_item);
-					this.child_reordered(dnd_item.widget,this.children.index(dnd_item));
 					dnd_done=true;
 //~ 				}
 
@@ -544,15 +551,17 @@ public class HVBox : Container {
 		unowned Widget widget = w;
 		widget.set_parent(this);
 		HVBoxItem item = new HVBoxItem(widget);
-		unowned HVBoxItem item_ptr = item;//use in closure to avoid unnecessary ref()
-
 
 		drag_source_set (widget, Gdk.ModifierType.BUTTON1_MASK, target_entries, Gdk.DragAction.MOVE);
 
-		widget.drag_begin.connect ((context) => {
+		item.drag_begin_id = widget.drag_begin.connect ((context) => {
 			if(dnd_inprocess)return;
 			dnd_inprocess=true;
 			  debug ("drag begin");
+			  this.last_dnd_x=-1;//reset position
+			  this.last_dnd_y=-1;//reset position
+			  this.last_dnd_item=item;
+			  this.last_dnd_above_item=item;
 	//~ 		  drag_highlight (widget);
 			  widget.unparent ();
 
@@ -562,7 +571,7 @@ public class HVBox : Container {
 			  dnd_window.add (widget);
 			  dnd_window.show();
 
-			  item_ptr.ignore=true;
+			  item.ignore=true;
 
 			  dnd_window.draw.connect ((cr)=>{widget.draw(cr); return true;});
 
@@ -572,7 +581,7 @@ public class HVBox : Container {
 //~ 			  base.drag_begin(context) ;
 		});
 
-		widget.drag_data_get.connect ((context, selection_data, info, time) => {
+		item.drag_data_get_id = widget.drag_data_get.connect ((context, selection_data, info, time) => {
 				debug ("drag data get");
 				Gdk.Atom target = Gdk.Atom.intern_static_string ("GTK_HVBOX_ITEM");
 
@@ -580,19 +589,22 @@ public class HVBox : Container {
 					//workaround for vala 0.14 selection_data.set uchar[]
  					uchar[] adata = new uchar[sizeof(void *)];//should work on x86_64 too
  					ulong* pdata = (ulong *)(&adata[0]);//should work on x86_64 too
-					HVBoxItem** pitem=&item_ptr;//should work on x86_64 too
+					HVBoxItem** pitem=&item;//should work on x86_64 too
 					*pdata=pitem;
 					selection_data.set (target,8,(uchar[])adata);
 //~ 					base.drag_data_get(context, selection_data, info, time) ;
 				}
 		});
 
-		widget.drag_end.connect ((context) => {
+		item.drag_end_id = widget.drag_end.connect ((context) => {
 			  debug ("drag end");
+			  this.child_reordered(item.widget,this.children.index(item));
+			  this.last_dnd_item=null;
+			  this.last_dnd_above_item=null;
 			  dnd_window.remove (widget);
 			  widget.set_parent (this);
 			  dnd_window.destroy();
-			  item_ptr.ignore=false;
+			  item.ignore=false;
 			  drag_end(context);
 			  dnd_inprocess=false;
 		});
@@ -607,14 +619,18 @@ public class HVBox : Container {
 		foreach(unowned HVBoxItem item in this.children){
 			if(item.widget == widget){
 				item.widget.unparent();
+				GLib.SignalHandler.disconnect(item.widget,item.drag_begin_id);
+				GLib.SignalHandler.disconnect(item.widget,item.drag_data_get_id);
+				GLib.SignalHandler.disconnect(item.widget,item.drag_end_id);
 				children.remove(item);
+
 				if(children.length()>0 && this.visible){
 					int minimum_height,natural_height;
 					hvbox_get_preferred_height_for_width(this.get_allocated_width(),out minimum_height, out natural_height);
 					this.queue_resize();//and redraw
 				}
-				item.unref();//destroy
-				return;
+				//item.unref();//destroy
+				break;
 				//possible problem not optimized exit
 //~ 				item.destroy();
 //~ 				return;
@@ -727,6 +743,7 @@ public class HVBox : Container {
 
 		unowned List<HVBoxItem> item_it=null;
 		unowned List<HVBoxItem> end_of_line=null;
+		bool found_dnd_above=false;
 		//draw background only behind widgets
 		for (item_it = this.children; item_it != null; item_it = item_it.next) {
 
@@ -744,6 +761,15 @@ public class HVBox : Container {
 				unowned HVBoxItem item = line_item.data;
 				unowned Widget widget = item.widget;
 				allocation.width+=item.widget.get_allocated_width();
+				//dnd stuff
+				if( !found_dnd_above && dnd_inprocess && this.last_dnd_x>0 && this.last_dnd_x<allocation.width && this.last_dnd_y<allocation.y+allocation.height){
+					if(this.last_dnd_above_item!=null && this.last_dnd_above_item!=item){
+						debug("last_dnd_above_item update");
+						this.on_dnd_above_changed(this.last_dnd_item.widget,item.widget);
+					}
+					this.last_dnd_above_item=item;
+					found_dnd_above=true;
+				}
 			}
 			if(background_only_behind_widgets){
 				 cr.rectangle (allocation.x, allocation.y,allocation.width+border.left+border.right, allocation.height+border.top+border.bottom);

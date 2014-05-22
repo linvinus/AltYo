@@ -24,7 +24,7 @@ using Gdk;
     PanelHotkey.instance().triggered (a);
 }*/
 
-public class KeyBinding {
+public class KeyBinding : Object {
 	public string combination;
 	public uint key_code;
 	public uint modifiers;
@@ -38,7 +38,8 @@ public class KeyBinding {
 	}
 
 	~KeyBinding(){
-		free(this.combination);
+		debug("~KeyBinding");
+		//free(this.combination);
 	}
 }
 
@@ -165,6 +166,7 @@ public class PanelHotkey {
 				flush();
 			}
 			bindings.remove(bind);
+			bind.unref();//destroy
 		}
 	}
 

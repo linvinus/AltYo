@@ -1285,6 +1285,11 @@ public class AYObject :Object{
 		this.hvbox.expand=false;
 
 		this.hvbox.child_reordered.connect(this.move_tab);
+		this.hvbox.on_dnd_above_changed.connect((dnd_widget,above_widget)=>{
+			VTToggleButton dnd = (VTToggleButton) dnd_widget;
+			VTToggleButton above = (VTToggleButton) above_widget;
+			dnd.set_title((int)(this.children.index((AYTab)above.object)+1),null);
+			});
 //~		this.hvbox.size_changed.connect(this.hvbox_size_changed);
 
 		this.hvbox.can_focus=false;//vte shoud have focus

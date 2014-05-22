@@ -229,6 +229,13 @@ public class VTMainWindow : Window{
 		this.pixwin = new OffscreenWindow ();
 		this.pixwin.name="OffscreenWindow";
 		this.pixwin.show();
+		this.pixwin.damage_event.connect((event)=>{
+			if(this.visible && (this.pull_animation_active || this.pull_active)){
+				debug("pixwin.damage_event");
+				var w = this.get_window();
+				w.invalidate_rect(null,false);
+			}
+			});
 		//this.set_app_paintable(true);
 		//this.set_double_buffered(false);
 
@@ -272,9 +279,12 @@ public class VTMainWindow : Window{
 			return false;//default is allow
 			});
 
-		this.destroy.connect (()=>{
+		this.destroy.connect (()=>{			
 			this.ayobject.save_configuration();
 			this.conf.save();
+			unowned Gtk.Widget ch=this.pixwin.get_child();
+			if(ch is Gtk.Widget)
+				ch.destroy();		
 			Gtk.main_quit();
 			});
 
@@ -560,9 +570,10 @@ public class VTMainWindow : Window{
 		//debug("reparent to offscreen window");
 		//this.get_child().reparent(this.pixwin);//reparent to offscreen window
 		var ch=this.get_child();//.reparent(this);//reparent from offscreen window
-		this.remove(ch);
 		this.pixwin.set_size_request(pull_w,pull_h);
+		this.remove(ch);
 		this.pixwin.add(ch);
+		
 		//set main_vbox size same as original,otherwise draw will be broken
 		this.ayobject.main_vbox.height_request = this.orig_h_main_vbox;
 		this.ayobject.main_vbox.width_request = this.orig_w_main_vbox;
@@ -587,6 +598,7 @@ public class VTMainWindow : Window{
 			this.pull_step=this.pull_steps;//skip animation
 		this.pull_animation_active=true;
 		this.ayobject.clear_prelight_state();
+		this.update_events();//process pixwin.damage_event
 		GLib.Timeout.add(this.animation_speed,this.on_pull_up);
 	}
 

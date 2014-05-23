@@ -1,3 +1,20 @@
+altyo (0.4~rc5-linvinus1) quantal; urgency=low
+
+  * improvement: set logo in about dialog
+  * improvement: redraw borders when it's necessary
+  * Update README.md
+  * improvement: quick switch to last tab
+  * improvement: prevent transparent background in settings dialog if theme is broken
+  * improvement: in dialogs destroying
+  * fix: styling problems on DnD
+  * improvement: more predictable DnD behaviour
+  * new: popup menu option "Restore all closed tabs"
+  * improvement: use OffscreenWindow damage_event
+  * improvement: reverse order for closed tabs in popup menu
+  * update: Russian translation
+
+ -- denis <linvinus@gmail.com>  Fri, 23 May 2014 10:20:11 +0400
+
 altyo (0.4~rc4-linvinus1) quantal; urgency=low
 
   * Update README.md

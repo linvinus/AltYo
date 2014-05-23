@@ -215,6 +215,11 @@ public class VTMainWindow : Window{
 		}
 
 	construct {
+		var settings = Gtk.Settings.get_default();
+//~ 		settings.gtk_menu_images=false;
+//~ 		settings.gtk_button_images=false;
+//~ 		settings.gtk_enable_animations=false;
+//~ 		settings.gtk_toolbar_style=Gtk.ToolbarStyle.TEXT;
 		this.title = "AltYo"; 
 		//this.border_width = 0;
 		this.skip_taskbar_hint = true;
@@ -1035,7 +1040,14 @@ public class VTMainWindow : Window{
 			var title=_("Please select key combination, to show/hide AltYo.");
 			if(prev_bind!=null)
 				title+="\n"+_("Previous key '%s' incorrect or busy").printf(prev_bind);
-			var dialog = new MessageDialog (null, (DialogFlags.DESTROY_WITH_PARENT | DialogFlags.MODAL), MessageType.QUESTION, ButtonsType.OK, title);
+			Gtk.MessageType message_type=Gtk.MessageType.OTHER;	
+			var settings = Gtk.Settings.get_default();
+			if(settings.gtk_menu_images){
+				message_type = MessageType.QUESTION;
+			}
+		
+		
+			var dialog = new MessageDialog (null, (DialogFlags.DESTROY_WITH_PARENT | DialogFlags.MODAL), message_type, ButtonsType.OK, title);
 			var aLabel = new Label(_("Press any key"));
 			var dialog_box = ((Gtk.Box)dialog.get_content_area ());
 			dialog_box.pack_start(aLabel,false,false,0);
@@ -1094,7 +1106,12 @@ public class VTMainWindow : Window{
 	}
 
 	public void show_message_box(string title,string message){
-			var dialog = new MessageDialog (null, (DialogFlags.DESTROY_WITH_PARENT | DialogFlags.MODAL), MessageType.QUESTION, ButtonsType.OK, title);
+			Gtk.MessageType message_type=Gtk.MessageType.OTHER;	
+			var settings = Gtk.Settings.get_default();
+			if(settings.gtk_menu_images){
+				message_type = MessageType.QUESTION;
+			}		
+			var dialog = new MessageDialog (null, (DialogFlags.DESTROY_WITH_PARENT | DialogFlags.MODAL), message_type, ButtonsType.OK, title);
 			var aLabel = new Label(message);
 			var dialog_box = ((Gtk.Box)dialog.get_content_area ());
 			dialog_box.pack_start(aLabel,false,false,0);
@@ -1518,7 +1535,12 @@ public class AYObject :Object{
 
 	private bool confirm_close_tab(string question){
 		bool close=true;
-		var dialog = new MessageDialog (null, (DialogFlags.DESTROY_WITH_PARENT | DialogFlags.MODAL), MessageType.QUESTION, ButtonsType.YES_NO, question);
+		Gtk.MessageType message_type=Gtk.MessageType.OTHER;	
+		var settings = Gtk.Settings.get_default();
+		if(settings.gtk_menu_images){
+			message_type = MessageType.QUESTION;
+		}			
+		var dialog = new MessageDialog (null, (DialogFlags.DESTROY_WITH_PARENT | DialogFlags.MODAL), message_type, ButtonsType.YES_NO, question);
 		dialog.response.connect ((response_id) => {
 			if(response_id == Gtk.ResponseType.YES)
 				close=true;
@@ -1841,7 +1863,12 @@ public class AYObject :Object{
 	}//tab_sort
 
 	public void ShowQuitDialog(){
-			var dialog = new MessageDialog (null, (DialogFlags.DESTROY_WITH_PARENT | DialogFlags.MODAL), MessageType.QUESTION, ButtonsType.YES_NO, _("Really quit?"));
+			Gtk.MessageType message_type=Gtk.MessageType.OTHER;	
+			var settings = Gtk.Settings.get_default();
+			if(settings.gtk_menu_images){
+				message_type = MessageType.QUESTION;
+			}		
+			var dialog = new MessageDialog (null, (DialogFlags.DESTROY_WITH_PARENT | DialogFlags.MODAL), message_type, ButtonsType.YES_NO, _("Really quit?"));
 			var checkbox = new CheckButton.with_label(_("Save session"));
 			checkbox.active=this.save_session;
 			var dialog_box = ((Gtk.ButtonBox)dialog.get_action_area ());
@@ -1899,7 +1926,12 @@ public class AYObject :Object{
 
 	public void show_reset_to_defaults_dialog(){
 			string msg=_("Really reset to defaults?\nCurrent settings will be saved in backup file %s.bak").printf(this.conf.conf_file);
-			var dialog = new MessageDialog (null, (DialogFlags.DESTROY_WITH_PARENT | DialogFlags.MODAL), MessageType.QUESTION, ButtonsType.YES_NO, msg);
+			Gtk.MessageType message_type=Gtk.MessageType.OTHER;	
+			var settings = Gtk.Settings.get_default();
+			if(settings.gtk_menu_images){
+				message_type = MessageType.QUESTION;
+			}				
+			var dialog = new MessageDialog (null, (DialogFlags.DESTROY_WITH_PARENT | DialogFlags.MODAL), message_type, ButtonsType.YES_NO, msg);
 
 			dialog.response.connect ((response_id) => {
 				if(response_id == Gtk.ResponseType.YES){
@@ -1930,7 +1962,12 @@ public class AYObject :Object{
 	}
 	
 	public void set_custom_title_dialog(VTToggleButton tab){
-			var dialog = new MessageDialog (null, (DialogFlags.DESTROY_WITH_PARENT | DialogFlags.MODAL), MessageType.QUESTION, ButtonsType.YES_NO, _("Setup custom title?"));
+			Gtk.MessageType message_type=Gtk.MessageType.OTHER;	
+			var settings = Gtk.Settings.get_default();
+			if(settings.gtk_menu_images){
+				message_type = MessageType.QUESTION;
+			}		
+			var dialog = new MessageDialog (null, (DialogFlags.DESTROY_WITH_PARENT | DialogFlags.MODAL), message_type, ButtonsType.YES_NO, _("Setup custom title?"));
 			var entry = new Gtk.Entry();
 			entry.set_text ( ( tab.tab_custom_title==null ? _("new custom title") : tab.tab_custom_title) );
 			entry.activate.connect(()=>{
@@ -2836,8 +2873,11 @@ public class QoptNotebook: Notebook{
 		search_hbox.pack_start(rbox,false,false,0);
 
 		var next_button = new Button();
-		Image img = new Image.from_stock ("gtk-go-up",Gtk.IconSize.SMALL_TOOLBAR);
-		next_button.add(img);
+		var settings = Gtk.Settings.get_default();
+		if(settings.gtk_button_images){
+			Image img = new Image.from_stock ("gtk-go-up",Gtk.IconSize.SMALL_TOOLBAR);
+			next_button.add(img);
+		}
 		next_button.clicked.connect(()=>{
 			if(this.search_in == SEARCH_MODE.SEARCH_IN_TEXT){
 				unowned AYTab ayt = ((AYTab)this.ayobject.active_tab.object);
@@ -2857,8 +2897,10 @@ public class QoptNotebook: Notebook{
 		search_hbox.pack_start(next_button,false,false,0);
 
 		var prev_button = new Button();
-		img = new Image.from_stock ("gtk-go-down",Gtk.IconSize.SMALL_TOOLBAR);
-		prev_button.add(img);
+		if(settings.gtk_button_images){
+			var img = new Image.from_stock ("gtk-go-down",Gtk.IconSize.SMALL_TOOLBAR);
+			prev_button.add(img);
+		}
 		prev_button.clicked.connect(()=>{
 			if(this.search_in == SEARCH_MODE.SEARCH_IN_TEXT){
 				unowned AYTab ayt = ((AYTab)this.ayobject.active_tab.object);
@@ -2878,8 +2920,10 @@ public class QoptNotebook: Notebook{
 		search_hbox.pack_start(prev_button,false,false,0);
 
 		var hide_button = new Button();
-		img = new Image.from_stock ("gtk-close",Gtk.IconSize.SMALL_TOOLBAR);
-		hide_button.add(img);
+		if(settings.gtk_button_images){
+			var img = new Image.from_stock ("gtk-close",Gtk.IconSize.SMALL_TOOLBAR);
+			hide_button.add(img);
+		}
 		hide_button.clicked.connect(()=>{
 			this.ayobject.quick_options_notebook_hide();
 			});
@@ -3057,10 +3101,14 @@ public class QoptNotebook: Notebook{
 		del_combo.model= builder.get_object ("terminal_delete_binding_liststore") as Gtk.ListStore;
 		var bps_combo = builder.get_object ("terminal_backspace_binding") as Gtk.ComboBox;
 		bps_combo.model= builder.get_object ("terminal_delete_binding_liststore") as Gtk.ListStore;
-				
+		
+		var settings = Gtk.Settings.get_default();
+		
 		var apply_button = new Button();
-		var img = new Image.from_stock ("gtk-apply",Gtk.IconSize.SMALL_TOOLBAR);
-		apply_button.add(img);
+		if(settings.gtk_button_images){
+			var img = new Image.from_stock ("gtk-apply",Gtk.IconSize.SMALL_TOOLBAR);
+			apply_button.add(img);
+		}
 		apply_button.clicked.connect(()=>{
 			unowned AYTab vtt = ((AYTab)this.ayobject.active_tab.object);
 			if(!(vtt is VTTerminal)) return;
@@ -3087,8 +3135,10 @@ public class QoptNotebook: Notebook{
 			});
 			
 		var hide_button = new Button();
-		img = new Image.from_stock ("gtk-close",Gtk.IconSize.SMALL_TOOLBAR);
-		hide_button.add(img);
+		if(settings.gtk_button_images){
+			var img = new Image.from_stock ("gtk-close",Gtk.IconSize.SMALL_TOOLBAR);
+			hide_button.add(img);
+		}
 		hide_button.clicked.connect(()=>{
 			this.ayobject.quick_options_notebook_hide();
 			});

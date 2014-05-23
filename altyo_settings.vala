@@ -48,6 +48,7 @@ public class AYSettings : AYTab{
 				this.builder.connect_signals(this);
 				var B = builder.get_object ("settings-scrolledwindow") as Gtk.Widget;
 				B.name="settings-scrolledwindow";
+				B.destroy.connect(()=>{debug("~settings-scrolledwindow");});
 				this.hbox.add(B);
 				var L = builder.get_object ("config_path_linkbutton") as Gtk.LinkButton;
 				L.label=my_conf.conf_file;
@@ -63,6 +64,10 @@ public class AYSettings : AYTab{
 			R.sensitive=false;
 			R.tooltip_text=A.tooltip_text=_("Config is read only!");
 		}
+	}
+	
+	~AYSettings(){
+		debug("~AYSettings");	
 	}
 
 	[CCode (instance_pos = -1)]
@@ -143,8 +148,8 @@ public class AYSettings : AYTab{
 					var saved_key = this.my_conf.get_accel_string(name,"");
 					if(parsed_name != saved_key){
 						//some thing was wrong,update key value
-						unowned uint accelerator_key;
-						unowned Gdk.ModifierType accelerator_mods;
+						uint accelerator_key;
+						Gdk.ModifierType accelerator_mods;
 						Gtk.accelerator_parse(saved_key,out accelerator_key,out accelerator_mods);
 						accel_key=accelerator_key;
 						accel_mods=accelerator_mods;
@@ -742,7 +747,7 @@ public class AYSettings : AYTab{
 							//try to find encoding in a list
 							if(encodings_combo.model.get_iter_first(out iter))
 								do{
-									unowned string s;
+									string s;
 									encodings_combo.model.get(iter,0,out s);
 									if(s == term_encoding){
 										found=true;

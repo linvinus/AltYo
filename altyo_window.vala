@@ -2615,7 +2615,10 @@ public class AYObject :Object{
 			menuitem = new Gtk.SeparatorMenuItem();
 			submenu.append(menuitem);
 			int index=1;
-			foreach(var tab in this.children_removed){
+			unowned List<unowned AYTab> item_it = null;
+			//reverse order
+			for (item_it = this.children_removed.last(); item_it != null; item_it = item_it.prev) {
+				AYTab tab = item_it.data;
 				tab.stop_remove_timer();//disable timer while popup shown
 				string s = ( tab.tbutton.tab_title != null ? tab.tbutton.tab_title : _("index %d").printf(tab.tbutton.tab_index) );
 				menuitem = new Gtk.MenuItem.with_label (_("%d: %s").printf(index,s));

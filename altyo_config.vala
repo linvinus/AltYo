@@ -67,6 +67,7 @@ public class MySettings : Object {
 	public  bool readonly = false;
 	public string? default_path = null;
 	public DISTRIB_ID DISTR_ID=DISTRIB_ID.OTHER;
+	public  bool reduce_memory_usage = false;
 
 	public signal void on_load();
 
@@ -104,6 +105,8 @@ public class MySettings : Object {
 			}
 			if(distr=="ubuntu")
 				this.DISTR_ID=DISTRIB_ID.UBUNTU;
+
+			this.reduce_memory_usage = this.get_boolean("reduce_memory_usage",false);
 		}
 	}
 
@@ -138,8 +141,7 @@ public class MySettings : Object {
 						} catch (FileError err) {
 								warning (err.message);
 						}
-				}
-				
+				}				
 	}
 
 	public void reload_config(){

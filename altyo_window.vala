@@ -215,11 +215,6 @@ public class VTMainWindow : Window{
 		}
 
 	construct {
-		var settings = Gtk.Settings.get_default();
-//~ 		settings.gtk_menu_images=false;
-//~ 		settings.gtk_button_images=false;
-//~ 		settings.gtk_enable_animations=false;
-//~ 		settings.gtk_toolbar_style=Gtk.ToolbarStyle.TEXT;
 		this.title = "AltYo"; 
 		//this.border_width = 0;
 		this.skip_taskbar_hint = true;
@@ -795,6 +790,14 @@ public class VTMainWindow : Window{
 	
 	public void reconfigure(){
 		debug("reconfigure VTWindow");
+
+		if(this.conf.reduce_memory_usage){
+			var settings = Gtk.Settings.get_default();
+			settings.gtk_menu_images=false;
+			settings.gtk_button_images=false;
+			settings.gtk_enable_animations=false;
+			settings.gtk_toolbar_style=Gtk.ToolbarStyle.TEXT;
+		}
 
 		//update on reset
 		conf.get_boolean("keep_above_at_startup",true);
@@ -2211,52 +2214,53 @@ public class AYObject :Object{
         });
 		this.add_window_accel("open_settings", _("Settings..."), _("Settings"), Gtk.Stock.EDIT,"",()=> {
 				this.conf.save(true);//force save before edit
-				/*
-				VTTerminal vt;
-				string editor = conf.get_string("text_editor_command","");
+				if(this.conf.reduce_memory_usage){
+					VTTerminal vt;
+					string editor = conf.get_string("text_editor_command","");
 
-				if(editor=="" ||editor==null)
-					editor=GLib.Environment.get_variable("EDITOR");
+					if(editor=="" ||editor==null)
+						editor=GLib.Environment.get_variable("EDITOR");
 
-				string[] editor_names={"editor","nano","vi","emacs"};
-				string[] paths={"/usr/bin/","/bin/","/usr/local/bin/"};
-				bool done=false;
-				if(editor==""||editor==null)
-				foreach(string editor_name in editor_names){
-					foreach(string path in paths){
-						if(GLib.FileUtils.test(path+editor_name,GLib.FileTest.EXISTS|GLib.FileTest.IS_EXECUTABLE)){
-						editor=path+editor_name;
-						done=true;
-						break;
+					string[] editor_names={"editor","nano","vi","emacs"};
+					string[] paths={"/usr/bin/","/bin/","/usr/local/bin/"};
+					bool done=false;
+					if(editor==""||editor==null)
+					foreach(string editor_name in editor_names){
+						foreach(string path in paths){
+							if(GLib.FileUtils.test(path+editor_name,GLib.FileTest.EXISTS|GLib.FileTest.IS_EXECUTABLE)){
+							editor=path+editor_name;
+							done=true;
+							break;
+							}
+						}
+						if(done) break;
+					}
+					debug("Found editor: %s",editor);
+					vt = this.add_tab(editor+" "+this.conf.conf_file,null,(vt1)=>{
+						debug("OnChildExited");
+						this.conf.load_config();
+						this.close_tab(this.hvbox.children_index(vt1.tbutton));
+						});
+					vt.auto_restart=false;
+					var tab_index =  this.children.index(vt)+1;
+					vt.tbutton.set_title(tab_index, _("AltYo Settings") );
+				}else{
+					if(!this.aysettings_shown){
+						this.aysettings=new AYSettings(this.conf,this.terms_notebook,(int)(this.children.length()+1),this);
+						this.children.append(this.aysettings);
+						this.aysettings.tbutton.button_press_event.connect(tab_button_press_event);
+						this.hvbox.add(this.aysettings.tbutton);
+						this.activate_tab(this.aysettings.tbutton) ;//this.active_tab = this.hvbox.children_index(tbutton);
+						this.aysettings_shown=true;
+					}else{
+						if(this.active_tab!=this.aysettings.tbutton){
+							this.activate_tab(this.aysettings.tbutton);
+						}else{//close
+							this.close_tab(this.hvbox.children_index(this.aysettings.tbutton));
+							this.aysettings_shown=false;
 						}
 					}
-					if(done) break;
-				}
-				debug("Found editor: %s",editor);
-				vt = this.add_tab(editor+" "+this.conf.conf_file,null,(vt1)=>{
-					debug("OnChildExited");
-					this.conf.load_config();
-					this.close_tab(this.hvbox.children_index(vt1.tbutton));
-					});
-				vt.auto_restart=false;
-				var tab_index =  this.children.index(vt)+1;
-				vt.tbutton.set_title(tab_index, _("AltYo Settings") );
-				*/
-				if(!this.aysettings_shown){
-					this.aysettings=new AYSettings(this.conf,this.terms_notebook,(int)(this.children.length()+1),this);
-					this.children.append(this.aysettings);
-					this.aysettings.tbutton.button_press_event.connect(tab_button_press_event);
-					this.hvbox.add(this.aysettings.tbutton);
-					this.activate_tab(this.aysettings.tbutton) ;//this.active_tab = this.hvbox.children_index(tbutton);
-					this.aysettings_shown=true;
-				}else{
-					if(this.active_tab!=this.aysettings.tbutton){
-						this.activate_tab(this.aysettings.tbutton);
-					}else{//close
-						this.close_tab(this.hvbox.children_index(this.aysettings.tbutton));
-						this.aysettings_shown=false;
-					}
-				}
+			}
         });
 
 

@@ -2,9 +2,9 @@
 <gresources>
   <gresource prefix="/org/gnome/altyo">
     <!--file alias="altyo.png" preprocess="to-pixdata">altyo.png</file-->
-    <file alias="altyo.svg">altyo.svg</file>
-    <file alias="preferences.glade" preprocess="xml-stripblanks">preferences.glade</file>
-    <file alias="encodings_list.glade" preprocess="xml-stripblanks">encodings_list.glade</file>
-    <file alias="main_window_encodings_combo.glade" preprocess="xml-stripblanks">main_window_encodings_combo.glade</file>
+    <file alias="altyo.svg" compressed="true">altyo.svg</file>
+    <file alias="preferences.glade" preprocess="xml-stripblanks" compressed="true">preferences.glade</file>
+    <file alias="encodings_list.glade" preprocess="xml-stripblanks"compressed="true">encodings_list.glade</file>
+    <file alias="main_window_encodings_combo.glade" preprocess="xml-stripblanks" compressed="true">main_window_encodings_combo.glade</file>
   </gresource>
 </gresources>

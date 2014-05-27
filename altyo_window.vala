@@ -2239,9 +2239,11 @@ public class AYObject :Object{
 					vt = this.add_tab(editor+" "+this.conf.conf_file,null,(vt1)=>{
 						debug("OnChildExited");
 						this.conf.load_config();
+						vt1.destroe_delay=0;
 						this.close_tab(this.hvbox.children_index(vt1.tbutton));
 						});
 					vt.auto_restart=false;
+					vt.destroe_delay=0;
 					var tab_index =  this.children.index(vt)+1;
 					vt.tbutton.set_title(tab_index, _("AltYo Settings") );
 				}else{

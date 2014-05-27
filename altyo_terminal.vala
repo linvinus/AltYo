@@ -133,6 +133,9 @@ public class VTToggleButton : Gtk.Button{
 		this.label_text = label;
 		Object();
 	}*/
+	~VTToggleButton() {
+		debug("~VTToggleButton");
+	}
 
 	construct {
 		this.label = new Gtk.Label(null);
@@ -144,7 +147,6 @@ public class VTToggleButton : Gtk.Button{
 		unowned Gtk.StyleContext context = this.get_style_context();
 		context.remove_class("button");//don't use default button theme
 		context.add_class("aytab");
-		this.destroy.connect(()=>{ debug("VTToggleButton destroyed");	});
 	}
 
 	public override void state_flags_changed (StateFlags previous_state_flags) {
@@ -382,7 +384,7 @@ public class AYTab : Object{
 	public unowned MySettings my_conf;
 	private uint remove_timer = 0;
 	public signal void on_remove_timeout(AYTab self);
-	private uint destroe_delay = 0;
+	public uint destroe_delay = 0;
 	public signal void on_destroy ();
 	
 	public AYTab(MySettings my_conf,Notebook notebook, int tab_index) {

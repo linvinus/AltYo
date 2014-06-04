@@ -43,7 +43,7 @@ public class KeyBinding : Object {
 	}
 }
 
-public class PanelHotkey {
+public class PanelHotkey : Object {
     public signal void triggered (string combination);
     public uint32 last_key_event_time {get;set;default =0;}
     public uint32 last_property_event_time {get;set;default =0;}
@@ -53,12 +53,6 @@ public class PanelHotkey {
     private X.Atom active_window;
     private bool processing_event = false;
     public signal void on_active_window_change();
-
-    static PanelHotkey _instance;
-
-    public static PanelHotkey instance () {
-        return _instance;
-    }
 
     private static uint[] lock_modifiers = {
         0,
@@ -74,7 +68,6 @@ public class PanelHotkey {
     private GLib.List<KeyBinding> bindings;
 
     public PanelHotkey () {
-        _instance = this;
         bindings = new GLib.List<KeyBinding> ();
         root_window = get_default_root_window ();
 
@@ -84,6 +77,13 @@ public class PanelHotkey {
         root_window.add_filter (event_filter);
 
     }
+
+    ~PanelHotkey () {
+		debug("~PanelHotkey ()");
+		this.unbind();
+		 var root_window = Gdk.get_default_root_window ();
+		 root_window.remove_filter(event_filter);
+	}
 
     public Gdk.FilterReturn event_filter (Gdk.XEvent gxevent, Gdk.Event event) {
 

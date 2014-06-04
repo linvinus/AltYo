@@ -280,7 +280,9 @@ public class VTMainWindow : Window{
 			});
 
 		this.destroy.connect (()=>{			
-			this.hotkey.unbind();
+			this.hide();
+			this.hotkey.on_active_window_change.disconnect(this.check_focusout);
+			this.hotkey.unref();//destroy
 			this.ayobject.save_configuration();
 			this.conf.save();
 			unowned Gtk.Widget ch=this.pixwin.get_child();

@@ -280,6 +280,7 @@ public class VTMainWindow : Window{
 			});
 
 		this.destroy.connect (()=>{			
+			this.hotkey.unbind();
 			this.ayobject.save_configuration();
 			this.conf.save();
 			unowned Gtk.Widget ch=this.pixwin.get_child();
@@ -920,11 +921,11 @@ public class VTMainWindow : Window{
 			string? monitor_name = gscreen.get_monitor_plug_name (current_monitor);
 			
 			if(monitor_name==null){
-				//monitor_name="unknown";
-				return false;
+				monitor_name="null";
+				//return false;//bad idia! can happen at startup. get_monitor_plug_name asynchronous?
 			}
 				
-			debug("monitor name %s",monitor_name);
+			debug("monitor name %s %d",monitor_name,current_monitor);
 			Gdk.Rectangle rectangle;
 			
 			/* gdk_screen_get_monitor_workarea returns workarea only for the primary monitor.

@@ -10,3 +10,4 @@ syntax: glob
 /data/altyo.c
 /*.c
 /*.h
+/tmpfs

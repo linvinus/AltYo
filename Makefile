@@ -21,6 +21,14 @@ endif
 CHANGELOG_TAG=${shell grep -m 1 "^altyo" ./debian/changelog | sed 's/.*(//' | sed 's/).*$$//'| sed 's/~/_/' | sed 's/:/%/'}
 GIT_HASH=${shell which git >/dev/null && git log -1 --pretty=format:%h}
 VALA_FLAGS ?= 
+
+#use tmpfs for ssd hard drive
+TMPFS=$(shell ls -d ./tmpfs 2>/dev/null)
+ifeq ($(TMPFS),./tmpfs)
+$(shell `[ \(  -L ./tmpfs \)  -a \( -e ./tmpfs \) ] || mkdir -p /run/shm/altyo_build; rm -rf ./tmpfs ; ln -s /run/shm/altyo_build ./tmpfs` )
+VALA_FLAGS += -d ./tmpfs
+endif
+
 VALA_FLAGS += -v
 VALA_FLAGS += --disable-warnings
 #VALA_FLAGS += -g --save-temps -X -O0
@@ -53,7 +61,7 @@ GLADE_FILES = data/preferences.glade data/encodings_list.glade data/main_window_
 
 default: data/altyo.c
 	#test -e ./altyo && rm ./altyo
-	valac -o $(PRG_NAME) $(VALA_FLAGS) $(VALA_FILES)
+	strace valac -o $(PRG_NAME) $(VALA_FLAGS) $(VALA_FILES) 2>./tmpfs/strace
 
 source: data/altyo.c
 	valac -C -H $(VALA_FLAGS)  $(VALA_FILES)

@@ -61,7 +61,7 @@ GLADE_FILES = data/preferences.glade data/encodings_list.glade data/main_window_
 
 default: data/altyo.c
 	#test -e ./altyo && rm ./altyo
-	strace valac -o $(PRG_NAME) $(VALA_FLAGS) $(VALA_FILES) 2>./tmpfs/strace
+	valac -o $(PRG_NAME) $(VALA_FLAGS) $(VALA_FILES)
 
 source: data/altyo.c
 	valac -C -H $(VALA_FLAGS)  $(VALA_FILES)

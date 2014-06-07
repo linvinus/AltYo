@@ -68,6 +68,7 @@ public class MySettings : Object {
 	public string? default_path = null;
 	public DISTRIB_ID DISTR_ID=DISTRIB_ID.OTHER;
 	public  bool reduce_memory_usage = false;
+	public  bool force_debug = false;
 
 	public signal void on_load();
 

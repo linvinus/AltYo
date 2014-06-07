@@ -58,6 +58,7 @@ struct Globals{
 	static bool standalone_mode = false;
 	static string? path = null;
 	static bool config_readonly = false;
+	static bool force_debug = false;
 
 	[CCode (array_length = false, array_null_terminated = true)]
 	public static string[]? exec_file_with_args = null;
@@ -75,6 +76,7 @@ struct Globals{
 					{ "standalone", 0, 0, OptionArg.NONE, ref Globals.standalone_mode,N_("Disable control of window dimension, and set --id=none"),null},
 					{ "default_path", 0, 0, OptionArg.STRING, ref Globals.path,N_("Set/update default path"),"/home/user/special" },
 					{ "config_readonly", 0, 0, OptionArg.NONE, ref Globals.config_readonly, N_("Lock any configuration changes"), null },
+					{ "debug", 'd', 0, OptionArg.NONE, ref Globals.force_debug,N_("Force debug"), null },
 					{ null }
 			};
 
@@ -94,7 +96,16 @@ static void print_handler(string? domain, LogLevelFlags flags, string message) {
 	    }
 
 static void configure_debug(MySettings conf){
-				if(!conf.get_boolean("debug",false))
+				if(conf.force_debug) {
+					Log.set_handler(null, 
+						LogLevelFlags.LEVEL_MASK & 
+						(LogLevelFlags.LEVEL_DEBUG | 
+						LogLevelFlags.LEVEL_MESSAGE |
+						LogLevelFlags.LEVEL_WARNING |
+						LogLevelFlags.LEVEL_INFO |
+						LogLevelFlags.LEVEL_CRITICAL), print_handler);
+
+				}else if(!conf.get_boolean("debug",false))
 					Log.set_handler(null, LogLevelFlags.LEVEL_MASK & ~LogLevelFlags.LEVEL_ERROR, null_handler);
 				else{
 					var mask = conf.get_string_list("debug_level",{"debug","message","warning","info","critical"});
@@ -186,6 +197,7 @@ int main (string[] args) {
 				Globals.opt_help=false;
 				Globals.toggle=false;
 				Globals.path=null;
+				Globals.force_debug=false;
 
 				try {
 					if(!ctx.parse(ref pargv))return 3;
@@ -193,6 +205,12 @@ int main (string[] args) {
 						GLib.stderr.printf("Error initializing: %s\n", e.message);
 				}
 				debug("app.command_line.connect reload=%d",(int)Globals.reload);
+				if(Globals.force_debug){
+					unowned List<weak Window> list = app.get_windows();
+					if(list!=null)
+						((VTMainWindow)list.data).conf.force_debug=Globals.force_debug;
+					configure_debug(((VTMainWindow)list.data).conf);
+				}else 
 				if(Globals.reload){
 					unowned List<weak Window> list = app.get_windows();
 					if(list!=null)
@@ -238,6 +256,7 @@ int main (string[] args) {
 				conf.readonly=Globals.config_readonly;
 				conf.disable_hotkey=Globals.disable_hotkey;
 				conf.default_path=Globals.path;
+				conf.force_debug=Globals.force_debug;
 
 				if(!conf.opened){
 					printf("Unable to open configuration file!\n");

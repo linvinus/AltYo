@@ -285,6 +285,18 @@ public class MySettings : Object {
 				}catch (KeyFileError err) {}
 			version[VER.rc]=10;//update version
 		}		
+		/*if was 0.3.10
+		 * update program_style option, remove button shadow, disable animation
+		 * */
+		if(version[VER.major]==0 && version[VER.minor]==3 && version[VER.rc]<11){
+				try {
+					string old=kf.get_string(this.profile,"program_style");
+					if(old!=null && old!="" ){
+						kf.set_string(this.profile,"program_style",old+" VTToggleButton{ box-shadow: none;transition-duration: 0s;} ");
+					}
+				}catch (KeyFileError err) {}
+			version[VER.rc]=11;//update version
+		}	
 		return version;
 	}
 	

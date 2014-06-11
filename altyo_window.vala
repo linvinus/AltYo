@@ -811,7 +811,7 @@ public class VTMainWindow : Window{
 		var css_main = new CssProvider ();
 		string style_str= ""+
 					 "VTToggleButton GtkLabel  { font: Mono 10; -GtkWidget-focus-padding: 0px; -GtkButton-default-border:0px; -GtkButton-default-outside-border:0px; -GtkButton-inner-border:0px; border-width:0px; -outer-stroke-width: 0px; margin:0px; padding:0px;}"+
-					 "VTToggleButton {-GtkWidget-focus-padding: 0px;-GtkButton-default-border:0px;-GtkButton-default-outside-border:0px;-GtkButton-inner-border:0px;border-color:alpha(#000000,0.0);border-width: 1px;-outer-stroke-width: 0px;border-radius: 3px;border-style: solid;background-image: none;margin:0px;padding:0px 0px 0px 0px;background-color: alpha(#000000,0.0);color: #AAAAAA;}"+
+					 "VTToggleButton {-GtkWidget-focus-padding: 0px;-GtkButton-default-border:0px;-GtkButton-default-outside-border:0px;-GtkButton-inner-border:0px;border-color:alpha(#000000,0.0);border-width: 1px;-outer-stroke-width: 0px;border-radius: 3px;border-style: solid;background-image: none;margin:0px;padding:0px 0px 0px 0px;background-color: alpha(#000000,0.0);color: #AAAAAA; box-shadow: none;transition-duration: 0s;}"+
 					 "VTToggleButton:active{background-color: #00AAAA;background-image: -gtk-gradient(radial,center center, 0,center center, 1, from (#00BBBB),to (#008888) );color: #000000;}"+
 					 "VTToggleButton:prelight {background-color: #AAAAAA;background-image: -gtk-gradient(radial,center center, 0,center center, 1, from (#AAAAAA),to (#777777) ); color: #000000;}"+
 					 "VTToggleButton:active:prelight{background-color: #00AAAA;background-image: -gtk-gradient(radial,center center, 0,center center, 1, from (lighter(#00BBBB)),to (#008888) );color: #000000;}"+

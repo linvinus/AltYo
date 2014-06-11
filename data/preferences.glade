@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.16.1 -->
 <interface>
-  <!-- interface-requires gtk+ 3.0 -->
+  <requires lib="gtk+" version="3.0"/>
   <object class="GtkAdjustment" id="animation_pull_steps_adjustment">
     <property name="lower">1</property>
     <property name="upper">100</property>
@@ -140,6 +141,24 @@
     <property name="step_increment">10</property>
     <property name="page_increment">100</property>
   </object>
+  <object class="GtkListStore" id="tab_sort_order_liststore">
+    <columns>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+      <!-- column-name value -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">None</col>
+        <col id="1">none</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Hostname</col>
+        <col id="1">hostname</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkListStore" id="tab_title_format_regex">
     <columns>
       <!-- column-name pattern -->
@@ -158,6 +177,17 @@
       <column type="gboolean"/>
     </columns>
   </object>
+  <object class="GtkListStore" id="terminal_autostart_session">
+    <columns>
+      <!-- column-name command -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkAdjustment" id="terminal_background_saturation_adjustment">
+    <property name="upper">1</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">10</property>
+  </object>
   <object class="GtkListStore" id="terminal_cursor_blinkmode_liststore">
     <columns>
       <!-- column-name gchararray1 -->
@@ -174,6 +204,12 @@
         <col id="0" translatable="yes">Off</col>
       </row>
     </data>
+  </object>
+  <object class="GtkAdjustment" id="terminal_height_adjustment">
+    <property name="lower">1</property>
+    <property name="upper">10000</property>
+    <property name="step_increment">10</property>
+    <property name="page_increment">100</property>
   </object>
   <object class="GtkListStore" id="terminal_notify_level_liststore">
     <columns>
@@ -194,6 +230,108 @@
         <col id="0" translatable="yes">Any changes</col>
       </row>
     </data>
+  </object>
+  <object class="GtkAdjustment" id="terminal_opacity_adjustment">
+    <property name="upper">1</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="terminal_scrollback_lines_adjustment">
+    <property name="lower">-1</property>
+    <property name="upper">100000</property>
+    <property name="step_increment">10</property>
+    <property name="page_increment">100</property>
+  </object>
+  <object class="GtkAdjustment" id="terminal_timeout_before_notify_adjustment">
+    <property name="upper">1440</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkListStore" id="terminal_url_regexps">
+    <columns>
+      <!-- column-name match -->
+      <column type="gchararray"/>
+      <!-- column-name run -->
+      <column type="gchararray"/>
+      <!-- column-name tooltip -->
+      <column type="gchararray"/>
+      <!-- column-name match_color -->
+      <column type="GdkRGBA"/>
+      <!-- column-name match_s -->
+      <column type="gboolean"/>
+    </columns>
+  </object>
+  <object class="GtkAdjustment" id="terminal_width_adjustment">
+    <property name="lower">1</property>
+    <property name="upper">10000</property>
+    <property name="step_increment">10</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkListStore" id="window_action_on_close_last_tab_liststore">
+    <columns>
+      <!-- column-name gchararray1 -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Restart shell</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Restart shell and hide</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Quit</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="window_default_monitor_liststore">
+    <columns>
+      <!-- column-name monitor -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkListStore" id="window_hvbox_display_mode_liststore">
+    <columns>
+      <!-- column-name gchararray1 -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Visible</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Hidden</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Hide if one tab</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="window_new_tab_position_liststore">
+    <columns>
+      <!-- column-name gchararray1 -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Right next</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Far right</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkAdjustment" id="window_position_y_adjustment">
+    <property name="lower">-1</property>
+    <property name="upper">10000</property>
+    <property name="value">-1</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="window_tab_destroy_delay_adjustment">
+    <property name="upper">360</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">60</property>
   </object>
   <object class="GtkScrolledWindow" id="settings-scrolledwindow">
     <property name="visible">True</property>
@@ -306,7 +444,6 @@
                                                         <property name="has_tooltip">True</property>
                                                         <property name="tooltip_text" translatable="yes">Number of animation steps,less is faster.</property>
                                                         <property name="invisible_char">•</property>
-                                                        <property name="invisible_char_set">True</property>
                                                         <property name="adjustment">animation_pull_steps_adjustment</property>
                                                         <property name="numeric">True</property>
                                                       </object>
@@ -570,7 +707,6 @@ otherwise - gravity south</property>
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="invisible_char">•</property>
-                                                            <property name="invisible_char_set">True</property>
                                                             <property name="input_purpose">digits</property>
                                                             <property name="input_hints">GTK_INPUT_HINT_SPELLCHECK | GTK_INPUT_HINT_NONE</property>
                                                             <property name="adjustment">terminal_width_adjustment</property>
@@ -591,7 +727,6 @@ otherwise - gravity south</property>
                                                             <property name="tooltip_markup" translatable="yes">When height equal 100, maximize window.</property>
                                                             <property name="tooltip_text" translatable="yes">When height equal 100, maximize window.</property>
                                                             <property name="invisible_char">•</property>
-                                                            <property name="invisible_char_set">True</property>
                                                             <property name="input_purpose">digits</property>
                                                             <property name="input_hints">GTK_INPUT_HINT_SPELLCHECK | GTK_INPUT_HINT_NONE</property>
                                                             <property name="adjustment">terminal_height_adjustment</property>
@@ -670,7 +805,6 @@ otherwise - gravity south</property>
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="invisible_char">●</property>
-                                                            <property name="invisible_char_set">True</property>
                                                             <property name="adjustment">window_position_y_adjustment</property>
                                                             </object>
                                                             <packing>
@@ -934,6 +1068,39 @@ otherwise - gravity south</property>
                                                 <property name="height">1</property>
                                               </packing>
                                             </child>
+                                            <child>
+                                              <object class="GtkLabel" id="label69">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="xalign">0</property>
+                                                <property name="label" translatable="yes">Tab bar mode</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">0</property>
+                                                <property name="top_attach">3</property>
+                                                <property name="width">1</property>
+                                                <property name="height">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkComboBox" id="window_hvbox_display_mode">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="model">window_hvbox_display_mode_liststore</property>
+                                                <child>
+                                                  <object class="GtkCellRendererText" id="cellrenderertext14"/>
+                                                  <attributes>
+                                                    <attribute name="text">0</attribute>
+                                                  </attributes>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">1</property>
+                                                <property name="top_attach">3</property>
+                                                <property name="width">1</property>
+                                                <property name="height">1</property>
+                                              </packing>
+                                            </child>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
@@ -1126,7 +1293,6 @@ otherwise - gravity south</property>
                                         <property name="tooltip_text" translatable="yes">lines count
 -1  means "infinite scrollback"</property>
                                         <property name="invisible_char">•</property>
-                                        <property name="invisible_char_set">True</property>
                                         <property name="progress_pulse_step">1</property>
                                         <property name="input_purpose">digits</property>
                                         <property name="input_hints">GTK_INPUT_HINT_SPELLCHECK | GTK_INPUT_HINT_NONE</property>
@@ -1227,7 +1393,6 @@ otherwise - gravity south</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="invisible_char">•</property>
-                                        <property name="invisible_char_set">True</property>
                                         <property name="input_purpose">digits</property>
                                         <property name="input_hints">GTK_INPUT_HINT_SPELLCHECK | GTK_INPUT_HINT_NONE</property>
                                         <property name="adjustment">terminal_background_saturation_adjustment</property>
@@ -1260,7 +1425,6 @@ otherwise - gravity south</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="invisible_char">•</property>
-                                        <property name="invisible_char_set">True</property>
                                         <property name="input_purpose">digits</property>
                                         <property name="input_hints">GTK_INPUT_HINT_SPELLCHECK | GTK_INPUT_HINT_NONE</property>
                                         <property name="adjustment">terminal_opacity_adjustment</property>
@@ -1281,7 +1445,6 @@ otherwise - gravity south</property>
                                           <object class="GtkFileChooserButton" id="terminal_background_image_file">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="orientation">vertical</property>
                                             <property name="filter">filefilter1</property>
                                             <signal name="file-set" handler="ay_settings_on_terminal_background_image_file_file_set" swapped="no"/>
                                           </object>
@@ -1407,7 +1570,6 @@ otherwise - gravity south</property>
                                         <property name="has_tooltip">True</property>
                                         <property name="tooltip_text" translatable="yes">Run this command instead user shell</property>
                                         <property name="invisible_char">•</property>
-                                        <property name="invisible_char_set">True</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
@@ -2137,7 +2299,6 @@ when command is launched</property>
                                         <property name="can_focus">True</property>
                                         <property name="tooltip_text" translatable="yes">The time during which respond to the double pressing.</property>
                                         <property name="invisible_char">•</property>
-                                        <property name="invisible_char_set">True</property>
                                         <property name="adjustment">double_hotkey_milliseconds_adjustment</property>
                                       </object>
                                       <packing>
@@ -2190,8 +2351,8 @@ when command is launched</property>
                                             <child>
                                               <object class="GtkCellRendererAccel" id="cellrenderertext3">
                                                 <signal name="accel-cleared" handler="ay_settings_accel_cleared_cb" swapped="no"/>
-                                                <signal name="editing-started" handler="ay_settings_accel_editing_started_cb" swapped="no"/>
                                                 <signal name="accel-edited" handler="ay_settings_accel_edited_cb" swapped="no"/>
+                                                <signal name="editing-started" handler="ay_settings_accel_editing_started_cb" swapped="no"/>
                                               </object>
                                               <attributes>
                                                 <attribute name="editable">4</attribute>
@@ -2445,7 +2606,6 @@ when command is launched</property>
                                             <property name="can_focus">True</property>
                                             <property name="hexpand">True</property>
                                             <property name="invisible_char">•</property>
-                                            <property name="invisible_char_set">True</property>
                                             <signal name="changed" handler="ay_settings_on_tab_format_markup" swapped="no"/>
                                           </object>
                                           <packing>
@@ -2475,7 +2635,6 @@ when command is launched</property>
                                             <property name="can_focus">True</property>
                                             <property name="hexpand">True</property>
                                             <property name="invisible_char">•</property>
-                                            <property name="invisible_char_set">True</property>
                                             <signal name="changed" handler="ay_settings_on_tab_title_format_markup" swapped="no"/>
                                           </object>
                                           <packing>
@@ -2908,7 +3067,6 @@ when command is launched</property>
                                     <property name="has_tooltip">True</property>
                                     <property name="hexpand">True</property>
                                     <property name="invisible_char">•</property>
-                                    <property name="invisible_char_set">True</property>
                                     <signal name="changed" handler="ay_settings_on_terminal_prevent_close_regex_changed" swapped="no"/>
                                   </object>
                                   <packing>
@@ -3310,125 +3468,5 @@ when command is launched</property>
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkListStore" id="tab_sort_order_liststore">
-    <columns>
-      <!-- column-name name -->
-      <column type="gchararray"/>
-      <!-- column-name value -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">None</col>
-        <col id="1">none</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Hostname</col>
-        <col id="1">hostname</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="terminal_autostart_session">
-    <columns>
-      <!-- column-name command -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
-  <object class="GtkAdjustment" id="terminal_background_saturation_adjustment">
-    <property name="upper">1</property>
-    <property name="step_increment">0.10000000000000001</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="terminal_height_adjustment">
-    <property name="lower">1</property>
-    <property name="upper">10000</property>
-    <property name="step_increment">10</property>
-    <property name="page_increment">100</property>
-  </object>
-  <object class="GtkAdjustment" id="terminal_opacity_adjustment">
-    <property name="upper">1</property>
-    <property name="step_increment">0.10000000000000001</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="terminal_scrollback_lines_adjustment">
-    <property name="lower">-1</property>
-    <property name="upper">100000</property>
-    <property name="step_increment">10</property>
-    <property name="page_increment">100</property>
-  </object>
-  <object class="GtkAdjustment" id="terminal_timeout_before_notify_adjustment">
-    <property name="upper">1440</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkListStore" id="terminal_url_regexps">
-    <columns>
-      <!-- column-name match -->
-      <column type="gchararray"/>
-      <!-- column-name run -->
-      <column type="gchararray"/>
-      <!-- column-name tooltip -->
-      <column type="gchararray"/>
-      <!-- column-name match_color -->
-      <column type="GdkRGBA"/>
-      <!-- column-name match_s -->
-      <column type="gboolean"/>
-    </columns>
-  </object>
-  <object class="GtkAdjustment" id="terminal_width_adjustment">
-    <property name="lower">1</property>
-    <property name="upper">10000</property>
-    <property name="step_increment">10</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkListStore" id="window_action_on_close_last_tab_liststore">
-    <columns>
-      <!-- column-name gchararray1 -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Restart shell</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Restart shell and hide</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Quit</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="window_default_monitor_liststore">
-    <columns>
-      <!-- column-name monitor -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
-  <object class="GtkListStore" id="window_new_tab_position_liststore">
-    <columns>
-      <!-- column-name gchararray1 -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Right next</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Far right</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkAdjustment" id="window_position_y_adjustment">
-    <property name="lower">-1</property>
-    <property name="upper">10000</property>
-    <property name="value">-1</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="window_tab_destroy_delay_adjustment">
-    <property name="upper">360</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">60</property>
   </object>
 </interface>

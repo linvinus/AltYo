@@ -61,6 +61,11 @@ public enum MYWINStates{
 	MAXIMIZED,
 	FULLSCREEN
 	}
+public enum HVBOXDISPLAY{
+	VISIBLE,
+	HIDDEN,
+	HIDEIFONETAB
+	}
 public delegate void MyCallBack(Gtk.Action a);
 
 public class VTMainWindow : Window{
@@ -1279,6 +1284,7 @@ public class AYObject :Object{
 	private bool aysettings_shown=false;
 	private int action_on_close_last_tab=0;
 	private int new_tab_position=0;
+	private int hvbox_display_mode=0;
 
 	public AYObject(VTMainWindow _MW ,MySettings _conf) {
 		debug("AYObject new");
@@ -1479,6 +1485,15 @@ public class AYObject :Object{
 
 
 		this.setup_keyboard_accelerators();
+		/* 0 - HVBOXDISPLAY.VISIBLE
+		 * 1 - HVBOXDISPLAY.HIDDEN
+		 * 2 - HVBOXDISPLAY.HIDEIFONETAB
+		 * */
+		this.hvbox_display_mode=this.conf.get_integer("window_hvbox_display_mode",HVBOXDISPLAY.VISIBLE,(ref new_val)=>{
+			if(new_val>HVBOXDISPLAY.HIDEIFONETAB){ new_val=HVBOXDISPLAY.VISIBLE; return CFG_CHECK.REPLACE;}
+			if(new_val<0){ new_val=HVBOXDISPLAY.VISIBLE; return CFG_CHECK.REPLACE;}
+			return CFG_CHECK.OK;
+			});
 	}
 
 	public VTTerminal add_tab(string? session_command=null,string? session_path=null,OnChildExitCallBack? on_exit=null) {
@@ -2512,6 +2527,18 @@ public class AYObject :Object{
 	
 	public void search_update(){
 		this.window_title_update();
+		
+		if(this.hvbox_display_mode == HVBOXDISPLAY.HIDEIFONETAB){
+			if(this.children.length()==1)
+				this.hvbox.visible=false;
+			else
+				this.hvbox.visible=true;
+		}else if(this.hvbox_display_mode == HVBOXDISPLAY.VISIBLE && !this.hvbox.visible){
+			this.hvbox.visible=true;
+		}else if(this.hvbox_display_mode == HVBOXDISPLAY.HIDDEN && this.hvbox.visible){
+			this.hvbox.visible=false;
+		}
+
 		if(this.quick_options_notebook.visible){
 			unowned AYTab vtt = ((AYTab)this.active_tab.object);
 			if(!(vtt is VTTerminal)) {

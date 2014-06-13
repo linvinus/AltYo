@@ -821,7 +821,8 @@ public class VTMainWindow : Window{
 					 "VTToggleButton:prelight {background-color: #AAAAAA;background-image: -gtk-gradient(radial,center center, 0,center center, 1, from (#AAAAAA),to (#777777) ); color: #000000;}"+
 					 "VTToggleButton:active:prelight{background-color: #00AAAA;background-image: -gtk-gradient(radial,center center, 0,center center, 1, from (lighter(#00BBBB)),to (#008888) );color: #000000;}"+
 					 "VTToggleButton *:selected{ background-color: alpha(#FF0000, 0.4);background-image: none;}"+
-					 "#tasks_notebook {border-width: 2px 2px 0px 2px;border-color: #3C3B37;border-style: solid;padding:0px;margin:0;}"+
+					 ".window_multitabs {border-width: 2px 2px 0px 2px;border-color: #3C3B37;border-style: solid;padding:0px;margin:0;}"+
+					 ".window_single_tab {border-width: 2px 2px 2px 2px;border-color: #3C3B37;border-style: solid;}"+
 					 "#terms_notebook {border-width: 0px;border-style: solid;padding:0px;margin:0;}"+
 					 "#search_hbox :active { border-color: @fg_color; color: #FF0000;}"+
 					 "#search_hbox :prelight { background-color: alpha(#000000,0.0); border-color: @fg_color; color: #FF0000;}"+
@@ -1317,6 +1318,8 @@ public class AYObject :Object{
 		this.tasks_notebook.set_show_tabs(false);
 		this.tasks_notebook.insert_page(terms_notebook,null,TASKS.TERMINALS);
 		this.tasks_notebook.switch_page.connect(on_switch_task);
+		unowned Gtk.StyleContext context = this.tasks_notebook.get_style_context();
+		context.add_class("window_multitabs");
 
 		this.save_session    = conf.get_boolean("autosave_session",false);
 
@@ -2529,15 +2532,33 @@ public class AYObject :Object{
 		this.window_title_update();
 		
 		if(this.hvbox_display_mode == HVBOXDISPLAY.HIDEIFONETAB){
-			if(this.children.length()==1)
+			if(this.children.length()==1){
+				unowned Gtk.StyleContext context = this.tasks_notebook.get_style_context();
+				context.remove_class("window_multitabs");
+				context.add_class("window_single_tab");
+				context.invalidate();
 				this.hvbox.visible=false;
-			else
+			}else{
+				unowned Gtk.StyleContext context = this.tasks_notebook.get_style_context();
+				context.remove_class("window_single_tab");
+				context.add_class("window_multitabs");
+				context.invalidate();
 				this.hvbox.visible=true;
+			}
 		}else if(this.hvbox_display_mode == HVBOXDISPLAY.VISIBLE && !this.hvbox.visible){
+			unowned Gtk.StyleContext context = this.tasks_notebook.get_style_context();
+			context.remove_class("window_single_tab");
+			context.add_class("window_multitabs");
+			context.invalidate();
 			this.hvbox.visible=true;
 		}else if(this.hvbox_display_mode == HVBOXDISPLAY.HIDDEN && this.hvbox.visible){
+			unowned Gtk.StyleContext context = this.tasks_notebook.get_style_context();
+			context.remove_class("window_multitabs");
+			context.add_class("window_single_tab");
+			context.invalidate();
 			this.hvbox.visible=false;
 		}
+//~ 		Gtk.StyleContext.reset_widgets(this.main_window.get_screen ());//force apply new class
 
 		if(this.quick_options_notebook.visible){
 			unowned AYTab vtt = ((AYTab)this.active_tab.object);

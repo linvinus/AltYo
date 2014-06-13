@@ -292,7 +292,15 @@ public class MySettings : Object {
 				try {
 					string old=kf.get_string(this.profile,"program_style");
 					if(old!=null && old!="" ){
-						kf.set_string(this.profile,"program_style",old+" VTToggleButton{ box-shadow: none;transition-duration: 0s;} ");
+						Regex regex = new Regex ("#tasks_notebook");
+						try {
+							string result = regex.replace(old,-1,0,".window_multitabs");
+							old=result;
+						}catch (RegexError e) {
+							stdout.printf ("Error: %s\n", e.message);
+						}
+
+						kf.set_string(this.profile,"program_style",old+" VTToggleButton{ box-shadow: none;transition-duration: 0s;} .window_single_tab {border-width: 2px 2px 2px 2px;border-color: #3C3B37;border-style: solid;}");
 					}
 				}catch (KeyFileError err) {}
 			version[VER.rc]=11;//update version

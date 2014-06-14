@@ -2677,8 +2677,10 @@ public class AYObject :Object{
 		int hvbox_h,hvbox_h_ignore,should_be_h=this.terminal_height;
 		if(!standalone_mode)
 			this.hvbox.width_request=this.terminal_width;
-		this.hvbox.get_preferred_height_for_width(this.terminal_width,out hvbox_h,out hvbox_h_ignore);
-		should_be_h+=hvbox_h;
+		if(this.hvbox.visible){
+			this.hvbox.get_preferred_height_for_width(this.terminal_width,out hvbox_h,out hvbox_h_ignore);
+			should_be_h+=hvbox_h;
+		}
 		if(this.quick_options_notebook.visible){
 			this.quick_options_notebook.get_preferred_height_for_width(this.terminal_width,out hvbox_h,out hvbox_h_ignore);
 			should_be_h+=hvbox_h;

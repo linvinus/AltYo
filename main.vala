@@ -93,6 +93,7 @@ static void null_handler(string? domain, LogLevelFlags flags, string message) {
 
 static void print_handler(string? domain, LogLevelFlags flags, string message) {
 		printf("domain:%s message:%s\n",domain,message);
+		GLib.stdout.flush();
 	    }
 
 static void configure_debug(MySettings conf){

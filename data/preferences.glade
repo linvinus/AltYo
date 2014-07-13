@@ -3176,6 +3176,7 @@ when command is launched</property>
                                   <object class="GtkEntry" id="terminal_exclude_variables">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
+                                    <signal name="changed" handler="ay_settings_on_terminal_terminal_exclude_variables" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>

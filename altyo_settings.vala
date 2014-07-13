@@ -542,6 +542,12 @@ public class AYSettings : AYTab{
 	}
 
 	[CCode (instance_pos = -1)]
+	public void on_terminal_terminal_exclude_variables(Gtk.Editable editable) {
+		var E = builder.get_object ("terminal_exclude_variables") as Gtk.Entry;
+		this.check_entry_regex(E);
+	}
+
+	[CCode (instance_pos = -1)]
 	public void on_tab_format_markup(Gtk.Editable editable) {
 		var E = builder.get_object ("tab_format") as Gtk.Entry;
 		this.check_entry_markup(E);
@@ -997,7 +1003,7 @@ public class AYSettings : AYTab{
 							var B = builder.get_object (key) as Gtk.Entry;
 							if(B!=null){
 								if(B.text!=this.my_conf.get_string(key,"")){
-									if(key=="terminal_prevent_close_regex" || key=="terminal_session_exclude_regex"){
+									if(key=="terminal_prevent_close_regex" || key=="terminal_session_exclude_regex" || key =="terminal_exclude_variables"){
 										string err;
 										if(this.my_conf.check_regex(B.text,out err)){
 											this.my_conf.set_string(key,B.text);

@@ -1,8 +1,8 @@
-altyo (0.4~rc7-linvinus1) precise; urgency=low
+altyo (0.4~rc7-linvinus2) trusty; urgency=low
 
   * small fix
 
- -- denis <linvinus@gmail.com>  Sun, 13 Jul 2014 18:18:59 +0400
+ -- denis <linvinus@gmail.com>  Sun, 13 Jul 2014 18:30:12 +0400
 
 altyo (0.4~rc6-linvinus1) quantal; urgency=low
 

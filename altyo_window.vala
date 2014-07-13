@@ -2217,7 +2217,13 @@ public class AYObject :Object{
 
 		/* Find on <Ctrl><Shift>f */
 		this.add_window_accel("terminal_search_dialog", _("Search"), _("Search"), Gtk.Stock.FIND,"<Control><Shift>F",()=> {
-            this.quick_options_notebook.search_show();
+			if(!((Entry)this.quick_options_notebook.search_text_combo.get_child()).has_focus || this.quick_options_notebook.search_mode_rbutton.active )
+				this.quick_options_notebook.search_show();
+
+			if(!this.quick_options_notebook.search_mode_rbutton.active){
+				this.quick_options_notebook.search_mode_rbutton.set_active(true);
+			}
+
         });
 
 		/* QuickLIst <Ctrl><Shift>d */
@@ -2400,7 +2406,7 @@ public class AYObject :Object{
 
         this.add_window_accel("terminal_search_in_tab_title",_("Search in terminals titles"), _("Search in terminals titles"), Gtk.Stock.FIND,"<Control><Shift>D",()=> {
 				unowned SList <Gtk.RadioButton> rbutton_group = this.quick_options_notebook.search_mode_rbutton.get_group ();
-				if(!((Entry)this.quick_options_notebook.search_text_combo.get_child()).has_focus)
+				if(!((Entry)this.quick_options_notebook.search_text_combo.get_child()).has_focus || !this.quick_options_notebook.search_mode_rbutton.active )
 					this.quick_options_notebook.search_show();
 
 				if(this.quick_options_notebook.search_mode_rbutton.active){

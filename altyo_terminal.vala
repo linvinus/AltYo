@@ -658,10 +658,8 @@ public class VTTerminal : AYTab{
 		string term_var = this.my_conf.get_string("terminal_term_variable","");
 		string term_exclude_vars = this.my_conf.get_string("terminal_exclude_variables","^(COLUMNS|LINES|GNOME_DESKTOP_ICON|COLORTERM|WINDOWID)$");
 		foreach(string arg in args){
-			if(term_var != "" && arg == "TERM"){
-				string s="%s=%s".printf(arg,term_var);
-				debug(s);
-				envv+=s;
+			if(arg == "TERM"){
+				continue;//skip
 			}else
 			if( !GLib.Regex.match_simple(term_exclude_vars,arg,RegexCompileFlags.CASELESS,0) ){
 				unowned string val=GLib.Environment.get_variable(arg);
@@ -671,6 +669,7 @@ public class VTTerminal : AYTab{
 				debug("exclude:%s",arg);
 			}
 		}
+		envv+="TERM="+(term_var!=""?term_var:"xterm");
 		envv+="COLORTERM="+GLib.Environment.get_prgname();
 		envv+=null;
 		bool ret=false;

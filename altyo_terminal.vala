@@ -590,7 +590,7 @@ public class VTTerminal : AYTab{
 
 	public bool start_command(string? session_command = null,string? session_path=null){
 		PtyFlags pty_flags = PtyFlags.DEFAULT;
-		GLib.SpawnFlags sflags = 0;
+		GLib.SpawnFlags spawn_flags =  0;
 		string? command = null;
 		string[] argvp;
 		
@@ -606,7 +606,7 @@ public class VTTerminal : AYTab{
 
 		if(session_command != null && session_command != ""){
 			command = session_command;
-			sflags |= GLib.SpawnFlags.SEARCH_PATH;
+			spawn_flags |= GLib.SpawnFlags.SEARCH_PATH;
 			try {
 				GLib.Shell.parse_argv(command,out argvp);
 			}catch (ShellError e) {
@@ -627,10 +627,10 @@ public class VTTerminal : AYTab{
 			}
 				
 			if(run_as_login_shell){
-				sflags |= GLib.SpawnFlags.FILE_AND_ARGV_ZERO;
+				spawn_flags |= GLib.SpawnFlags.FILE_AND_ARGV_ZERO;
 				argvp+="-%s".printf(GLib.Path.get_basename(command));
 			}else
-				sflags |= GLib.SpawnFlags.SEARCH_PATH;
+				spawn_flags |= GLib.SpawnFlags.SEARCH_PATH;
 		}
 
 		debug("run command:%s",command);
@@ -652,20 +652,57 @@ public class VTTerminal : AYTab{
 		 *  GLib.SpawnFlags spawn_flags,
 		 *  GLib.SpawnChildSetupFunc? child_setup,
 		 *  out GLib.Pid child_pid)*/
-		Pid p;
-		string[] new_args = {};
+		Pid child_pid;
+		string?[] envv = {};
 		string[] args = GLib.Environment.list_variables ();
+		string term_var = this.my_conf.get_string("terminal_term_variable","");
+		string term_exclude_vars = this.my_conf.get_string("terminal_exclude_variables","^(COLUMNS|LINES|GNOME_DESKTOP_ICON|COLORTERM|WINDOWID)$");
 		foreach(string arg in args){
-			if( !GLib.Regex.match_simple("COLUMNS|LINES|GNOME_DESKTOP_ICON|COLORTERM|WINDOWID",arg,RegexCompileFlags.CASELESS,0) ){
+			if(term_var != "" && arg == "TERM"){
+				string s="%s=%s".printf(arg,term_var);
+				debug(s);
+				envv+=s;
+			}else
+			if( !GLib.Regex.match_simple(term_exclude_vars,arg,RegexCompileFlags.CASELESS,0) ){
 				unowned string val=GLib.Environment.get_variable(arg);
 				string s="%s=%s".printf(arg,(val!=null?val:""));
-				new_args+=s;
+				envv+=s;
+			}else{
+				debug("exclude:%s",arg);
 			}
 		}
-		new_args+="COLORTERM="+GLib.Environment.get_prgname();
-				
-		var ret = this.vte_term.fork_command_full(pty_flags ,path,argvp,new_args,sflags,null,out p);
-		this.pid=p;
+		envv+="COLORTERM="+GLib.Environment.get_prgname();
+		envv+=null;
+		bool ret=false;
+		//var ret = this.vte_term.fork_command_full(pty_flags ,path,argvp,envv,spawn_flags,null,out p);
+		//don't use fork_command_full because with it, is not possible to set up TERM variable
+		Vte.Pty pty = this.vte_term.pty_new(pty_flags);
+		spawn_flags |= GLib.SpawnFlags.CHILD_INHERITS_STDIN;
+		spawn_flags |= GLib.SpawnFlags.DO_NOT_REAP_CHILD;
+		try{
+        ret = GLib.Process.spawn_async_with_pipes(path,
+                                       argvp, envv,
+                                       spawn_flags,
+                                       (GLib.SpawnChildSetupFunc) pty.child_setup,
+                                       out child_pid,
+                                       null, null, null);
+		}catch(GLib.SpawnError.CHDIR err){
+			 /* try spawning in our working directory */
+			if(path!=null)
+			ret = GLib.Process.spawn_async_with_pipes(null,
+										   argvp, envv,
+										   spawn_flags,
+										   (GLib.SpawnChildSetupFunc) pty.child_setup,
+										   out child_pid,
+										   null, null, null);
+		}
+
+		if(ret==true){
+			this.vte_term.set_pty_object(pty);
+			this.vte_term.watch_child(child_pid);
+			this.pid=child_pid;
+		}
+
 		return ret;
 	}
 

@@ -1,3 +1,26 @@
+altyo (0.4~rc6-linvinus1) quantal; urgency=low
+
+  * improvement: allow minimize memory usage
+  * improvement: reduce binary size
+  * improvement: option to lowering memory usage
+  * fix: wrong window size at startup in some cases
+  * improvement: disconnect GDK event filter on destroy
+  * improvement: optimization in makefile, use tmpfs for ssd hard drive
+  * fix previous commit
+  * new: command line option "--debug"
+  * improvement: allow restore default button style.
+  * new: option "Tab bar mode"
+  * improvement: separate style for each window mode
+  * ya tebya lublu
+  * improvement:flush debug messages
+  * improvement: new options terminal_term_variable,terminal_exclude_variables
+  * improvement: always set up TERM variable
+  * improvement: use path from /proc/self/exe to run new copy of the program
+  * improvement: more friendly toggling of search
+  * update: Russian translation
+
+ -- denis <linvinus@gmail.com>  Sun, 13 Jul 2014 17:39:12 +0400
+
 altyo (0.4~rc5-linvinus1) quantal; urgency=low
 
   * improvement: set logo in about dialog

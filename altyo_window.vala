@@ -2365,12 +2365,7 @@ public class AYObject :Object{
 					
 					/* firstly try to find absolite path
 					 * else search in default system path*/
-					string exec;
-					if(GLib.FileUtils.test(GLib.Environment.get_current_dir()+"/"+GLib.Environment.get_prgname(),GLib.FileTest.EXISTS) ){
-						exec="%s/%s --standalone --default_path '%s'".printf(GLib.Environment.get_current_dir(),GLib.Environment.get_prgname(),tmp);
-					}else{
-						exec="%s --standalone --default_path '%s'".printf(GLib.Environment.get_prgname(),tmp);
-					}
+					string exec="%s --standalone --default_path '%s'".printf(GLib.FileUtils.read_link("/proc/self/exe"),tmp);
 					/*pass cfg only if sure that it is for standalone_mode*/
 					if(conf.standalone_mode)
 						exec+=" --config_readonly -c '%s'&".printf(this.conf.conf_file);

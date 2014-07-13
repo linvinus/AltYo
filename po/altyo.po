@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-23 10:18+0400\n"
+"POT-Creation-Date: 2014-07-13 17:29+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,180 +17,184 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: main.vala:68
+#: main.vala:69
 msgid "Reload configuration"
 msgstr ""
 
-#: main.vala:69
+#: main.vala:70
 msgid "Read configuration from file"
 msgstr ""
 
-#: main.vala:69
+#: main.vala:70
 msgid "/path/to/config.ini"
 msgstr ""
 
-#: main.vala:71
+#: main.vala:72
 msgid "Run command in new tab"
 msgstr ""
 
-#: main.vala:71
+#: main.vala:72
 msgid "\"command arg1 argN...\""
 msgstr ""
 
-#: main.vala:72
+#: main.vala:73
 msgid "Show/hide window"
 msgstr ""
 
-#: main.vala:73
+#: main.vala:74
 msgid "Set application id, none means disable application id"
 msgstr ""
 
-#: main.vala:74
+#: main.vala:75
 msgid "Disable main hotkey"
 msgstr ""
 
-#: main.vala:75
+#: main.vala:76
 msgid "Disable control of window dimension, and set --id=none"
 msgstr ""
 
-#: main.vala:76
+#: main.vala:77
 msgid "Set/update default path"
 msgstr ""
 
-#: main.vala:77
+#: main.vala:78
 msgid "Lock any configuration changes"
 msgstr ""
 
-#: altyo_terminal.vala:440
+#: main.vala:79
+msgid "Force debug"
+msgstr ""
+
+#: altyo_terminal.vala:442
 #, c-format
 msgid "tab_format wrong value! will be used default value. err:%s"
 msgstr ""
 
-#: altyo_terminal.vala:450
+#: altyo_terminal.vala:452
 #, c-format
 msgid "tab_title_format wrong value! will be used default value. err:%s"
 msgstr ""
 
-#: altyo_terminal.vala:458
+#: altyo_terminal.vala:460
 msgid ""
 "tab_title_format_regex odd value of array length! will be used default value."
 msgstr ""
 
-#: altyo_terminal.vala:465
+#: altyo_terminal.vala:467
 #, c-format
 msgid "tab_title_format_regex wrong value! will be used default value. err:%s"
 msgstr ""
 
-#: altyo_terminal.vala:875
+#: altyo_terminal.vala:913
 msgid ""
 "terminal_url_regexps odd value of array length! will be used default value."
 msgstr ""
 
-#: altyo_terminal.vala:881
+#: altyo_terminal.vala:919
 #, c-format
 msgid "terminal_url_regexps wrong value! will be used default value. err:%s"
 msgstr ""
 
-#: altyo_terminal.vala:1054
+#: altyo_terminal.vala:1092
 msgid "Quick settings"
 msgstr ""
 
-#: altyo_terminal.vala:1083
+#: altyo_terminal.vala:1121
 msgid "Copy link"
 msgstr ""
 
-#: altyo_terminal.vala:1086
+#: altyo_terminal.vala:1124
 msgid "Run link Ctrl+left mouse button"
 msgstr ""
 
-#: altyo_terminal.vala:1162
+#: altyo_terminal.vala:1200
 msgid "Copy terminal name"
 msgstr ""
 
-#: altyo_terminal.vala:1176
+#: altyo_terminal.vala:1214
 msgid "Copy terminal host name"
 msgstr ""
 
-#: altyo_terminal.vala:1191
+#: altyo_terminal.vala:1229
 msgid "Disable key bindings"
 msgstr ""
 
-#: altyo_terminal.vala:1198
+#: altyo_terminal.vala:1236
 msgid "Disable terminal menu"
 msgstr ""
 
-#: altyo_terminal.vala:1241
+#: altyo_terminal.vala:1279
 msgid "Terminal menu"
 msgstr ""
 
-#: altyo_window.vala:1035
+#: altyo_window.vala:1052
 msgid "Please select key combination, to show/hide AltYo."
 msgstr ""
 
-#: altyo_window.vala:1037
+#: altyo_window.vala:1054
 #, c-format
 msgid "Previous key '%s' incorrect or busy"
 msgstr ""
 
-#: altyo_window.vala:1039
+#: altyo_window.vala:1063
 msgid "Press any key"
 msgstr ""
 
-#: altyo_window.vala:1044
+#: altyo_window.vala:1068
 msgid "Grab another key."
 msgstr ""
 
-#: altyo_window.vala:1480 altyo_window.vala:1659
+#: altyo_window.vala:1521 altyo_window.vala:1705
 msgid "Shell terminated."
 msgstr ""
 
-#: altyo_window.vala:1557
+#: altyo_window.vala:1603
 msgid "Tab is locked, are you sure you want to close?"
 msgstr ""
 
-#: altyo_window.vala:1568
+#: altyo_window.vala:1614
 #, c-format
 msgid ""
 "terminal_prevent_close_regex wrong value! will be used default value. err:%s"
 msgstr ""
 
-#: altyo_window.vala:1591
+#: altyo_window.vala:1637
 #, c-format
 msgid "Found important task \"%s\""
 msgstr ""
 
-#: altyo_window.vala:1592
+#: altyo_window.vala:1638
 msgid "Close tab anyway?"
 msgstr ""
 
-#: altyo_window.vala:1844
+#: altyo_window.vala:1895
 msgid "Really quit?"
 msgstr ""
 
-#: altyo_window.vala:1845
+#: altyo_window.vala:1896
 msgid "Save session"
 msgstr ""
 
-#: altyo_window.vala:1881
+#: altyo_window.vala:1932
 msgid "willemw12@gmail.com"
 msgstr ""
 
-#: altyo_window.vala:1901
+#: altyo_window.vala:1952
 #, c-format
 msgid ""
 "Really reset to defaults?\n"
 "Current settings will be saved in backup file %s.bak"
 msgstr ""
 
-#: altyo_window.vala:1933
+#: altyo_window.vala:1994
 msgid "Setup custom title?"
 msgstr ""
 
-#: altyo_window.vala:1935
+#: altyo_window.vala:1996
 msgid "new custom title"
 msgstr ""
 
-#: altyo_window.vala:1992
+#: altyo_window.vala:2053
 #, c-format
 msgid ""
 "You are trying to use key binding \"%s\"\n"
@@ -198,222 +202,226 @@ msgid ""
 "but, same key binding already binded to the action \"%s\""
 msgstr ""
 
-#: altyo_window.vala:1993
+#: altyo_window.vala:2054
 msgid "error"
 msgstr ""
 
-#: altyo_window.vala:2085
+#: altyo_window.vala:2146
 msgid "New tab"
 msgstr ""
 
-#: altyo_window.vala:2085
+#: altyo_window.vala:2146
 msgid "Open new tab"
 msgstr ""
 
-#: altyo_window.vala:2104
+#: altyo_window.vala:2165
 msgid "Close tab"
 msgstr ""
 
-#: altyo_window.vala:2104
+#: altyo_window.vala:2165
 msgid "Close current tab"
 msgstr ""
 
-#: altyo_window.vala:2109
+#: altyo_window.vala:2170
 msgid "Next tab"
 msgstr ""
 
-#: altyo_window.vala:2109
+#: altyo_window.vala:2170
 msgid "Switch to next tab"
 msgstr ""
 
-#: altyo_window.vala:2114
+#: altyo_window.vala:2175
 msgid "Previous tab"
 msgstr ""
 
-#: altyo_window.vala:2114
+#: altyo_window.vala:2175
 msgid "Switch to previous tab"
 msgstr ""
 
-#: altyo_window.vala:2120
+#: altyo_window.vala:2181
 #, c-format
 msgid "Switch to tab %d"
 msgstr ""
 
-#: altyo_window.vala:2120
+#: altyo_window.vala:2181
 #, c-format
 msgid "Switch to tab %d,double press switch to tab %d"
 msgstr ""
 
-#: altyo_window.vala:2148
+#: altyo_window.vala:2209
 msgid "Copy"
 msgstr ""
 
-#: altyo_window.vala:2148
+#: altyo_window.vala:2209
 msgid "Copy selected text"
 msgstr ""
 
-#: altyo_window.vala:2153
+#: altyo_window.vala:2214
 msgid "Paste"
 msgstr ""
 
-#: altyo_window.vala:2153
+#: altyo_window.vala:2214
 msgid "Paste from primary clipboard"
 msgstr ""
 
-#: altyo_window.vala:2158
+#: altyo_window.vala:2219
 msgid "Search"
 msgstr ""
 
-#: altyo_window.vala:2164
+#: altyo_window.vala:2231
 msgid "Show/Hide Quick list"
 msgstr ""
 
-#: altyo_window.vala:2172 data/preferences.glade:396
+#: altyo_window.vala:2239 data/preferences.glade:533
 msgid "Follow mouse cursor"
 msgstr ""
 
-#: altyo_window.vala:2175
+#: altyo_window.vala:2242
 msgid "Settings..."
 msgstr ""
 
-#: altyo_window.vala:2175
+#: altyo_window.vala:2242
 msgid "Settings"
 msgstr ""
 
-#: altyo_window.vala:2228 data/preferences.glade:3398
+#: altyo_window.vala:2275
+msgid "AltYo Settings"
+msgstr ""
+
+#: altyo_window.vala:2298 data/preferences.glade:283
 msgid "Quit"
 msgstr ""
 
-#: altyo_window.vala:2238
+#: altyo_window.vala:2308
 msgid "Show/Hide"
 msgstr ""
 
-#: altyo_window.vala:2243
+#: altyo_window.vala:2313
 msgid "About"
 msgstr ""
 
-#: altyo_window.vala:2247
+#: altyo_window.vala:2317
 msgid "Disable sort tab"
 msgstr ""
 
-#: altyo_window.vala:2255
+#: altyo_window.vala:2325
 msgid "Stay on top"
 msgstr ""
 
-#: altyo_window.vala:2266
+#: altyo_window.vala:2336
 msgid "Stick"
 msgstr ""
 
-#: altyo_window.vala:2266
+#: altyo_window.vala:2336
 msgid "Toggle stick"
 msgstr ""
 
-#: altyo_window.vala:2275
+#: altyo_window.vala:2345
 msgid "Autohide"
 msgstr ""
 
-#: altyo_window.vala:2275
+#: altyo_window.vala:2345
 msgid "Toggle autohide"
 msgstr ""
 
-#: altyo_window.vala:2279
+#: altyo_window.vala:2349
 msgid "Maximize - restore"
 msgstr ""
 
-#: altyo_window.vala:2279
+#: altyo_window.vala:2349
 msgid "Maximize window, or restore to normal size"
 msgstr ""
 
-#: altyo_window.vala:2288
+#: altyo_window.vala:2358
 msgid "Sort by hostname"
 msgstr ""
 
-#: altyo_window.vala:2292
+#: altyo_window.vala:2362
 msgid "Open new window"
 msgstr ""
 
-#: altyo_window.vala:2342
+#: altyo_window.vala:2407
 msgid "Search in terminals titles"
 msgstr ""
 
-#: altyo_window.vala:2353
+#: altyo_window.vala:2418
 msgid "Terminal quick settings"
 msgstr ""
 
-#: altyo_window.vala:2358
+#: altyo_window.vala:2423
 msgid "Lock tab"
 msgstr ""
 
-#: altyo_window.vala:2367
+#: altyo_window.vala:2432
 msgid "Restore closed tab"
 msgstr ""
 
-#: altyo_window.vala:2367
+#: altyo_window.vala:2432
 msgid "Restore last closed tab"
 msgstr ""
 
-#: altyo_window.vala:2375
+#: altyo_window.vala:2440
 msgid "Custom title"
 msgstr ""
 
-#: altyo_window.vala:2463
+#: altyo_window.vala:2528
 #, c-format
 msgid "Tab%d - AltYo"
 msgstr ""
 
-#: altyo_window.vala:2505
+#: altyo_window.vala:2600
 #, c-format
 msgid ""
 "terminal_session_exclude_regex wrong value! will be used default value. err:"
 "%s"
 msgstr ""
 
-#: altyo_window.vala:2600
+#: altyo_window.vala:2697
 msgid "Restore tabs"
 msgstr ""
 
-#: altyo_window.vala:2607
+#: altyo_window.vala:2704
 msgid "Restore all closed tabs"
 msgstr ""
 
-#: altyo_window.vala:2623
+#: altyo_window.vala:2720
 #, c-format
 msgid "index %d"
 msgstr ""
 
-#: altyo_window.vala:2779
+#: altyo_window.vala:2876
 msgid "Wrap search"
 msgstr ""
 
-#: altyo_window.vala:2791
+#: altyo_window.vala:2888
 msgid "Match case-sensitive"
 msgstr ""
 
-#: altyo_window.vala:2807
+#: altyo_window.vala:2904
 msgid "terminal text"
 msgstr ""
 
-#: altyo_window.vala:2822
+#: altyo_window.vala:2919
 msgid "terminals titles"
 msgstr ""
 
-#: altyo_window.vala:2855
+#: altyo_window.vala:2955
 msgid "Find previous"
 msgstr ""
 
-#: altyo_window.vala:2876
+#: altyo_window.vala:2978
 msgid "Find next"
 msgstr ""
 
-#: altyo_window.vala:2887
+#: altyo_window.vala:2991
 msgid "Close search dialog"
 msgstr ""
 
-#: altyo_window.vala:3070
+#: altyo_window.vala:3178
 msgid "Press enter to appy"
 msgstr ""
 
-#: altyo_window.vala:3096
+#: altyo_window.vala:3206
 msgid "Close dialog"
 msgstr ""
 
@@ -421,32 +429,32 @@ msgstr ""
 msgid "AYsettings"
 msgstr ""
 
-#: altyo_settings.vala:64
+#: altyo_settings.vala:65
 msgid "Config is read only!"
 msgstr ""
 
-#: altyo_settings.vala:85 data/preferences.glade:688
+#: altyo_settings.vala:90 data/preferences.glade:822
 msgid "px"
 msgstr ""
 
-#: altyo_settings.vala:88
+#: altyo_settings.vala:93
 msgid "maximize"
 msgstr ""
 
-#: altyo_settings.vala:90
+#: altyo_settings.vala:95
 msgid "%"
 msgstr ""
 
-#: altyo_settings.vala:490
+#: altyo_settings.vala:495
 #, c-format
 msgid "in line %d  at position %d error:%s"
 msgstr ""
 
-#: altyo_settings.vala:497
+#: altyo_settings.vala:502
 msgid "Looks good"
 msgstr ""
 
-#: altyo_settings.vala:950
+#: altyo_settings.vala:957
 #, c-format
 msgid ""
 "New style will not be saved!\n"
@@ -454,413 +462,453 @@ msgid ""
 "error:%s"
 msgstr ""
 
-#: altyo_settings.vala:952
+#: altyo_settings.vala:959
 msgid "AltYo CSS style error"
 msgstr ""
 
-#: altyo_settings.vala:998 altyo_settings.vala:1008 altyo_settings.vala:1052
+#: altyo_settings.vala:1005 altyo_settings.vala:1015 altyo_settings.vala:1059
 #, c-format
 msgid "AltYo %s error"
 msgstr ""
 
-#: altyo_settings.vala:999 altyo_settings.vala:1009 altyo_settings.vala:1053
+#: altyo_settings.vala:1006 altyo_settings.vala:1016 altyo_settings.vala:1060
 #, c-format
 msgid ""
 "New value of %s will not be saved!\n"
 "%s"
 msgstr ""
 
-#: data/preferences.glade:17
+#: data/preferences.glade:18
 msgid "Block"
 msgstr ""
 
-#: data/preferences.glade:20
+#: data/preferences.glade:21
 msgid "Ibeam"
 msgstr ""
 
-#: data/preferences.glade:23
+#: data/preferences.glade:24
 msgid "Underline"
 msgstr ""
 
-#: data/preferences.glade:60 data/preferences.glade:82
-#: data/preferences.glade:104
+#: data/preferences.glade:61 data/preferences.glade:83
+#: data/preferences.glade:105
 msgid "add"
 msgstr ""
 
-#: data/preferences.glade:69 data/preferences.glade:91
-#: data/preferences.glade:113
+#: data/preferences.glade:70 data/preferences.glade:92
+#: data/preferences.glade:114
 msgid "remove"
 msgstr ""
 
-#: data/preferences.glade:126
+#: data/preferences.glade:127
 msgid "Left"
 msgstr ""
 
-#: data/preferences.glade:129
+#: data/preferences.glade:130
 msgid "Center"
 msgstr ""
 
-#: data/preferences.glade:132
+#: data/preferences.glade:133
 msgid "Right"
 msgstr ""
 
-#: data/preferences.glade:168
+#: data/preferences.glade:153
+msgid "None"
+msgstr ""
+
+#: data/preferences.glade:157
+msgid "Hostname"
+msgstr ""
+
+#: data/preferences.glade:198
 msgid "System"
 msgstr ""
 
-#: data/preferences.glade:171
+#: data/preferences.glade:201
 msgid "On"
 msgstr ""
 
-#: data/preferences.glade:174
+#: data/preferences.glade:204
 msgid "Off"
 msgstr ""
 
-#: data/preferences.glade:185
+#: data/preferences.glade:221
 msgid "Never"
 msgstr ""
 
-#: data/preferences.glade:188
+#: data/preferences.glade:224
 msgid "Contents changed"
 msgstr ""
 
-#: data/preferences.glade:191
+#: data/preferences.glade:227
 msgid "Title changed"
 msgstr ""
 
-#: data/preferences.glade:194
+#: data/preferences.glade:230
 msgid "Any changes"
 msgstr ""
 
-#: data/preferences.glade:271
+#: data/preferences.glade:277
+msgid "Restart shell"
+msgstr ""
+
+#: data/preferences.glade:280
+msgid "Restart shell and hide"
+msgstr ""
+
+#: data/preferences.glade:300
+msgid "Visible"
+msgstr ""
+
+#: data/preferences.glade:303
+msgid "Hidden"
+msgstr ""
+
+#: data/preferences.glade:306
+msgid "Hide if one tab"
+msgstr ""
+
+#: data/preferences.glade:317
+msgid "Right next"
+msgstr ""
+
+#: data/preferences.glade:320
+msgid "Far right"
+msgstr ""
+
+#: data/preferences.glade:409
 msgid "Enable"
 msgstr ""
 
-#: data/preferences.glade:294
+#: data/preferences.glade:432
 msgid "Speed "
 msgstr ""
 
-#: data/preferences.glade:307
+#: data/preferences.glade:445
 msgid "Number of animation steps,less is faster."
 msgstr ""
 
-#: data/preferences.glade:334
+#: data/preferences.glade:471
 msgid "<b>Animation</b>"
 msgstr ""
 
-#: data/preferences.glade:366
+#: data/preferences.glade:503
 msgid "Start maximized"
 msgstr ""
 
-#: data/preferences.glade:381
+#: data/preferences.glade:518
 msgid "Fullscreen on maximize"
 msgstr ""
 
-#: data/preferences.glade:401
+#: data/preferences.glade:538
 msgid ""
 "Pull down on the same screen where the mouse cursor.\n"
 "Useful on multimonitor systems."
 msgstr ""
 
-#: data/preferences.glade:414
+#: data/preferences.glade:551
 msgid "Window gravity north"
 msgstr ""
 
-#: data/preferences.glade:418
+#: data/preferences.glade:555
 msgid ""
 "if checked - gravity north,\n"
 "otherwise - gravity south"
 msgstr ""
 
-#: data/preferences.glade:449
+#: data/preferences.glade:586
 msgid "First monitor"
 msgstr ""
 
-#: data/preferences.glade:462 data/preferences.glade:463
+#: data/preferences.glade:599 data/preferences.glade:600
 msgid "Default monitor on which altyo will be shown at start up."
 msgstr ""
 
-#: data/preferences.glade:513
+#: data/preferences.glade:650
 msgid "100 or lower is in percentage"
 msgstr ""
 
-#: data/preferences.glade:531
+#: data/preferences.glade:668
 msgid "Width"
 msgstr ""
 
-#: data/preferences.glade:545
+#: data/preferences.glade:682
 msgid "Height"
 msgstr ""
 
-#: data/preferences.glade:559
+#: data/preferences.glade:696
 msgid "X Position"
 msgstr ""
 
-#: data/preferences.glade:591 data/preferences.glade:592
+#: data/preferences.glade:727 data/preferences.glade:728
 msgid "When height equal 100, maximize window."
 msgstr ""
 
-#: data/preferences.glade:631 data/preferences.glade:645
+#: data/preferences.glade:766 data/preferences.glade:780
 msgid "label"
 msgstr ""
 
-#: data/preferences.glade:659
+#: data/preferences.glade:794
 msgid "Y Position"
 msgstr ""
 
-#: data/preferences.glade:733
+#: data/preferences.glade:867
 msgid "<b>Size and position</b>"
 msgstr ""
 
-#: data/preferences.glade:751
+#: data/preferences.glade:885
 msgid "Start hidden"
 msgstr ""
 
-#: data/preferences.glade:766
+#: data/preferences.glade:900
 msgid "Auto start with desktop session"
 msgstr ""
 
-#: data/preferences.glade:781
+#: data/preferences.glade:915
 msgid "Stay on top by default"
 msgstr ""
 
-#: data/preferences.glade:796
+#: data/preferences.glade:930
 msgid "Auto hide on focus lost"
 msgstr ""
 
-#: data/preferences.glade:811
+#: data/preferences.glade:945
 msgid "Save session on quit"
 msgstr ""
 
-#: data/preferences.glade:826
+#: data/preferences.glade:960
 msgid "Confirm to Quit"
 msgstr ""
 
-#: data/preferences.glade:848
+#: data/preferences.glade:982
 msgid "On close last tab"
 msgstr ""
 
-#: data/preferences.glade:881
+#: data/preferences.glade:1015
 msgid "New tab position"
 msgstr ""
 
-#: data/preferences.glade:914
+#: data/preferences.glade:1048
 msgid "Tab close delay"
 msgstr ""
 
-#: data/preferences.glade:957
+#: data/preferences.glade:1076
+msgid "Tab bar mode"
+msgstr ""
+
+#: data/preferences.glade:1124
 msgid "New tab in current directory"
 msgstr ""
 
-#: data/preferences.glade:972
+#: data/preferences.glade:1139
 msgid "Debug"
 msgstr ""
 
-#: data/preferences.glade:977
+#: data/preferences.glade:1144
 msgid "Print debug information into stdout."
 msgstr ""
 
-#: data/preferences.glade:1002
+#: data/preferences.glade:1169
 msgid "<b>Window</b>"
 msgstr ""
 
-#: data/preferences.glade:1054
+#: data/preferences.glade:1221
 msgid "Font"
 msgstr ""
 
-#: data/preferences.glade:1068
+#: data/preferences.glade:1235
 msgid "Wrap search by default"
 msgstr ""
 
-#: data/preferences.glade:1097
+#: data/preferences.glade:1264
 msgid "Match case-sensitive by default"
 msgstr ""
 
-#: data/preferences.glade:1126
+#: data/preferences.glade:1293
 msgid ""
 "lines count\n"
 "-1  means \"infinite scrollback\""
 msgstr ""
 
-#: data/preferences.glade:1148
+#: data/preferences.glade:1314
 msgid "Text color"
 msgstr ""
 
-#: data/preferences.glade:1175
+#: data/preferences.glade:1341
 msgid "Background color"
 msgstr ""
 
-#: data/preferences.glade:1202
+#: data/preferences.glade:1368
 msgid "Background image file"
 msgstr ""
 
-#: data/preferences.glade:1216
+#: data/preferences.glade:1382
 msgid "Background saturation"
 msgstr ""
 
-#: data/preferences.glade:1249
+#: data/preferences.glade:1414
 msgid "Background opacity"
 msgstr ""
 
-#: data/preferences.glade:1324
+#: data/preferences.glade:1487
 msgid "Fake transparency"
 msgstr ""
 
-#: data/preferences.glade:1353
+#: data/preferences.glade:1516
 msgid "Scroll background"
 msgstr ""
 
-#: data/preferences.glade:1367
+#: data/preferences.glade:1530
 msgid "Tint color"
 msgstr ""
 
-#: data/preferences.glade:1394
+#: data/preferences.glade:1557
 msgid "Custom shell"
 msgstr ""
 
-#: data/preferences.glade:1408
+#: data/preferences.glade:1571
 msgid "Run this command instead user shell"
 msgstr ""
 
-#: data/preferences.glade:1448
+#: data/preferences.glade:1610
 msgid "Auto restart shell"
 msgstr ""
 
-#: data/preferences.glade:1477
+#: data/preferences.glade:1639
 msgid "Cursor shape"
 msgstr ""
 
-#: data/preferences.glade:1510
+#: data/preferences.glade:1672
 msgid "Cursor blink mode"
 msgstr ""
 
-#: data/preferences.glade:1543 data/main_window_encodings_combo.glade:44
+#: data/preferences.glade:1705 data/main_window_encodings_combo.glade:44
 msgid "Delete key binding"
 msgstr ""
 
-#: data/preferences.glade:1575 data/main_window_encodings_combo.glade:27
+#: data/preferences.glade:1737 data/main_window_encodings_combo.glade:27
 msgid "Backspace key binding"
 msgstr ""
 
-#: data/preferences.glade:1607
+#: data/preferences.glade:1769
 msgid "Scroll on output"
 msgstr ""
 
-#: data/preferences.glade:1636
+#: data/preferences.glade:1798
 msgid "Scroll on keystroke"
 msgstr ""
 
-#: data/preferences.glade:1665
+#: data/preferences.glade:1827
 msgid "Scroll lines"
 msgstr ""
 
-#: data/preferences.glade:1679
+#: data/preferences.glade:1841
 msgid "Alternate screen scroll"
 msgstr ""
 
-#: data/preferences.glade:1694 data/preferences.glade:1696
+#: data/preferences.glade:1856 data/preferences.glade:1858
 msgid ""
 "Available only on debian based systems.\n"
 "Allow use mouse scroll in some programs,for example in less"
 msgstr ""
 
-#: data/preferences.glade:1713
+#: data/preferences.glade:1875
 msgid "Show scrollbar"
 msgstr ""
 
-#: data/preferences.glade:1742
+#: data/preferences.glade:1904
 msgid "Terminal audible bell"
 msgstr ""
 
-#: data/preferences.glade:1771
+#: data/preferences.glade:1933
 msgid "Terminal visible bell"
 msgstr ""
 
-#: data/preferences.glade:1800
+#: data/preferences.glade:1962
 msgid "Terminal allow bold text"
 msgstr ""
 
-#: data/preferences.glade:1830
+#: data/preferences.glade:1992
 msgid ""
 "Controls whether or not the terminal will scroll the background image (if "
 "one is set) when the text in the window must be scrolled. "
 msgstr ""
 
-#: data/preferences.glade:1866
+#: data/preferences.glade:2028
 msgid "Notify on"
 msgstr ""
 
-#: data/preferences.glade:1894
+#: data/preferences.glade:2056
 msgid "Timeout before Notify "
 msgstr ""
 
-#: data/preferences.glade:1908
+#: data/preferences.glade:2070
 msgid "Sort by"
 msgstr ""
 
-#: data/preferences.glade:1941
+#: data/preferences.glade:2103
 msgid "Disable popup menu"
 msgstr ""
 
-#: data/preferences.glade:1970
+#: data/preferences.glade:2132
 msgid "Default encoding"
 msgstr ""
 
-#: data/preferences.glade:2010
+#: data/preferences.glade:2172
 msgid "Run command as a login shell"
 msgstr ""
 
-#: data/preferences.glade:2024
+#: data/preferences.glade:2186
 msgid ""
 "Update login records\n"
 "when command is launched"
 msgstr ""
 
-#: data/preferences.glade:2072
+#: data/preferences.glade:2234
 msgid "<b>Terminal</b>"
 msgstr ""
 
-#: data/preferences.glade:2091
+#: data/preferences.glade:2253
 msgid "Look and feel"
 msgstr ""
 
-#: data/preferences.glade:2126
+#: data/preferences.glade:2288
 msgid "Double hotkey milliseconds"
 msgstr ""
 
-#: data/preferences.glade:2138
+#: data/preferences.glade:2300
 msgid "The time during which respond to the double pressing."
 msgstr ""
 
-#: data/preferences.glade:2176
+#: data/preferences.glade:2337
 msgid "Action"
 msgstr ""
 
-#: data/preferences.glade:2189
+#: data/preferences.glade:2350
 msgid "Key binding"
 msgstr ""
 
-#: data/preferences.glade:2221
+#: data/preferences.glade:2382
 msgid "<b>Key bindings</b>"
 msgstr ""
 
-#: data/preferences.glade:2236
+#: data/preferences.glade:2397
 msgid "Key bindings"
 msgstr ""
 
-#: data/preferences.glade:2261
+#: data/preferences.glade:2422
 msgid "Pango Text Attribute Markup Language"
 msgstr ""
 
-#: data/preferences.glade:2281
+#: data/preferences.glade:2442
 msgid "Regular expression syntax"
 msgstr ""
 
-#: data/preferences.glade:2301
+#: data/preferences.glade:2462
 msgid "Gtk CSS"
 msgstr ""
 
-#: data/preferences.glade:2323
+#: data/preferences.glade:2484
 msgid ""
 "<b>Tab: format</b>\n"
 "    _INDEX_ - replace by tab index\n"
@@ -873,138 +921,122 @@ msgid ""
 "    _PATH_ - use match subpattern as path."
 msgstr ""
 
-#: data/preferences.glade:2347
+#: data/preferences.glade:2508
 msgid "Help"
 msgstr ""
 
-#: data/preferences.glade:2374
+#: data/preferences.glade:2535
 msgid "Max tab width"
 msgstr ""
 
-#: data/preferences.glade:2387
+#: data/preferences.glade:2548
 msgid ""
 "size in pixels\n"
 "-1 - max width is window width\n"
 msgstr ""
 
-#: data/preferences.glade:2433
+#: data/preferences.glade:2594
 msgid "Base title"
 msgstr ""
 
-#: data/preferences.glade:2463
+#: data/preferences.glade:2623
 msgid "Terminal header"
 msgstr ""
 
-#: data/preferences.glade:2496
+#: data/preferences.glade:2655
 msgid "<b>Tab format</b>"
 msgstr ""
 
-#: data/preferences.glade:2534
+#: data/preferences.glade:2693
 msgid "Pattern"
 msgstr ""
 
-#: data/preferences.glade:2550
+#: data/preferences.glade:2709
 msgid "Replace"
 msgstr ""
 
-#: data/preferences.glade:2572
+#: data/preferences.glade:2731
 msgid "<b>Pattern</b>"
 msgstr ""
 
-#: data/preferences.glade:2589
+#: data/preferences.glade:2748
 msgid "Tab"
 msgstr ""
 
-#: data/preferences.glade:2617
+#: data/preferences.glade:2776
 msgid "Command"
 msgstr ""
 
-#: data/preferences.glade:2635
+#: data/preferences.glade:2794
 msgid "Auto run commands"
 msgstr ""
 
-#: data/preferences.glade:2867
+#: data/preferences.glade:3026
 msgid "Color palette"
 msgstr ""
 
-#: data/preferences.glade:2895
+#: data/preferences.glade:3054
 msgid "Prevent close"
 msgstr ""
 
-#: data/preferences.glade:2926
+#: data/preferences.glade:3084
 msgid "Exclude from saving session"
 msgstr ""
 
-#: data/preferences.glade:2955
+#: data/preferences.glade:3113
 msgid "Select-by-word characters"
 msgstr ""
 
-#: data/preferences.glade:3012
-msgid "Match"
+#: data/preferences.glade:3140
+msgid "TERM"
 msgstr ""
 
-#: data/preferences.glade:3028
-msgid "Run"
-msgstr ""
-
-#: data/preferences.glade:3048
-msgid "<b>URL regexps</b>"
-msgstr ""
-
-#: data/preferences.glade:3065
-msgid "Terminal regexps"
-msgstr ""
-
-#: data/preferences.glade:3091
-msgid "Check css"
-msgstr ""
-
-#: data/preferences.glade:3096 data/preferences.glade:3097
-msgid "if error occurred, cursor will be placed at corresponding position"
-msgstr ""
-
-#: data/preferences.glade:3123
-msgid "Tab bar background"
-msgstr ""
-
-#: data/preferences.glade:3171
-msgid "Application style"
-msgstr ""
-
-#: data/preferences.glade:3190
-msgid "Advanced"
+#: data/preferences.glade:3166
+msgid "Exclude variables"
 msgstr ""
 
 #: data/preferences.glade:3222
+msgid "Match"
+msgstr ""
+
+#: data/preferences.glade:3238
+msgid "Run"
+msgstr ""
+
+#: data/preferences.glade:3258
+msgid "<b>URL regexps</b>"
+msgstr ""
+
+#: data/preferences.glade:3275
+msgid "Terminal regexps"
+msgstr ""
+
+#: data/preferences.glade:3301
+msgid "Check css"
+msgstr ""
+
+#: data/preferences.glade:3306 data/preferences.glade:3307
+msgid "if error occurred, cursor will be placed at corresponding position"
+msgstr ""
+
+#: data/preferences.glade:3333
+msgid "Tab bar background"
+msgstr ""
+
+#: data/preferences.glade:3381
+msgid "Application style"
+msgstr ""
+
+#: data/preferences.glade:3400
+msgid "Advanced"
+msgstr ""
+
+#: data/preferences.glade:3432
 msgid "Reset all settings to default values"
 msgstr ""
 
-#: data/preferences.glade:3272
+#: data/preferences.glade:3482
 msgid "config.ini"
-msgstr ""
-
-#: data/preferences.glade:3323
-msgid "None"
-msgstr ""
-
-#: data/preferences.glade:3327
-msgid "Hostname"
-msgstr ""
-
-#: data/preferences.glade:3392
-msgid "Restart shell"
-msgstr ""
-
-#: data/preferences.glade:3395
-msgid "Restart shell and hide"
-msgstr ""
-
-#: data/preferences.glade:3415
-msgid "Right next"
-msgstr ""
-
-#: data/preferences.glade:3418
-msgid "Far right"
 msgstr ""
 
 #: data/encodings_list.glade:14 data/encodings_list.glade:66

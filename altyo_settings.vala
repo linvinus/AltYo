@@ -864,7 +864,8 @@ public class AYSettings : AYTab{
 
 	public void apply() {
 		var keys = this.my_conf.get_profile_keys();
-		foreach(var key in keys){
+		foreach(var key_bug in keys){
+			var key=key_bug;//bug in UBUNTU precise
 			switch(this.my_conf.get_key_type(key)){
 				case CFG_TYPE.TYPE_UNKNOWN:
 				continue;

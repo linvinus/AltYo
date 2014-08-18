@@ -2499,8 +2499,8 @@ public class AYObject :Object{
 		//cycle through all items
 		do{
 			vt = item_it.data;
-			debug("search %s in %s",new_pattern,vt.tbutton.tab_title);
-			if(reg_exp.match(vt.tbutton.tab_title,0,null)){
+			debug("search %s in %s",new_pattern,(vt.tbutton.tab_custom_title_enabled? vt.tbutton.tab_custom_title : vt.tbutton.tab_title));
+			if(reg_exp.match((vt.tbutton.tab_custom_title_enabled? vt.tbutton.tab_custom_title : vt.tbutton.tab_title),0,null)){
 				this.activate_tab(vt.tbutton);
 				break;
 			}

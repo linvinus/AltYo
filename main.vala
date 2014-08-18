@@ -59,10 +59,20 @@ struct Globals{
 	static string? path = null;
 	static bool config_readonly = false;
 	static bool force_debug = false;
+	static bool cmd_fullscreen = false;
+	static string? cmd_title_tab = null;
+	static string? cmd_select_tab = null;
+	static string? cmd_close_tab = null;
 
 	[CCode (array_length = false, array_null_terminated = true)]
 	public static string[]? exec_file_with_args = null;
 
+	public static const OptionEntry[] local_options = {
+					{ "id", 0, 0, OptionArg.STRING, ref Globals.app_id,null,null},
+					{ "standalone", 0, 0, OptionArg.NONE, ref Globals.standalone_mode,null,null},
+					{ null }
+			};
+		
 	public static const OptionEntry[] options = {
 					/*allow show help from remote call*/
 					{ "help", 'h', OptionFlags.HIDDEN, OptionArg.NONE, ref Globals.opt_help, null, null },
@@ -77,6 +87,10 @@ struct Globals{
 					{ "default_path", 0, 0, OptionArg.STRING, ref Globals.path,N_("Set/update default path"),"/home/user/special" },
 					{ "config_readonly", 0, 0, OptionArg.NONE, ref Globals.config_readonly, N_("Lock any configuration changes"), null },
 					{ "debug", 'd', 0, OptionArg.NONE, ref Globals.force_debug,N_("Force debug"), null },
+					{ "fullscreen", 'f', 0, OptionArg.NONE, ref Globals.cmd_fullscreen,N_("Toggle AltYo in fullscreen mode"), null },
+					{ "get-set-tab-title", 't', 0, OptionArg.STRING, ref Globals.cmd_title_tab,N_("Get/Set tab title"), null },
+					{ "select-tab", 0, 0, OptionArg.STRING, ref Globals.cmd_select_tab,N_("Select tab by index"), null },
+					{ "close-tab", 0, 0, OptionArg.STRING, ref Globals.cmd_close_tab,N_("Close tab by index"), null },
 					{ null }
 			};
 
@@ -136,7 +150,9 @@ static void configure_debug(MySettings conf){
 }
 
 int main (string[] args) {
-
+	
+	GLib.ApplicationFlags appflags=ApplicationFlags.HANDLES_COMMAND_LINE;
+	
 	Intl.setlocale (LocaleCategory.ALL, "");
 	Intl.bindtextdomain (GETTEXT_PACKAGE, null);
 	Intl.bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
@@ -144,19 +160,21 @@ int main (string[] args) {
 
 	Gtk.init (ref args);
 	Globals.app_id="org.gtk.altyo";//default app id
-	string[] args2=args;//copy args for local use, original args will be used on remote side
-	unowned string[] args3=args2;
 
-	if(args.length>1 ){//show local help if needed
-		   try {
-				   OptionContext ctx2 = new OptionContext("AltYo");
-				   ctx2.add_main_entries(Globals.options, null);
-				   ctx2.parse(ref args3);
-		   } catch (Error e) {
-						   GLib.stderr.printf("Error initializing: %s\n", e.message);
-		   }
+	/* Parse only --id and --standalone options
+	 * others will be parsed in application app.startup.connect event
+	 * */
+	try {
+	   OptionContext ctx = new OptionContext("AltYo");
+	   ctx.set_help_enabled (false);//disable exit from application
+	   ctx.set_ignore_unknown_options (true);//disable exit from application if wrong parameters
+	   ctx.add_main_entries(Globals.local_options, null);
+	   ctx.parse(ref args);
+	} catch (Error e) {
+	   GLib.stderr.printf("Error initializing: %s\n", e.message);
+	   return 1;
 	}
-	args2=null;//destroy
+
 
 	if(Globals.app_id == "none")
 		Globals.app_id=null;
@@ -168,9 +186,10 @@ int main (string[] args) {
 	if(Globals.standalone_mode){
 		Globals.disable_hotkey=true;
 		Globals.app_id=null;
+		appflags|=GLib.ApplicationFlags.NON_UNIQUE;
 	}
 
-    var app = new Gtk.Application(Globals.app_id, ApplicationFlags.HANDLES_COMMAND_LINE);
+    var app = new Gtk.Application(Globals.app_id, appflags);
 
 	//remote args usage
     app.command_line.connect((command_line)=>{//ApplicationCommandLine
@@ -199,51 +218,119 @@ int main (string[] args) {
 				Globals.toggle=false;
 				Globals.path=null;
 				Globals.force_debug=false;
+				
+				Globals.cmd_fullscreen = false;
+				Globals.cmd_title_tab = null;
+				Globals.cmd_select_tab = null;
+				Globals.cmd_close_tab = null;
 
 				try {
 					if(!ctx.parse(ref pargv))return 3;
 				} catch (Error e) {
-						GLib.stderr.printf("Error initializing: %s\n", e.message);
+						command_line.print("Error initializing: %s\n", e.message);
 				}
-				debug("app.command_line.connect reload=%d",(int)Globals.reload);
-				if(Globals.force_debug){
-					unowned List<weak Window> list = app.get_windows();
-					if(list!=null)
-						((VTMainWindow)list.data).conf.force_debug=Globals.force_debug;
-					configure_debug(((VTMainWindow)list.data).conf);
-				}else 
-				if(Globals.reload){
-					unowned List<weak Window> list = app.get_windows();
-					if(list!=null)
-						((VTMainWindow)list.data).conf.load_config();
-				}else
-				if(Globals.exec_file_with_args!=null){
-					unowned List<weak Window> list = app.get_windows();
-					if(list!=null){
-						VTMainWindow mwin = ((VTMainWindow)list.data);
-						
-						foreach(var s in Globals.exec_file_with_args){
-							debug("exec %s",s);
-							if(Globals.path!=null){
-								mwin.conf.default_path=Globals.path;
-							}
-							mwin.ayobject.add_tab_with_title(s,s);
-						}
-
-						if(mwin.current_state == WStates.HIDDEN)
-							mwin.pull_down();
-					}
-				}else
+				
 				if (Globals.opt_help) {
 					command_line.printerr (ctx.get_help (true, null));
 					Globals.opt_help=false;
-				}else
-				if(Globals.toggle){
-					unowned List<weak Window> list = app.get_windows();
-					if(list!=null)
-						((VTMainWindow)list.data).toggle_window();
+				}
+								
+				debug("app.command_line.connect reload=%d",(int)Globals.reload);
+				VTMainWindow remote_window=null;
+				unowned List<weak Window> list = app.get_windows();
+				if(list!=null)
+					remote_window=((VTMainWindow)list.data);
+				else{
+					command_line.print("Err: remote window not found");
+					return 2;
 				}
 
+				if(Globals.force_debug){
+					configure_debug(remote_window.conf);
+				}else 
+				if(Globals.reload){
+					remote_window.conf.load_config();
+				}else
+				if(Globals.exec_file_with_args!=null){				
+					foreach(var s in Globals.exec_file_with_args){
+						debug("exec %s",s);
+						if(Globals.path!=null){
+							remote_window.conf.default_path=Globals.path;
+						}
+						remote_window.ayobject.add_tab_with_title(s,s);
+					}
+
+					if(remote_window.current_state == WStates.HIDDEN)
+						remote_window.pull_down();
+				}else
+				if(Globals.toggle){
+					remote_window.toggle_window();
+				}else
+				if(Globals.cmd_fullscreen){
+					if(remote_window.maximized)
+						remote_window.maximized=false;
+					else
+						remote_window.maximized=true;
+				}else
+				if(remote_window.conf.get_boolean("window_allow_remote_control",false)){
+					if(Globals.cmd_title_tab!=null){
+						var current_index=remote_window.ayobject.cmd_get_tab_index();
+						var count=remote_window.ayobject.cmd_get_tabs_count();
+						if(Globals.cmd_title_tab!=""){
+							var s_arr = Globals.cmd_title_tab.split (":",2);
+							uint64 index=0;/*index from user starting from 1*/
+							if(s_arr.length==2 && uint64.try_parse(s_arr[0],out index) && index<=count && index>0){
+								if(s_arr[1]=="") s_arr[1]=null;
+								command_line.print("new title=%d:%s\n",(int)index,s_arr[1]);
+								remote_window.ayobject.cmd_set_tab_title((uint)index-1,s_arr[1]);
+							}else{
+								if(s_arr.length!=2)
+									command_line.print("usage:\n\t-t \"3:new title\"\n\t-t \"\"\n");
+									
+								if(index>count)
+									command_line.print("Err: index>count (%d > %d)\n",(int)index,(int)count);
+								if(index==0)
+									command_line.print("Err: index must be > 1\n");
+							}
+						}else{
+							command_line.print("%d/%d \n",current_index+1,(int)count);
+							for(var i=0; i<count; i++){
+								command_line.print("%d:%s\n",i+1,remote_window.ayobject.cmd_get_tab_title(i));
+							}
+						}
+					}else
+					if(Globals.cmd_select_tab!=null){
+						var count=remote_window.ayobject.cmd_get_tabs_count();
+						uint64 index=0;/*index from user starting from 1*/
+						if(uint64.try_parse(Globals.cmd_select_tab,out index) && index<=count && index>0 ){
+							remote_window.ayobject.cmd_activate_tab((uint)(index-1));
+							command_line.print("selected %d\n",(int)index);
+						}else{
+							if(index>count)
+								command_line.print("Err: index>count (%d > %d)\n",(int)index,(int)count);
+							if(index==0)
+								command_line.print("Err: index must be > 1\n");							
+						}
+					}else
+					if(Globals.cmd_close_tab!=null){
+						var count=remote_window.ayobject.cmd_get_tabs_count();
+						uint64 index=0;/*index from user starting from 1*/
+						if(uint64.try_parse(Globals.cmd_close_tab,out index) && index<=count && index>0 ){
+							remote_window.ayobject.close_tab((int)(index-1));
+							command_line.print("closed %d\n",(int)index);
+						}else{
+							if(index>count)
+								command_line.print("Err: index>count (%d > %d)\n",(int)index,(int)count);
+							if(index==0)
+								command_line.print("Err: index must be > 1\n");
+						}
+					}
+				}//if window_allow_remote_control
+				else{
+					if(Globals.cmd_title_tab!=null || Globals.cmd_select_tab!=null || Globals.cmd_close_tab!=null)
+						command_line.print("Err: remote commands is disabled in configuration file!\n");
+				}
+				
 				Globals.reload=false;
 
 				return 2;//exit status
@@ -252,12 +339,20 @@ int main (string[] args) {
 
 	app.startup.connect(()=>{//first run
 				debug("app.startup.connect");
-
+				try {
+				   OptionContext ctx = new OptionContext("AltYo");
+				   ctx.add_main_entries(Globals.options, null);
+				   ctx.parse(ref args);
+				} catch (Error e) {
+				   GLib.stderr.printf("Error initializing: %s\n", e.message);
+				   return;
+				}
 				var conf = new MySettings(Globals.cmd_conf_file,Globals.standalone_mode);
 				conf.readonly=Globals.config_readonly;
 				conf.disable_hotkey=Globals.disable_hotkey;
 				conf.default_path=Globals.path;
 				conf.force_debug=Globals.force_debug;
+				conf.get_boolean("window_allow_remote_control",false);
 
 				if(!conf.opened){
 					printf("Unable to open configuration file!\n");

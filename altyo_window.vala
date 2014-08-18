@@ -1332,7 +1332,7 @@ public class AYObject :Object{
 		this.hvbox.on_dnd_above_changed.connect((dnd_widget,above_widget)=>{
 			VTToggleButton dnd = (VTToggleButton) dnd_widget;
 			VTToggleButton above = (VTToggleButton) above_widget;
-			dnd.set_title((int)(this.children.index((AYTab)above.object)+1),null);
+			dnd.set_title((int)(this.children.index((AYTab)above.object)),null);
 			});
 //~		this.hvbox.size_changed.connect(this.hvbox_size_changed);
 
@@ -1504,12 +1504,12 @@ public class AYObject :Object{
 		int index;//must be assigned!
 
 		if(this.new_tab_position==NEW_TAB_MODE.RIGHT_NEXT)
-			index=this.hvbox.children_index(this.active_tab)+1;
+			index=this.hvbox.children_index(this.active_tab);
 		else
-			index=(int)this.children.length()+1;//NEW_TAB_MODE.FAR_RIGHT
+			index=(int)this.children.length();//NEW_TAB_MODE.FAR_RIGHT
 		
 		if(on_exit==null){
-			vt = new VTTerminal(this.conf,this.terms_notebook,(int)(index),session_command,(session_path!=null?session_path:conf.default_path),(terminal)=>{		
+			vt = new VTTerminal(this.conf,this.terms_notebook,index,session_command,(session_path!=null?session_path:conf.default_path),(terminal)=>{		
 				/* if child exited (guess by ctrl+d) and it was last tab
 				 * and action_on_close_last_tab==quit then quit*/
 				if(this.children.length()==1 && this.action_on_close_last_tab==2){//quit
@@ -1529,8 +1529,9 @@ public class AYObject :Object{
 				
 			});
 		}else{
-			vt = new VTTerminal(this.conf,this.terms_notebook,(int)(index),session_command,session_path,on_exit );
+			vt = new VTTerminal(this.conf,this.terms_notebook,index,session_command,session_path,on_exit );
 		}
+		index++;//next position
 		this.children.insert( vt ,(int) index);
 
 		vt.vte_term.window_title_changed.connect( () => {
@@ -1552,7 +1553,7 @@ public class AYObject :Object{
 
 	public VTTerminal add_tab_with_title(string title,string session_command,string? session_path=null) {
 		var vt=this.add_tab(session_command,session_path);
-		var tab_index =  this.children.index(vt)+1;
+		var tab_index =  this.children.index(vt);
 		vt.tbutton.set_title(tab_index,title);
 		return vt;
 	}
@@ -1741,7 +1742,7 @@ public class AYObject :Object{
 					}
 					this.active_tab = tab_button;
 					this.active_tab.active=true;
-					//vt.tbutton.set_title((this.children.index(vt)+1),null);//not necessary
+					//vt.tbutton.set_title((this.children.index(vt)),null);//not necessary
 					if(vt is VTTerminal){
 						((VTTerminal)vt).vte_term.grab_focus();
 						((VTTerminal)vt).vte_term.show () ;
@@ -1781,7 +1782,7 @@ public class AYObject :Object{
 	public void update_tabs_title(){
 		foreach (var vt in this.children) {
 			//reindex all tabs
-			if(vt.tbutton.set_title((int)(this.children.index(vt)+1),null)){
+			if(vt.tbutton.set_title(this.children.index(vt),null)){
 				this.hvbox.queue_draw();
 				this.main_window.update_events();
 			}
@@ -1833,7 +1834,7 @@ public class AYObject :Object{
 		//becouse of this.children.index
 		foreach (var vt in this.children) {
 			if (vt is VTTerminal && ((VTTerminal)vt).vte_term == term){
-				var tab_index =  this.children.index(vt)+1;
+				var tab_index =  this.children.index(vt);
 				if(vt.tbutton.set_title(tab_index, s )){
 					this.hvbox.queue_draw();
 					this.main_window.update_events();
@@ -2271,11 +2272,11 @@ public class AYObject :Object{
 						});
 					vt.auto_restart=false;
 					vt.destroe_delay=0;
-					var tab_index =  this.children.index(vt)+1;
+					var tab_index =  this.children.index(vt);
 					vt.tbutton.set_title(tab_index, _("AltYo Settings") );
 				}else{
 					if(!this.aysettings_shown){
-						this.aysettings=new AYSettings(this.conf,this.terms_notebook,(int)(this.children.length()+1),this);
+						this.aysettings=new AYSettings(this.conf,this.terms_notebook,(int)(this.children.length()),this);
 						this.children.append(this.aysettings);
 						this.aysettings.tbutton.button_press_event.connect(tab_button_press_event);
 						this.hvbox.add(this.aysettings.tbutton);
@@ -2737,11 +2738,11 @@ public class AYObject :Object{
 	public void restore_tab(AYTab vt){
 		if(this.children_removed.find(vt)!=null){
 			vt.stop_remove_timer();
-			int index = vt.tbutton.tab_index-1;
+			uint index = vt.tbutton.tab_index;
 			
-			debug("restore tab index %d",index);
+			debug("restore tab index %u",index);
 			this.hvbox.insert( vt.tbutton ,(int) index);
-			this.children.insert(vt,index);
+			this.children.insert(vt,(int)index);
 			
 			this.update_tabs_title();
 			this.search_update();					
@@ -2749,6 +2750,32 @@ public class AYObject :Object{
 			this.children_removed.remove(vt);
 			vt.on_remove_timeout.disconnect(this.on_tab_remove_timeout);
 		}
+	}
+
+	public int cmd_get_tab_index(){
+		return this.children.index((AYTab)this.active_tab.object);/*starting from 0*/
+	}
+	public uint cmd_get_tabs_count(){
+		return this.children.length ();
+	}
+	public void cmd_set_tab_title(uint index/*starting from 0*/,string? s){
+		var tbutton = this.children.nth_data(index).tbutton;
+		tbutton.force_update_tab_title=true;	
+		if(tbutton.set_title(index, s )){
+			this.hvbox.queue_draw();
+			this.main_window.update_events();
+			this.window_title_update();
+		}
+	}
+	public string cmd_get_tab_title(uint index/*starting from 0*/){
+		var tbutton = this.children.nth_data(index).tbutton;
+		return tbutton.tab_title;
+	}
+	
+	public void cmd_activate_tab(uint index/*starting from 0*/){
+		unowned AYTab vt = children.nth_data(index);
+		if(vt != null)
+			this.activate_tab(vt.tbutton);		
 	}
 
 }//class AYObject

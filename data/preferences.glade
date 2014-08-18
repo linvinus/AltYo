@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.16.1 -->
 <interface>
-  <requires lib="gtk+" version="3.0"/>
+  <!-- interface-requires gtk+ 3.0 -->
   <object class="GtkAdjustment" id="animation_pull_steps_adjustment">
     <property name="lower">1</property>
     <property name="upper">100</property>
@@ -1131,7 +1130,7 @@ otherwise - gravity south</property>
                                           <packing>
                                             <property name="expand">False</property>
                                             <property name="fill">True</property>
-                                            <property name="position">10</property>
+                                            <property name="position">8</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -1141,6 +1140,7 @@ otherwise - gravity south</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
                                             <property name="has_tooltip">True</property>
+                                            <property name="tooltip_markup" translatable="yes">Print debug information into stdout.</property>
                                             <property name="tooltip_text" translatable="yes">Print debug information into stdout.</property>
                                             <property name="xalign">0</property>
                                             <property name="draw_indicator">True</property>
@@ -1148,7 +1148,22 @@ otherwise - gravity south</property>
                                           <packing>
                                             <property name="expand">False</property>
                                             <property name="fill">True</property>
-                                            <property name="position">12</property>
+                                            <property name="position">9</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="window_allow_remote_control">
+                                            <property name="label" translatable="yes">Allow remote control (CLI)</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="xalign">0</property>
+                                            <property name="draw_indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">10</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -2351,8 +2366,8 @@ when command is launched</property>
                                             <child>
                                               <object class="GtkCellRendererAccel" id="cellrenderertext3">
                                                 <signal name="accel-cleared" handler="ay_settings_accel_cleared_cb" swapped="no"/>
-                                                <signal name="accel-edited" handler="ay_settings_accel_edited_cb" swapped="no"/>
                                                 <signal name="editing-started" handler="ay_settings_accel_editing_started_cb" swapped="no"/>
+                                                <signal name="accel-edited" handler="ay_settings_accel_edited_cb" swapped="no"/>
                                               </object>
                                               <attributes>
                                                 <attribute name="editable">4</attribute>

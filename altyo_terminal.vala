@@ -92,11 +92,11 @@ public class VTToggleButton : Gtk.Button{
 	public bool tab_custom_title_enabled {
 		get{ return _tab_custom_title!=null; }
 	}
-	public int    tab_index {get;set;default = -1;}
+	public  uint    tab_index; /*tab position starting from 0*/
 	private string markup_normal  {get;set;}
 	private string markup_active  {get;set;}
 	private string markup_prelight  {get;set;}
-	private bool force_update_tab_title {get;set;default = false;}
+	public bool force_update_tab_title {get;set;default = false;}
 	private bool _user_notify=false;
 	public bool user_notify {
 		get{
@@ -184,14 +184,14 @@ public class VTToggleButton : Gtk.Button{
 	}
 
 
-	public bool set_title(int tab_index,string? title){
+	public bool set_title(uint tab_index /*starting from 0*/,string? title){
 		debug("set_title start");
 		if( ((this.tab_title != null && this.tab_title == title && this.tab_index == tab_index )||
 		   (title == null && this.tab_index == tab_index )) && this.force_update_tab_title==false )
 			return false; //prevent unneccesary redraw
-		debug("set_title(%d,%s)",tab_index,title);
+		debug("set_title(%u,%s)",tab_index,title);
 		
-		this.force_update_tab_title=false;
+		
 		
 		if(!this.active && 
 		   this.notify_on_title_change && 
@@ -204,8 +204,10 @@ public class VTToggleButton : Gtk.Button{
 			
 		string? new_title=null;
 		
-		if(title!=null && title!="")
+		if((title!=null && title!="") || this.force_update_tab_title)
 			this.tab_title = title;
+		
+		this.force_update_tab_title=false;
 		
 		if(this.tab_custom_title_enabled)
 			new_title = this.tab_custom_title;
@@ -213,6 +215,9 @@ public class VTToggleButton : Gtk.Button{
 			new_title = this.tab_title;
 
 		this.tab_index = tab_index;
+		
+		tab_index++;//convert index from 0 to 1
+		
 		string result2="";
 		if((new_title!=null && new_title!="") ){
 			try{
@@ -387,7 +392,7 @@ public class AYTab : Object{
 	public uint destroe_delay = 0;
 	public signal void on_destroy ();
 	
-	public AYTab(MySettings my_conf,Notebook notebook, int tab_index) {
+	public AYTab(MySettings my_conf,Notebook notebook, uint tab_index /*starting from 0*/) {
 		this.my_conf=my_conf;
 		this.notebook=notebook;
 		this.tbutton = new VTToggleButton();
@@ -415,7 +420,7 @@ public class AYTab : Object{
 		this.hbox.show();
 //~		this.scrollbar = new VScrollbar(((Scrollable)this.vte_term).get_vadjustment());
 //~		hbox.pack_start(scrollbar,false,false,0);
-		page_index = this.notebook.insert_page (hbox,null,tab_index);
+		page_index = this.notebook.insert_page (hbox,null,(int)tab_index);
 
 		this.tbutton.object = this;
 		
@@ -520,7 +525,7 @@ public class VTTerminal : AYTab{
 	private Array<VTT_LOCK_SETTING> lock_settings;
 	
 
-	public VTTerminal(MySettings my_conf,Notebook notebook, int tab_index,string? session_command=null,string? session_path=null,OnChildExitCallBack? on_child_exit=null) {
+	public VTTerminal(MySettings my_conf,Notebook notebook, uint tab_index/*starting from 0*/,string? session_command=null,string? session_path=null,OnChildExitCallBack? on_child_exit=null) {
 		base(my_conf, notebook, tab_index);
 		this.my_conf=my_conf;
 		this.notebook=notebook;

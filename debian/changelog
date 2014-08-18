@@ -1,3 +1,13 @@
+altyo (0.4~rc8-linvinus1) precise; urgency=low
+
+  * improvement: check terminal_exclude_variables before use
+  * new: cli options for remote management
+  * fix: compilation bug in Ubuntu precise
+  * fix: search in custom tab title
+  * update: Russian translation
+
+ -- denis <linvinus@gmail.com>  Mon, 18 Aug 2014 22:58:25 +0400
+
 altyo (0.4~rc7-linvinus2) trusty; urgency=low
 
   * small fix

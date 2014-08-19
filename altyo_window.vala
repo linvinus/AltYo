@@ -816,7 +816,7 @@ public class VTMainWindow : Window{
 		var css_main = new CssProvider ();
 		string style_str= ""+
 					 "VTToggleButton GtkLabel  { font: Mono 10; -GtkWidget-focus-padding: 0px; -GtkButton-default-border:0px; -GtkButton-default-outside-border:0px; -GtkButton-inner-border:0px; border-width:0px; -outer-stroke-width: 0px; margin:0px; padding:0px;}"+
-					 "VTToggleButton {-GtkWidget-focus-padding: 0px;-GtkButton-default-border:0px;-GtkButton-default-outside-border:0px;-GtkButton-inner-border:0px;border-color:alpha(#000000,0.0);border-width: 1px;-outer-stroke-width: 0px;border-radius: 3px;border-style: solid;background-image: none;margin:0px;padding:0px 0px 0px 0px;background-color: alpha(#000000,0.0);color: #AAAAAA; box-shadow: none;transition-duration: 0s;}"+
+					 "VTToggleButton {-GtkWidget-focus-padding: 0px;-GtkButton-default-border:0px;-GtkButton-default-outside-border:0px;-GtkButton-inner-border:0px;border-color:alpha(#000000,0.0);border-width: 1px;-outer-stroke-width: 0px;border-radius: 3px;border-style: solid;background-image: none;margin:0px;padding:0px 0px 0px 0px;background-color: alpha(#000000,0.0);color: #AAAAAA; box-shadow: none;}"+
 					 "VTToggleButton:active{background-color: #00AAAA;background-image: -gtk-gradient(radial,center center, 0,center center, 1, from (#00BBBB),to (#008888) );color: #000000;}"+
 					 "VTToggleButton:prelight {background-color: #AAAAAA;background-image: -gtk-gradient(radial,center center, 0,center center, 1, from (#AAAAAA),to (#777777) ); color: #000000;}"+
 					 "VTToggleButton:active:prelight{background-color: #00AAAA;background-image: -gtk-gradient(radial,center center, 0,center center, 1, from (lighter(#00BBBB)),to (#008888) );color: #000000;}"+
@@ -832,6 +832,10 @@ public class VTMainWindow : Window{
 					 "HVBox,#quick_options_notebook{background-color: alpha(#000000,1.0);}"+
 					 "#settings-scrolledwindow{ background-color: @bg_color;}"+
 					 "";
+
+		if(Gtk.get_major_version()>=3 && Gtk.get_minor_version()>4)
+			style_str+= "VTToggleButton{transition-duration: 0s;}";
+
 		if(Gtk.get_major_version()>=3 && Gtk.get_minor_version()>6)//special eyecandy if supported ;)
 			style_str+= "VTToggleButton:active { text-shadow: 1px 1px 2px #005555;}";
 
@@ -851,8 +855,12 @@ public class VTMainWindow : Window{
 			Gtk.StyleContext.add_provider_for_screen(this.get_screen(),css_main,Gtk.STYLE_PROVIDER_PRIORITY_USER);
 		}catch (Error e) {
 			debug("Theme error! loading default..");
-			css_main.load_from_data (style_str,-1);
-			Gtk.StyleContext.add_provider_for_screen(this.get_screen(),css_main,Gtk.STYLE_PROVIDER_PRIORITY_USER);
+			try{
+				css_main.load_from_data (style_str,-1);
+				Gtk.StyleContext.add_provider_for_screen(this.get_screen(),css_main,Gtk.STYLE_PROVIDER_PRIORITY_USER);
+			}catch (Error e) {
+				debug("Theme error! default theme is broken!");
+			}
 		}
 
 		this.animation_enabled=conf.get_boolean("animation_enabled",true);

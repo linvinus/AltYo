@@ -125,8 +125,10 @@ public class PanelHotkey : Object {
         uint key_sym;
         ModifierType modifiers;
 
-        if(this.display==null)
+        if(this.display==null){
+			debug("error: KeyBinding display==null");
 			return null;
+		}
 
         accelerator_parse (combination, out key_sym, out modifiers);
 		debug("bind %s display=%d key_sym=%d modifiers=%d",combination,(int)display,(int)key_sym,modifiers);

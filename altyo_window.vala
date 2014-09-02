@@ -497,6 +497,7 @@ public class VTMainWindow : Window{
 		this.display_sync();
 		this.current_state=WStates.VISIBLE;
 		this.window_set_active();//update keep_above stick and focus
+		this.hotkey.Xklrestore(this.get_window());//restore keyboard layout
 		if((this.mouse_follow || !this.gravity_north_west) && !this.pull_maximized){
 			this.move (this.orig_x,this.orig_y);//new position
 		}else
@@ -555,6 +556,11 @@ public class VTMainWindow : Window{
 		this.orig_w_tasks_notebook = this.ayobject.tasks_notebook.get_allocated_width();
 		debug("pull_up orig_h_tasks_notebook=%d orig_w_tasks_notebook=%d",orig_h_tasks_notebook,orig_w_tasks_notebook);
 		this.pull_maximized=this.maximized;
+		/* save keyboard layout,
+		 * because we will destroy xwindow (this.unrealize())
+		 * we need to save some of window-state atoms*/
+		this.hotkey.Xklsave(this.get_window());
+		 
 		if(this.pull_w<2 || this.pull_h<2){//if start hidden
 			//we don't know size , guess
 			this.orig_w_tasks_notebook=orig_w_main_vbox=this.pull_w=this.ayobject.terminal_width;

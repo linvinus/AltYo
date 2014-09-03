@@ -149,6 +149,16 @@ static void configure_debug(MySettings conf){
 				}
 }
 
+public class AppAltYo: Gtk.Application {
+	public AppAltYo(string? application_id, ApplicationFlags flags){
+		Object (application_id:application_id, flags:flags);
+	}
+	
+	public override bool local_command_line (ref unowned string[] arguments, out int exit_status){
+        return false;
+    }
+}
+
 int main (string[] args) {
 	
 	GLib.ApplicationFlags appflags=ApplicationFlags.HANDLES_COMMAND_LINE;
@@ -189,7 +199,7 @@ int main (string[] args) {
 		appflags|=GLib.ApplicationFlags.NON_UNIQUE;
 	}
 
-    var app = new Gtk.Application(Globals.app_id, appflags);
+    var app = new AppAltYo(Globals.app_id, appflags);
 
 	//remote args usage
     app.command_line.connect((command_line)=>{//ApplicationCommandLine

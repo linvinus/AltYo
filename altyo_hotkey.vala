@@ -303,7 +303,11 @@ public class PanelHotkey : Object {
 					       /*format*/32, 
 					       /*mode*/Gdk.PropMode.REPLACE, 
 					       /*data*/ (uint8[])prop
-					       /*XKLAVIER_STATE_PROP_LENGTH* nelements 2*/ );
+					       #if VALA_0_22
+					       /*XKLAVIER_STATE_PROP_LENGTH* nelements 2*/ ,2);
+					       #else
+					       );
+					       #endif
 
 	  debug( "Saved the group %d, indicators %X for appwin %d ",
 				this.grp, this.inds, (int)appWin );

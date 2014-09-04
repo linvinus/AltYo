@@ -1,3 +1,9 @@
+altyo (0.4~rc10-linvinus1) precise; urgency=low
+
+  * fix: for vala 0.18 v2
+
+ -- denis <linvinus@gmail.com>  Thu, 04 Sep 2014 10:19:46 +0400
+
 altyo (0.4~rc9-linvinus1) precise; urgency=low
 
   * fix: broken gtk3 theme in precise

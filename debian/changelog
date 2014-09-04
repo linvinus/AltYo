@@ -1,3 +1,12 @@
+altyo (0.4~rc9-linvinus1) precise; urgency=low
+
+  * fix: broken gtk3 theme in precise
+  * improvement: save/restore XKLAVIER_STATE Xwindow atom on pull-up/pull-down
+  * fix: handling of command line in ubuntu 14.04
+  * fix: for vala 0.18
+
+ -- denis <linvinus@gmail.com>  Thu, 04 Sep 2014 09:01:10 +0400
+
 altyo (0.4~rc8-linvinus1) precise; urgency=low
 
   * improvement: check terminal_exclude_variables before use

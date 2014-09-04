@@ -153,10 +153,12 @@ public class AppAltYo: Gtk.Application {
 	public AppAltYo(string? application_id, ApplicationFlags flags){
 		Object (application_id:application_id, flags:flags);
 	}
-	
+	#if VALA_0_22
 	public override bool local_command_line (ref unowned string[] arguments, out int exit_status){
+		exit_status=-1;
         return false;
     }
+    #endif
 }
 
 int main (string[] args) {

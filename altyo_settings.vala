@@ -17,6 +17,7 @@ public class AYSettings : AYTab{
 	private Gtk.ListStore keybindings_store;
 	private string autorun_file;
 	private string monitor_name;/*save monitor name on which settings was opened*/
+	private bool ignore_on_loading;/*ignore some events when loading settings from ini file*/
 	public AYSettings(MySettings my_conf,Notebook notebook, int tab_index,AYObject ayo) {
 		base(my_conf, notebook, tab_index);
 		this.tbutton.set_title(tab_index, _("AYsettings") );
@@ -80,6 +81,15 @@ public class AYSettings : AYTab{
 		var B = builder.get_object ("animation_pull_steps") as Gtk.SpinButton;
 		if(B!=null){
 			B.sensitive=w.active;
+		}
+	}
+	
+	[CCode (instance_pos = -1)]
+	public void on_workaround_if_focuslost_toggled  (Gtk.CheckButton w) {
+		if(!this.ignore_on_loading && w.active){
+			string title=_("AltYo attention");
+			string msg=_("You must restart altyo for the workaround to take effect.");
+			this.ayobject.main_window.show_message_box(title,msg);
 		}
 	}
 
@@ -632,6 +642,7 @@ public class AYSettings : AYTab{
         int win_x,win_y;
         this.ayobject.main_window.get_position (out win_x, out win_y);	
 		this.monitor_name = gscreen.get_monitor_plug_name(gscreen.get_monitor_at_point (win_x,win_y));
+		this.ignore_on_loading = true;
 		
 		var keys = this.my_conf.get_profile_keys();
 		foreach(var key in keys){
@@ -859,7 +870,7 @@ public class AYSettings : AYTab{
 			ASS.sensitive=false;
 		}
 		#endif
-
+		this.ignore_on_loading = false;
 	}//get_from_conf
 
 	public void apply() {

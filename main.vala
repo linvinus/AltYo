@@ -166,9 +166,14 @@ public class AppAltYo: Gtk.Application {
 		exit_status=-1;
         return false;
     }
+/* glib compatability hack
+ * http://www.trevorpounds.com/blog/?p=103
+ * >Building and linking to an older version of libc or using a chroot is a much better, less error prone approach.
+ * */
+//~[CCode (cname = "__asm__(\".symver memcpy,memcpy@GLIBC_2.2.5\");//",type="")]
+//~	public extern void* fake_function();
     
 }
-
 int main (string[] args) {
 	
 	GLib.ApplicationFlags appflags=ApplicationFlags.HANDLES_COMMAND_LINE;

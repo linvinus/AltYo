@@ -121,14 +121,15 @@ FAQ:
   `<keybind key="F11">  
   <action name="ToggleFullscreen"/>  
   </keybind>`
-* Q) Missing terminal focus-in
-* A) Bug report is here https://bugzilla.gnome.org/show_bug.cgi?id=677329
-     https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=699907
-     fixed in Ubuntu 12.04 updates xserver-xorg-core-lts-trusty >= 2:1.15.1-0ubuntu2~precise2
-     fixed in Ubuntu 14.04 and newer
-     Workarounds:
-     1) window.unrealize();
-     2) export GDK_CORE_DEVICE_EVENTS=1
+
+* Q) Missing terminal focus-in (libvte bug)
+* A) Bug report is here https://bugzilla.gnome.org/show_bug.cgi?id=677329  
+     https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=699907  
+     resolved in Ubuntu 12.04 updates xserver-xorg-core-lts-trusty >= 2:1.15.1-0ubuntu2~precise2  
+     resolved in Ubuntu 14.04 and newer  
+     Workarounds:  
+     1) window.unrealize();  
+     2) export GDK_CORE_DEVICE_EVENTS=1  
 
 
 Reviews about AltYo

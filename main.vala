@@ -67,12 +67,6 @@ struct Globals{
 	[CCode (array_length = false, array_null_terminated = true)]
 	public static string[]? exec_file_with_args = null;
 
-	public static const OptionEntry[] local_options = {
-					{ "id", 0, 0, OptionArg.STRING, ref Globals.app_id,null,null},
-					{ "standalone", 0, 0, OptionArg.NONE, ref Globals.standalone_mode,null,null},
-					{ null }
-			};
-		
 	public static const OptionEntry[] options = {
 					/*allow show help from remote call*/
 					{ "help", 'h', OptionFlags.HIDDEN, OptionArg.NONE, ref Globals.opt_help, null, null },
@@ -109,6 +103,19 @@ static void print_handler(string? domain, LogLevelFlags flags, string message) {
 		printf("domain:%s message:%s\n",domain,message);
 		GLib.stdout.flush();
 	    }
+
+/* sync file_workaround_if_focuslost with  workaround_if_focuslost option
+ * */
+static void sync_workaround(MySettings conf, string file_workaround_if_focuslost){
+	bool workaround = conf.get_boolean("workaround_if_focuslost",false);
+	bool w_file = GLib.FileUtils.test(file_workaround_if_focuslost,GLib.FileTest.EXISTS);
+	debug("workaround != w_file %d != %d",(int)workaround,(int)w_file);
+	if(workaround && !w_file){
+		GLib.FileUtils.set_data(file_workaround_if_focuslost,null);
+	}else if(!workaround && w_file){
+		GLib.FileUtils.remove(file_workaround_if_focuslost);
+	}	
+}
 
 static void configure_debug(MySettings conf){
 				if(conf.force_debug) {
@@ -171,18 +178,21 @@ int main (string[] args) {
 	Intl.bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	Intl.textdomain (GETTEXT_PACKAGE);
 
-	Gtk.init (ref args);
+	//Gtk.init (ref args);
 	Globals.app_id="org.gtk.altyo";//default app id
 
 	/* Parse only --id and --standalone options
 	 * others will be parsed in application app.startup.connect event
 	 * */
+	OptionContext local_ctx = new OptionContext("AltYo");//global var, used in app.startup
 	try {
-	   OptionContext ctx = new OptionContext("AltYo");
-	   ctx.set_help_enabled (false);//disable exit from application
-	   ctx.set_ignore_unknown_options (true);//disable exit from application if wrong parameters
-	   ctx.add_main_entries(Globals.local_options, null);
-	   ctx.parse(ref args);
+	   local_ctx.set_help_enabled (false);//disable exit from application
+	   local_ctx.set_ignore_unknown_options (true);//disable exit from application if wrong parameters
+	   local_ctx.add_main_entries(Globals.options, null);
+	   string[] args2 = args;         //copy args for local use, original args will be used on remote side
+	   unowned string[] args3 = args2;//tmp pointer
+	   local_ctx.parse(ref args3);
+	   args2=null;                    //destroy
 	} catch (Error e) {
 	   GLib.stderr.printf("Error initializing: %s\n", e.message);
 	   return 1;
@@ -202,6 +212,23 @@ int main (string[] args) {
 		appflags|=GLib.ApplicationFlags.NON_UNIQUE;
 	}
 
+	/******************************************************************/
+	/* use file as special configuration marker
+	 * because we should not parse config.ini file yet
+	 * later we will sync it in sync_workaround()
+	 * simple and fast
+	 * */
+	string file_workaround_if_focuslost = GLib.Environment.get_user_config_dir()+"/altyo/workaround_if_focuslost";
+	if(GLib.FileUtils.test(file_workaround_if_focuslost,GLib.FileTest.EXISTS) ){
+		/* more info in README.md in FAQ.
+		 * */
+		if(!GLib.Environment.set_variable("GDK_CORE_DEVICE_EVENTS","1",true)) //must be set before new AppAltYo()
+			printf("altyo: Unable to set GDK_CORE_DEVICE_EVENTS=1\n");
+		else if(Globals.force_debug)
+			printf("altyo: set GDK_CORE_DEVICE_EVENTS=1\n");
+	}
+	/******************************************************************/
+	
     var app = new AppAltYo(Globals.app_id, appflags);
 
 	//remote args usage
@@ -352,39 +379,32 @@ int main (string[] args) {
 
 	app.startup.connect(()=>{//first run
 				debug("app.startup.connect");
-				try {
-				   OptionContext ctx = new OptionContext("AltYo");
-				   ctx.add_main_entries(Globals.options, null);
-				   ctx.parse(ref args);
-				} catch (Error e) {
-				   GLib.stderr.printf("Error initializing: %s\n", e.message);
-				   return;
+				if (Globals.opt_help) {
+					printf(local_ctx.get_help (true, null));
+					return;//show help and exit
 				}
 				var conf = new MySettings(Globals.cmd_conf_file,Globals.standalone_mode);
 				conf.readonly=Globals.config_readonly;
 				conf.disable_hotkey=Globals.disable_hotkey;
 				conf.default_path=Globals.path;
 				conf.force_debug=Globals.force_debug;
-				conf.get_boolean("window_allow_remote_control",false);
-				
-				if(conf.get_boolean("workaround_if_focuslost",false)){
-					/* more info in README.md in FAQ.
-					 * */
-					if(!GLib.Environment.set_variable("GDK_CORE_DEVICE_EVENTS","1",true))
-						printf("altyo: Unable to set GDK_CORE_DEVICE_EVENTS=1\n");
-				}
 
 				if(!conf.opened){
 					printf("Unable to open configuration file!\n");
 					Posix.exit(1);
 				}
+				
+				conf.get_boolean("window_allow_remote_control",false);//remember option type
 
 				configure_debug(conf);
+				sync_workaround(conf,file_workaround_if_focuslost);
+				
 				debug("git_hash=%s",AY_GIT_HASH);
 				debug("changelog_tag=%s",AY_CHANGELOG_TAG);
 
 				conf.on_load.connect(()=>{
 					configure_debug(conf);
+					sync_workaround(conf,file_workaround_if_focuslost);
 				});
 
 				var win = new VTMainWindow (WindowType.TOPLEVEL);

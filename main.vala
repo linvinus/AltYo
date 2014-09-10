@@ -366,6 +366,13 @@ int main (string[] args) {
 				conf.default_path=Globals.path;
 				conf.force_debug=Globals.force_debug;
 				conf.get_boolean("window_allow_remote_control",false);
+				
+				if(conf.get_boolean("workaround_if_focuslost",false)){
+					/* more info in README.md in FAQ.
+					 * */
+					if(!GLib.Environment.set_variable("GDK_CORE_DEVICE_EVENTS","1",true))
+						printf("altyo: Unable to set GDK_CORE_DEVICE_EVENTS=1\n");
+				}
 
 				if(!conf.opened){
 					printf("Unable to open configuration file!\n");

@@ -51,12 +51,8 @@ public class PanelHotkey : Object {
     private Gdk.Window root_window;
     private X.ID x_id;
     private X.Atom active_window;
-    private Gdk.Atom xklavier;
-    private Gdk.Atom xaint;
     private bool processing_event = false;
     public signal void on_active_window_change();
-	private int grp = -1;
-	private uint8 inds = 0;
 	
     private static uint[] lock_modifiers = {
         0,
@@ -77,8 +73,6 @@ public class PanelHotkey : Object {
 
         this.display = Gdk.x11_get_default_xdisplay ();
         this.active_window = this.display.intern_atom("_NET_ACTIVE_WINDOW",false);
-        this.xklavier = Gdk.Atom.intern("XKLAVIER_STATE",false);
-        this.xaint =  Gdk.Atom.intern("INTEGER",false);
         x_id = X11Window.get_xid (root_window);
         root_window.add_filter (event_filter);
 
@@ -246,70 +240,5 @@ public class PanelHotkey : Object {
 		this.display.get_transient_for_hint(w,out result);
 		return result;
 	}
-	
-	/**
-	 * Gets the XKLAVIER_STATE from the window property
-	 * from libxklavier 
-	 */
-	public bool Xklsave( Gdk.Window appWin ){
-	  Atom type_ret;
-	  int format_ret;
-	  ulong nitems, rest;
-	  uint8[] prop;
-	  int32* prop32;
-	  bool ret = false;
-																								
-
-	
-																								
-	  if( ( Gdk.property_get
-			( appWin, 
-			  /*property*/ this.xklavier,
-			  /*type*/    this.xaint, 
-			  /*offset*/  0L,
-			  /*XKLAVIER_STATE_PROP_LENGTH length*/ 2, 
-			  /*pdelete*/ (int)false,
-			  /*actual_property_type*/ out type_ret, 
-			  /*actual_format*/ out format_ret,
-			  /*data*/ out prop ) == true )
-		  && ( type_ret == this.xaint ) && ( format_ret == 32 ) )
-	  {
-		prop32 = (int32[])prop;
-		this.grp = prop32[0];																						
-		this.inds = (uint8)prop32[1];
-		debug("win satet grp:%d inds:%d",prop32[0],prop32[1]);																						
-		ret = true;
-	  }
-	  
-																								
-	  if( !ret )
-		debug( "Appwin does not have XKLAVIER_STATE atom %d", (int)appWin) ;
-
-	  return ret;
-	}
-
-	/**
-	 * Restore the XKLAVIER_STATE into the window properties
-	 */
-	public void Xklrestore(  Gdk.Window appWin ){
-	  int32 prop[2];
-
-	  prop[0] = this.grp;
-	  prop[1] = this.inds;
-
-	  Gdk.property_change( /*window*/appWin, 
-						   /*property*/ this.xklavier, 
-						   /*type*/ this.xaint,
-					       /*format*/32, 
-					       /*mode*/Gdk.PropMode.REPLACE, 
-					       /*data*/ (uint8[])prop
-					       #if VALA_0_22
-					       /*XKLAVIER_STATE_PROP_LENGTH* nelements 2*/ ,2);
-					       #else
-					       );
-					       #endif
-
-	  debug( "Saved the group %d, indicators %X for appwin %d ",
-				this.grp, this.inds, (int)appWin );
-	}	
+		
 }

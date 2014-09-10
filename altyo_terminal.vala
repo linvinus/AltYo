@@ -674,7 +674,8 @@ public class VTTerminal : AYTab{
 			return CFG_CHECK.OK;
 			});
 		foreach(string arg in args){
-			if(arg == "TERM"){
+			if(arg == "TERM" ||
+			  (arg == "GDK_CORE_DEVICE_EVENTS" && this.my_conf.get_boolean("workaround_if_focuslost",false) ) ){
 				continue;//skip
 			}else
 			if( !GLib.Regex.match_simple(term_exclude_vars,arg,RegexCompileFlags.CASELESS,0) ){

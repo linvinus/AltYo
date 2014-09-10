@@ -1,3 +1,14 @@
+altyo (0.4~rc11-linvinus1) trusty; urgency=low
+
+  * update README.md
+  * fix: make focus-lost workaround optional
+  * improvement: better workaround for libvte focus-lost bug
+  * improvement: notify user about the need to restart altyo for the workaround to take effect.
+  * update: Russian translation
+  * misc: hack, for future research
+
+ -- denis <linvinus@gmail.com>  Wed, 10 Sep 2014 23:09:57 +0400
+
 altyo (0.4~rc10-linvinus1) precise; urgency=low
 
   * fix: for vala 0.18 v2

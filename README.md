@@ -128,8 +128,9 @@ FAQ:
      resolved in Ubuntu 12.04 updates xserver-xorg-core-lts-trusty >= 2:1.15.1-0ubuntu2~precise2  
      resolved in Ubuntu 14.04 and newer  
      Workarounds:  
-     1) window.unrealize();  
-     2) export GDK_CORE_DEVICE_EVENTS=1  
+     1) ~~window.unrealize();~~  
+     2) ~~export GDK_CORE_DEVICE_EVENTS=1 ~~  
+     3) Set checkbox "Workaround if focus lost" in settings, then restart altyo.
 
 
 Reviews about AltYo

@@ -88,6 +88,7 @@ sorry, this keys is hardcoded.
    This libraries should be available on fresh distributives.
 6. Double click on empty space in tab bar will open new tab.
 7. Middle click on tab button will close tab.
+8. You may set default TERM variable at Advanced -> Terminal regexps ->TERM, for example `TERM=xterm-256color`
 
 FAQ:
 ----

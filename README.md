@@ -129,7 +129,7 @@ FAQ:
      resolved in Ubuntu 14.04 and newer  
      Workarounds:  
      1) ~~window.unrealize();~~  
-     2) ~~export GDK_CORE_DEVICE_EVENTS=1 ~~  
+     2) ~~export GDK_CORE_DEVICE_EVENTS=1~~  
      3) Set checkbox "Workaround if focus lost" in settings, then restart altyo.
 
 

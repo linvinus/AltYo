@@ -48,6 +48,8 @@
 using Gtk;
 using Posix;
 
+static const string DEFAULT_APP_ID = "org.gtk.altyo";
+
 struct Globals{
 	static bool reload = false;
 	static bool opt_help = false;
@@ -63,6 +65,8 @@ struct Globals{
 	static string? cmd_title_tab = null;
 	static string? cmd_select_tab = null;
 	static string? cmd_close_tab = null;
+	static bool list_id = false;
+	static bool force_remote = false;
 
 	[CCode (array_length = false, array_null_terminated = true)]
 	public static string[]? exec_file_with_args = null;
@@ -76,6 +80,7 @@ struct Globals{
 					{ "exec", 'e', 0, OptionArg.STRING_ARRAY, ref Globals.exec_file_with_args,N_("Run command in new tab"), N_("\"command arg1 argN...\"") },
 					{ "toggle", 0, 0, OptionArg.NONE, ref Globals.toggle,N_("Show/hide window"), null },
 					{ "id", 0, 0, OptionArg.STRING, ref Globals.app_id,N_("Set application id, none means disable application id"),"org.gtk.altyo_my,none" },
+					{ "listid", 0, 0, OptionArg.NONE, ref Globals.list_id,N_("Show ids of running AltYo instances"), null },
 					{ "disable_hotkey", 0, 0, OptionArg.NONE, ref Globals.disable_hotkey,N_("Disable main hotkey"),null},
 					{ "standalone", 0, 0, OptionArg.NONE, ref Globals.standalone_mode,N_("Disable control of window dimension, and set --id=none"),null},
 					{ "default_path", 0, 0, OptionArg.STRING, ref Globals.path,N_("Set/update default path"),"/home/user/special" },
@@ -85,6 +90,7 @@ struct Globals{
 					{ "get-set-tab-title", 't', 0, OptionArg.STRING, ref Globals.cmd_title_tab,N_("Get/Set tab title"), null },
 					{ "select-tab", 0, 0, OptionArg.STRING, ref Globals.cmd_select_tab,N_("Select tab by index"), null },
 					{ "close-tab", 0, 0, OptionArg.STRING, ref Globals.cmd_close_tab,N_("Close tab by index"), null },
+					{ "remote", 0, 0, OptionArg.NONE, ref Globals.force_remote,N_("Connect to remote instance or exit."), null },
 					{ null }
 			};
 
@@ -155,6 +161,25 @@ static void configure_debug(MySettings conf){
 					Log.set_handler(null, LogLevelFlags.LEVEL_MASK & log_mask, print_handler);
 				}
 }
+[DBus (name = "org.gtk.altyo")]
+public class AltYoDbusServer : Object {
+	weak Gtk.Application app;
+	public AltYoDbusServer(Gtk.Application app){
+		this.app = app;
+	}
+	public string get_window_title(){
+		unowned List<weak Window> list = app.get_windows();
+		if(list!=null){
+			var win=((VTMainWindow)list.data);
+			return win.title;
+		}
+		return "window not found :(";
+	}
+}
+[DBus (name = "org.gtk.altyo")]
+interface AltYoDbusClient : Object {
+    public abstract string get_window_title () throws IOError;
+}
 
 public class AppAltYo: Gtk.Application {
 	public AppAltYo(string? application_id, ApplicationFlags flags){
@@ -172,7 +197,14 @@ public class AppAltYo: Gtk.Application {
  * */
 //~[CCode (cname = "__asm__(\".symver memcpy,memcpy@GLIBC_2.2.5\");//",type="")]
 //~	public extern void* fake_function();
-    
+    public override bool dbus_register (DBusConnection connection, string object_path){
+		try {
+			connection.register_object (object_path, new AltYoDbusServer (this));
+		} catch (IOError e) {
+			GLib.stderr.printf ("Could not register AltYoServer\n");
+		}
+		return true;//continue
+	}
 }
 int main (string[] args) {
 	
@@ -184,15 +216,13 @@ int main (string[] args) {
 	Intl.textdomain (GETTEXT_PACKAGE);
 
 	//Gtk.init (ref args);
-	Globals.app_id="org.gtk.altyo";//default app id
+	Globals.app_id=DEFAULT_APP_ID;//default app id
 
 	/* Parse only --id and --standalone options
 	 * others will be parsed in application app.startup.connect event
 	 * */
 	OptionContext local_ctx = new OptionContext("AltYo");//global var, used in app.startup
 	try {
-	   local_ctx.set_help_enabled (false);//disable exit from application
-	   local_ctx.set_ignore_unknown_options (true);//disable exit from application if wrong parameters
 	   local_ctx.add_main_entries(Globals.options, null);
 	   string[] args2 = args;         //copy args for local use, original args will be used on remote side
 	   unowned string[] args3 = args2;//tmp pointer
@@ -202,19 +232,67 @@ int main (string[] args) {
 	   GLib.stderr.printf("Error initializing: %s\n", e.message);
 	   return 1;
 	}
+	/*searching for remote instances*/
+	if(Globals.list_id){
+		Variant interfaces;
+		DBusConnection session_bus = Bus.get_sync (BusType.SESSION);
+		try {
+			 interfaces =  session_bus.call_sync ("org.freedesktop.DBus",
+												 "/",
+												 "org.freedesktop.DBus",
+												 "ListNames",
+												 null,
+												 new VariantType ("(as)"),
+												 DBusCallFlags.NONE,
+												 -1);
+			}catch (GLib.Error e) {
+				GLib.stderr.printf ("unable to search for existing altyo instances: %s \n", e.message);
+				return 1;
+			}
 
+			foreach (var val in interfaces.get_child_value (0)) {
+				var address = (string) val;
+				if (address.has_prefix (DEFAULT_APP_ID)){//search only inside org.gtk.altyo
+					printf("%s",address);
+					try{
+						string path = "/"+address.replace(".","/");
+						AltYoDbusClient client = session_bus.get_proxy_sync (address,path,
+						GLib.DBusProxyFlags.DO_NOT_CONNECT_SIGNALS|GLib.DBusProxyFlags.DO_NOT_LOAD_PROPERTIES);
+						printf(" %s",client.get_window_title());
+					}catch (GLib.Error e) {
+						//GLib.stderr.printf ("unable to search for existing altyo instances: %d %s \n",e.code, e.message);
+					}
+					printf("\n");
+				}
+			}
+
+		return 0;//list and exit
+	}
+
+	if(Globals.standalone_mode && Globals.app_id==DEFAULT_APP_ID){
+		Globals.app_id+="._%d".printf(Posix.getpid());//generate unique id for standalone_mode
+	}
+	if(!Globals.app_id.has_prefix(DEFAULT_APP_ID)){
+		/*this name restriction occur because we need limit searching in --listid */
+		printf(_("Application id must begin with %s \n for example %s.my_instance"),DEFAULT_APP_ID,DEFAULT_APP_ID);
+		return 1;
+	}
 
 	if(Globals.app_id == "none")
 		Globals.app_id=null;
 	else if(!GLib.Application.id_is_valid(Globals.app_id)){
-		printf("Wrong application id \"%s\"\n",Globals.app_id);
+		printf(_("Wrong application id \"%s\""),Globals.app_id);
+		printf(_("""
+    Application identifiers must contain only the ASCII characters "A-Z[0-9]_-." and must not begin with a digit.
+    Application identifiers must contain at least one '.' (period) character (and thus at least three elements).
+    Application identifiers must not begin or end with a '.' (period) character.
+    Application identifiers must not contain consecutive '.' (period) characters.
+    Application identifiers must not exceed 255 characters."""));
 		return 1;//stop on error
 	}
 	
 	if(Globals.standalone_mode){
 		Globals.disable_hotkey=true;
-		Globals.app_id=null;
-		appflags|=GLib.ApplicationFlags.NON_UNIQUE;
 	}
 
 	/******************************************************************/
@@ -275,10 +353,6 @@ int main (string[] args) {
 						command_line.print("Error initializing: %s\n", e.message);
 				}
 				
-				if (Globals.opt_help) {
-					command_line.printerr (ctx.get_help (true, null));
-					Globals.opt_help=false;
-				}
 								
 				debug("app.command_line.connect reload=%d",(int)Globals.reload);
 				VTMainWindow remote_window=null;
@@ -383,11 +457,11 @@ int main (string[] args) {
 		});//app.command_line.connect
 
 	app.startup.connect(()=>{//first run
-				debug("app.startup.connect");
-				if (Globals.opt_help) {
-					printf(local_ctx.get_help (true, null));
-					return;//show help and exit
+				if(Globals.force_remote){
+					printf("remote instance %s not found!\n",Globals.app_id);
+					Posix.exit(1);
 				}
+				debug("app.startup.connect");
 				var conf = new MySettings(Globals.cmd_conf_file,Globals.standalone_mode);
 				conf.readonly=Globals.config_readonly;
 				conf.disable_hotkey=Globals.disable_hotkey;

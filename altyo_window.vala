@@ -1938,6 +1938,7 @@ public class AYObject :Object{
 			dialog.website ="https://github.com/linvinus/AltYo";
 			dialog.version = (AY_CHANGELOG_TAG!="" ? AY_CHANGELOG_TAG : "0.3") +" "+AY_GIT_HASH;
 			dialog.translator_credits=_("willemw12@gmail.com");
+			dialog.comments="id: "+Globals.app_id;
 			Image img = new Image.from_resource ("/org/gnome/altyo/altyo.svg");
 			dialog.set_logo(img.pixbuf);
 

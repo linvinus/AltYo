@@ -1410,6 +1410,18 @@ public class AYObject :Object{
 	}//CreateAYObject
 	
 	public bool create_tabs(){
+		if(Globals.exec_file_with_args!=null){
+			foreach(var s in Globals.exec_file_with_args){
+				debug("exec %s",s);
+				add_tab_with_title(s,s);
+			}
+			if(Globals.standalone_mode){
+				this.action_on_close_last_tab=2;//quit
+				this.hvbox_display_mode=HVBOXDISPLAY.HIDEIFONETAB;
+				return false;
+			}
+		}
+
 		var autostart_terminal_session=this.conf.get_string_list("terminal_autostart_session",null);
 		if(autostart_terminal_session != null && autostart_terminal_session.length>0){
 			foreach(var s in autostart_terminal_session){
@@ -1499,7 +1511,7 @@ public class AYObject :Object{
 		 * 1 - HVBOXDISPLAY.HIDDEN
 		 * 2 - HVBOXDISPLAY.HIDEIFONETAB
 		 * */
-		this.hvbox_display_mode=this.conf.get_integer("window_hvbox_display_mode",HVBOXDISPLAY.VISIBLE,(ref new_val)=>{
+		this.hvbox_display_mode=this.conf.get_integer("window_hvbox_display_mode",(Globals.standalone_mode?HVBOXDISPLAY.HIDEIFONETAB:HVBOXDISPLAY.VISIBLE),(ref new_val)=>{
 			if(new_val>HVBOXDISPLAY.HIDEIFONETAB){ new_val=HVBOXDISPLAY.VISIBLE; return CFG_CHECK.REPLACE;}
 			if(new_val<0){ new_val=HVBOXDISPLAY.VISIBLE; return CFG_CHECK.REPLACE;}
 			return CFG_CHECK.OK;

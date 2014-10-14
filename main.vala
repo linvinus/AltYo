@@ -347,12 +347,13 @@ int main (string[] args) {
 				Globals.cmd_select_tab = null;
 				Globals.cmd_close_tab = null;
 
+				var old_standalone_mode=Globals.standalone_mode;
 				try {
 					if(!ctx.parse(ref pargv))return 3;
 				} catch (Error e) {
 						command_line.print("altyo: Error initializing: %s\n", e.message);
 				}
-				
+				Globals.standalone_mode=old_standalone_mode;//restore standalone_mode state
 								
 				debug("app.command_line.connect reload=%d",(int)Globals.reload);
 				VTMainWindow remote_window=null;
@@ -490,15 +491,6 @@ int main (string[] args) {
 				win.set_application(app);
 				win.CreateVTWindow(conf);
 				main_win=win;
-
-				if(Globals.exec_file_with_args!=null){
-					foreach(var s in Globals.exec_file_with_args){
-						debug("exec %s",s);
-						win.ayobject.add_tab_with_title(s,s);
-					}
-					
-					
-				}
 				
 				sigaction_t action = sigaction_t ();
 				action.sa_handler = signal_handler;

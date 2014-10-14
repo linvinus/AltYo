@@ -1524,7 +1524,7 @@ public class AYObject :Object{
 					this.main_window.destroy();
 					return;
 				}else{
-					if(terminal.auto_restart){//restart shell if allowed
+					if(terminal.auto_restart && terminal.session_command==null){//restart shell if allowed
 						string S=_("Shell terminated.")+"\n\r\n\r";
 						debug(S);
 						terminal.vte_term.feed(S,S.length);

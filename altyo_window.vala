@@ -1447,7 +1447,7 @@ public class AYObject :Object{
 		 * 1 - restart shell, hide
 		 * 2 - quit
 		 * */
-		this.action_on_close_last_tab=this.conf.get_integer("window_action_on_close_last_tab",0,(ref new_val)=>{
+		this.action_on_close_last_tab=this.conf.get_integer("window_action_on_close_last_tab",(Globals.standalone_mode?2:0),(ref new_val)=>{
 			if(new_val>2){ new_val=1; return CFG_CHECK.REPLACE;}
 			if(new_val<0){ new_val=0; return CFG_CHECK.REPLACE;}
 			return CFG_CHECK.OK;

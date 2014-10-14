@@ -350,7 +350,7 @@ int main (string[] args) {
 				try {
 					if(!ctx.parse(ref pargv))return 3;
 				} catch (Error e) {
-						command_line.print("Error initializing: %s\n", e.message);
+						command_line.print("altyo: Error initializing: %s\n", e.message);
 				}
 				
 								
@@ -360,7 +360,7 @@ int main (string[] args) {
 				if(list!=null)
 					remote_window=((VTMainWindow)list.data);
 				else{
-					command_line.print("Err: remote window not found");
+					command_line.print("altyo: Err remote window not found");
 					return 2;
 				}
 
@@ -400,16 +400,16 @@ int main (string[] args) {
 							uint64 index=0;/*index from user starting from 1*/
 							if(s_arr.length==2 && uint64.try_parse(s_arr[0],out index) && index<=count && index>0){
 								if(s_arr[1]=="") s_arr[1]=null;
-								command_line.print("new title=%d:%s\n",(int)index,s_arr[1]);
+								command_line.print("altyo: new title=%d:%s\n",(int)index,s_arr[1]);
 								remote_window.ayobject.cmd_set_tab_title((uint)index-1,s_arr[1]);
 							}else{
 								if(s_arr.length!=2)
-									command_line.print("usage:\n\t-t \"3:new title\"\n\t-t \"\"\n");
+									command_line.print("altyo usage:\n\t-t \"3:new title\"\n\t-t \"\"\n");
 									
 								if(index>count)
-									command_line.print("Err: index>count (%d > %d)\n",(int)index,(int)count);
+									command_line.print("altyo: Err index>count (%d > %d)\n",(int)index,(int)count);
 								if(index==0)
-									command_line.print("Err: index must be > 1\n");
+									command_line.print("altyo: Err index must be > 1\n");
 							}
 						}else{
 							command_line.print("%d/%d \n",current_index+1,(int)count);
@@ -423,12 +423,12 @@ int main (string[] args) {
 						uint64 index=0;/*index from user starting from 1*/
 						if(uint64.try_parse(Globals.cmd_select_tab,out index) && index<=count && index>0 ){
 							remote_window.ayobject.cmd_activate_tab((uint)(index-1));
-							command_line.print("selected %d\n",(int)index);
+							command_line.print("altyo: selected %d\n",(int)index);
 						}else{
 							if(index>count)
-								command_line.print("Err: index>count (%d > %d)\n",(int)index,(int)count);
+								command_line.print("altyo: Err index>count (%d > %d)\n",(int)index,(int)count);
 							if(index==0)
-								command_line.print("Err: index must be > 1\n");							
+								command_line.print("altyo: Err index must be > 1\n");
 						}
 					}else
 					if(Globals.cmd_close_tab!=null){
@@ -436,18 +436,18 @@ int main (string[] args) {
 						uint64 index=0;/*index from user starting from 1*/
 						if(uint64.try_parse(Globals.cmd_close_tab,out index) && index<=count && index>0 ){
 							remote_window.ayobject.close_tab((int)(index-1));
-							command_line.print("closed %d\n",(int)index);
+							command_line.print("altyo: tab %d closed\n",(int)index);
 						}else{
 							if(index>count)
-								command_line.print("Err: index>count (%d > %d)\n",(int)index,(int)count);
+								command_line.print("altyo: Err index>count (%d > %d)\n",(int)index,(int)count);
 							if(index==0)
-								command_line.print("Err: index must be > 1\n");
+								command_line.print("altyo: Err index must be > 1\n");
 						}
 					}
 				}//if window_allow_remote_control
 				else{
 					if(Globals.cmd_title_tab!=null || Globals.cmd_select_tab!=null || Globals.cmd_close_tab!=null)
-						command_line.print("Err: remote commands is disabled in configuration file!\n");
+						command_line.print("altyo: Err remote commands is disabled in configuration file!\n");
 				}
 				
 				Globals.reload=false;
@@ -458,7 +458,7 @@ int main (string[] args) {
 
 	app.startup.connect(()=>{//first run
 				if(Globals.force_remote){
-					printf("remote instance %s not found!\n",Globals.app_id);
+					printf("altyo: remote instance %s not found!\n",Globals.app_id);
 					Posix.exit(1);
 				}
 				debug("app.startup.connect");
@@ -469,7 +469,7 @@ int main (string[] args) {
 				conf.force_debug=Globals.force_debug;
 
 				if(!conf.opened){
-					printf("Unable to open configuration file!\n");
+					printf("altyo: Unable to open configuration file!\n");
 					Posix.exit(1);
 				}
 				

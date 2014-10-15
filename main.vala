@@ -87,9 +87,9 @@ struct Globals{
 					{ "config_readonly", 0, 0, OptionArg.NONE, ref Globals.config_readonly, N_("Lock any configuration changes"), null },
 					{ "debug", 'd', 0, OptionArg.NONE, ref Globals.force_debug,N_("Force debug"), null },
 					{ "fullscreen", 'f', 0, OptionArg.NONE, ref Globals.cmd_fullscreen,N_("Toggle AltYo in fullscreen mode"), null },
-					{ "get-set-tab-title", 't', 0, OptionArg.STRING, ref Globals.cmd_title_tab,N_("Get/Set tab title"), null },
-					{ "select-tab", 0, 0, OptionArg.STRING, ref Globals.cmd_select_tab,N_("Select tab by index"), null },
-					{ "close-tab", 0, 0, OptionArg.STRING, ref Globals.cmd_close_tab,N_("Close tab by index"), null },
+					{ "tab_title", 't', 0, OptionArg.STRING, ref Globals.cmd_title_tab,N_("Get/Set tab title"), null },
+					{ "select_tab", 0, 0, OptionArg.STRING, ref Globals.cmd_select_tab,N_("Select tab by index"), null },
+					{ "close_tab", 0, 0, OptionArg.STRING, ref Globals.cmd_close_tab,N_("Close tab by index"), null },
 					{ "remote", 0, 0, OptionArg.NONE, ref Globals.force_remote,N_("Connect to remote instance or exit."), null },
 					{ null }
 			};

@@ -533,7 +533,7 @@ public class VTMainWindow : Window{
 
 				return true;//continue animation
 			}else{
-				this.hide();
+				this.iconify ();//this.hide(); use iconify to prevent loss of keyboard layout per window in XFCE.
 				this.current_state=WStates.HIDDEN;
 				this.pull_animation_active=false;
 				return false;
@@ -566,7 +566,7 @@ public class VTMainWindow : Window{
 			this.pull_active=true;
 			this.ayobject.clear_prelight_state();
 			this.prev_focus=this.get_focus();
-			this.hide();
+			this.iconify ();//this.hide(); use iconify to prevent loss of keyboard layout per window in XFCE.
 			this.current_state=WStates.HIDDEN;
 			return;
 		}
@@ -632,7 +632,7 @@ public class VTMainWindow : Window{
 			debug("slf=%d w=%d",(int)Gdk.X11Window.get_xid(slf_win),(int)w);
 		//debug("toggle_window %d %d",(int)this.last_event_time,(int)this.hotkey.last_focus_out_event_time);
 		//&& !this.is_active && (this.current_state == WStates.VISIBLE) && ((int)this.hotkey.last_key_event_time-(int)this.last_focus_out_event_time)>100
-		if(!this.keep_above && slf_win!=null && Gdk.X11Window.get_xid(slf_win) != w ){
+		if(this.current_state==WStates.VISIBLE && !this.keep_above && slf_win!=null && Gdk.X11Window.get_xid(slf_win) != w ){
 			this.window_set_active();
 			return;
 		}
@@ -674,7 +674,14 @@ public class VTMainWindow : Window{
 					}
 				}
 			}
-	
+
+			if( (event.changed_mask & Gdk.WindowState.ICONIFIED)==Gdk.WindowState.ICONIFIED ){//ICONIFIED state change
+				debug("changed_mask ICONIFIED");
+				if((event.new_window_state & Gdk.WindowState.ICONIFIED)!=Gdk.WindowState.ICONIFIED){
+					//deiconify from window manager
+					this.pull_down();
+				}
+			}	
 	return ret;
 	//false;//continue
 	//base.window_state_event(event);

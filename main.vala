@@ -209,7 +209,9 @@ public class AppAltYo: Gtk.Application {
 
 public delegate void myprintcb (string print_string);
 
-void apply_flags(VTMainWindow remote_window,myprintcb myprint){
+int apply_flags(VTMainWindow remote_window,myprintcb myprint){
+				int return_code=0;
+
 				if(Globals.force_debug){
 					configure_debug(remote_window.conf);
 				}
@@ -262,6 +264,7 @@ void apply_flags(VTMainWindow remote_window,myprintcb myprint){
 									myprint("altyo: Err index>count (%d > %d)\n".printf((int)index,(int)count) );
 								if(index==0)
 									myprint("altyo: Err index must be > 1\n");
+								return_code=1;
 							}
 						}else{
 							myprint("%d/%d \n".printf(current_index+1,(int)count) );
@@ -276,12 +279,13 @@ void apply_flags(VTMainWindow remote_window,myprintcb myprint){
 						uint64 index=0;/*index from user starting from 1*/
 						if(uint64.try_parse(Globals.cmd_select_tab,out index) && index<=count && index>0 ){
 							remote_window.ayobject.cmd_activate_tab((uint)(index-1));
-							myprint("altyo: selected %d\n".printf((int)index) );
+							debug("altyo: selected %d\n".printf((int)index) );
 						}else{
 							if(index>count)
 								myprint("altyo: Err index>count (%d > %d)\n".printf((int)index,(int)count) );
 							if(index==0)
 								myprint("altyo: Err index must be > 1\n");
+							return_code=1;
 						}
 					}
 
@@ -290,19 +294,22 @@ void apply_flags(VTMainWindow remote_window,myprintcb myprint){
 						uint64 index=0;/*index from user starting from 1*/
 						if(uint64.try_parse(Globals.cmd_close_tab,out index) && index<=count && index>0 ){
 							remote_window.ayobject.close_tab((int)(index-1));
-							myprint("altyo: tab %d closed\n".printf((int)index) );
+							debug("altyo: tab %d closed\n".printf((int)index) );
 						}else{
 							if(index>count)
 								myprint("altyo: Err index>count (%d > %d)\n".printf((int)index,(int)count) );
 							if(index==0)
 								myprint("altyo: Err index must be > 1\n");
+							return_code=1;
 						}
 					}
 				}//if window_allow_remote_control
 				else{
 					if(Globals.cmd_title_tab!=null || Globals.cmd_select_tab!=null || Globals.cmd_close_tab!=null)
 						myprint("altyo: Err remote commands is disabled in configuration file!\n");
+						return_code=1;
 				}
+	return return_code;
 }
 
 int main (string[] args) {
@@ -464,13 +471,13 @@ int main (string[] args) {
 					return 2;
 				}
 
-				apply_flags(remote_window,(s)=>{
+				var return_code = apply_flags(remote_window,(s)=>{
 					command_line.print(s);
 					});
 
 				Globals.reload=false;
 
-				return 2;//exit status
+				return return_code;//exit status
 			}
 		});//app.command_line.connect
 

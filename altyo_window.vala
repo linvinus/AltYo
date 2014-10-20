@@ -1418,10 +1418,6 @@ public class AYObject :Object{
 	
 	public bool create_tabs(){
 		if(Globals.exec_file_with_args!=null){
-			foreach(var s in Globals.exec_file_with_args){
-				debug("exec %s",s);
-				add_tab_with_title(s,s);
-			}
 			if(Globals.standalone_mode){
 				this.action_on_close_last_tab=2;//quit
 				this.hvbox_display_mode=HVBOXDISPLAY.HIDEIFONETAB;

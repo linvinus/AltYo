@@ -84,12 +84,12 @@ struct Globals{
 					{ "disable_hotkey", 0, 0, OptionArg.NONE, ref Globals.disable_hotkey,N_("Disable main hotkey"),null},
 					{ "standalone", 0, 0, OptionArg.NONE, ref Globals.standalone_mode,N_("Disable control of window dimension, and set --id=none"),null},
 					{ "default_path", 0, 0, OptionArg.STRING, ref Globals.path,N_("Set/update default path"),"/home/user/special" },
-					{ "config_readonly", 0, 0, OptionArg.NONE, ref Globals.config_readonly, N_("Lock any configuration changes"), null },
+					{ "config-readonly", 0, 0, OptionArg.NONE, ref Globals.config_readonly, N_("Lock any configuration changes"), null },
 					{ "debug", 'd', 0, OptionArg.NONE, ref Globals.force_debug,N_("Force debug"), null },
 					{ "fullscreen", 'f', 0, OptionArg.NONE, ref Globals.cmd_fullscreen,N_("Toggle AltYo in fullscreen mode"), null },
-					{ "tab_title", 't', 0, OptionArg.STRING, ref Globals.cmd_title_tab,N_("Get/Set tab title"), null },
-					{ "select_tab", 0, 0, OptionArg.STRING, ref Globals.cmd_select_tab,N_("Select tab by index"), null },
-					{ "close_tab", 0, 0, OptionArg.STRING, ref Globals.cmd_close_tab,N_("Close tab by index"), null },
+					{ "tab-title", 't', 0, OptionArg.STRING, ref Globals.cmd_title_tab,N_("Get/Set tab title"), null },
+					{ "select-tab", 0, 0, OptionArg.STRING, ref Globals.cmd_select_tab,N_("Select tab by index"), null },
+					{ "close-tab", 0, 0, OptionArg.STRING, ref Globals.cmd_close_tab,N_("Close tab by index"), null },
 					{ "remote", 0, 0, OptionArg.NONE, ref Globals.force_remote,N_("Connect to remote instance or exit."), null },
 					{ null }
 			};
@@ -120,14 +120,14 @@ static void sync_workaround(MySettings conf, string file_workaround_if_focuslost
 		GLib.FileUtils.set_data(file_workaround_if_focuslost,null);
 	}else if(!workaround && w_file){
 		GLib.FileUtils.remove(file_workaround_if_focuslost);
-	}	
+	}
 }
 
 static void configure_debug(MySettings conf){
 				if(conf.force_debug) {
-					Log.set_handler(null, 
-						LogLevelFlags.LEVEL_MASK & 
-						(LogLevelFlags.LEVEL_DEBUG | 
+					Log.set_handler(null,
+						LogLevelFlags.LEVEL_MASK &
+						(LogLevelFlags.LEVEL_DEBUG |
 						LogLevelFlags.LEVEL_MESSAGE |
 						LogLevelFlags.LEVEL_WARNING |
 						LogLevelFlags.LEVEL_INFO |
@@ -206,10 +206,109 @@ public class AppAltYo: Gtk.Application {
 		return true;//continue
 	}
 }
+
+public delegate void myprintcb (string print_string);
+
+void apply_flags(VTMainWindow remote_window,myprintcb myprint){
+				if(Globals.force_debug){
+					configure_debug(remote_window.conf);
+				}
+
+				if(Globals.reload){
+					remote_window.conf.load_config();
+				}
+
+				if(Globals.path!=null){
+					remote_window.conf.default_path=Globals.path;
+				}
+
+				if(Globals.exec_file_with_args!=null){
+					foreach(var s in Globals.exec_file_with_args){
+						debug("exec %s",s);
+						remote_window.ayobject.add_tab_with_title(s,s);
+					}
+
+					if(remote_window.current_state == WStates.HIDDEN)
+						remote_window.pull_down();
+				}
+
+				if(Globals.toggle){
+					remote_window.toggle_window();
+				}
+
+				if(Globals.cmd_fullscreen){
+					if(remote_window.maximized)
+						remote_window.maximized=false;
+					else
+						remote_window.maximized=true;
+				}
+
+				if(remote_window.conf.get_boolean("window_allow_remote_control",false)){
+					if(Globals.cmd_title_tab!=null){
+						var current_index=remote_window.ayobject.cmd_get_tab_index();
+						var count=remote_window.ayobject.cmd_get_tabs_count();
+						if(Globals.cmd_title_tab!=""){
+							var s_arr = Globals.cmd_title_tab.split (":",2);
+							uint64 index=0;/*index from user starting from 1*/
+							if(s_arr.length==2 && uint64.try_parse(s_arr[0],out index) && index<=count && index>0){
+								if(s_arr[1]=="") s_arr[1]=null;
+								myprint("altyo: new title=%d:%s\n".printf((int)index,s_arr[1]));
+								remote_window.ayobject.cmd_set_tab_title((uint)index-1,s_arr[1]);
+							}else{
+								if(s_arr.length!=2)
+									myprint("altyo usage:\n\t-t \"3:new title\"\n\t-t \"\"\n");
+
+								if(index>count)
+									myprint("altyo: Err index>count (%d > %d)\n".printf((int)index,(int)count) );
+								if(index==0)
+									myprint("altyo: Err index must be > 1\n");
+							}
+						}else{
+							myprint("%d/%d \n".printf(current_index+1,(int)count) );
+							for(var i=0; i<count; i++){
+								myprint("%d:%s\n".printf(i+1,remote_window.ayobject.cmd_get_tab_title(i)) );
+							}
+						}
+					}
+
+					if(Globals.cmd_select_tab!=null){
+						var count=remote_window.ayobject.cmd_get_tabs_count();
+						uint64 index=0;/*index from user starting from 1*/
+						if(uint64.try_parse(Globals.cmd_select_tab,out index) && index<=count && index>0 ){
+							remote_window.ayobject.cmd_activate_tab((uint)(index-1));
+							myprint("altyo: selected %d\n".printf((int)index) );
+						}else{
+							if(index>count)
+								myprint("altyo: Err index>count (%d > %d)\n".printf((int)index,(int)count) );
+							if(index==0)
+								myprint("altyo: Err index must be > 1\n");
+						}
+					}
+
+					if(Globals.cmd_close_tab!=null){
+						var count=remote_window.ayobject.cmd_get_tabs_count();
+						uint64 index=0;/*index from user starting from 1*/
+						if(uint64.try_parse(Globals.cmd_close_tab,out index) && index<=count && index>0 ){
+							remote_window.ayobject.close_tab((int)(index-1));
+							myprint("altyo: tab %d closed\n".printf((int)index) );
+						}else{
+							if(index>count)
+								myprint("altyo: Err index>count (%d > %d)\n".printf((int)index,(int)count) );
+							if(index==0)
+								myprint("altyo: Err index must be > 1\n");
+						}
+					}
+				}//if window_allow_remote_control
+				else{
+					if(Globals.cmd_title_tab!=null || Globals.cmd_select_tab!=null || Globals.cmd_close_tab!=null)
+						myprint("altyo: Err remote commands is disabled in configuration file!\n");
+				}
+}
+
 int main (string[] args) {
-	
+
 	GLib.ApplicationFlags appflags=ApplicationFlags.HANDLES_COMMAND_LINE;
-	
+
 	Intl.setlocale (LocaleCategory.ALL, "");
 	Intl.bindtextdomain (GETTEXT_PACKAGE, null);
 	Intl.bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
@@ -290,7 +389,7 @@ int main (string[] args) {
     Application identifiers must not exceed 255 characters."""));
 		return 1;//stop on error
 	}
-	
+
 	if(Globals.standalone_mode){
 		Globals.disable_hotkey=true;
 	}
@@ -311,7 +410,7 @@ int main (string[] args) {
 			printf("altyo: set GDK_CORE_DEVICE_EVENTS=1\n");
 	}
 	/******************************************************************/
-	
+
     var app = new AppAltYo(Globals.app_id, appflags);
 
 	//remote args usage
@@ -341,7 +440,7 @@ int main (string[] args) {
 				Globals.toggle=false;
 				Globals.path=null;
 				Globals.force_debug=false;
-				
+
 				Globals.cmd_fullscreen = false;
 				Globals.cmd_title_tab = null;
 				Globals.cmd_select_tab = null;
@@ -354,7 +453,7 @@ int main (string[] args) {
 						command_line.print("altyo: Error initializing: %s\n", e.message);
 				}
 				Globals.standalone_mode=old_standalone_mode;//restore standalone_mode state
-								
+
 				debug("app.command_line.connect reload=%d",(int)Globals.reload);
 				VTMainWindow remote_window=null;
 				unowned List<weak Window> list = app.get_windows();
@@ -365,92 +464,10 @@ int main (string[] args) {
 					return 2;
 				}
 
-				if(Globals.force_debug){
-					configure_debug(remote_window.conf);
-				}else 
-				if(Globals.reload){
-					remote_window.conf.load_config();
-				}else
-				if(Globals.exec_file_with_args!=null){				
-					foreach(var s in Globals.exec_file_with_args){
-						debug("exec %s",s);
-						if(Globals.path!=null){
-							remote_window.conf.default_path=Globals.path;
-						}
-						remote_window.ayobject.add_tab_with_title(s,s);
-					}
+				apply_flags(remote_window,(s)=>{
+					command_line.print(s);
+					});
 
-					if(remote_window.current_state == WStates.HIDDEN)
-						remote_window.pull_down();
-				}else
-				if(Globals.toggle){
-					remote_window.toggle_window();
-				}else
-				if(Globals.cmd_fullscreen){
-					if(remote_window.maximized)
-						remote_window.maximized=false;
-					else
-						remote_window.maximized=true;
-				}else
-				if(remote_window.conf.get_boolean("window_allow_remote_control",false)){
-					if(Globals.cmd_title_tab!=null){
-						var current_index=remote_window.ayobject.cmd_get_tab_index();
-						var count=remote_window.ayobject.cmd_get_tabs_count();
-						if(Globals.cmd_title_tab!=""){
-							var s_arr = Globals.cmd_title_tab.split (":",2);
-							uint64 index=0;/*index from user starting from 1*/
-							if(s_arr.length==2 && uint64.try_parse(s_arr[0],out index) && index<=count && index>0){
-								if(s_arr[1]=="") s_arr[1]=null;
-								command_line.print("altyo: new title=%d:%s\n",(int)index,s_arr[1]);
-								remote_window.ayobject.cmd_set_tab_title((uint)index-1,s_arr[1]);
-							}else{
-								if(s_arr.length!=2)
-									command_line.print("altyo usage:\n\t-t \"3:new title\"\n\t-t \"\"\n");
-									
-								if(index>count)
-									command_line.print("altyo: Err index>count (%d > %d)\n",(int)index,(int)count);
-								if(index==0)
-									command_line.print("altyo: Err index must be > 1\n");
-							}
-						}else{
-							command_line.print("%d/%d \n",current_index+1,(int)count);
-							for(var i=0; i<count; i++){
-								command_line.print("%d:%s\n",i+1,remote_window.ayobject.cmd_get_tab_title(i));
-							}
-						}
-					}else
-					if(Globals.cmd_select_tab!=null){
-						var count=remote_window.ayobject.cmd_get_tabs_count();
-						uint64 index=0;/*index from user starting from 1*/
-						if(uint64.try_parse(Globals.cmd_select_tab,out index) && index<=count && index>0 ){
-							remote_window.ayobject.cmd_activate_tab((uint)(index-1));
-							command_line.print("altyo: selected %d\n",(int)index);
-						}else{
-							if(index>count)
-								command_line.print("altyo: Err index>count (%d > %d)\n",(int)index,(int)count);
-							if(index==0)
-								command_line.print("altyo: Err index must be > 1\n");
-						}
-					}else
-					if(Globals.cmd_close_tab!=null){
-						var count=remote_window.ayobject.cmd_get_tabs_count();
-						uint64 index=0;/*index from user starting from 1*/
-						if(uint64.try_parse(Globals.cmd_close_tab,out index) && index<=count && index>0 ){
-							remote_window.ayobject.close_tab((int)(index-1));
-							command_line.print("altyo: tab %d closed\n",(int)index);
-						}else{
-							if(index>count)
-								command_line.print("altyo: Err index>count (%d > %d)\n",(int)index,(int)count);
-							if(index==0)
-								command_line.print("altyo: Err index must be > 1\n");
-						}
-					}
-				}//if window_allow_remote_control
-				else{
-					if(Globals.cmd_title_tab!=null || Globals.cmd_select_tab!=null || Globals.cmd_close_tab!=null)
-						command_line.print("altyo: Err remote commands is disabled in configuration file!\n");
-				}
-				
 				Globals.reload=false;
 
 				return 2;//exit status
@@ -473,12 +490,12 @@ int main (string[] args) {
 					printf("altyo: Unable to open configuration file!\n");
 					Posix.exit(1);
 				}
-				
+
 				conf.get_boolean("window_allow_remote_control",false);//remember option type
 
 				configure_debug(conf);
 				sync_workaround(conf,file_workaround_if_focuslost);
-				
+
 				debug("git_hash=%s",AY_GIT_HASH);
 				debug("changelog_tag=%s",AY_CHANGELOG_TAG);
 
@@ -491,7 +508,9 @@ int main (string[] args) {
 				win.set_application(app);
 				win.CreateVTWindow(conf);
 				main_win=win;
-				
+
+				apply_flags(win,(s)=>{print(s);});
+
 				sigaction_t action = sigaction_t ();
 				action.sa_handler = signal_handler;
 				/* Hook up signal handlers */

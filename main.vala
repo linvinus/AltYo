@@ -50,6 +50,18 @@ using Posix;
 
 static const string DEFAULT_APP_ID = "org.gtk.altyo";
 
+bool ParseGlobalsPath(string option_name,
+                   string? val,
+                   void *data,
+                   ref Error error){
+if(val != null)
+	Globals.path=val;
+else
+	Globals.path=Globals.remote_cwd;
+
+return true;
+}
+
 struct Globals{
 	static bool reload = false;
 	static bool opt_help = false;
@@ -67,6 +79,7 @@ struct Globals{
 	static string? cmd_close_tab = null;
 	static bool list_id = false;
 	static bool force_remote = false;
+	static string? remote_cwd = null;
 
 	[CCode (array_length = false, array_null_terminated = true)]
 	public static string[]? exec_file_with_args = null;
@@ -83,7 +96,7 @@ struct Globals{
 					{ "listid", 0, 0, OptionArg.NONE, ref Globals.list_id,N_("Show ids of running AltYo instances"), null },
 					{ "disable-hotkey", 0, 0, OptionArg.NONE, ref Globals.disable_hotkey,N_("Disable main hotkey"),null},
 					{ "standalone", 0, 0, OptionArg.NONE, ref Globals.standalone_mode,N_("Disable control of window dimension, and set --id=none"),null},
-					{ "default-path", 0, 0, OptionArg.STRING, ref Globals.path,N_("Set/update default path"),"/home/user/special" },
+					{ "default-path", 0, OptionFlags.OPTIONAL_ARG, OptionArg.CALLBACK, (void *)ParseGlobalsPath,N_("Set/update default path. Without arguments CWD will be used."),"/home/user/special" },
 					{ "config-readonly", 0, 0, OptionArg.NONE, ref Globals.config_readonly, N_("Lock any configuration changes"), null },
 					{ "debug", 'd', 0, OptionArg.NONE, ref Globals.force_debug,N_("Force debug"), null },
 					{ "fullscreen", 'f', 0, OptionArg.NONE, ref Globals.cmd_fullscreen,N_("Toggle AltYo in fullscreen mode"), null },
@@ -323,7 +336,7 @@ int main (string[] args) {
 
 	//Gtk.init (ref args);
 	Globals.app_id=DEFAULT_APP_ID;//default app id
-
+	Globals.remote_cwd = GLib.Environment.get_current_dir();
 	/* Parse only --id and --standalone options
 	 * others will be parsed in application app.startup.connect event
 	 * */
@@ -452,6 +465,7 @@ int main (string[] args) {
 				Globals.cmd_title_tab = null;
 				Globals.cmd_select_tab = null;
 				Globals.cmd_close_tab = null;
+				Globals.remote_cwd = command_line.get_cwd();
 
 				var old_standalone_mode=Globals.standalone_mode;
 				try {

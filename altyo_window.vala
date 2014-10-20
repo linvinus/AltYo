@@ -2395,10 +2395,10 @@ public class AYObject :Object{
 					
 					/* firstly try to find absolite path
 					 * else search in default system path*/
-					string exec="%s --standalone --default_path '%s'".printf(GLib.FileUtils.read_link("/proc/self/exe"),tmp);
+					string exec="%s --standalone --default-path '%s'".printf(GLib.FileUtils.read_link("/proc/self/exe"),tmp);
 					/*pass cfg only if sure that it is for standalone_mode*/
 					if(conf.standalone_mode)
-						exec+=" --config_readonly -c '%s'&".printf(this.conf.conf_file);
+						exec+=" --config-readonly -c '%s'&".printf(this.conf.conf_file);
 					else
 						exec+="&";
 					
@@ -2413,13 +2413,13 @@ public class AYObject :Object{
 					 * else search in default system path*/
 					string exec;
 					if(GLib.FileUtils.test(GLib.Environment.get_current_dir()+"/"+GLib.Environment.get_prgname(),GLib.FileTest.EXISTS) ){
-						exec="%s/%s --standalone --default_path '%s'".printf(GLib.Environment.get_current_dir(),GLib.Environment.get_prgname(),GLib.Environment.get_current_dir());
+						exec="%s/%s --standalone --default-path='%s'".printf(GLib.Environment.get_current_dir(),GLib.Environment.get_prgname(),GLib.Environment.get_current_dir());
 					}else{
-						exec="%s --standalone --default_path '%s'".printf(GLib.Environment.get_prgname(),GLib.Environment.get_current_dir());
+						exec="%s --standalone --default-path='%s'".printf(GLib.Environment.get_prgname(),GLib.Environment.get_current_dir());
 					}
 					/*pass cfg only if sure that it is for standalone_mode*/
 					if(conf.standalone_mode)
-						exec+=" --config_readonly -c '%s'&".printf(this.conf.conf_file);
+						exec+=" --config-readonly -c '%s'&".printf(this.conf.conf_file);
 					else
 						exec+="&";
 											

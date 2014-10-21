@@ -393,7 +393,7 @@ int main (string[] args) {
 	}
 	if(!Globals.app_id.has_prefix(DEFAULT_APP_ID)){
 		/*this name restriction occur because we need limit searching in --listid */
-		printf(_("Application id must begin with %s \n for example %s.my_instance"),DEFAULT_APP_ID,DEFAULT_APP_ID);
+		printf(_("Application id must begin with %s \n for example %s.my_instance\n"),DEFAULT_APP_ID,DEFAULT_APP_ID);
 		return 1;
 	}
 
@@ -481,7 +481,7 @@ int main (string[] args) {
 				if(list!=null)
 					remote_window=((VTMainWindow)list.data);
 				else{
-					command_line.print("altyo: Err remote window not found");
+					command_line.print("altyo: Err remote window not found\n");
 					return 2;
 				}
 

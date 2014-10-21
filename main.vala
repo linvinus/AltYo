@@ -95,7 +95,7 @@ struct Globals{
 					{ "id", 0, 0, OptionArg.STRING, ref Globals.app_id,N_("Set application id, none means disable application id"),"org.gtk.altyo_my,none" },
 					{ "listid", 0, 0, OptionArg.NONE, ref Globals.list_id,N_("Show ids of running AltYo instances"), null },
 					{ "disable-hotkey", 0, 0, OptionArg.NONE, ref Globals.disable_hotkey,N_("Disable main hotkey"),null},
-					{ "standalone", 0, 0, OptionArg.NONE, ref Globals.standalone_mode,N_("Disable control of window dimension, and set --id=none"),null},
+					{ "standalone", 0, 0, OptionArg.NONE, ref Globals.standalone_mode,N_("Disable control of window dimension"),null},
 					{ "default-path", 0, OptionFlags.OPTIONAL_ARG, OptionArg.CALLBACK, (void *)ParseGlobalsPath,N_("Set/update default path. Without arguments CWD will be used."),"/home/user/special" },
 					{ "config-readonly", 0, 0, OptionArg.NONE, ref Globals.config_readonly, N_("Lock any configuration changes"), null },
 					{ "debug", 'd', 0, OptionArg.NONE, ref Globals.force_debug,N_("Force debug"), null },

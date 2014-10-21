@@ -1881,6 +1881,8 @@ public class AYObject :Object{
 			/*sort while sorting*/
 
 			this.children.sort_with_data( (vt_a, vt_next_b)=>{
+				if( !(vt_a is VTTerminal) || !(vt_next_b is VTTerminal)) return 0;
+
 				VTTerminal vt = vt_a as VTTerminal, vt_next = vt_next_b as VTTerminal;
 
 				//debug("compare: %s == %s",vt.tbutton.host_name,vt_next.tbutton.host_name);
@@ -2305,6 +2307,7 @@ public class AYObject :Object{
 						this.hvbox.add(this.aysettings.tbutton);
 						this.activate_tab(this.aysettings.tbutton) ;//this.active_tab = this.hvbox.children_index(tbutton);
 						this.aysettings_shown=true;
+						this.aysettings.tbutton.do_not_sort=true;
 					}else{
 						if(this.active_tab!=this.aysettings.tbutton){
 							this.activate_tab(this.aysettings.tbutton);

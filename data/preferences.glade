@@ -289,6 +289,23 @@
       <column type="gchararray"/>
     </columns>
   </object>
+  <object class="GtkListStore" id="window_hvbox_display_mode_liststore">
+    <columns>
+      <!-- column-name gchararray1 -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Visible</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Hidden</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Hide if one tab</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkScrolledWindow" id="settings-scrolledwindow">
     <property name="visible">True</property>
     <property name="can_focus">True</property>
@@ -1137,6 +1154,21 @@ otherwise - gravity south</property>
                                             <property name="expand">False</property>
                                             <property name="fill">True</property>
                                             <property name="position">11</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="window_iconify2hide">
+                                            <property name="label" translatable="yes">Workaround if keyboard layout lost</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="xalign">0</property>
+                                            <property name="draw_indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">12</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -3509,23 +3541,6 @@ when command is launched</property>
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkListStore" id="window_hvbox_display_mode_liststore">
-    <columns>
-      <!-- column-name gchararray1 -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Visible</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Hidden</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Hide if one tab</col>
-      </row>
-    </data>
   </object>
   <object class="GtkListStore" id="window_new_tab_position_liststore">
     <columns>

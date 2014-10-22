@@ -210,6 +210,7 @@ public class VTMainWindow : Window{
 	public bool allow_close=false;
 	public bool gravity_north_west=true;
 	public bool autohide=false;
+	public bool BUG_16=false;
 
 	private uint32 last_focus_out_event_time;
 	private unowned Gdk.Window ignore_last_active_window = null;
@@ -533,7 +534,8 @@ public class VTMainWindow : Window{
 
 				return true;//continue animation
 			}else{
-				this.iconify ();//this.hide(); use iconify to prevent loss of keyboard layout per window in XFCE.
+				if(this.BUG_16) this.iconify();//use iconify to prevent loss of keyboard layout per window in XFCE/Gnome3 .
+				else 			this.hide(); 
 				this.current_state=WStates.HIDDEN;
 				this.pull_animation_active=false;
 				return false;
@@ -566,7 +568,22 @@ public class VTMainWindow : Window{
 			this.pull_active=true;
 			this.ayobject.clear_prelight_state();
 			this.prev_focus=this.get_focus();
-			this.iconify ();//this.hide(); use iconify to prevent loss of keyboard layout per window in XFCE.
+			/* BUG:#16
+			 * When unhide Altyo, it doesn`t respect setting of layout for each window (not global)...
+			 * core problem:
+			 * 1) xwindow have only NormalState|IconicState|WithdrawnState(unmaped)
+			 * 2) libwnck sends "window-closed" signal for unmaped window
+			 * 3) xfce4-xkb-plugin remove windowid from internal list as it think window is closed
+			 * chain is follow:
+			 * window.hide()->WithdrawnState->Unmap->libwnck=>"window-closed"->xfce4-xkb-plugin = forgot window keyboard layout.
+			 * same problem in gnome3.
+			 * as workarund for that we are using window.iconify(),
+			 * as drawbacks, some window managers will show minimization animations (i.e. metacity)
+			 * seems that this is fundamental Xwindow/window_managers problem.
+			 * */
+			if(this.BUG_16) this.iconify();//use iconify to prevent loss of keyboard layout per window in XFCE/Gnome3 .
+			else 			this.hide(); 
+			
 			this.current_state=WStates.HIDDEN;
 			return;
 		}
@@ -804,7 +821,7 @@ public class VTMainWindow : Window{
 	
 	public void reconfigure(){
 		debug("reconfigure VTWindow");
-
+		
 		if(this.conf.reduce_memory_usage){
 			var settings = Gtk.Settings.get_default();
 			settings.gtk_menu_images=false;
@@ -917,6 +934,7 @@ public class VTMainWindow : Window{
 		else
 			this.gravity=Gdk.Gravity.SOUTH_WEST;
 		this.autohide  = conf.get_boolean("window_autohide",false);
+		this.BUG_16    = conf.get_boolean("window_iconify2hide",(Gtk.get_major_version()>=3 && Gtk.get_minor_version()>4?true:false));//13.04...
 	}//reconfigure
 
 	public bool configure_position(){

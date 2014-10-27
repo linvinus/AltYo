@@ -54,7 +54,8 @@ small video presentation of available features:
 Installing
 ----
 Packages for *Ubuntu and Debian* available there https://launchpad.net/~linvinus/+archive/altyo  
-Package for *Arch Linux* AUR https://aur.archlinux.org/packages/altyo-git/ (package created by willemw)
+Package for *Arch Linux* AUR https://aur.archlinux.org/packages/altyo-git/ (package created by willemw)  
+Ebuild for *Gentoo/Sabayon* https://drive.google.com/file/d/0B6vs0mKF7AyLQzdYOEdEVzJOZWM/view?usp=sharing (ebuild created by giacomogiorgianni)
 
 Source code available there https://github.com/linvinus/AltYo  
 How to install from sources is described in INSTALL file.

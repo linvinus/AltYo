@@ -1628,6 +1628,8 @@ public class AYObject :Object{
 	}
 
 	public void on_tab_remove_timeout(AYTab vtt){
+			if(vtt.tbutton == this.previous_active_tab)
+				this.previous_active_tab=null;
 			this.children_removed.remove(vtt);
 	}
 	
@@ -1779,7 +1781,9 @@ public class AYObject :Object{
 					if (this.active_tab!=null){
 						this.active_tab.active=false;
 						this.previous_active_tab=active_tab;
-					}
+					}else
+						this.previous_active_tab=null;
+
 					this.active_tab = tab_button;
 					this.active_tab.active=true;
 					//vt.tbutton.set_title((this.children.index(vt)),null);//not necessary
@@ -2565,6 +2569,7 @@ public class AYObject :Object{
 	}
 
 	public void window_title_update(){
+		if(!(this.active_tab is VTToggleButton )) return;
 		AYTab vtt = ((AYTab)this.active_tab.object);
 		if(vtt!=null) {
 			if(vtt.tbutton.tab_title!=null)

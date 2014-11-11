@@ -534,8 +534,11 @@ public class VTMainWindow : Window{
 
 				return true;//continue animation
 			}else{
-				if(this.BUG_16) this.iconify();//use iconify to prevent loss of keyboard layout per window in XFCE/Gnome3 .
-				else 			this.hide(); 
+				//if(this.BUG_16) this.iconify();//use iconify to prevent loss of keyboard layout per window in XFCE/Gnome3 .
+				//else 			this.hide(); 
+				this.hide();
+				this.unrealize();//important!
+
 				this.current_state=WStates.HIDDEN;
 				this.pull_animation_active=false;
 				return false;
@@ -581,8 +584,10 @@ public class VTMainWindow : Window{
 			 * as drawbacks, some window managers will show minimization animations (i.e. metacity)
 			 * seems that this is fundamental Xwindow/window_managers problem.
 			 * */
-			if(this.BUG_16) this.iconify();//use iconify to prevent loss of keyboard layout per window in XFCE/Gnome3 .
-			else 			this.hide(); 
+			//if(this.BUG_16) this.iconify();//use iconify to prevent loss of keyboard layout per window in XFCE/Gnome3 .
+			//else 			this.hide(); 
+			this.hide();
+			this.unrealize();//important!
 			
 			this.current_state=WStates.HIDDEN;
 			return;

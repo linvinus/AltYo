@@ -1,3 +1,24 @@
+altyo (0.4~rc12-linvinus1) trusty; urgency=low
+
+  * fix: #14
+  * print program name in error messages
+  * fix: #13
+  * improvement: use same naming convention for all options
+  * not fix: #16
+  * improvement: use posix compliant options names, use same function for parsing remote and local options
+  * improvement: return exit status for remote flags
+  * improvement: allow --default-path without arguments
+  * fix: segfault when sorting tab while opened settings dialog
+  * fix: add missing LF
+  * fix: --standalone option description
+  * improvement: make a workaround for bug #16 optional
+  * Update README.md
+  * fix: segfault after close settings dialog if previous tab was closed
+  * fix: #17 undo 0af290f058b757e12551df55023e047f4302daa0
+  * fix for #16 conflicts with #17, currently #16 is not resolved
+
+ -- denis <linvinus@gmail.com>  Tue, 11 Nov 2014 15:29:44 +0400
+
 altyo (0.4~rc11-linvinus1) trusty; urgency=low
 
   * update README.md

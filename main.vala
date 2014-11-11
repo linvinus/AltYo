@@ -100,7 +100,9 @@ struct Globals{
 					{ "config-readonly", 0, 0, OptionArg.NONE, ref Globals.config_readonly, N_("Lock any configuration changes"), null },
 					{ "debug", 'd', 0, OptionArg.NONE, ref Globals.force_debug,N_("Force debug"), null },
 					{ "fullscreen", 'f', 0, OptionArg.NONE, ref Globals.cmd_fullscreen,N_("Toggle AltYo in fullscreen mode"), null },
+					#if VALA_0_22
 					{ "tab-title", 't', 0, OptionArg.STRING, ref Globals.cmd_title_tab,N_("Get/Set tab title"), null },
+					#endif
 					{ "select-tab", 0, 0, OptionArg.STRING, ref Globals.cmd_select_tab,N_("Select tab by index"), null },
 					{ "close-tab", 0, 0, OptionArg.STRING, ref Globals.cmd_close_tab,N_("Close tab by index"), null },
 					{ "remote", 0, 0, OptionArg.NONE, ref Globals.force_remote,N_("Connect to remote instance or exit."), null },
@@ -210,6 +212,8 @@ public class AppAltYo: Gtk.Application {
  * */
 //~[CCode (cname = "__asm__(\".symver memcpy,memcpy@GLIBC_2.2.5\");//",type="")]
 //~	public extern void* fake_function();
+	#if VALA_0_22
+	//if > GLib.Version.@2_34 
     public override bool dbus_register (DBusConnection connection, string object_path){
 		try {
 			connection.register_object (object_path, new AltYoDbusServer (this));
@@ -218,6 +222,7 @@ public class AppAltYo: Gtk.Application {
 		}
 		return true;//continue
 	}
+	#endif
 }
 
 public delegate void myprintcb (string print_string);
@@ -351,6 +356,7 @@ int main (string[] args) {
 	   GLib.stderr.printf("Error initializing: %s\n", e.message);
 	   return 1;
 	}
+	#if VALA_0_22
 	/*searching for remote instances*/
 	if(Globals.list_id){
 		Variant interfaces;
@@ -387,6 +393,7 @@ int main (string[] args) {
 
 		return 0;//list and exit
 	}
+	#endif
 
 	if(Globals.standalone_mode && Globals.app_id==DEFAULT_APP_ID){
 		Globals.app_id+="._%d".printf(Posix.getpid());//generate unique id for standalone_mode

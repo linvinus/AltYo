@@ -98,6 +98,9 @@ source-package:
 	rm ./altyo || true
 	rm ./po/ru/LC_MESSAGES/$(PRG_NAME).mo || true
 	git-buildpackage --git-upstream-tree=branch --git-upstream-branch=master -rfakeroot -S -sa
+	sed -i -re '1 s/(altyo \(.*)\) .*\;/\1~precise\) precise\;/' ./debian/changelog
+	dpkg-buildpackage -S -sa
+	git checkout ./debian/changelog
 
 gen_changes:
 	git-dch --ignore-branch --debian-branch=master --verbose -a -R

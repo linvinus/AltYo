@@ -1,3 +1,9 @@
+altyo (0.4~rc12.1-linvinus1) trusty; urgency=low
+
+  * improve compilation on precise v3
+
+ -- denis <linvinus@gmail.com>  Tue, 11 Nov 2014 17:30:43 +0400
+
 altyo (0.4~rc12-linvinus1) trusty; urgency=low
 
   * fix: #14

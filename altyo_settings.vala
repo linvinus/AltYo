@@ -56,9 +56,11 @@ public class AYSettings : AYTab{
 				L.uri="file://"+my_conf.conf_file;
 				#if VTE_2_91
 				/*hide unavailable options*/
-				var grid = (builder.get_object ("grid1") as Gtk.Grid);
+				Gtk.Grid grid;
 				int r = 0;
 				Gtk.Widget? child;
+
+				grid = (builder.get_object ("grid1") as Gtk.Grid);
 				while( (child=grid.get_child_at(1,r)) != null){
 					switch(child.get_name()){
 						case "terminal_background_image_file":
@@ -68,8 +70,19 @@ public class AYSettings : AYTab{
 						case "terminal_tint_color":
 						case "terminal_background_saturation":
 						case "terminal_visible_bell":
-						case "terminal_word_chars":
 						case "terminal_set_alternate_screen_scroll":
+						grid.remove_row(r);
+						break;
+						default:
+						r++;
+						break;
+					}
+				}
+				grid = (builder.get_object ("grid5") as Gtk.Grid);
+				r = 0;
+				while( (child=grid.get_child_at(1,r)) != null){
+					switch(child.get_name()){
+						case "terminal_word_chars":
 						grid.remove_row(r);
 						break;
 						default:

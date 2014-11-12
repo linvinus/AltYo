@@ -853,20 +853,24 @@ public class VTTerminal : AYTab{
 			palette[i].parse(s);
 			i++;
 		}
+		double opacity = my_conf.get_double("terminal_opacity",1.0,(ref new_val)=>{
+			if(new_val<0.0){new_val=0.0;return CFG_CHECK.REPLACE;}
+			if(new_val>1.0){new_val=1.0;return CFG_CHECK.REPLACE;}
+			return CFG_CHECK.OK;
+			});
+
+
 		#if ! VTE_2_91
 		this.vte_term.set_colors_rgba(fg,bg,palette);
 		#else
+		bg.alpha=opacity;
 		this.vte_term.set_colors(fg,bg,palette);
 		#endif
 
 		#if ! VTE_2_91
 		//vte bug, set_opacity don't call vte_terminal_queue_background_update
 		// we force update later
-		this.vte_term.set_opacity((uint16)((my_conf.get_double("terminal_opacity",1.0,(ref new_val)=>{
-			if(new_val<0.0){new_val=0.0;return CFG_CHECK.REPLACE;}
-			if(new_val>1.0){new_val=1.0;return CFG_CHECK.REPLACE;}
-			return CFG_CHECK.OK;
-			}) )*65535) );
+		this.vte_term.set_opacity((uint16)((opacity)*65535));
 
 		var bg_img_file = my_conf.get_string("terminal_background_image_file","");
 		if(bg_img_file!=null && bg_img_file!="" && GLib.FileUtils.test(bg_img_file,GLib.FileTest.EXISTS)){

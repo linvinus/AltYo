@@ -64,7 +64,6 @@ public class AYSettings : AYTab{
 				while( (child=grid.get_child_at(1,r)) != null){
 					switch(child.get_name()){
 						case "terminal_background_image_file":
-						case "terminal_opacity":
 						case "terminal_background_fake_transparent":
 						case "terminal_background_fake_transparent_scroll":
 						case "terminal_tint_color":

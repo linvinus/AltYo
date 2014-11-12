@@ -115,6 +115,9 @@ source-package:
 	sed -i -re '1 s/(altyo \(.*)\) .*\;/\1~precise\) precise\;/' ./debian/changelog
 	dpkg-buildpackage -S -sa
 	git checkout ./debian/changelog
+	sed -i -re '1 s/(altyo \(.*)\) .*\;/\1~vivid\) vivid\;/' ./debian/changelog
+	dpkg-buildpackage -S -sa
+	git checkout ./debian/changelog
 
 gen_changes:
 	git-dch --ignore-branch --debian-branch=master --verbose -a -R

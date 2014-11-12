@@ -1364,7 +1364,12 @@ public class VTTerminal : AYTab{
 			int char_width=(int)this.vte_term.get_char_width();
 			int char_height=(int)this.vte_term.get_char_height();
 			unowned Gtk.Border? inner_border=null;
+			#if ! VTE_2_91
 			this.vte_term.style_get("inner-border", out inner_border, null);
+			#else
+			unowned Gtk.StyleContext context = this.vte_term.get_style_context();
+			inner_border=context.get_padding(this.vte_term.get_state_flags());
+			#endif
 			int col = ((int)x - (inner_border!=null ? inner_border.left : 0)) / char_width;
 			int row = ((int)y - (inner_border!=null ? inner_border.top : 0)) / char_height;
 			return this.vte_term.match_check (col, row, out tag);

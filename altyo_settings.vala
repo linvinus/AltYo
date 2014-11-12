@@ -61,8 +61,6 @@ public class AYSettings : AYTab{
 				(builder.get_object ("terminal_background_fake_transparent_scroll") as Gtk.Widget).hide();
 				(builder.get_object ("terminal_tint_color") as Gtk.Widget).hide();
 				(builder.get_object ("terminal_background_saturation") as Gtk.Widget).hide();
-				(builder.get_object ("terminal_cursorshape") as Gtk.Widget).hide();
-				(builder.get_object ("terminal_cursor_blinkmode") as Gtk.Widget).hide();
 				(builder.get_object ("terminal_visible_bell") as Gtk.Widget).hide();
 				(builder.get_object ("terminal_word_chars") as Gtk.Widget).hide();
 				#endif

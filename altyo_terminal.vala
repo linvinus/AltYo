@@ -895,20 +895,28 @@ public class VTTerminal : AYTab{
 			this.vte_term.set_background_transparent(true);//but only when changes
 			this.vte_term.set_background_transparent(false);//but only when changes
 		}
+		#endif
 		/*0-BLOCK,1-IBEAM,2-UNDERLINE*/
 		var cursorshape  = my_conf.get_integer("terminal_cursorshape",0,(ref new_val)=>{
 			if(new_val>2){new_val=0;return CFG_CHECK.REPLACE;}
 			if(new_val<0){new_val=0;return CFG_CHECK.REPLACE;}
 			return CFG_CHECK.OK;
 			});
+		#if ! VTE_2_91
 		this.vte_term.set_cursor_shape((Vte.TerminalCursorShape)cursorshape);
+		#else
+		this.vte_term.set_cursor_shape((Vte.CursorShape)cursorshape);
+		#endif
 		/*0-SYSTEM,1-ON,2-OFF*/
 		var cursor_blinkmode  = my_conf.get_integer("terminal_cursor_blinkmode",0,(ref new_val)=>{
 			if(new_val>2){new_val=0;return CFG_CHECK.REPLACE;}
 			if(new_val<0){new_val=0;return CFG_CHECK.REPLACE;}
 			return CFG_CHECK.OK;
 			});
+		#if ! VTE_2_91
 		this.vte_term.set_cursor_blink_mode ((Vte.TerminalCursorBlinkMode)cursor_blinkmode);
+		#else
+		this.vte_term.set_cursor_blink_mode ((Vte.CursorBlinkMode)cursor_blinkmode);
 		#endif
 
 		if(!this.is_locked(VTT_LOCK_SETTING.DELETE_BINDING)){

@@ -997,16 +997,15 @@ public class VTTerminal : AYTab{
 					this.match_tags.insert(key,url_regexps[j+1]);
 			}
 		}
-
+		#if ! VTE_2_91
+		/*since 0.38 set_word_chars is hardcoded
+		 * https://bugzilla.gnome.org/show_bug.cgi?id=727743
+		 * */
 		var word_chars = my_conf.get_string("terminal_word_chars","-A-Za-z0-9,./?%&#:_=+@~");
 		if(word_chars!=null){
-			#if ! VTE_2_91
 			this.vte_term.set_word_chars(word_chars);
-			#endif
-			/*since 0.38 set_word_chars is hardcoded
-			 * https://bugzilla.gnome.org/show_bug.cgi?id=727743
-			 * */
 		}
+		#endif
 
 		this.vte_term.set_scroll_on_output(my_conf.get_boolean("terminal_scroll_on_output",false));
 		this.vte_term.set_scroll_on_keystroke(my_conf.get_boolean("terminal_scroll_on_keystroke",true));

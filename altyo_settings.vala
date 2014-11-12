@@ -56,13 +56,27 @@ public class AYSettings : AYTab{
 				L.uri="file://"+my_conf.conf_file;
 				#if VTE_2_91
 				/*hide unavailable options*/
-				(builder.get_object ("terminal_background_image_file") as Gtk.Widget).hide();
-				(builder.get_object ("terminal_background_fake_transparent") as Gtk.Widget).hide();
-				(builder.get_object ("terminal_background_fake_transparent_scroll") as Gtk.Widget).hide();
-				(builder.get_object ("terminal_tint_color") as Gtk.Widget).hide();
-				(builder.get_object ("terminal_background_saturation") as Gtk.Widget).hide();
-				(builder.get_object ("terminal_visible_bell") as Gtk.Widget).hide();
-				(builder.get_object ("terminal_word_chars") as Gtk.Widget).hide();
+				var grid = (builder.get_object ("grid1") as Gtk.Grid);
+				int r = 0;
+				Gtk.Widget? child;
+				while( (child=grid.get_child_at(1,r)) != null){
+					switch(child.get_name()){
+						case "terminal_background_image_file":
+						case "terminal_opacity":
+						case "terminal_background_fake_transparent":
+						case "terminal_background_fake_transparent_scroll":
+						case "terminal_tint_color":
+						case "terminal_background_saturation":
+						case "terminal_visible_bell":
+						case "terminal_word_chars":
+						case "terminal_set_alternate_screen_scroll":
+						grid.remove_row(r);
+						break;
+						default:
+						r++;
+						break;
+					}
+				}
 				#endif
 				this.get_from_conf();
  			} catch (Error e) {

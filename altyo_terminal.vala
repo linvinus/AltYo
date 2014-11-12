@@ -809,7 +809,6 @@ public class VTTerminal : AYTab{
 			return CFG_CHECK.OK;
 			}));
 
-		#if ! VTE_2_91
 		Gdk.RGBA? fg;
 		fg=new Gdk.RGBA();
 		Gdk.RGBA? bg;
@@ -854,8 +853,13 @@ public class VTTerminal : AYTab{
 			palette[i].parse(s);
 			i++;
 		}
-
+		#if ! VTE_2_91
 		this.vte_term.set_colors_rgba(fg,bg,palette);
+		#else
+		this.vte_term.set_colors(fg,bg,palette);
+		#endif
+
+		#if ! VTE_2_91
 		//vte bug, set_opacity don't call vte_terminal_queue_background_update
 		// we force update later
 		this.vte_term.set_opacity((uint16)((my_conf.get_double("terminal_opacity",1.0,(ref new_val)=>{
@@ -978,11 +982,11 @@ public class VTTerminal : AYTab{
 			});
 			this.match_tags.steal_all();
 			debug("url_regexps=%d",url_regexps.length);
-			for(int i=0;i<url_regexps.length-1;i+=2){
-				var key=this.vte_term.match_add_gregex((new Regex (url_regexps[i])),0);
+			for(int j=0;j<url_regexps.length-1;j+=2){
+				var key=this.vte_term.match_add_gregex((new Regex (url_regexps[j])),0);
 				debug("match_add_gregex %d",key);
 				if(!this.match_tags.lookup_extended(key,null,null))
-					this.match_tags.insert(key,url_regexps[i+1]);
+					this.match_tags.insert(key,url_regexps[j+1]);
 			}
 		}
 

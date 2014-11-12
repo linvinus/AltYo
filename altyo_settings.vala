@@ -56,14 +56,9 @@ public class AYSettings : AYTab{
 				L.uri="file://"+my_conf.conf_file;
 				#if VTE_2_91
 				/*hide unavailable options*/
-				for(int i=1; i<17;i++){
-					(builder.get_object ("terminal_palette_colorbutton"+i.to_string()) as Gtk.Widget).hide();
-				}
 				(builder.get_object ("terminal_background_image_file") as Gtk.Widget).hide();
 				(builder.get_object ("terminal_background_fake_transparent") as Gtk.Widget).hide();
 				(builder.get_object ("terminal_background_fake_transparent_scroll") as Gtk.Widget).hide();
-				(builder.get_object ("terminal_color_fg") as Gtk.Widget).hide();
-				(builder.get_object ("terminal_color_bg") as Gtk.Widget).hide();
 				(builder.get_object ("terminal_tint_color") as Gtk.Widget).hide();
 				(builder.get_object ("terminal_background_saturation") as Gtk.Widget).hide();
 				(builder.get_object ("terminal_cursorshape") as Gtk.Widget).hide();

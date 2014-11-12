@@ -1565,7 +1565,11 @@ public class AYObject :Object{
 					if(terminal.auto_restart && terminal.session_command==null){//restart shell if allowed
 						string S=_("Shell terminated.")+"\n\r\n\r";
 						debug(S);
+						#if ! VTE_2_91
 						terminal.vte_term.feed(S,S.length);
+						#else
+						terminal.vte_term.feed((uint8[])S);
+						#endif
 						terminal.start_shell();
 					}else{//or close tab
 						this.close_tab(this.hvbox.children_index(terminal.tbutton));
@@ -1751,7 +1755,11 @@ public class AYObject :Object{
 			if(this.action_on_close_last_tab<2){//restart shell
 				var vt_new=this.add_tab();
 				string S=_("Shell terminated.")+"\n\r\n\r";
+				#if ! VTE_2_91
 				vt_new.vte_term.feed(S,S.length);
+				#else
+				vt_new.vte_term.feed((uint8[])S);
+				#endif
 			}
 			if(this.action_on_close_last_tab==1)//restart shell and hide
 				this.main_window.toggle_window();			
@@ -2638,7 +2646,11 @@ public class AYObject :Object{
 
 		unowned AYTab vtt = ((AYTab)this.active_tab.object);
 		if(vtt is VTTerminal) {
+			#if ! VTE_2_91
 			((VTTerminal)vtt).vte_term.search_set_gregex(null);
+			#else
+			((VTTerminal)vtt).vte_term.search_set_gregex(null,0);
+			#endif
 			((VTTerminal)vtt).vte_term.grab_focus();
 		}
 	}
@@ -3163,7 +3175,11 @@ public class QoptNotebook: Notebook{
 						}
 					if(needs_udatate){
 						var reg_exp = new GLib.Regex(new_pattern,cflags);
+						#if ! VTE_2_91
 						vtt.vte_term.search_set_gregex(reg_exp);
+						#else
+						vtt.vte_term.search_set_gregex(reg_exp,0);
+						#endif
 					}
 	}
 
@@ -3359,7 +3375,11 @@ public class QoptNotebook: Notebook{
 		if(!(vtt is VTTerminal)) return;
 		((VTTerminal)vtt).lock_setting(VTT_LOCK_SETTING.DELETE_BINDING);
 		var term = ((VTTerminal)vtt).vte_term;
+		#if ! VTE_2_91
 		term.delete_binding = (Vte.TerminalEraseBinding)this.delete_binding_combo.get_active();
+		#else
+		term.delete_binding = (Vte.EraseBinding)this.delete_binding_combo.get_active();
+		#endif
 	}
 	
 	[CCode (instance_pos = -1)]
@@ -3368,7 +3388,11 @@ public class QoptNotebook: Notebook{
 		if(!(vtt is VTTerminal)) return;
 		((VTTerminal)vtt).lock_setting(VTT_LOCK_SETTING.BACKSPACE_BINDING);
 		var term = ((VTTerminal)vtt).vte_term;
+		#if ! VTE_2_91
 		term.backspace_binding = (Vte.TerminalEraseBinding) this.terminal_backspace_combo.get_active();
+		#else
+		term.backspace_binding = (Vte.EraseBinding) this.terminal_backspace_combo.get_active();
+		#endif
 	}
 	[CCode (instance_pos = -1)]
 	public void on_terminal_combos_popupdown(Gtk.ComboBox w){

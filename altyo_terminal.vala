@@ -21,6 +21,7 @@ using Vte;
 using GnomeKeyring;
 #endif
 
+
 public enum FIND_TTY{
 	CMDLINE,
 	CWD,
@@ -692,7 +693,11 @@ public class VTTerminal : AYTab{
 		bool ret=false;
 		//var ret = this.vte_term.fork_command_full(pty_flags ,path,argvp,envv,spawn_flags,null,out p);
 		//don't use fork_command_full because with it, is not possible to set up TERM variable
+		#if ! VTE_2_91
 		Vte.Pty pty = this.vte_term.pty_new(pty_flags);
+		#else
+		Vte.Pty pty = new Vte.Pty.sync(pty_flags);
+		#endif
 		spawn_flags |= GLib.SpawnFlags.CHILD_INHERITS_STDIN;
 		spawn_flags |= GLib.SpawnFlags.DO_NOT_REAP_CHILD;
 		try{
@@ -714,7 +719,11 @@ public class VTTerminal : AYTab{
 		}
 
 		if(ret==true){
+			#if ! VTE_2_91
 			this.vte_term.set_pty_object(pty);
+			#else
+			this.vte_term.pty = pty;
+			#endif
 			this.vte_term.watch_child(child_pid);
 			this.pid=child_pid;
 		}
@@ -788,7 +797,7 @@ public class VTTerminal : AYTab{
 		this.vte_term.set_font(font_description);//same color for terminal
 		this.auto_restart=my_conf.get_boolean("terminal_auto_restart_shell",true);
 
-		#if ALTERNATE_SCREEN_SCROLL
+		#if ALTERNATE_SCREEN_SCROLL && ! VTE_2_91
 		if(my_conf.DISTR_ID==DISTRIB_ID.UBUNTU){
 			//debian patch vte_terminal_set_alternate_screen_scroll
 			this.vte_term.set_alternate_screen_scroll(my_conf.get_boolean("terminal_set_alternate_screen_scroll",true));
@@ -800,6 +809,7 @@ public class VTTerminal : AYTab{
 			return CFG_CHECK.OK;
 			}));
 
+		#if ! VTE_2_91
 		Gdk.RGBA? fg;
 		fg=new Gdk.RGBA();
 		Gdk.RGBA? bg;
@@ -854,7 +864,6 @@ public class VTTerminal : AYTab{
 			return CFG_CHECK.OK;
 			}) )*65535) );
 
-
 		var bg_img_file = my_conf.get_string("terminal_background_image_file","");
 		if(bg_img_file!=null && bg_img_file!="" && GLib.FileUtils.test(bg_img_file,GLib.FileTest.EXISTS)){
 			message("set_background_image_file=%s",bg_img_file);
@@ -863,6 +872,7 @@ public class VTTerminal : AYTab{
 			this.vte_term.set_background_image_file ("/dev/null");
 
 		var bg_faket = my_conf.get_boolean("terminal_background_fake_transparent",false);
+
 		this.vte_term.set_scroll_background(my_conf.get_boolean("terminal_background_fake_transparent_scroll",false));
 		Gdk.Color? tint;//currently libvte don't support rgba tint
 		if(Gdk.Color.parse(my_conf.get_string("terminal_tint_color","#000000"),out tint))
@@ -895,6 +905,8 @@ public class VTTerminal : AYTab{
 			return CFG_CHECK.OK;
 			});
 		this.vte_term.set_cursor_blink_mode ((Vte.TerminalCursorBlinkMode)cursor_blinkmode);
+		#endif
+
 		if(!this.is_locked(VTT_LOCK_SETTING.DELETE_BINDING)){
 			/*0-AUTO,1-BACKSPACE,2-DELETE,3-SEQUENCE,4-TTY*/
 			var delbinding  = my_conf.get_integer("terminal_delete_binding",0,(ref new_val)=>{
@@ -902,7 +914,11 @@ public class VTTerminal : AYTab{
 				if(new_val<0){new_val=0;return CFG_CHECK.REPLACE;}
 				return CFG_CHECK.OK;
 				});
+			#if ! VTE_2_91
 			this.vte_term.set_delete_binding ((Vte.TerminalEraseBinding)delbinding);
+			#else
+			this.vte_term.set_delete_binding ((Vte.EraseBinding)delbinding);
+			#endif
 		}
 
 		if(!this.is_locked(VTT_LOCK_SETTING.BACKSPACE_BINDING)){
@@ -912,17 +928,21 @@ public class VTTerminal : AYTab{
 				if(new_val<0){new_val=0;return CFG_CHECK.REPLACE;}
 				return CFG_CHECK.OK;
 				});
+			#if ! VTE_2_91
 			this.vte_term.set_backspace_binding ((Vte.TerminalEraseBinding)backspace);
+			#else
+			this.vte_term.set_backspace_binding ((Vte.EraseBinding)backspace);
+			#endif
 		}
 
 		if(!this.is_locked(VTT_LOCK_SETTING.ENCODING)){
 			/* default - is special value
 			 * */
 			var s = my_conf.get_string("terminal_default_encoding","default");
-			if(s!="default"){
-				this.vte_term.set_encoding (s);
-			}else
-				this.vte_term.set_encoding (null);//reset to default
+//~ 			if(s!="default"){
+//~ 				this.vte_term.set_encoding (s);
+//~ 			}else
+//~ 				this.vte_term.set_encoding (null);//reset to default
 		}
 
 		string[] url_regexps = my_conf.get_string_list("terminal_url_regexps",{"(\\\"\\s*)?((?i)http|https|ftp|sftp)\\://([a-zA-Z0-9\\-]+(\\.)?)+(:[0-9]+)?(/([a-zA-Z0-9\\(\\)\\[\\]\\{\\};\\!\\*'\"`\\:@&=\\+\\$\\,/\\?#\\-\\_\\.\\~%\\^<>\\|\\\\])*)?","xdg-open"},(ref new_val)=>{
@@ -942,13 +962,15 @@ public class VTTerminal : AYTab{
 			});
 
 		if((url_regexps.length % 2) == 0){
+			#if ! VTE_2_91
 			this.vte_term.match_clear_all();
+			#endif
 			this.match_tags.foreach ((key, val) => {
 				free(val);
 			});
 			this.match_tags.steal_all();
 			debug("url_regexps=%d",url_regexps.length);
-			for(i=0;i<url_regexps.length-1;i+=2){
+			for(int i=0;i<url_regexps.length-1;i+=2){
 				var key=this.vte_term.match_add_gregex((new Regex (url_regexps[i])),0);
 				debug("match_add_gregex %d",key);
 				if(!this.match_tags.lookup_extended(key,null,null))
@@ -958,13 +980,20 @@ public class VTTerminal : AYTab{
 
 		var word_chars = my_conf.get_string("terminal_word_chars","-A-Za-z0-9,./?%&#:_=+@~");
 		if(word_chars!=null){
+			#if ! VTE_2_91
 			this.vte_term.set_word_chars(word_chars);
+			#endif
+			/*since 0.38 set_word_chars is hardcoded
+			 * https://bugzilla.gnome.org/show_bug.cgi?id=727743
+			 * */
 		}
 
 		this.vte_term.set_scroll_on_output(my_conf.get_boolean("terminal_scroll_on_output",false));
 		this.vte_term.set_scroll_on_keystroke(my_conf.get_boolean("terminal_scroll_on_keystroke",true));
 		this.vte_term.set_audible_bell(my_conf.get_boolean("terminal_audible_bell",true));
+		#if ! VTE_2_91
 		this.vte_term.set_visible_bell(my_conf.get_boolean("terminal_visible_bell",true));
+		#endif
 		this.vte_term.set_allow_bold(my_conf.get_boolean("terminal_allow_bold_text",true));
 		var notify  = my_conf.get_integer("terminal_notify_level",2,(ref new_val)=>{
 			if(new_val>3){new_val=0;return CFG_CHECK.REPLACE;}

@@ -38,7 +38,21 @@ ifeq ($(LINUX.DISTRIB.ID),ubuntu)
 #debian specific possibility
 VALA_FLAGS += -D ALTERNATE_SCREEN_SCROLL
 endif
-VALA_FLAGS += --vapidir ./vapi --pkg gtk+-3.0 --pkg vte-2.90 --pkg gdk-x11-3.0 --pkg cairo --pkg posix --pkg gmodule-2.0
+
+VTE ?= $(shell pkg-config  --exists vte-2.91 && echo 2.91)
+VTE ?= $(shell pkg-config  --exists vte-2.90 && echo 2.90)
+
+VALA_FLAGS += --vapidir ./vapi --pkg gtk+-3.0 --pkg gdk-x11-3.0 --pkg cairo --pkg posix --pkg gmodule-2.0
+
+
+
+ifeq ($(VTE),2.91)
+VALA_FLAGS += -D VTE_2_91
+VALA_FLAGS += --pkg vte-2.91
+else
+VALA_FLAGS += --pkg vte-2.90
+endif
+
 #DESTDIR?=
 PREFIX?=/usr
 

@@ -54,6 +54,23 @@ public class AYSettings : AYTab{
 				var L = builder.get_object ("config_path_linkbutton") as Gtk.LinkButton;
 				L.label=my_conf.conf_file;
 				L.uri="file://"+my_conf.conf_file;
+				#if VTE_2_91
+				/*hide unavailable options*/
+				for(int i=1; i<17;i++){
+					(builder.get_object ("terminal_palette_colorbutton"+i.to_string()) as Gtk.Widget).hide();
+				}
+				(builder.get_object ("terminal_background_image_file") as Gtk.Widget).hide();
+				(builder.get_object ("terminal_background_fake_transparent") as Gtk.Widget).hide();
+				(builder.get_object ("terminal_background_fake_transparent_scroll") as Gtk.Widget).hide();
+				(builder.get_object ("terminal_color_fg") as Gtk.Widget).hide();
+				(builder.get_object ("terminal_color_bg") as Gtk.Widget).hide();
+				(builder.get_object ("terminal_tint_color") as Gtk.Widget).hide();
+				(builder.get_object ("terminal_background_saturation") as Gtk.Widget).hide();
+				(builder.get_object ("terminal_cursorshape") as Gtk.Widget).hide();
+				(builder.get_object ("terminal_cursor_blinkmode") as Gtk.Widget).hide();
+				(builder.get_object ("terminal_visible_bell") as Gtk.Widget).hide();
+				(builder.get_object ("terminal_word_chars") as Gtk.Widget).hide();
+				#endif
 				this.get_from_conf();
  			} catch (Error e) {
  				error ("loading menu builder file: %s", e.message);

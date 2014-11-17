@@ -471,7 +471,7 @@ public class VTMainWindow : Window{
 			this.pixwin.get_child()==null){//prevent error if start hidden
 			this.configure_position();
 			this.resize (this.pull_w,this.pull_h);//start height
-			this.show();
+
 			if((this.mouse_follow || !this.gravity_north_west) && !this.pull_maximized){
 				this.move (this.orig_x,this.orig_y);//new position
 			}else
@@ -479,6 +479,8 @@ public class VTMainWindow : Window{
 					this.move (this.pull_x,this.pull_y);
 				else
 					this.move (this.pull_x,this.orig_y);
+
+			this.show();
 
 			debug("pull_down pull_maximized=%d",(int)this.pull_maximized);
 			if(this.pull_maximized)
@@ -534,10 +536,13 @@ public class VTMainWindow : Window{
 
 				return true;//continue animation
 			}else{
-				//if(this.BUG_16) this.iconify();//use iconify to prevent loss of keyboard layout per window in XFCE/Gnome3 .
-				//else 			this.hide(); 
+				#if VTE_2_91
+				if(this.BUG_16) this.iconify();//use iconify to prevent loss of keyboard layout per window in XFCE/Gnome3 .
+				else 			this.hide(); 
+				#else
 				this.hide();
 				this.unrealize();//important!
+				#endif
 
 				this.current_state=WStates.HIDDEN;
 				this.pull_animation_active=false;
@@ -584,10 +589,13 @@ public class VTMainWindow : Window{
 			 * as drawbacks, some window managers will show minimization animations (i.e. metacity)
 			 * seems that this is fundamental Xwindow/window_managers problem.
 			 * */
-			//if(this.BUG_16) this.iconify();//use iconify to prevent loss of keyboard layout per window in XFCE/Gnome3 .
-			//else 			this.hide(); 
+			#if VTE_2_91
+			if(this.BUG_16) this.iconify();//use iconify to prevent loss of keyboard layout per window in XFCE/Gnome3 .
+			else 			this.hide(); 
+			#else
 			this.hide();
 			this.unrealize();//important!
+			#endif
 			
 			this.current_state=WStates.HIDDEN;
 			return;
@@ -602,7 +610,6 @@ public class VTMainWindow : Window{
 		this.pixwin.set_size_request(pull_w,pull_h);
 		this.remove(ch);
 		this.pixwin.add(ch);
-		
 		//set main_vbox size same as original,otherwise draw will be broken
 		this.ayobject.main_vbox.height_request = this.orig_h_main_vbox;
 		this.ayobject.main_vbox.width_request = this.orig_w_main_vbox;

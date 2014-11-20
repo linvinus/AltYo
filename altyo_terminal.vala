@@ -1158,6 +1158,9 @@ public class VTTerminal : AYTab{
 				submenu.append(menuitem);
 			}
 
+			menuitem = (Gtk.MenuItem)acg.get_action("terminal_copy_all_text").create_menu_item();
+			submenu.append(menuitem);
+
 		menuitem = new Gtk.MenuItem.with_label (_("Quick settings"));
 		menuitem.set_submenu(submenu);
 		menu.append(menuitem);
@@ -1293,6 +1296,20 @@ public class VTTerminal : AYTab{
 				});		
 			menu.append(image_menuitem);
 		}
+
+		image_menuitem = new Gtk.ImageMenuItem.with_label (_("Copy running command"));
+		if(settings.gtk_menu_images){
+			//show images only if it not disabled globally
+			image = new Gtk.Image.from_icon_name ("gtk-copy", Gtk.IconSize.MENU);
+			image_menuitem.set_image(image);
+		}
+		image_menuitem.activate.connect(()=>{
+			Gdk.Display display = vtw.get_display ();
+			Gtk.Clipboard clipboard = Gtk.Clipboard.get_for_display (display, Gdk.SELECTION_CLIPBOARD);
+			clipboard.set_text(this.find_tty_pgrp(this.pid,FIND_TTY.CMDLINE),-1);
+			});
+		menu.append(image_menuitem);
+
 		Gtk.CheckMenuItem chmenuitem;
 		
 		chmenuitem = new Gtk.CheckMenuItem.with_label (_("Disable key bindings"));

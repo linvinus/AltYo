@@ -2283,6 +2283,11 @@ public class AYObject :Object{
             this.cpaste();
         });
 
+		this.add_window_accel("terminal_copy_all_text",_("Copy all"), _("Copy all text"), Gtk.Stock.COPY,"",()=> {
+            this.cselect_all();
+            this.ccopy();
+        });
+
 		/* Find on <Ctrl><Shift>f */
 		this.add_window_accel("terminal_search_dialog", _("Search"), _("Search"), Gtk.Stock.FIND,"<Control><Shift>F",()=> {
 			if(!((Entry)this.quick_options_notebook.search_text_combo.get_child()).has_focus || this.quick_options_notebook.search_mode_rbutton.active )
@@ -2517,6 +2522,12 @@ public class AYObject :Object{
 
 
 
+
+	public void cselect_all() {
+				unowned AYTab vtt = ((AYTab)this.active_tab.object);
+				if(vtt is VTTerminal)
+					((VTTerminal)vtt).vte_term.select_all ();
+	}
 
 	public void ccopy() {
 				unowned AYTab vtt = ((AYTab)this.active_tab.object);

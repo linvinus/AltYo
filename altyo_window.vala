@@ -946,7 +946,7 @@ public class VTMainWindow : Window{
 		else
 			this.gravity=Gdk.Gravity.SOUTH_WEST;
 		this.autohide  = conf.get_boolean("window_autohide",false);
-		this.BUG_16    = conf.get_boolean("window_iconify2hide",(Gtk.get_major_version()>=3 && Gtk.get_minor_version()>4?true:false));//13.04...
+		this.BUG_16    = conf.get_boolean("window_iconify2hide",false);
 	}//reconfigure
 
 	public bool configure_position(){

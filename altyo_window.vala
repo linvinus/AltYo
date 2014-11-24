@@ -267,6 +267,11 @@ public class VTMainWindow : Window{
 			this.skip_taskbar_hint = false;
 			this.set_keep_above(false);
 		}
+		/* since VTE 2.91,
+		 * needed for PanelHotkey to receive X.EventType.PropertyNotify events
+		 * */
+		var gdkwin = this.get_screen().get_root_window();
+		gdkwin.set_events(gdkwin.get_events()|Gdk.EventMask.PROPERTY_CHANGE_MASK);
 
 		this.hotkey = new PanelHotkey ();
 		this.hotkey.on_active_window_change.connect(this.check_focusout);

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.16.1 -->
 <interface>
-  <!-- interface-requires gtk+ 3.0 -->
+  <requires lib="gtk+" version="3.0"/>
   <object class="GtkAdjustment" id="animation_pull_steps_adjustment">
     <property name="lower">1</property>
     <property name="upper">100</property>
@@ -305,6 +306,32 @@
         <col id="0" translatable="yes">Hide if one tab</col>
       </row>
     </data>
+  </object>
+  <object class="GtkListStore" id="window_new_tab_position_liststore">
+    <columns>
+      <!-- column-name gchararray1 -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Right next</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Far right</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkAdjustment" id="window_position_y_adjustment">
+    <property name="lower">-1</property>
+    <property name="upper">10000</property>
+    <property name="value">-1</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="window_tab_destroy_delay_adjustment">
+    <property name="upper">360</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">60</property>
   </object>
   <object class="GtkScrolledWindow" id="settings-scrolledwindow">
     <property name="visible">True</property>
@@ -1154,21 +1181,6 @@ otherwise - gravity south</property>
                                             <property name="expand">False</property>
                                             <property name="fill">True</property>
                                             <property name="position">11</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkCheckButton" id="window_iconify2hide">
-                                            <property name="label" translatable="yes">Workaround if keyboard layout lost</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">False</property>
-                                            <property name="xalign">0</property>
-                                            <property name="draw_indicator">True</property>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">12</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -2371,8 +2383,8 @@ when command is launched</property>
                                             <child>
                                               <object class="GtkCellRendererAccel" id="cellrenderertext3">
                                                 <signal name="accel-cleared" handler="ay_settings_accel_cleared_cb" swapped="no"/>
-                                                <signal name="editing-started" handler="ay_settings_accel_editing_started_cb" swapped="no"/>
                                                 <signal name="accel-edited" handler="ay_settings_accel_edited_cb" swapped="no"/>
+                                                <signal name="editing-started" handler="ay_settings_accel_editing_started_cb" swapped="no"/>
                                               </object>
                                               <attributes>
                                                 <attribute name="editable">4</attribute>
@@ -3541,31 +3553,5 @@ when command is launched</property>
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkListStore" id="window_new_tab_position_liststore">
-    <columns>
-      <!-- column-name gchararray1 -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Right next</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Far right</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkAdjustment" id="window_position_y_adjustment">
-    <property name="lower">-1</property>
-    <property name="upper">10000</property>
-    <property name="value">-1</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="window_tab_destroy_delay_adjustment">
-    <property name="upper">360</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">60</property>
   </object>
 </interface>

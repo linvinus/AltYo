@@ -210,7 +210,6 @@ public class VTMainWindow : Window{
 	public bool allow_close=false;
 	public bool gravity_north_west=true;
 	public bool autohide=false;
-	public bool BUG_16=false;
 
 	private uint32 last_focus_out_event_time;
 	private unowned Gdk.Window ignore_last_active_window = null;
@@ -541,13 +540,8 @@ public class VTMainWindow : Window{
 
 				return true;//continue animation
 			}else{
-				#if VTE_2_91
-				if(this.BUG_16) this.iconify();//use iconify to prevent loss of keyboard layout per window in XFCE/Gnome3 .
-				else 			this.hide(); 
-				#else
 				this.hide();
 				this.unrealize();//important!
-				#endif
 
 				this.current_state=WStates.HIDDEN;
 				this.pull_animation_active=false;
@@ -594,14 +588,9 @@ public class VTMainWindow : Window{
 			 * as drawbacks, some window managers will show minimization animations (i.e. metacity)
 			 * seems that this is fundamental Xwindow/window_managers problem.
 			 * */
-			#if VTE_2_91
-			if(this.BUG_16) this.iconify();//use iconify to prevent loss of keyboard layout per window in XFCE/Gnome3 .
-			else 			this.hide(); 
-			#else
 			this.hide();
 			this.unrealize();//important!
-			#endif
-			
+
 			this.current_state=WStates.HIDDEN;
 			return;
 		}
@@ -951,7 +940,6 @@ public class VTMainWindow : Window{
 		else
 			this.gravity=Gdk.Gravity.SOUTH_WEST;
 		this.autohide  = conf.get_boolean("window_autohide",false);
-		this.BUG_16    = conf.get_boolean("window_iconify2hide",false);
 	}//reconfigure
 
 	public bool configure_position(){

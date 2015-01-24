@@ -1,3 +1,23 @@
+altyo (0.4~rc13-linvinus1) trusty; urgency=low
+
+  * improve compilation on precise v4
+  * improve Makefile
+  * new: add support for vte 0.38 (vte abi 2.91)
+  * improvement: #18 enable vte default encoding
+  * improvement: #18 restore support of pallete bg and fd collors
+  * improvement: #18 restore support of cursor blinkmode, cursor shape
+  * improvement: #18 in settings dialog, enable opacity
+  * improvement: #18 makefile, added vivid support
+  * improvement: #18
+  * fix: first attempt to fix  #19 and #16 and #17 at same time
+  * improvement: added 'Copy all' and 'Copy running command' menu options
+  * improvement: disable by default 'Workaround if keyboard layout lost'
+  * fix: auto hide with vte 2.91, #18
+  * fix: regression, empty window in some circumstance remove woraround for #16,
+  * fix: #21
+
+ -- denis <linvinus@gmail.com>  Sat, 24 Jan 2015 19:42:31 +0400
+
 altyo (0.4~rc12.1-linvinus1) trusty; urgency=low
 
   * improve compilation on precise v3

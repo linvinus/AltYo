@@ -11,3 +11,4 @@ syntax: glob
 /*.c
 /*.h
 /tmpfs
+/data/#preferences.glade#

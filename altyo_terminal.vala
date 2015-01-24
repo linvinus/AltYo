@@ -863,6 +863,13 @@ public class VTTerminal : AYTab{
 		#if ! VTE_2_91
 		this.vte_term.set_colors_rgba(fg,bg,palette);
 		#else
+		if(bg==null){
+			/* vte_terminal_set_colors
+			 * If background is NULL and palette_size is greater than 0,
+			 * the new background color is taken from palette [0].
+			 */ 
+			bg=palette[0];
+		}
 		bg.alpha=opacity;
 		this.vte_term.set_colors(fg,bg,palette);
 		#endif

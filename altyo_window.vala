@@ -176,7 +176,7 @@ public class VTMainWindow : Window{
 	}
 	public bool fullscreen_on_maximize=false;
 	public bool animation_enabled = true;
-	public int animation_speed=5;
+	public int animation_speed=20;//50hz
 	public int pull_steps=20;
 	public bool pull_animation_active = false;
 	public bool pull_active = false;
@@ -427,14 +427,16 @@ public class VTMainWindow : Window{
 
 			if(this.pull_step<this.pull_steps){
 
-				int arith_progress=(int)( ((float)(1+this.pull_steps)/2.0)*this.pull_steps);
+				float arith_progress=( ((float)(1+this.pull_steps)/(float)2.0)*this.pull_steps);
 				int tmp =this.pull_steps-this.pull_step;
-				//int arith_progress2=(int)( ((float)(1+tmp)/2.0)*this.pull_step); //bubble
-				int arith_progress2=(int)( ((float)(1+tmp)/2.0)*(tmp));
-				int h=(this.pull_h-(this.pull_h/arith_progress)*(arith_progress2) );
-				if(h==0)h=1;//set minimum height
+				float arith_progress2=( ((float)(1+tmp)/(float)2.0)*(tmp));
+				uint h=(uint)(this.pull_h-(((float)this.pull_h)/arith_progress)*(arith_progress2) )+1;
 
-				this.resize(this.pull_w,h);
+        //simple animation
+        //float step = ((float)this.pull_h/(float)this.pull_steps);
+        //uint h = (this.pull_h - (int)(step*(float)(this.pull_steps-this.pull_step)) )+1;
+
+				this.resize(this.pull_w,(int)h);
 				this.display_sync();
 				this.pull_step++;
 				return true;//continue animation
@@ -516,32 +518,32 @@ public class VTMainWindow : Window{
 			this.pull_step=0;
 		else
 			this.pull_step=this.pull_steps;//skip animation
-		GLib.Timeout.add(this.animation_speed,this.on_pull_down);
+		GLib.Timeout.add_full(GLib.Priority.LOW,this.animation_speed,this.on_pull_down);
 	}
 
 	public bool on_pull_up(){
-
 			if(this.pull_step<this.pull_steps){
-				int arith_progress=(int)( ((float)(1+this.pull_steps)/2.0)*this.pull_steps);
-				int tmp =this.pull_steps-this.pull_step;
-				int arith_progress2=(int)( ((float)(this.pull_steps+tmp)/2.0)*this.pull_step);
 
-				int h=(this.pull_h-(this.pull_h/arith_progress)*(arith_progress2) );
-				//debug("ff=%d this.pull_step=%d h=%d",ff,this.pull_step,h);
-//~ 				debug("on_pull_up h=%d",h);
-				if(h==0)h=1;//set minimum height
+				float arith_progress=( ((float)(1+this.pull_steps)/(float)2.0)*this.pull_steps);
+				int tmp =this.pull_steps-this.pull_step;
+				float arith_progress2=( ((float)(this.pull_steps+tmp)/(float)2.0)*this.pull_step);
+				uint h=(uint)(this.pull_h-((float)this.pull_h/arith_progress)*(arith_progress2) )+1;
+
+        //simple animation
+        //float step = ((float)this.pull_h/(float)this.pull_steps);
+        //uint h = (this.pull_h - (int)(step*(float)this.pull_step) )+1;
+
 				/* object Gdk.Window have option "state" with current window state
 				 * we will check is window still in fullscreen satate*/
 				this.fullscreened=false;//force unfullscreen, some WMs sets fullscreen state if window size equal to fullscreen
-				this.resize(this.pull_w,h);
-				this.pull_step++;
-//~ 				this.update_events();
+				this.resize(this.pull_w,(int)h);
 				this.display_sync();
 
+				this.pull_step++;
 				return true;//continue animation
 			}else{
 				this.hide();
-				this.unrealize();//important!
+//~ 				this.unrealize();//important!
 
 				this.current_state=WStates.HIDDEN;
 				this.pull_animation_active=false;
@@ -589,7 +591,7 @@ public class VTMainWindow : Window{
 			 * seems that this is fundamental Xwindow/window_managers problem.
 			 * */
 			this.hide();
-			this.unrealize();//important!
+//~ 			this.unrealize();//important!
 
 			this.current_state=WStates.HIDDEN;
 			return;
@@ -629,7 +631,7 @@ public class VTMainWindow : Window{
 		this.pull_animation_active=true;
 		this.ayobject.clear_prelight_state();
 		this.update_events();//process pixwin.damage_event
-		GLib.Timeout.add(this.animation_speed,this.on_pull_up);
+		GLib.Timeout.add_full(GLib.Priority.LOW,this.animation_speed,this.on_pull_up);
 	}
 
 	/*public void fake_pullup(){
@@ -717,7 +719,7 @@ public class VTMainWindow : Window{
 		
 		if(this.allow_update_size && this.wait_for_window_position_update>0){
 				if(this.update_position_size_for_glib_timer_id == 0)
-					this.update_position_size_for_glib_timer_id=GLib.Timeout.add(50,this.update_position_size_for_glib);//recheck position after 50ms			
+					this.update_position_size_for_glib_timer_id=GLib.Idle.add_full(GLib.Priority.DEFAULT_IDLE,this.update_position_size_for_glib);//recheck position after 50ms			
 				return ret;
 		}
 		
@@ -1237,7 +1239,7 @@ public class VTMainWindow : Window{
 					this.wait_for_window_position_update--;
 					debug("check_size this.wait_for_window_position_update=%d",(int)this.wait_for_window_position_update);
 					if(this.update_position_size_for_glib_timer_id == 0)
-						this.update_position_size_for_glib_timer_id=GLib.Timeout.add(50,this.update_position_size_for_glib);//recheck size after 50ms
+						this.update_position_size_for_glib_timer_id=GLib.Idle.add_full(GLib.Priority.DEFAULT_IDLE,this.update_position_size_for_glib);//recheck size after 50ms
 					return; //prevent GLib.Source.remove
 				}else
 					this.wait_for_window_position_update=0;

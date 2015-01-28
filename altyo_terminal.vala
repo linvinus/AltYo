@@ -511,8 +511,104 @@ public class AYTab : Object{
 	}
 }
 
+[CCode (cname = "g_param_spec_boxed")]
+extern unowned GLib.ParamSpec param_spec_boxed(string name,string nick,string blurb,Type boxed_type,ParamFlags flags);
+
+public class AYTerm : Vte.Terminal{
+	static construct {
+		int i=0;
+		for(i=0;i<16;i++){
+		install_style_property (param_spec_boxed ("palette-%0d".printf(i),
+												   null, null,
+												   typeof(Gdk.RGBA),
+												   GLib.ParamFlags.READABLE));
+		}
+		install_style_property (param_spec_boxed ("fg-color",
+												   null, null,
+												   typeof(Gdk.RGBA),
+												   GLib.ParamFlags.READABLE));
+		install_style_property (param_spec_boxed ("bg-color",
+												   null, null,
+												   typeof(Gdk.RGBA),
+												   GLib.ParamFlags.READABLE));												   		
+	}//construct
+
+	public override void style_updated (){
+		base.style_updated ();
+		this.update_style();
+	}
+
+	private bool get_style_color(string name,ref Gdk.RGBA color){
+		unowned Gdk.RGBA? tmp;
+		this.style_get(name,out tmp);
+		if(tmp!=null){
+			color=tmp;
+			debug("AYTerm: %s:%s",name,color.to_string());
+			tmp.free();
+			return true;
+		}else
+			debug("AYTerm: css color \"%s\" not found ",name);
+		return false;
+	}
+
+	public void update_style(){
+		Gdk.RGBA? fg={0};
+		Gdk.RGBA? bg={0};
+		Gdk.RGBA tmp_c={0};
+
+		Gdk.RGBA[] palette=  new Gdk.RGBA[16];
+		palette=  {
+				Gdk.RGBA(){  red=0x0000/65535.0,green=0x0000/65535.0,blue=0x0000/65535.0,alpha=1.0 },
+				Gdk.RGBA(){  red=0xaaaa/65535.0,green=0x0000/65535.0,blue=0x0000/65535.0,alpha=1.0 },
+				Gdk.RGBA(){  red=0x0000/65535.0,green=0xaaaa/65535.0,blue=0x0000/65535.0,alpha=1.0 },
+				Gdk.RGBA(){  red=0xaaaa/65535.0,green=0x5555/65535.0,blue=0x0000/65535.0,alpha=1.0 },
+				Gdk.RGBA(){  red=0x0000/65535.0,green=0x0000/65535.0,blue=0xaaaa/65535.0,alpha=1.0 },
+				Gdk.RGBA(){  red=0xaaaa/65535.0,green=0x0000/65535.0,blue=0xaaaa/65535.0,alpha=1.0 },
+				Gdk.RGBA(){  red=0x0000/65535.0,green=0xaaaa/65535.0,blue=0xaaaa/65535.0,alpha=1.0 },
+				Gdk.RGBA(){  red=0xaaaa/65535.0,green=0xaaaa/65535.0,blue=0xaaaa/65535.0,alpha=1.0 },
+				Gdk.RGBA(){  red=0x5555/65535.0,green=0x5555/65535.0,blue=0x5555/65535.0,alpha=1.0 },
+				Gdk.RGBA(){  red=0xffff/65535.0,green=0x5555/65535.0,blue=0x5555/65535.0,alpha=1.0 },
+				Gdk.RGBA(){  red=0x5555/65535.0,green=0xffff/65535.0,blue=0x5555/65535.0,alpha=1.0 },
+				Gdk.RGBA(){  red=0xffff/65535.0,green=0xffff/65535.0,blue=0x5555/65535.0,alpha=1.0 },
+				Gdk.RGBA(){  red=0x5555/65535.0,green=0x5555/65535.0,blue=0xffff/65535.0,alpha=1.0 },
+				Gdk.RGBA(){  red=0xffff/65535.0,green=0x5555/65535.0,blue=0xffff/65535.0,alpha=1.0 },
+				Gdk.RGBA(){  red=0x5555/65535.0,green=0xffff/65535.0,blue=0xffff/65535.0,alpha=1.0 },
+				Gdk.RGBA(){  red=0xffff/65535.0,green=0xffff/65535.0,blue=0xffff/65535.0,alpha=1.0 }
+				};
+		int i;
+		for(i=0;i<palette.length;i++){
+			this.get_style_color("palette-%0d".printf(i),ref palette[i]);
+		}
+
+		if(!this.get_style_color("fg-color",ref fg))
+			fg=null;
+
+		if(!this.get_style_color("bg-color",ref bg))
+			bg=null;
+
+		#if ! VTE_2_91
+		this.set_colors_rgba(fg,bg,palette);
+		if(bg!=null)
+			this.vte_term.set_opacity((uint16)((bg.alpha)*65535));
+		//set_background_transparent call vte_terminal_queue_background_update
+		this.vte_term.set_background_transparent(true);//but only when changes
+		this.vte_term.set_background_transparent(false);//but only when changes
+		#else
+		this.set_colors(fg,bg,palette);
+		#endif
+	}//update_style
+
+	public AYTerm(){
+		this.update_style();
+		var context = this.get_style_context ();
+		context.changed.connect(()=>{
+			this.update_style();
+			});
+	}
+
+}
 public class VTTerminal : AYTab{
-	public Vte.Terminal vte_term {get; set; default = null;}
+	public AYTerm vte_term {get; set; default = null;}
 	public Pid pid {get; set; default = -1;}
 	public bool auto_restart {get; set; default = true;}
 	public bool match_case {get; set; default = false;}
@@ -538,7 +634,7 @@ public class VTTerminal : AYTab{
 			this.on_child_exit=on_child_exit;
 
 		this.match_tags = new HashTable<int, string> (direct_hash, direct_equal);
-		this.vte_term = new Vte.Terminal();
+		this.vte_term = new AYTerm();
 		this.vte_term.halign=Gtk.Align.FILL;
 		this.vte_term.valign=Gtk.Align.FILL;
 		this.vte_term.expand=false;
@@ -809,76 +905,7 @@ public class VTTerminal : AYTab{
 			return CFG_CHECK.OK;
 			}));
 
-		Gdk.RGBA? fg;
-		fg=new Gdk.RGBA();
-		Gdk.RGBA? bg;
-		bg=new Gdk.RGBA();
-		if(!fg.parse(my_conf.get_string("terminal_color_fg","#00FFAA")))
-			fg = null;//use color from pallete
-		if(!bg.parse(my_conf.get_string("terminal_color_bg","")))
-			bg = null;//use color from pallete
-
-		//default color palette - "Linux", in term of gnome-terminal
-		Gdk.RGBA[] palette=  new Gdk.RGBA[16];
-		palette=  {
-				Gdk.RGBA(){  red=0x0000/65535.0,green=0x0000/65535.0,blue=0x0000/65535.0,alpha=1.0 },
-				Gdk.RGBA(){  red=0xaaaa/65535.0,green=0x0000/65535.0,blue=0x0000/65535.0,alpha=1.0 },
-				Gdk.RGBA(){  red=0x0000/65535.0,green=0xaaaa/65535.0,blue=0x0000/65535.0,alpha=1.0 },
-				Gdk.RGBA(){  red=0xaaaa/65535.0,green=0x5555/65535.0,blue=0x0000/65535.0,alpha=1.0 },
-				Gdk.RGBA(){  red=0x0000/65535.0,green=0x0000/65535.0,blue=0xaaaa/65535.0,alpha=1.0 },
-				Gdk.RGBA(){  red=0xaaaa/65535.0,green=0x0000/65535.0,blue=0xaaaa/65535.0,alpha=1.0 },
-				Gdk.RGBA(){  red=0x0000/65535.0,green=0xaaaa/65535.0,blue=0xaaaa/65535.0,alpha=1.0 },
-				Gdk.RGBA(){  red=0xaaaa/65535.0,green=0xaaaa/65535.0,blue=0xaaaa/65535.0,alpha=1.0 },
-				Gdk.RGBA(){  red=0x5555/65535.0,green=0x5555/65535.0,blue=0x5555/65535.0,alpha=1.0 },
-				Gdk.RGBA(){  red=0xffff/65535.0,green=0x5555/65535.0,blue=0x5555/65535.0,alpha=1.0 },
-				Gdk.RGBA(){  red=0x5555/65535.0,green=0xffff/65535.0,blue=0x5555/65535.0,alpha=1.0 },
-				Gdk.RGBA(){  red=0xffff/65535.0,green=0xffff/65535.0,blue=0x5555/65535.0,alpha=1.0 },
-				Gdk.RGBA(){  red=0x5555/65535.0,green=0x5555/65535.0,blue=0xffff/65535.0,alpha=1.0 },
-				Gdk.RGBA(){  red=0xffff/65535.0,green=0x5555/65535.0,blue=0xffff/65535.0,alpha=1.0 },
-				Gdk.RGBA(){  red=0x5555/65535.0,green=0xffff/65535.0,blue=0xffff/65535.0,alpha=1.0 },
-				Gdk.RGBA(){  red=0xffff/65535.0,green=0xffff/65535.0,blue=0xffff/65535.0,alpha=1.0 }
-				};
-
-		string[] palette_s = new string [16];
-		var i = 0;
-		foreach(var c in palette){
-			palette_s[i] = c.to_string();
-			i++;
-		}
-
-		string[] palette_s_conf = my_conf.get_string_list("terminal_palette",palette_s);
-		i = 0;
-		if(palette_s_conf != null && palette_s_conf.length==16)//todo: make different sizes
-		foreach(var s in palette_s_conf){
-			palette[i].parse(s);
-			i++;
-		}
-		double opacity = my_conf.get_double("terminal_opacity",1.0,(ref new_val)=>{
-			if(new_val<0.0){new_val=0.0;return CFG_CHECK.REPLACE;}
-			if(new_val>1.0){new_val=1.0;return CFG_CHECK.REPLACE;}
-			return CFG_CHECK.OK;
-			});
-
-
 		#if ! VTE_2_91
-		this.vte_term.set_colors_rgba(fg,bg,palette);
-		#else
-		if(bg==null){
-			/* vte_terminal_set_colors
-			 * If background is NULL and palette_size is greater than 0,
-			 * the new background color is taken from palette [0].
-			 */ 
-			bg=palette[0];
-		}
-		bg.alpha=opacity;
-		this.vte_term.set_colors(fg,bg,palette);
-		#endif
-
-		#if ! VTE_2_91
-		//vte bug, set_opacity don't call vte_terminal_queue_background_update
-		// we force update later
-		this.vte_term.set_opacity((uint16)((opacity)*65535));
-
 		var bg_img_file = my_conf.get_string("terminal_background_image_file","");
 		if(bg_img_file!=null && bg_img_file!="" && GLib.FileUtils.test(bg_img_file,GLib.FileTest.EXISTS)){
 			message("set_background_image_file=%s",bg_img_file);
@@ -901,11 +928,11 @@ public class VTTerminal : AYTab{
 		this.vte_term.set_background_saturation(sat);
 		if(bg_faket){
 			this.vte_term.set_background_transparent(true);//fake transparent
-		}else{
+		}//else{//moved -> this.vte_term.update_style();
 			//set_background_transparent call vte_terminal_queue_background_update
-			this.vte_term.set_background_transparent(true);//but only when changes
-			this.vte_term.set_background_transparent(false);//but only when changes
-		}
+			//this.vte_term.set_background_transparent(true);//but only when changes
+			//this.vte_term.set_background_transparent(false);//but only when changes
+		//}
 		#endif
 		/*0-BLOCK,1-IBEAM,2-UNDERLINE*/
 		var cursorshape  = my_conf.get_integer("terminal_cursorshape",0,(ref new_val)=>{
@@ -1045,6 +1072,7 @@ public class VTTerminal : AYTab{
 			return CFG_CHECK.OK;
 			});
 		this.disable_terminal_popup=my_conf.get_boolean("terminal_disable_popup_menu",false);
+		this.vte_term.update_style();
 	}//configure
 
 	public bool vte_button_press_event(Widget widget,Gdk.EventButton event) {

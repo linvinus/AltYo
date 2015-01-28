@@ -81,43 +81,44 @@ public class VTMainWindow : Window{
 	private bool _maximized=false;//cached value
 	public bool maximized {
         get {
-			
-			var win = this.get_window();
-			if( win!=null ){
-				if( (win.get_state() & Gdk.WindowState.MAXIMIZED) == Gdk.WindowState.MAXIMIZED){
-					_maximized=true;
-					return true; 
-				}else{
-					_maximized=false;
-					return false;
-				}
-			}else
-				return _maximized;
-		}
+          var win = this.get_window();
+          if( win!=null ){
+            if( (win.get_state() & Gdk.WindowState.MAXIMIZED) == Gdk.WindowState.MAXIMIZED){
+              _maximized=true;
+              this.get_style_context().add_class("window_maximized");
+              return true; 
+            }else{
+              _maximized=false;
+              this.get_style_context().remove_class("window_maximized");
+              return false;
+            }
+          }else
+            return _maximized;
+        }//get
 
         set {
-			if(value == true){
-				debug("mainvt_maximize");
-				this.my_window_state |= MYWINStates.MAXIMIZED;
-				if(!this.maximized){
-					this.wait_window_manager=true;
-					this.maximize();
-					if(this.fullscreen_on_maximize)
-						this.fullscreened=true;
-				}
-			}else{
-				debug("mainvt_unmaximize");
-				this.my_window_state &= ~(MYWINStates.MAXIMIZED);
-				this.fullscreened=false;
-				if(this.maximized){
-					this.wait_window_manager=true;
-					this.wait_for_window_position_update=5;
-					this.width_request=-1;//allow main window resize
-					this.height_request=-1;//allow main window resize
-					this.unmaximize();
-				}
-			}
-		}		
+          if(value == true){
+            debug("mainvt_maximize");
+            this.my_window_state |= MYWINStates.MAXIMIZED;
+            if(!this.maximized){
+              this.wait_window_manager=true;
+              this.maximize();
+              if(this.fullscreen_on_maximize)
+                this.fullscreened=true;
+            }
+          }else{
+            debug("mainvt_unmaximize");
+            this.my_window_state &= ~(MYWINStates.MAXIMIZED);
+            this.fullscreened=false;
+            if(this.maximized){
+              this.wait_window_manager=true;
+              this.wait_for_window_position_update=5;
+              this.width_request=-1;//allow main window resize
+              this.height_request=-1;//allow main window resize
+              this.unmaximize();
+            }
+          }
+        }//set
 	}//public bool maximized
 	
 	private bool _fullscreened=false;
@@ -846,6 +847,8 @@ public class VTMainWindow : Window{
 
 		var css_main = new CssProvider ();
 		string style_str= ""+
+           ".window_maximized AYTerm{-AYTerm-bg-color: alpha(#000000,1.0);}"+
+           "AYTerm{ -AYTerm-bg-color: alpha(#000000,1.0); -AYTerm-fg-color: #00FFAA; -AYTerm-palette-0:#FF0000; -AYTerm-palette-1:#AA0000; -AYTerm-palette-2:#00AA00; -AYTerm-palette-3:#AA5500; -AYTerm-palette-4:#0000AA; -AYTerm-palette-5:#AA00AA; -AYTerm-palette-6:#00AAAA; -AYTerm-palette-7:#AAAAAA; -AYTerm-palette-8:#555555; -AYTerm-palette-9:#FF5555; -AYTerm-palette-10:#55FF55; -AYTerm-palette-11:#FFFF55; -AYTerm-palette-12:#5555FF; -AYTerm-palette-13:#FF55FF; -AYTerm-palette-14:#55FFFF; -AYTerm-palette-15:#FFFFFF; } " +
 					 "VTToggleButton GtkLabel  { font: Mono 10; -GtkWidget-focus-padding: 0px; -GtkButton-default-border:0px; -GtkButton-default-outside-border:0px; -GtkButton-inner-border:0px; border-width:0px; -outer-stroke-width: 0px; margin:0px; padding:0px;}"+
 					 "VTToggleButton {-GtkWidget-focus-padding: 0px;-GtkButton-default-border:0px;-GtkButton-default-outside-border:0px;-GtkButton-inner-border:0px;border-color:alpha(#000000,0.0);border-width: 1px;-outer-stroke-width: 0px;border-radius: 3px;border-style: solid;background-image: none;margin:0px;padding:0px 0px 0px 0px;background-color: alpha(#000000,0.0);color: #AAAAAA; box-shadow: none;}"+
 					 "VTToggleButton:active{background-color: #00AAAA;background-image: -gtk-gradient(radial,center center, 0,center center, 1, from (#00BBBB),to (#008888) );color: #000000;}"+
@@ -2731,6 +2734,7 @@ public class AYObject :Object{
 			this.main_vbox.valign=Gtk.Align.FILL;
 			this.tasks_notebook.expand=true;
 			this.tasks_notebook.queue_resize_no_redraw();
+      this.update_terminal_style();
 			debug("maximize==FILL");
 		}else if(!new_maximize && this.tasks_notebook.halign!=Gtk.Align.START){
 			this.tasks_notebook.halign=Gtk.Align.START;
@@ -2739,6 +2743,7 @@ public class AYObject :Object{
 			this.main_vbox.valign=Gtk.Align.START;
 			this.tasks_notebook.expand=false;
 			this.tasks_notebook.queue_resize_no_redraw();
+      this.update_terminal_style();
 			debug("maximize==START");
 		}
 
@@ -2856,6 +2861,27 @@ public class AYObject :Object{
 		if(vt != null)
 			this.activate_tab(vt.tbutton);		
 	}
+  
+  public void update_terminal_style(){
+		unowned AYTab vt = children.nth_data(0);
+		if(vt != null){
+				if( vt is VTTerminal ){
+          VTTerminal vtt=((VTTerminal) vt);
+					vtt.vte_term.grab_focus();
+          Gdk.RGBA? fg={0};
+          Gdk.RGBA? bg={0};
+          Gdk.RGBA palette[16];
+    
+          vtt.vte_term.gen_colors(ref fg,ref bg,palette);
+          foreach(var tab in this.children){
+            if( tab is VTTerminal ){
+              ((VTTerminal)tab).vte_term.apply_style(ref fg,ref bg,palette);
+            }
+          }
+        }
+    }
+
+  }
 
 }//class AYObject
 

@@ -623,15 +623,7 @@ public class MySettings : Object {
 			try {
 				this.changed=true;
 				if(digits_after_comma>0){
-					uint round=1;
-					double rest=5.0;
-					while(digits_after_comma-->0){
-						round*=10;
-					}
-					rest/=(round*10);
-					int i=(int)((def+rest) * round);//round
-					def=(double)((double)(i)/(double)round);
-					string S="%.2f".printf(def);
+					string S="%.2f".printf(round_double(def,digits_after_comma));
 					//printf string is localized, but KeyFile allow only
 					//dot as digits delimeter in double,
 					//so replace comma with dot
@@ -799,4 +791,19 @@ public to_data
 */
 }
 
+public string hexRGBA(Gdk.RGBA c){
+  //output #AABBCC
+  return "#%02hhX%02hhX%02hhX".printf((char)(c.red*65535)&0xFF,(char)(c.green*65535)&0xFF,(char)(c.blue*65535)&0xFF);
+}
 
+public double round_double(double def,uint digits_after_comma){
+					uint round=1;
+					double rest=5.0;
+					while(digits_after_comma-->0){
+						round*=10;
+					}
+					rest/=(round*10);
+					int i=(int)((def+rest) * round);//round
+					def=(double)((double)(i)/(double)round);
+          return def;
+}

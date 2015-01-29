@@ -672,7 +672,38 @@ public class AYSettings : AYTab{
 			B.sensitive=( (w.active==1 || w.active==3) ?true:false);
 		}
 	}
-	
+	private string css_ini_to_human(string s){
+    Regex regex = new Regex ("[{};]");
+    string result = regex.replace_eval(s, s.length,0,0, (match_info, result)=>{
+    result.append(match_info.fetch(match_info.get_match_count()-1)+"\n");
+    return false;//continue
+    });
+    return result;
+  }
+  private void load_css(){
+    //load css colors  
+    var test_term =new AYTerm();//will be  destroyed automatically
+    Gdk.RGBA? fg={0};
+    Gdk.RGBA? bg={0};
+    Gdk.RGBA palette[16];
+
+    test_term.gen_colors(ref fg,ref bg,palette);
+    
+    Gtk.ColorButton CB;
+    CB = builder.get_object ("terminal_color_fg") as Gtk.ColorButton;
+    if(fg!=null)
+      CB.set_rgba(fg);
+    CB = builder.get_object ("terminal_color_bg") as Gtk.ColorButton;
+    if(bg!=null)
+      CB.set_rgba(bg);
+    for(int i=1; i<17;i++){
+      CB = builder.get_object ("terminal_palette_colorbutton"+i.to_string()) as Gtk.ColorButton;
+      if(CB!=null)
+          CB.set_rgba(palette[i-1]);
+    }
+
+  }
+
 	public void get_from_conf() {
 		unowned Gdk.Screen gscreen = this.ayobject.main_window.get_screen ();
         int win_x,win_y;
@@ -750,7 +781,7 @@ public class AYSettings : AYTab{
 							var B = builder.get_object (key) as Gtk.FontButton;
 							B.font_name=this.my_conf.get_string(key,"");
 						}else
-						if(key=="terminal_color_fg" || key=="terminal_color_bg" || key=="terminal_tint_color"){
+						if(key=="terminal_tint_color"){
 							var B = builder.get_object (key) as Gtk.ColorButton;
 							var color=new Gdk.RGBA();
 							if(color.parse(this.my_conf.get_string(key,"")))
@@ -771,12 +802,7 @@ public class AYSettings : AYTab{
 						if(key=="program_style"){
 							var B = builder.get_object (key) as Gtk.TextView;
 							var s=this.my_conf.get_string(key,"");
-							Regex regex = new Regex ("[{};]");
-							string result = regex.replace_eval(s, s.length,0,0, (match_info, result)=>{
-							result.append(match_info.fetch(match_info.get_match_count()-1)+"\n");
-							return false;//continue
-							});
-							B.buffer.text=result;
+							B.buffer.text=this.css_ini_to_human(s);
 						}else
 						if(key=="tab_sort_order"){
 							var B = builder.get_object (key) as Gtk.ComboBox;
@@ -812,7 +838,7 @@ public class AYSettings : AYTab{
 							if(found)
 								encodings_combo.set_active_iter(iter);
 							else
-								((Entry)encodings_combo.get_child()).set_text(term_encoding);							
+								((Entry)encodings_combo.get_child()).set_text(term_encoding);
 						}else{
 							var B = builder.get_object (key) as Gtk.Entry;
 							if(B!=null){
@@ -862,8 +888,8 @@ public class AYSettings : AYTab{
 				break;
 				case CFG_TYPE.TYPE_ACCEL_STRING:
 				break;
-			}
-		}
+			}//
+		}//foreach key
 
 			AccelMap am2=Gtk.AccelMap.get();
 			var p2 = new point_ActionGroup_store(this.ayobject.action_group,this.keybindings_store,this);
@@ -906,6 +932,9 @@ public class AYSettings : AYTab{
 			ASS.sensitive=false;
 		}
 		#endif
+    
+    this.load_css();
+    
 		this.ignore_on_loading = false;
 	}//get_from_conf
 
@@ -983,7 +1012,7 @@ public class AYSettings : AYTab{
 							if(B.font_name!=this.my_conf.get_string(key,""))
 								this.my_conf.set_string(key,B.font_name);
 						}else
-						if(key=="terminal_color_fg" || key=="terminal_color_bg" || key=="terminal_tint_color"){
+						if(/*key=="terminal_color_fg" || key=="terminal_color_bg" ||*/ key=="terminal_tint_color"){
 							var B = builder.get_object (key) as Gtk.ColorButton;
 							var color=B.get_rgba();
 							var S = color.to_string();
@@ -1005,17 +1034,53 @@ public class AYSettings : AYTab{
 							var B = builder.get_object (key) as Gtk.TextView;
 							var s=B.buffer.text;
 
+              //update css colors
+              Gtk.ColorButton CB;
+              CB = builder.get_object ("terminal_color_fg") as Gtk.ColorButton;
+              var fg=CB.get_rgba();
+              CB = builder.get_object ("terminal_color_bg") as Gtk.ColorButton;
+              var bg=CB.get_rgba();
+              string alpha="%1.2f".printf(round_double(bg.alpha,2));
+              alpha=alpha.replace(",",".");
+              string css_inner="-AYTerm-bg-color: alpha(%s,%s); -AYTerm-fg-color: %s;".printf(hexRGBA(bg),alpha,hexRGBA(fg));
+              
+              for(int i=1; i<17;i++){
+                CB = builder.get_object ("terminal_palette_colorbutton"+i.to_string()) as Gtk.ColorButton;
+                if(CB!=null){
+                  css_inner+=" -AYTerm-palette-%d:%s;".printf(i-1,hexRGBA(CB.rgba));
+                }
+              }
+              
+              string css = "AYTerm { %s } ".printf(css_inner);
+              debug(css);
+              
+              //https://regex101.com/r/iT2eR5/9
+              Regex css_regex = new Regex ("""((^\s*)|(\}\s*))(?P<AYTerm_css>AYTerm\s*\{\s*(([\/\*].*[\*\/])?[^}]+?)+\s*\})""");
+              MatchInfo match_info;
+              var css_result = new StringBuilder(s); 
+              if(css_regex.match(s,0, out match_info) ){
+                debug(" RegexEvalCallback match_info ");
+                int start_pos, end_pos;
+                if(match_info.fetch_named_pos("AYTerm_css",out start_pos, out end_pos) ){
+                  debug(" RegexEvalCallback %d %d ",start_pos,end_pos);
+                  
+                  css_result.erase(start_pos,end_pos-start_pos);
+                  css_result.insert(start_pos,css);
+                }
+              }
+              
 							string S="";
 							uint line,pos;
-							if(!this.check_css(B.buffer.text,ref S,out line,out pos)){
+							if(!this.check_css(css_result.str,ref S,out line,out pos)){
 								string msg=_("New style will not be saved!\nin line %d  at position %d\nerror:%s").printf(line,pos,S);
 								debug("on config apply css error %s",msg);
 								this.ayobject.main_window.show_message_box(_("AltYo CSS style error"),msg);
 							}else{//looks good
 								Regex regex = new Regex ("\n");
-								string result = regex.replace (s, s.length, 0, "");
+								string result = regex.replace (css_result.str, css_result.str.length, 0, "");
 								if(result!=this.my_conf.get_string(key,"")){
 									this.my_conf.set_string(key,result);
+                  B.buffer.text=this.css_ini_to_human(result);//update 
 								}
 							}
 						}else
@@ -1187,9 +1252,9 @@ Exec=altyo""";
 				}
 			}
 		}
-
 		this.my_conf.reload_config();
 		this.my_conf.save();
+    this.load_css();//reload 
 	}//apply
 
 

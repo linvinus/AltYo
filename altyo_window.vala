@@ -2867,7 +2867,6 @@ public class AYObject :Object{
 		if(vt != null){
 				if( vt is VTTerminal ){
           VTTerminal vtt=((VTTerminal) vt);
-					vtt.vte_term.grab_focus();
           Gdk.RGBA? fg={0};
           Gdk.RGBA? bg={0};
           Gdk.RGBA palette[16];

@@ -11,6 +11,8 @@ public class point_ActionGroup_store {
 	}
 }
 
+
+
 public class AYSettings : AYTab{
 	private Gtk.Builder builder;
 	public AYObject ayobject {get;set;default=null;}
@@ -18,6 +20,112 @@ public class AYSettings : AYTab{
 	private string autorun_file;
 	private string monitor_name;/*save monitor name on which settings was opened*/
 	private bool ignore_on_loading;/*ignore some events when loading settings from ini file*/
+  
+  //vala bug, without CCode will generate AY_SETTINGS_terminal_palettes[5] = {{{
+  //https://bugzilla.gnome.org/show_bug.cgi?id=604371
+  //[CCode (cname = "AY_SETTINGS_terminal_palettes[5][16]",array_length_cname = "5",array_length= false)]
+  //[CCode (cname = "AY_SETTINGS_terminal_palettes[16]",array_length= false)]
+    /* Tango palette */
+    const Gdk.RGBA terminal_palettes_tango[16] = {
+      { 0,         0,        0,         1 },
+      { 0.8,       0,        0,         1 },
+      { 0.305882,  0.603922, 0.0235294, 1 },
+      { 0.768627,  0.627451, 0,         1 },
+      { 0.203922,  0.396078, 0.643137,  1 },
+      { 0.458824,  0.313725, 0.482353,  1 },
+      { 0.0235294, 0.596078, 0.603922,  1 },
+      { 0.827451,  0.843137, 0.811765,  1 },
+      { 0.333333,  0.341176, 0.32549,   1 },
+      { 0.937255,  0.160784, 0.160784,  1 },
+      { 0.541176,  0.886275, 0.203922,  1 },
+      { 0.988235,  0.913725, 0.309804,  1 },
+      { 0.447059,  0.623529, 0.811765,  1 },
+      { 0.678431,  0.498039, 0.658824,  1 },
+      { 0.203922,  0.886275, 0.886275,  1 },
+      { 0.933333,  0.933333, 0.92549,   1 },
+    };
+
+    /* Linux palette */
+    const Gdk.RGBA terminal_palettes_linux[16] = {
+      { 0,        0,        0,        1 },
+      { 0.666667, 0,        0,        1 },
+      { 0,        0.666667, 0,        1 },
+      { 0.666667, 0.333333, 0,        1 },
+      { 0,        0,        0.666667, 1 },
+      { 0.666667, 0,        0.666667, 1 },
+      { 0,        0.666667, 0.666667, 1 },
+      { 0.666667, 0.666667, 0.666667, 1 },
+      { 0.333333, 0.333333, 0.333333, 1 },
+      { 1,        0.333333, 0.333333, 1 },
+      { 0.333333, 1,        0.333333, 1 },
+      { 1,        1,        0.333333, 1 },
+      { 0.333333, 0.333333, 1,        1 },
+      { 1,        0.333333, 1,        1 },
+      { 0.333333, 1,        1,        1 },
+      { 1,        1,        1,        1 },
+    };
+
+
+    /* XTerm palette */
+    const Gdk.RGBA terminal_palettes_xterm[16] = {
+      { 0,        0,        0,        1 },
+      { 0.803922, 0,        0,        1 },
+      { 0,        0.803922, 0,        1 },
+      { 0.803922, 0.803922, 0,        1 },
+      { 0.117647, 0.564706, 1,        1 },
+      { 0.803922, 0,        0.803922, 1 },
+      { 0,        0.803922, 0.803922, 1 },
+      { 0.898039, 0.898039, 0.898039, 1 },
+      { 0.298039, 0.298039, 0.298039, 1 },
+      { 1,        0,        0,        1 },
+      { 0,        1,        0,        1 },
+      { 1,        1,        0,        1 },
+      { 0.27451,  0.509804, 0.705882, 1 },
+      { 1,        0,        1,        1 },
+      { 0,        1,        1,        1 },
+      { 1,        1,        1,        1 },
+    };
+
+    /* RXVT palette */
+    const Gdk.RGBA terminal_palettes_rxvt[16] = {
+      { 0,        0,        0,        1 },
+      { 0.803922, 0,        0,        1 },
+      { 0,        0.803922, 0,        1 },
+      { 0.803922, 0.803922, 0,        1 },
+      { 0,        0,        0.803922, 1 },
+      { 0.803922, 0,        0.803922, 1 },
+      { 0,        0.803922, 0.803922, 1 },
+      { 0.980392, 0.921569, 0.843137, 1 },
+      { 0.25098,  0.25098,  0.25098,  1 },
+      { 1, 0, 0, 1 },
+      { 0, 1, 0, 1 },
+      { 1, 1, 0, 1 },
+      { 0, 0, 1, 1 },
+      { 1, 0, 1, 1 },
+      { 0, 1, 1, 1 },
+      { 1, 1, 1, 1 },
+    };
+
+    /* Solarized palette (1.0.0beta2): http://ethanschoonover.com/solarized */
+    const Gdk.RGBA terminal_palettes_solarized[16] = {
+      { 0.02745,  0.211764, 0.258823, 1 },
+      { 0.862745, 0.196078, 0.184313, 1 },
+      { 0.521568, 0.6,      0,        1 },
+      { 0.709803, 0.537254, 0,        1 },
+      { 0.149019, 0.545098, 0.823529, 1 },
+      { 0.82745,  0.211764, 0.509803, 1 },
+      { 0.164705, 0.631372, 0.596078, 1 },
+      { 0.933333, 0.909803, 0.835294, 1 },
+      { 0,        0.168627, 0.211764, 1 },
+      { 0.796078, 0.294117, 0.086274, 1 },
+      { 0.345098, 0.431372, 0.458823, 1 },
+      { 0.396078, 0.482352, 0.513725, 1 },
+      { 0.513725, 0.580392, 0.588235, 1 },
+      { 0.423529, 0.443137, 0.768627, 1 },
+      { 0.57647,  0.631372, 0.631372, 1 },
+      { 0.992156, 0.964705, 0.890196, 1 },
+    };
+
 	public AYSettings(MySettings my_conf,Notebook notebook, int tab_index,AYObject ayo) {
 		base(my_conf, notebook, tab_index);
 		this.tbutton.set_title(tab_index, _("AYsettings") );
@@ -672,6 +780,37 @@ public class AYSettings : AYTab{
 			B.sensitive=( (w.active==1 || w.active==3) ?true:false);
 		}
 	}
+  /*multidimantional array, hahaha*/
+	private Gdk.RGBA? get_color_from_array(int theme,int x){
+    switch(theme){
+      case 0 : return terminal_palettes_tango[x];
+      case 1 : return terminal_palettes_linux[x];
+      case 2 : return terminal_palettes_xterm[x];
+      case 3 : return terminal_palettes_rxvt[x];
+      case 4 : return terminal_palettes_solarized[x];
+    };
+    return null;
+  }
+  [CCode (instance_pos = -1)]
+	public void on_theme_changed  (Gtk.ComboBox w) {//ay_settings_on_theme_changed
+    Gtk.ColorButton CB;
+    int theme_index=w.get_active();
+    for(int i=1; i<17;i++){
+      CB = builder.get_object ("terminal_palette_colorbutton"+i.to_string()) as Gtk.ColorButton;
+      if(CB!=null){
+          //vala bug problem with accsess to multidimentional array
+          CB.set_rgba(get_color_from_array(theme_index,i-1));
+        }
+    }
+    CB = builder.get_object ("terminal_color_fg") as Gtk.ColorButton;
+    CB.set_rgba(get_color_from_array(theme_index,7));
+    CB = builder.get_object ("terminal_color_bg") as Gtk.ColorButton;
+    var bg = get_color_from_array(theme_index,0);
+    var opacity_w = builder.get_object ("terminal_opacity") as Gtk.SpinButton;
+    bg.alpha=opacity_w.get_value();
+    CB.set_rgba(bg);
+	}
+    
 	private string css_ini_to_human(string s){
     Regex regex = new Regex ("[{};]");
     string result = regex.replace_eval(s, s.length,0,0, (match_info, result)=>{
@@ -696,6 +835,8 @@ public class AYSettings : AYTab{
     CB = builder.get_object ("terminal_color_bg") as Gtk.ColorButton;
     if(bg!=null)
       CB.set_rgba(bg);
+    var opacity_w = builder.get_object ("terminal_opacity") as Gtk.SpinButton;
+    opacity_w.set_value(bg.alpha);
     for(int i=1; i<17;i++){
       CB = builder.get_object ("terminal_palette_colorbutton"+i.to_string()) as Gtk.ColorButton;
       if(CB!=null)
@@ -1040,6 +1181,9 @@ public class AYSettings : AYTab{
               var fg=CB.get_rgba();
               CB = builder.get_object ("terminal_color_bg") as Gtk.ColorButton;
               var bg=CB.get_rgba();
+              var opacity_w = builder.get_object ("terminal_opacity") as Gtk.SpinButton;
+              bg.alpha=opacity_w.get_value();
+    
               string alpha="%1.2f".printf(round_double(bg.alpha,2));
               alpha=alpha.replace(",",".");
               string css_inner="-AYTerm-bg-color: alpha(%s,%s); -AYTerm-fg-color: %s;".printf(hexRGBA(bg),alpha,hexRGBA(fg));

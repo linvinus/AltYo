@@ -42,7 +42,7 @@ public class AYSettings : AYTab{
       { 0.447059,  0.623529, 0.811765,  1 },
       { 0.678431,  0.498039, 0.658824,  1 },
       { 0.203922,  0.886275, 0.886275,  1 },
-      { 0.933333,  0.933333, 0.92549,   1 },
+      { 0.933333,  0.933333, 0.92549,   1 }
     };
 
     /* Linux palette */
@@ -62,7 +62,7 @@ public class AYSettings : AYTab{
       { 0.333333, 0.333333, 1,        1 },
       { 1,        0.333333, 1,        1 },
       { 0.333333, 1,        1,        1 },
-      { 1,        1,        1,        1 },
+      { 1,        1,        1,        1 }
     };
 
 
@@ -83,7 +83,7 @@ public class AYSettings : AYTab{
       { 0.27451,  0.509804, 0.705882, 1 },
       { 1,        0,        1,        1 },
       { 0,        1,        1,        1 },
-      { 1,        1,        1,        1 },
+      { 1,        1,        1,        1 }
     };
 
     /* RXVT palette */
@@ -103,7 +103,7 @@ public class AYSettings : AYTab{
       { 0, 0, 1, 1 },
       { 1, 0, 1, 1 },
       { 0, 1, 1, 1 },
-      { 1, 1, 1, 1 },
+      { 1, 1, 1, 1 }
     };
 
     /* Solarized palette (1.0.0beta2): http://ethanschoonover.com/solarized */
@@ -123,7 +123,7 @@ public class AYSettings : AYTab{
       { 0.513725, 0.580392, 0.588235, 1 },
       { 0.423529, 0.443137, 0.768627, 1 },
       { 0.57647,  0.631372, 0.631372, 1 },
-      { 0.992156, 0.964705, 0.890196, 1 },
+      { 0.992156, 0.964705, 0.890196, 1 }
     };
 
 	public AYSettings(MySettings my_conf,Notebook notebook, int tab_index,AYObject ayo) {
@@ -832,11 +832,17 @@ public class AYSettings : AYTab{
     CB = builder.get_object ("terminal_color_fg") as Gtk.ColorButton;
     if(fg!=null)
       CB.set_rgba(fg);
+    else
+      CB.set_rgba(terminal_palettes_linux[7]);
     CB = builder.get_object ("terminal_color_bg") as Gtk.ColorButton;
-    if(bg!=null)
-      CB.set_rgba(bg);
     var opacity_w = builder.get_object ("terminal_opacity") as Gtk.SpinButton;
-    opacity_w.set_value(bg.alpha);
+    if(bg!=null){
+      CB.set_rgba(bg);
+      opacity_w.set_value(bg.alpha);
+    }else{
+      CB.set_rgba(terminal_palettes_linux[0]);
+      opacity_w.set_value(1.0);
+    }
     for(int i=1; i<17;i++){
       CB = builder.get_object ("terminal_palette_colorbutton"+i.to_string()) as Gtk.ColorButton;
       if(CB!=null)
@@ -1211,7 +1217,9 @@ public class AYSettings : AYTab{
                   css_result.erase(start_pos,end_pos-start_pos);
                   css_result.insert(start_pos,css);
                 }
-              }
+              }else{
+		css_result.prepend(css);
+	      }
               
 							string S="";
 							uint line,pos;

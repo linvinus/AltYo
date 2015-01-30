@@ -511,6 +511,16 @@ public class AYTab : Object{
 	}
 }
 
+public class term_colors_t {
+  public Gdk.RGBA? fg;
+  public Gdk.RGBA? bg;
+  public Gdk.RGBA palette[16];
+  public term_colors_t(){
+    fg={0};
+    bg={0};
+  }
+}
+
 [CCode (cname = "g_param_spec_boxed")]
 extern unowned GLib.ParamSpec param_spec_boxed(string name,string nick,string blurb,Type boxed_type,ParamFlags flags);
 
@@ -533,7 +543,7 @@ public class AYTerm : Vte.Terminal{
 				{  0x5555/65535.0,0xffff/65535.0,0xffff/65535.0,1.0 },
 				{  0xffff/65535.0,0xffff/65535.0,0xffff/65535.0,1.0 }
 				};
-        
+
 	static construct {
 		int i=0;
 		for(i=0;i<16;i++){
@@ -570,40 +580,38 @@ public class AYTerm : Vte.Terminal{
 		return false;
 	}
 
-  public void gen_colors(ref Gdk.RGBA? fg,ref Gdk.RGBA? bg,Gdk.RGBA[] palette){
+  public void gen_colors(term_colors_t tct){
 		int i;
-		for(i=0;i<palette.length;i++){
-			if(!this.get_style_color("palette-%0d".printf(i),ref palette[i]))
-        palette[i]=const_palette[i];
+		for(i=0;i<tct.palette.length;i++){
+			if(!this.get_style_color("palette-%0d".printf(i),ref tct.palette[i]))
+        tct.palette[i]=const_palette[i];
 		}
 
-		if(!this.get_style_color("fg-color",ref fg))
-			fg=null;
+		if(!this.get_style_color("fg-color",ref tct.fg))
+			tct.fg=null;
 
-		if(!this.get_style_color("bg-color",ref bg))
-			bg=null;
+		if(!this.get_style_color("bg-color",ref tct.bg))
+			tct.bg=null;
   }//gen_colors
   
-  public void apply_style(ref Gdk.RGBA? fg,ref Gdk.RGBA? bg,Gdk.RGBA[] palette){
+  public void apply_style(term_colors_t tct){
 		#if ! VTE_2_91
-		this.set_colors_rgba(fg,bg,palette);
-		if(bg!=null)
-			this.set_opacity((uint16)((bg.alpha)*65535));
+		this.set_colors_rgba(tct.fg,tct.bg,tct.palette);
+		if(tct.bg!=null)
+			this.set_opacity((uint16)((tct.bg.alpha)*65535));
 		//set_background_transparent call vte_terminal_queue_background_update
 		this.set_background_transparent(true);//but only when changes
 		this.set_background_transparent(false);//but only when changes
 		#else
-		this.set_colors(fg,bg,palette);
+		this.set_colors(tct.fg,tct.bg,tct.palette);
 		#endif
   }//apply_style
 
 	public void update_style(){
-		Gdk.RGBA? fg={0};
-		Gdk.RGBA? bg={0};
-    Gdk.RGBA palette[16];
+    var tct =  new term_colors_t();
     
-    this.gen_colors(ref fg,ref bg,palette);
-    this.apply_style(ref fg,ref bg,palette);
+    this.gen_colors(tct);
+    this.apply_style(tct);
 	}//update_style
 
 	public AYTerm(){

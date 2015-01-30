@@ -822,23 +822,21 @@ public class AYSettings : AYTab{
   private void load_css(){
     //load css colors  
     var test_term =new AYTerm();//will be  destroyed automatically
-    Gdk.RGBA? fg={0};
-    Gdk.RGBA? bg={0};
-    Gdk.RGBA palette[16];
+    var tct =  new term_colors_t();
 
-    test_term.gen_colors(ref fg,ref bg,palette);
+    test_term.gen_colors(tct);
     
     Gtk.ColorButton CB;
     CB = builder.get_object ("terminal_color_fg") as Gtk.ColorButton;
-    if(fg!=null)
-      CB.set_rgba(fg);
+    if(tct.fg!=null)
+      CB.set_rgba(tct.fg);
     else
       CB.set_rgba(terminal_palettes_linux[7]);
     CB = builder.get_object ("terminal_color_bg") as Gtk.ColorButton;
     var opacity_w = builder.get_object ("terminal_opacity") as Gtk.SpinButton;
-    if(bg!=null){
-      CB.set_rgba(bg);
-      opacity_w.set_value(bg.alpha);
+    if(tct.bg!=null){
+      CB.set_rgba(tct.bg);
+      opacity_w.set_value(tct.bg.alpha);
     }else{
       CB.set_rgba(terminal_palettes_linux[0]);
       opacity_w.set_value(1.0);
@@ -846,7 +844,7 @@ public class AYSettings : AYTab{
     for(int i=1; i<17;i++){
       CB = builder.get_object ("terminal_palette_colorbutton"+i.to_string()) as Gtk.ColorButton;
       if(CB!=null)
-          CB.set_rgba(palette[i-1]);
+          CB.set_rgba(tct.palette[i-1]);
     }
 
   }

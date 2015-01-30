@@ -2867,14 +2867,11 @@ public class AYObject :Object{
 		if(vt != null){
 				if( vt is VTTerminal ){
           VTTerminal vtt=((VTTerminal) vt);
-          Gdk.RGBA? fg={0};
-          Gdk.RGBA? bg={0};
-          Gdk.RGBA palette[16];
-    
-          vtt.vte_term.gen_colors(ref fg,ref bg,palette);
+          var tct = new term_colors_t();
+          vtt.vte_term.gen_colors(tct);
           foreach(var tab in this.children){
             if( tab is VTTerminal ){
-              ((VTTerminal)tab).vte_term.apply_style(ref fg,ref bg,palette);
+              ((VTTerminal)tab).vte_term.apply_style(tct);
             }
           }
         }

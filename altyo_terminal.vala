@@ -582,16 +582,23 @@ public class AYTerm : Vte.Terminal{
 
   public void gen_colors(term_colors_t tct){
 		int i;
+		Gdk.RGBA c={0};
 		for(i=0;i<tct.palette.length;i++){
-			if(!this.get_style_color("palette-%0d".printf(i),ref tct.palette[i]))
+			if(!this.get_style_color("palette-%0d".printf(i),ref c))
         tct.palette[i]=const_palette[i];
+			else
+			    tct.palette[i]=c;
 		}
-
-		if(!this.get_style_color("fg-color",ref tct.fg))
+		
+		if(!this.get_style_color("fg-color",ref c))
 			tct.fg=null;
+		else
+			tct.fg=c;
 
-		if(!this.get_style_color("bg-color",ref tct.bg))
+		if(!this.get_style_color("bg-color",ref c))
 			tct.bg=null;
+		else
+			tct.bg=c;
   }//gen_colors
   
   public void apply_style(term_colors_t tct){

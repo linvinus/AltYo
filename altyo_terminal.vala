@@ -59,6 +59,20 @@ public class TildaAuth:Object{
 }//class TildaAuth
 
 public class VTToggleButton : Gtk.Button{
+  	static construct {
+		install_style_property (param_spec_boxed ("tab-index-color",
+												   null, null,
+												   typeof(Gdk.RGBA),
+												   GLib.ParamFlags.READABLE));
+		install_style_property (param_spec_boxed ("username-color",
+												   null, null,
+												   typeof(Gdk.RGBA),
+												   GLib.ParamFlags.READABLE));
+		install_style_property (param_spec_boxed ("hostname-color",
+												   null, null,
+												   typeof(Gdk.RGBA),
+												   GLib.ParamFlags.READABLE));
+    }
 	bool _active = false;
 	public bool active {get{ return _active;}
 						set{
@@ -235,26 +249,26 @@ public class VTToggleButton : Gtk.Button{
 							if(!done[0] && Regex.match_simple(".*_REPLACE_.*",this.tab_title_regex[i+1])){
 								//done[0]=true;//replace is allowed repeatedly
 								grx = new GLib.Regex(GLib.Regex.escape_string("_REPLACE_"));
-								result.append(grx.replace_literal(this.tab_title_regex[i+1],(ssize_t) this.tab_title_regex[i+1].size(), 0, match_info.fetch(match_info.get_match_count()-1)) );
+								result.append(grx.replace_literal(this.tab_title_regex[i+1],-1, 0, match_info.fetch(match_info.get_match_count()-1)) );
 								return true;//stop
 							}else
 							if(!done[1] && Regex.match_simple(".*_USER_.*",this.tab_title_regex[i+1])){
 								done[1]=true;
 								grx = new GLib.Regex(GLib.Regex.escape_string("_USER_"));
-								result.append(grx.replace_literal(this.tab_title_regex[i+1],(ssize_t) this.tab_title_regex[i+1].size(), 0, match_info.fetch(match_info.get_match_count()-1)) );
+								result.append(grx.replace_literal(this.tab_title_regex[i+1],-1, 0, match_info.fetch(match_info.get_match_count()-1)) );
 								return true;//stop
 							}else
 							if(!done[2] && Regex.match_simple(".*_HOSTNAME_.*",this.tab_title_regex[i+1])){
 								done[2]=true;
 								grx = new GLib.Regex(GLib.Regex.escape_string("_HOSTNAME_"));
-								result.append(grx.replace_literal(this.tab_title_regex[i+1],(ssize_t) this.tab_title_regex[i+1].size(), 0, match_info.fetch(match_info.get_match_count()-1)) );
+								result.append(grx.replace_literal(this.tab_title_regex[i+1],-1, 0, match_info.fetch(match_info.get_match_count()-1)) );
 								this.host_name=match_info.fetch(match_info.get_match_count()-1);
 								return true;//stop
 							}else
 							if(!done[3] && Regex.match_simple(".*_PATH_.*",this.tab_title_regex[i+1])){
 								done[3]=true;
 								grx = new GLib.Regex(GLib.Regex.escape_string("_PATH_"));
-								result.append(grx.replace_literal(this.tab_title_regex[i+1],(ssize_t) this.tab_title_regex[i+1].size(), 0, match_info.fetch(match_info.get_match_count()-1)) );
+								result.append(grx.replace_literal(this.tab_title_regex[i+1],-1, 0, match_info.fetch(match_info.get_match_count()-1)) );
 								return true;//stop
 							}
 							return false;//continue
@@ -264,7 +278,7 @@ public class VTToggleButton : Gtk.Button{
 
 				var grx_index = new GLib.Regex(GLib.Regex.escape_string("_INDEX_"));
 				var grx_title = new GLib.Regex(GLib.Regex.escape_string("_TITLE_"));
-                result2 = grx_index.replace_literal(this.tab_title_format,(ssize_t) this.tab_title_format.size(), 0, tab_index.to_string() );
+                result2 = grx_index.replace_literal(this.tab_title_format,-1, 0, tab_index.to_string() );
                 result2 = grx_title.replace_literal(result2,(ssize_t) result2.size(), 0, reg_title);
 			}catch(GLib.RegexError e){
 				this.label.set_markup("TAB: Error in regexp");
@@ -272,7 +286,7 @@ public class VTToggleButton : Gtk.Button{
 		}else{
 			try{
 				var grx_index = new GLib.Regex(GLib.Regex.escape_string("_INDEX_"));
-                result2 = grx_index.replace_literal(this.tab_format,(ssize_t) this.tab_format.size(), 0, tab_index.to_string() );
+                result2 = grx_index.replace_literal(this.tab_format,-1, 0, tab_index.to_string() );
 
 			}catch(GLib.RegexError e){
 				this.label.set_markup("TAB: Error in regexp");
@@ -284,24 +298,24 @@ public class VTToggleButton : Gtk.Button{
 		
         Gdk.RGBA color_f = context.get_color(StateFlags.NORMAL);
         Gdk.RGBA color_b = context.get_background_color(StateFlags.NORMAL);
-		this.markup_normal=(this.prevent_close ? "[!] " : "")+"<span foreground='#"+"%I02x".printf(((int)(color_f.red*255)))+"%I02x".printf(((int)(color_f.green*255)))+"%I02x".printf(((int)(color_f.blue*255)))+"' "+
+		this.markup_normal=replace_color_in_markup(this,(this.prevent_close ? "[!] " : "")+"<span foreground='"+hexRGBA(color_f)+"' "+
 		/*"background='#"+"%I02x".printf(((int)(color_b.red*255)))+"%I02x".printf(((int)(color_b.green*255)))+"%I02x".printf(((int)(color_b.blue*255)))+"' "+*/
-		">"+result2+"</span>";
+		">"+result2+"</span>");
 		//this.label.set_markup(this.markup_normal);
 		this.tooltip_markup=this.markup_normal;
 		//var grx_prelight = new GLib.Regex(GLib.Regex.escape_string("foreground"));
 		//result = grx_prelight.replace_literal(result,(ssize_t) result.size(), 0, "background" );
         color_f = context.get_color(StateFlags.ACTIVE);
         color_b = context.get_background_color(StateFlags.ACTIVE);
-		this.markup_active=(this.prevent_close ? "[!] " : "")+"<span foreground='#"+"%I02x".printf(((int)(color_f.red*255)))+"%I02x".printf(((int)(color_f.green*255)))+"%I02x".printf(((int)(color_f.blue*255)))+"' "+
+		this.markup_active=replace_color_in_markup(this,(this.prevent_close ? "[!] " : "")+"<span foreground='"+hexRGBA(color_f)+"' "+
 		/*"background='#"+"%I02x".printf(((int)(color_b.red*255)))+"%I02x".printf(((int)(color_b.green*255)))+"%I02x".printf(((int)(color_b.blue*255)))+"' "+*/
-		">"+result2+"</span>";
+		">"+result2+"</span>",StateFlags.ACTIVE);
 
         color_f = context.get_color(StateFlags.PRELIGHT);
         color_b = context.get_background_color(StateFlags.PRELIGHT);
-		this.markup_prelight=(this.prevent_close ? "[!] " : "")+"<span foreground='#"+"%I02x".printf(((int)(color_f.red*255)))+"%I02x".printf(((int)(color_f.green*255)))+"%I02x".printf(((int)(color_f.blue*255)))+"' "+
+		this.markup_prelight=replace_color_in_markup(this,(this.prevent_close ? "[!] " : "")+"<span foreground='"+hexRGBA(color_f)+"' "+
 		/*"background='#"+"%I02x".printf(((int)(color_b.red*255)))+"%I02x".printf(((int)(color_b.green*255)))+"%I02x".printf(((int)(color_b.blue*255)))+"' "+*/
-		">"+result2+"</span>";
+		">"+result2+"</span>",StateFlags.PRELIGHT);
 		//this.markup_prelight = result;//"<i>"+result+"</i>";
 
 		if(this.active)
@@ -444,7 +458,7 @@ public class AYTab : Object{
 	private void configure(MySettings my_conf){
 		this.tbutton.tab_format = my_conf.get_string("tab_format","[ _INDEX_ ]",(ref new_val)=>{
 			string err;
-			if(!my_conf.check_markup(new_val,out err)){
+			if(!my_conf.check_markup(replace_color_in_markup(this.tbutton,new_val),out err)){
 				debug(_("tab_format wrong value! will be used default value. err:%s"),err);
 				return CFG_CHECK.USE_DEFAULT;
 			}
@@ -454,7 +468,7 @@ public class AYTab : Object{
 
 		this.tbutton.tab_title_format = my_conf.get_string("tab_title_format","<span foreground='#FFF000'>_INDEX_</span>/_TITLE_<span foreground='#999999' font_family='sans' size='9000' rise='1000'>|</span>",(ref new_val)=>{
 			string err;
-			if(!my_conf.check_markup(new_val,out err)){
+			if(!my_conf.check_markup(replace_color_in_markup(this.tbutton,new_val),out err)){
 				debug(_("tab_title_format wrong value! will be used default value. err:%s"),err);
 				return CFG_CHECK.USE_DEFAULT;
 			}
@@ -469,7 +483,7 @@ public class AYTab : Object{
 			for(int i=0; i<new_val.length-1;i+=2){
 				string err="";
 				string err2="";
-				if(!my_conf.check_regex(new_val[i],out err) || !my_conf.check_markup(new_val[i+1],out err2)){
+				if(!my_conf.check_regex(new_val[i],out err) || !my_conf.check_markup(replace_color_in_markup(this.tbutton,new_val[i+1]),out err2)){
 					debug(_("tab_title_format_regex wrong value! will be used default value. err:%s"),(err!=null?err:(err2!=null?err2:"unknown")));
 					return CFG_CHECK.USE_DEFAULT;
 				}

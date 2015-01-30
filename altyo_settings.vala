@@ -126,6 +126,7 @@ public class AYSettings : AYTab{
 	private string autorun_file;
 	private string monitor_name;/*save monitor name on which settings was opened*/
 	private bool ignore_on_loading;/*ignore some events when loading settings from ini file*/
+  private VTToggleButton vttbut;
   
 	public AYSettings(MySettings my_conf,Notebook notebook, int tab_index,AYObject ayo) {
 		base(my_conf, notebook, tab_index);
@@ -199,6 +200,7 @@ public class AYSettings : AYTab{
 					}
 				}
 				#endif
+        this.vttbut = new VTToggleButton();
 				this.get_from_conf();
  			} catch (Error e) {
  				error ("loading menu builder file: %s", e.message);
@@ -551,7 +553,9 @@ public class AYSettings : AYTab{
 
 
 		string err;
-		if(!this.my_conf.check_markup(new_text,out err)){
+    var s = replace_color_in_markup(this.vttbut,new_text);
+
+		if(!this.my_conf.check_markup(s,out err)){
 			var bg=new Gdk.RGBA();
 			bg.parse("#FF0000");
 			store.set (iter,
@@ -717,7 +721,7 @@ public class AYSettings : AYTab{
 	private void check_entry_regex(Gtk.Entry E) {
 		if( E != null){
 			string err;
-			if(!this.my_conf.check_regex(E.text,out err)){
+			if(!this.my_conf.check_regex(replace_color_in_markup(this.vttbut,E.text),out err)){
 				E.set_tooltip_text (err);
 				var bg=new Gdk.RGBA();
 				bg.parse("#FF0000");
@@ -732,7 +736,7 @@ public class AYSettings : AYTab{
 	private void check_entry_markup(Gtk.Entry E) {
 		if( E != null){
 			string err;
-			if(!this.my_conf.check_markup(E.text,out err)){
+			if(!this.my_conf.check_markup(replace_color_in_markup(this.vttbut,E.text),out err)){
 				E.set_tooltip_text (err);
 				var bg=new Gdk.RGBA();
 				bg.parse("#FF0000");
@@ -1269,8 +1273,9 @@ public class AYSettings : AYTab{
 								if(B.text!=this.my_conf.get_string(key,"")){
 									if(key=="terminal_prevent_close_regex" || key=="terminal_session_exclude_regex" || key =="terminal_exclude_variables"){
 										string err;
-										if(this.my_conf.check_regex(B.text,out err)){
-											this.my_conf.set_string(key,B.text);
+                    var s = replace_color_in_markup(this.vttbut,B.text);
+										if(this.my_conf.check_regex(s,out err)){
+											this.my_conf.set_string(key,B.text);//save unchanged markup
 										}else{
 											string title=_("AltYo %s error").printf(key);
 											string msg=_("New value of %s will not be saved!\n%s").printf(key,err);
@@ -1279,8 +1284,9 @@ public class AYSettings : AYTab{
 									}else
 									if(key=="tab_format" || key=="tab_title_format"){
 										string err;
-										if(this.my_conf.check_markup(B.text,out err)){
-											this.my_conf.set_string(key,B.text);
+                    var s = replace_color_in_markup(this.vttbut,B.text);
+										if(this.my_conf.check_markup(s,out err)){
+											this.my_conf.set_string(key,B.text);//save unchanged markup
 										}else{
 											string title=_("AltYo %s error").printf(key);
 											string msg=_("New value of %s will not be saved!\n%s").printf(key,err);
@@ -1308,8 +1314,9 @@ public class AYSettings : AYTab{
 										1, out s2,
 										-1);
 										if(s1!=null && s2!=null){
+                      var smark = replace_color_in_markup(this.vttbut,s2);
 											if(this.my_conf.check_regex(s1,out err) &&
-											((key=="tab_title_format_regex" && this.my_conf.check_markup(s2,out err)) ||
+											((key=="tab_title_format_regex" && this.my_conf.check_markup(smark,out err)) ||
 											  key!="tab_title_format_regex"
 											)){
 													sl+=s1;

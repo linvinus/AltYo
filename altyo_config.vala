@@ -793,7 +793,7 @@ public to_data
 
 public string hexRGBA(Gdk.RGBA c){
   //output #AABBCC
-  return "#%02hhX%02hhX%02hhX".printf((char)((int)(c.red*65535)>>8),(char)((int)(c.green*65535)>>8),(char)((int)(c.blue*65535)>>8));
+  return "#%02hhX%02hhX%02hhX".printf((char)((int)(c.red*255)),(char)((int)(c.green*255)),(char)((int)(c.blue*255)));
 }
 
 public double round_double(double def,uint digits_after_comma){
@@ -807,3 +807,76 @@ public double round_double(double def,uint digits_after_comma){
 					def=(double)((double)(i)/(double)round);
           return def;
 }
+
+extern void gtk_style_context_get_style_property (Gtk.StyleContext context,
+                                      string property_name,
+                                      ref Value          value);
+public string replace_color_in_markup(Widget w,string markup,StateFlags state=Gtk.StateFlags.NORMAL){
+        Regex regex = new Regex ("""(foreground\=['"]\s*(?P<foreground>[^'"]+)\s*['"])|(background\=['"]\s*(?P<background>[^'"]+)\s*['"])""");
+        int offset=0;
+        var ret = regex.replace_eval(markup,-1,0,0, (match_info, result)=>{
+            int start_pos, end_pos;
+            string? name;
+            unowned Gdk.RGBA? tmp=null;
+            name = match_info.fetch_named("foreground");
+            if(name!=null){
+              if(name.get_char(0)!='#'){//if color is css color name
+                //try to guess
+                Gdk.RGBA? color=null;
+                GLib.ParamSpec? prop = w.find_style_property(name);
+                if(prop!=null){
+                  var context = w.get_style_context();
+                  var old=context.get_state();
+                  context.set_state(state);
+                  var val = new Value(typeof(Gdk.RGBA));
+                  //vala bug, vala binding for gtk_style_context_get_style_property is broken
+                  //context.get_style_property(name,val);
+                  gtk_style_context_get_style_property(context,name,ref val);
+                  color=*(Gdk.RGBA*)val.get_boxed();//shuld be safe we already find style property
+                  context.set_state(old);
+//~                   w.style_get(name,out tmp);
+//~                   color=tmp;
+//~                   tmp.free();
+                }
+                if(color!=null || w.get_style_context().lookup_color(name,out color) ){
+                  result.append("foreground='");
+                  result.append(hexRGBA(color));
+                  result.append("'");
+                }
+              }else
+                result.append(match_info.fetch(0));
+            }else{
+              name = match_info.fetch_named("background");
+
+              if(name!=null){
+                if(name.get_char(0)!='#'){//if color is css color name
+                  Gdk.RGBA? color=null;
+                  GLib.ParamSpec? prop = w.find_style_property(name);
+                  if(prop!=null){
+                      var context = w.get_style_context();
+                      var old=context.get_state();
+                      context.set_state(state);
+                      var val = new Value(typeof(Gdk.RGBA));
+                      //vala bug, vala binding for gtk_style_context_get_style_property is broken
+                      //context.get_style_property(name,val);
+                      gtk_style_context_get_style_property(context,name,ref val);
+                      color=*(Gdk.RGBA*)val.get_boxed();//shuld be safe we already find style property
+                      context.set_state(old);
+//~                     w.style_get(name,out color);
+//~                     color=tmp;
+//~                     tmp.free();
+                  }
+                  if( color!=null || w.get_style_context().lookup_color(name,out color) ){
+                    result.append("background='");
+                    result.append(hexRGBA(color));
+                    result.append("'");
+                  }
+                }else
+                  result.append(match_info.fetch(0));
+              }else
+                result.append(match_info.fetch(0));
+            }
+          return false;
+          });//while
+  return ret;
+}//replace_color_in_markup

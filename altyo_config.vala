@@ -793,7 +793,7 @@ public to_data
 
 public string hexRGBA(Gdk.RGBA c){
   //output #AABBCC
-  return "#%02hhX%02hhX%02hhX".printf((char)(c.red*65535)&0xFF,(char)(c.green*65535)&0xFF,(char)(c.blue*65535)&0xFF);
+  return "#%02hhX%02hhX%02hhX".printf((char)((int)(c.red*65535)>>8),(char)((int)(c.green*65535)>>8),(char)((int)(c.blue*65535)>>8));
 }
 
 public double round_double(double def,uint digits_after_comma){

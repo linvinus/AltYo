@@ -525,24 +525,6 @@ public class term_colors_t {
 extern unowned GLib.ParamSpec param_spec_boxed(string name,string nick,string blurb,Type boxed_type,ParamFlags flags);
 
 public class AYTerm : Vte.Terminal{
-		const Gdk.RGBA const_palette[16]={
-				{  0x0000/65535.0,0x0000/65535.0,0x0000/65535.0,1.0 },
-				{  0xaaaa/65535.0,0x0000/65535.0,0x0000/65535.0,1.0 },
-				{  0x0000/65535.0,0xaaaa/65535.0,0x0000/65535.0,1.0 },
-				{  0xaaaa/65535.0,0x5555/65535.0,0x0000/65535.0,1.0 },
-				{  0x0000/65535.0,0x0000/65535.0,0xaaaa/65535.0,1.0 },
-				{  0xaaaa/65535.0,0x0000/65535.0,0xaaaa/65535.0,1.0 },
-				{  0x0000/65535.0,0xaaaa/65535.0,0xaaaa/65535.0,1.0 },
-				{  0xaaaa/65535.0,0xaaaa/65535.0,0xaaaa/65535.0,1.0 },
-				{  0x5555/65535.0,0x5555/65535.0,0x5555/65535.0,1.0 },
-				{  0xffff/65535.0,0x5555/65535.0,0x5555/65535.0,1.0 },
-				{  0x5555/65535.0,0xffff/65535.0,0x5555/65535.0,1.0 },
-				{  0xffff/65535.0,0xffff/65535.0,0x5555/65535.0,1.0 },
-				{  0x5555/65535.0,0x5555/65535.0,0xffff/65535.0,1.0 },
-				{  0xffff/65535.0,0x5555/65535.0,0xffff/65535.0,1.0 },
-				{  0x5555/65535.0,0xffff/65535.0,0xffff/65535.0,1.0 },
-				{  0xffff/65535.0,0xffff/65535.0,0xffff/65535.0,1.0 }
-				};
 
 	static construct {
 		int i=0;
@@ -585,7 +567,7 @@ public class AYTerm : Vte.Terminal{
 		Gdk.RGBA c={0};
 		for(i=0;i<tct.palette.length;i++){
 			if(!this.get_style_color("palette-%0d".printf(i),ref c))
-        tct.palette[i]=const_palette[i];
+        tct.palette[i]=terminal_palettes_linux[i];
 			else
 			    tct.palette[i]=c;
 		}

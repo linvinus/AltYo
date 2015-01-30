@@ -1,26 +1,5 @@
 using Gtk;
 
-public class point_ActionGroup_store {
-	public unowned Gtk.ActionGroup action_group;
-	public unowned Gtk.ListStore store;
-	public unowned AYSettings yasettings;
-	public point_ActionGroup_store(Gtk.ActionGroup ag,Gtk.ListStore st,AYSettings yas) {
-		this.action_group=ag;
-		this.store=st;
-		this.yasettings=yas;
-	}
-}
-
-
-
-public class AYSettings : AYTab{
-	private Gtk.Builder builder;
-	public AYObject ayobject {get;set;default=null;}
-	private Gtk.ListStore keybindings_store;
-	private string autorun_file;
-	private string monitor_name;/*save monitor name on which settings was opened*/
-	private bool ignore_on_loading;/*ignore some events when loading settings from ini file*/
-  
   //vala bug, without CCode will generate AY_SETTINGS_terminal_palettes[5] = {{{
   //https://bugzilla.gnome.org/show_bug.cgi?id=604371
   //[CCode (cname = "AY_SETTINGS_terminal_palettes[5][16]",array_length_cname = "5",array_length= false)]
@@ -46,7 +25,7 @@ public class AYSettings : AYTab{
     };
 
     /* Linux palette */
-    const Gdk.RGBA terminal_palettes_linux[16] = {
+public const Gdk.RGBA terminal_palettes_linux[16] = {
       { 0,        0,        0,        1 },
       { 0.666667, 0,        0,        1 },
       { 0,        0.666667, 0,        1 },
@@ -126,6 +105,28 @@ public class AYSettings : AYTab{
       { 0.992156, 0.964705, 0.890196, 1 }
     };
 
+
+public class point_ActionGroup_store {
+	public unowned Gtk.ActionGroup action_group;
+	public unowned Gtk.ListStore store;
+	public unowned AYSettings yasettings;
+	public point_ActionGroup_store(Gtk.ActionGroup ag,Gtk.ListStore st,AYSettings yas) {
+		this.action_group=ag;
+		this.store=st;
+		this.yasettings=yas;
+	}
+}
+
+
+
+public class AYSettings : AYTab{
+	private Gtk.Builder builder;
+	public AYObject ayobject {get;set;default=null;}
+	private Gtk.ListStore keybindings_store;
+	private string autorun_file;
+	private string monitor_name;/*save monitor name on which settings was opened*/
+	private bool ignore_on_loading;/*ignore some events when loading settings from ini file*/
+  
 	public AYSettings(MySettings my_conf,Notebook notebook, int tab_index,AYObject ayo) {
 		base(my_conf, notebook, tab_index);
 		this.tbutton.set_title(tab_index, _("AYsettings") );

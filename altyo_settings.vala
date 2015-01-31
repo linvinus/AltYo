@@ -785,7 +785,7 @@ public class AYSettings : AYTab{
 			B.sensitive=( (w.active==1 || w.active==3) ?true:false);
 		}
 	}
-  /*multidimantional array, hahaha*/
+  /*multidimensional array, hahaha*/
 	private Gdk.RGBA? get_color_from_array(int theme,int x){
     switch(theme){
       case 0 : return terminal_palettes_tango[x];
@@ -799,21 +799,53 @@ public class AYSettings : AYTab{
   [CCode (instance_pos = -1)]
 	public void on_theme_changed  (Gtk.ComboBox w) {//ay_settings_on_theme_changed
     Gtk.ColorButton CB;
+    var B = builder.get_object ("program_style") as Gtk.TextView;
+    string css_inner=B.buffer.text;
+    
     int theme_index=w.get_active();
     for(int i=1; i<17;i++){
       CB = builder.get_object ("terminal_palette_colorbutton"+i.to_string()) as Gtk.ColorButton;
       if(CB!=null){
           //vala bug problem with accsess to multidimentional array
           CB.set_rgba(get_color_from_array(theme_index,i-1));
+          update_css_global_color(ref css_inner,"ayterm-palette-%d".printf(i-1),hexRGBA(CB.rgba) );
         }
     }
     CB = builder.get_object ("terminal_color_fg") as Gtk.ColorButton;
     CB.set_rgba(get_color_from_array(theme_index,7));
+    update_css_global_color(ref css_inner,"ayterm-fg-color",hexRGBA(CB.rgba) );
+    
     CB = builder.get_object ("terminal_color_bg") as Gtk.ColorButton;
     var bg = get_color_from_array(theme_index,0);
     var opacity_w = builder.get_object ("terminal_opacity") as Gtk.SpinButton;
     bg.alpha=opacity_w.get_value();
     CB.set_rgba(bg);
+
+    string alpha="%1.2f".printf(round_double(bg.alpha,2));
+    alpha=alpha.replace(",",".");
+    update_css_global_color(ref css_inner,"ayterm-bg-color","alpha(%s,%s)".printf(hexRGBA(bg),alpha) );
+    
+    B.buffer.text=css_inner;//done
+              
+              //string css = "AYTerm { %s } ".printf(css_inner);
+              //debug(css);
+              
+              //https://regex101.com/r/iT2eR5/9
+//~               Regex css_regex = new Regex ("""((^\s*)|(\}\s*))(?P<AYTerm_css>AYTerm\s*\{\s*(([\/\*].*[\*\/])?[^}]+?)+\s*\})""");
+//~               MatchInfo match_info;
+//~               var css_result = new StringBuilder(s); 
+//~               if(css_regex.match(s,0, out match_info) ){
+//~                 debug(" RegexEvalCallback match_info ");
+//~                 int start_pos, end_pos;
+//~                 if(match_info.fetch_named_pos("AYTerm_css",out start_pos, out end_pos) ){
+//~                   debug(" RegexEvalCallback %d %d ",start_pos,end_pos);
+//~                   
+//~                   css_result.erase(start_pos,end_pos-start_pos);
+//~                   css_result.insert(start_pos,css);
+//~                 }
+//~               }else{
+//~                   css_result.prepend(css);
+//~               }    
 	}
     
 	private string css_ini_to_human(string s){
@@ -852,6 +884,30 @@ public class AYSettings : AYTab{
           CB.set_rgba(tct.palette[i-1]);
     }
 
+  }
+  
+  private void update_css_global_color(ref string where,string name, string val){
+    bool done=false;
+    Regex regex = new Regex ("""\@define\-color\s+"""+GLib.Regex.escape_string(name)+"""\s+(?P<val>[^\;]+);""");
+    var result = regex.replace_eval(where,-1,0,0,(match_info, result)=>{
+            var v = match_info.fetch_named("val");
+            if(v!=null){
+                result.append("@define-color ");
+                result.append(name);
+                result.append(" ");
+                result.append(val);
+                result.append(";");
+                done=true;
+                return true;
+            }else
+              result.append(match_info.fetch(0));
+      return false;
+      });
+      if(!done){
+        string s = "@define-color %s %s;\n %s".printf(name,val,where);
+        where=s;
+      }else
+        where=result;
   }
 
 	public void get_from_conf() {
@@ -1183,56 +1239,15 @@ public class AYSettings : AYTab{
 						if(key=="program_style"){
 							var B = builder.get_object (key) as Gtk.TextView;
 							var s=B.buffer.text;
-
-              //update css colors
-              Gtk.ColorButton CB;
-              CB = builder.get_object ("terminal_color_fg") as Gtk.ColorButton;
-              var fg=CB.get_rgba();
-              CB = builder.get_object ("terminal_color_bg") as Gtk.ColorButton;
-              var bg=CB.get_rgba();
-              var opacity_w = builder.get_object ("terminal_opacity") as Gtk.SpinButton;
-              bg.alpha=opacity_w.get_value();
-    
-              string alpha="%1.2f".printf(round_double(bg.alpha,2));
-              alpha=alpha.replace(",",".");
-              string css_inner="-AYTerm-bg-color: alpha(%s,%s); -AYTerm-fg-color: %s;".printf(hexRGBA(bg),alpha,hexRGBA(fg));
-              
-              for(int i=1; i<17;i++){
-                CB = builder.get_object ("terminal_palette_colorbutton"+i.to_string()) as Gtk.ColorButton;
-                if(CB!=null){
-                  css_inner+=" -AYTerm-palette-%d:%s;".printf(i-1,hexRGBA(CB.rgba));
-                }
-              }
-              
-              string css = "AYTerm { %s } ".printf(css_inner);
-              debug(css);
-              
-              //https://regex101.com/r/iT2eR5/9
-              Regex css_regex = new Regex ("""((^\s*)|(\}\s*))(?P<AYTerm_css>AYTerm\s*\{\s*(([\/\*].*[\*\/])?[^}]+?)+\s*\})""");
-              MatchInfo match_info;
-              var css_result = new StringBuilder(s); 
-              if(css_regex.match(s,0, out match_info) ){
-                debug(" RegexEvalCallback match_info ");
-                int start_pos, end_pos;
-                if(match_info.fetch_named_pos("AYTerm_css",out start_pos, out end_pos) ){
-                  debug(" RegexEvalCallback %d %d ",start_pos,end_pos);
-                  
-                  css_result.erase(start_pos,end_pos-start_pos);
-                  css_result.insert(start_pos,css);
-                }
-              }else{
-		css_result.prepend(css);
-	      }
-              
 							string S="";
 							uint line,pos;
-							if(!this.check_css(css_result.str,ref S,out line,out pos)){
+							if(!this.check_css(s,ref S,out line,out pos)){
 								string msg=_("New style will not be saved!\nin line %d  at position %d\nerror:%s").printf(line,pos,S);
 								debug("on config apply css error %s",msg);
 								this.ayobject.main_window.show_message_box(_("AltYo CSS style error"),msg);
 							}else{//looks good
 								Regex regex = new Regex ("\n");
-								string result = regex.replace (css_result.str, css_result.str.length, 0, "");
+								string result = regex.replace (s,-1, 0, "");
 								if(result!=this.my_conf.get_string(key,"")){
 									this.my_conf.set_string(key,result);
                   B.buffer.text=this.css_ini_to_human(result);//update 

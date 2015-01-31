@@ -832,7 +832,8 @@ public string replace_color_in_markup(Widget w,string markup,StateFlags state=Gt
                   //vala bug, vala binding for gtk_style_context_get_style_property is broken
                   //context.get_style_property(name,val);
                   gtk_style_context_get_style_property(context,name,ref val);
-                  color=*(Gdk.RGBA*)val.get_boxed();//shuld be safe we already find style property
+                  if(val.get_boxed()!=null)
+					color=*(Gdk.RGBA*)val.get_boxed();
                   context.set_state(old);
 //~                   w.style_get(name,out tmp);
 //~                   color=tmp;
@@ -842,7 +843,8 @@ public string replace_color_in_markup(Widget w,string markup,StateFlags state=Gt
                   result.append("foreground='");
                   result.append(hexRGBA(color));
                   result.append("'");
-                }
+                }else
+				  debug("markup: wrong color '%s', foreground will be ignored",name);
               }else
                 result.append(match_info.fetch(0));
             }else{
@@ -860,7 +862,8 @@ public string replace_color_in_markup(Widget w,string markup,StateFlags state=Gt
                       //vala bug, vala binding for gtk_style_context_get_style_property is broken
                       //context.get_style_property(name,val);
                       gtk_style_context_get_style_property(context,name,ref val);
-                      color=*(Gdk.RGBA*)val.get_boxed();//shuld be safe we already find style property
+                      if(val.get_boxed()!=null)
+						color=*(Gdk.RGBA*)val.get_boxed();
                       context.set_state(old);
 //~                     w.style_get(name,out color);
 //~                     color=tmp;
@@ -870,7 +873,8 @@ public string replace_color_in_markup(Widget w,string markup,StateFlags state=Gt
                     result.append("background='");
                     result.append(hexRGBA(color));
                     result.append("'");
-                  }
+                  }else
+				  debug("markup: wrong color '%s', background will be ignored",name);
                 }else
                   result.append(match_info.fetch(0));
               }else

@@ -239,7 +239,9 @@ public class VTMainWindow : Window{
 			if(this.visible && (this.pull_animation_active || this.pull_active)){
 				debug("pixwin.damage_event");
 				var w = this.get_window();
-				w.invalidate_rect(null,false);
+        if(w!=null)
+          w.invalidate_rect(null,false);
+          
 			}
 			});
 		//this.set_app_paintable(true);
@@ -605,8 +607,13 @@ public class VTMainWindow : Window{
 		//this.get_child().reparent(this.pixwin);//reparent to offscreen window
 		var ch=this.get_child();//.reparent(this);//reparent from offscreen window
 		this.pixwin.set_size_request(pull_w,pull_h);
+    var w = this.get_window();
+    if(w!=null)
+      this.get_window().freeze_toplevel_updates_libgtk_only();
 		this.remove(ch);
 		this.pixwin.add(ch);
+    if(w!=null)
+      this.get_window().thaw_toplevel_updates_libgtk_only();
 		//set main_vbox size same as original,otherwise draw will be broken
 		this.ayobject.main_vbox.height_request = this.orig_h_main_vbox;
 		this.ayobject.main_vbox.width_request = this.orig_w_main_vbox;
@@ -801,9 +808,13 @@ public class VTMainWindow : Window{
 		if(this.pull_animation_active || this.pull_active){
 			cr.save();
 			//debug("draw 0-%d  this.get_allocated_height=%d this.orig_h=%d",this.get_allocated_height()-this.pull_h, this.get_allocated_height(),this.pull_h);
-			cr.set_source_surface(this.pixwin.get_surface(),0,this.get_allocated_height()-this.pull_h);
-			cr.paint();
-			cr.stroke ();
+      var surf=this.pixwin.get_surface();
+      if(surf!=null){
+        cr.set_source_surface(surf,0,this.get_allocated_height()-this.pull_h);
+        cr.paint();
+        cr.stroke ();
+      }else
+        base.draw(cr);
 			cr.restore();
 			return false;
 		}else{
@@ -815,7 +826,7 @@ public class VTMainWindow : Window{
 	public void update_events(){
 		while (Gtk.events_pending ()){
 			Gtk.main_iteration ();
-			Gdk.flush();
+			//Gdk.flush();
 			}
 	}
 

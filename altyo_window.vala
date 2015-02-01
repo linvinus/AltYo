@@ -1757,7 +1757,11 @@ public class AYObject :Object{
 			if (tab_position>(this.children.length()-1))
 				tab_position=(int)this.children.length()-1;
 
-			unowned VTToggleButton new_active_tbutton = (switch_to_previous ? this.previous_active_tab : (VTToggleButton)this.hvbox.children_nth(tab_position));
+			unowned VTToggleButton new_active_tbutton;
+       if(switch_to_previous==true && this.previous_active_tab!=null)
+          new_active_tbutton=this.previous_active_tab;
+        else
+          new_active_tbutton=(VTToggleButton)this.hvbox.children_nth(tab_position);
 			this.activate_tab(new_active_tbutton);
 			this.update_tabs_title();
 			this.search_update();

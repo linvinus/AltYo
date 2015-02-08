@@ -105,6 +105,303 @@ public const Gdk.RGBA terminal_palettes_linux[16] = {
       { 0.992156, 0.964705, 0.890196, 1 }
     };
 
+const string settings_base_css = """
+ AYTerm {
+ -AYTerm-bg-color: @ayterm-bg-color;
+ -AYTerm-fg-color: @ayterm-fg-color;
+ -AYTerm-palette-0 : @ayterm-palette-0;
+ -AYTerm-palette-1 : @ayterm-palette-1;
+ -AYTerm-palette-2 : @ayterm-palette-2;
+ -AYTerm-palette-3 : @ayterm-palette-3;
+ -AYTerm-palette-4 : @ayterm-palette-4;
+ -AYTerm-palette-5 : @ayterm-palette-5;
+ -AYTerm-palette-6 : @ayterm-palette-6;
+ -AYTerm-palette-7 : @ayterm-palette-7;
+ -AYTerm-palette-8 : @ayterm-palette-8;
+ -AYTerm-palette-9 : @ayterm-palette-9;
+ -AYTerm-palette-10 : @ayterm-palette-10;
+ -AYTerm-palette-11 : @ayterm-palette-11;
+ -AYTerm-palette-12 : @ayterm-palette-12;
+ -AYTerm-palette-13 : @ayterm-palette-13;
+ -AYTerm-palette-14 : @ayterm-palette-14;
+ -AYTerm-palette-15 : @ayterm-palette-15;
+ }
+
+VTToggleButton GtkLabel  {
+ font: Mono 10;
+ -GtkWidget-focus-padding: 0px;
+ -GtkButton-default-border:0px;
+ -GtkButton-default-outside-border:0px;
+ -GtkButton-inner-border:0px;
+ border-width:0px;
+ -outer-stroke-width: 0px;
+ margin:0px;
+ padding:0px;
+}
+
+VTToggleButton {
+ -GtkWidget-focus-padding: 0px;
+ -GtkButton-default-border:0px;
+ -GtkButton-default-outside-border:0px;
+ -GtkButton-inner-border:0px;
+ border-color:alpha(#000000,0.0);
+ border-width: 1px;
+ -outer-stroke-width: 0px;
+ border-radius: 3px;
+ border-style: solid;
+ background-image: none;
+ margin:0px;
+ padding:0px 0px 0px 0px;
+}
+
+VTToggleButton:active {
+ text-shadow: none;
+}
+.window_multitabs {
+border-width: 2px 2px 0px 2px;
+border-color: #3C3B37;
+border-style: solid;
+padding:0px;
+margin:0;
+}
+#terms_notebook {
+border-width: 0px;
+border-style: solid;
+padding:0px;
+margin:0;
+}
+#search_hbox :active {
+ border-color: @fg_color;
+ color: #FF0000;
+}
+#search_hbox :prelight {
+ background-color: @ayterm-bg-color;
+ border-color: @fg_color;
+ color: #FF0000;
+}
+#search_hbox {
+ border-width: 0px 0px 0px 0px;
+ -outer-stroke-width: 0px;
+ border-radius: 0px 0px 0px 0px;
+ border-style: solid;
+ background-image: none;
+ margin:0px;
+ padding:0px 0px 1px 0px;
+}
+HVBox {
+ border-width: 0px 2px 2px 2px;
+ border-style: solid;
+}
+
+#OffscreenWindow, VTMainWindow,#HVBox_dnd_window {
+ border-width: 0px;
+ border-style: solid;
+ background-color: alpha(@ayterm-bg-color,0.0);
+}
+HVBox,#quick_options_notebook{
+ background-color: @ayterm-bg-color;
+}
+#settings-scrolledwindow{
+ background-color: @bg_color;
+}
+
+VTToggleButton{
+ box-shadow: none;
+ transition-duration: 0s;
+}
+
+.window_single_tab {
+ border-width: 2px 2px 2px 2px;
+ border-style: solid;
+}
+""";
+
+const string settings_css_solarized_dark="""
+ @define-color ayterm-bg-color alpha(#063541,1.00);
+ @define-color ayterm-fg-color #EDE7D4;
+ @define-color ayterm-palette-15 #FCF5E2;
+ @define-color ayterm-palette-14 #92A0A0;
+ @define-color ayterm-palette-13 #6B70C3;
+ @define-color ayterm-palette-12 #829395;
+ @define-color ayterm-palette-11 #647A82;
+ @define-color ayterm-palette-10 #576D74;
+ @define-color ayterm-palette-9 #CA4A15;
+ @define-color ayterm-palette-8 #002A35;
+ @define-color ayterm-palette-7 #EDE7D4;
+ @define-color ayterm-palette-6 #29A097;
+ @define-color ayterm-palette-5 #D23581;
+ @define-color ayterm-palette-4 #258AD1;
+ @define-color ayterm-palette-3 #B48800;
+ @define-color ayterm-palette-2 #849900;
+ @define-color ayterm-palette-1 #DB312E;
+ @define-color ayterm-palette-0 #063541;
+ @define-color tab-index-color @ayterm-palette-11;
+ @define-color username-color  @ayterm-palette-2;
+ @define-color hostname-color  @ayterm-palette-9;
+
+
+VTToggleButton {
+ -VTToggleButton-username-color:@ayterm-palette-1;
+ background-color: alpha(@ayterm-bg-color,0.0);
+ color: @ayterm-fg-color;
+}
+VTToggleButton:active{
+ background-color: @ayterm-palette-15;
+ background-image: none;
+ color: @ayterm-palette-11;
+}
+VTToggleButton:prelight {
+ background-color: @ayterm-palette-7;
+ background-image:none;
+ color: @ayterm-bg-color;
+}
+VTToggleButton:active:prelight{
+ background-color:@ayterm-palette-7;
+ background-image: none;
+ color: @ayterm-palette-0;
+}
+.window_multitabs {
+ border-color: #3C3B37;
+ border-style: solid;
+}
+#search_hbox :active {
+ border-color: @fg_color;
+ color: #FF0000;
+}
+#search_hbox :prelight {
+ background-color: @ayterm-bg-color;
+ border-color: @fg_color;
+ color: #FF0000;
+}
+#search_hbox {
+ background-color: @ayterm-bg-color;
+ border-color: @bg_color;
+ color: #00FFAA;
+}
+HVBox {
+ border-color: #3C3B37;
+ border-style: solid;
+ background-color: @ayterm-bg-color;
+}
+#OffscreenWindow, VTMainWindow,#HVBox_dnd_window {
+ border-style: solid;
+ background-color: alpha(@ayterm-bg-color,0.0);
+}
+HVBox,#quick_options_notebook{
+ background-color: @ayterm-bg-color;
+}
+#settings-scrolledwindow{
+ background-color: @bg_color;
+}
+#settings-scrolledwindow{
+ background-color: @bg_color;
+}
+VTToggleButton{
+ box-shadow: none;
+ transition-duration: 0s;
+}
+
+.window_single_tab {
+ border-color: #3C3B37;
+ border-style: solid;
+}
+""";
+
+
+const string settings_css_linux = """
+ @define-color ayterm-bg-color alpha(#000000,1.00);
+ @define-color ayterm-fg-color #AAAAAA;
+ @define-color ayterm-palette-15 #FFFFFF;
+ @define-color ayterm-palette-14 #54FFFF;
+ @define-color ayterm-palette-13 #FF54FF;
+ @define-color ayterm-palette-12 #5454FF;
+ @define-color ayterm-palette-11 #FFFF54;
+ @define-color ayterm-palette-10 #54FF54;
+ @define-color ayterm-palette-9 #FF5454;
+ @define-color ayterm-palette-8 #545454;
+ @define-color ayterm-palette-7 #AAAAAA;
+ @define-color ayterm-palette-6 #00AAAA;
+ @define-color ayterm-palette-5 #AA00AA;
+ @define-color ayterm-palette-4 #0000AA;
+ @define-color ayterm-palette-3 #AA5400;
+ @define-color ayterm-palette-2 #00AA00;
+ @define-color ayterm-palette-1 #AA0000;
+ @define-color ayterm-palette-0 #000000;
+ @define-color tab-index-color @ayterm-palette-11;
+ @define-color username-color  @ayterm-palette-15;
+ @define-color hostname-color  @ayterm-palette-11;
+
+VTToggleButton {
+  -VTToggleButton-tab-index-color:@ayterm-palette-11;
+  -VTToggleButton-username-color:@ayterm-palette-15;
+  -VTToggleButton-hostname-color:@ayterm-palette-11;
+  border-color:alpha(#000000,0.0);
+  background-color: alpha(#000000,0.0);
+  color: #AAAAAA;
+  box-shadow: none;
+}
+VTToggleButton:active{
+  background-color: #00AAAA;
+  background-image: -gtk-gradient(radial,center center, 0,center center, 1, from (#00BBBB),to (#008888) );
+  color: #000000;
+}
+VTToggleButton:prelight {
+  background-color: #AAAAAA;
+  background-image: -gtk-gradient(radial,center center, 0,center center, 1, from (#AAAAAA),to (#777777) );
+  color: #000000;
+}
+VTToggleButton:active:prelight{
+  background-color: #00AAAA;
+  background-image: -gtk-gradient(radial,center center, 0,center center, 1, from (lighter(#00BBBB)),to (#008888) );
+  color: #000000;
+}
+.window_multitabs {
+ border-color: #3C3B37;
+ border-style: solid;
+}
+#search_hbox :active {
+ border-color: @fg_color;
+ color: #FF0000;
+}
+#search_hbox :prelight {
+ background-color: @ayterm-bg-color;
+ border-color: @fg_color;
+ color: #FF0000;
+}
+#search_hbox {
+ background-color: @ayterm-bg-color;
+ border-color: @bg_color;
+ color: #00FFAA;
+}
+HVBox {
+ border-color: #3C3B37;
+ border-style: solid;
+ background-color: @ayterm-bg-color;
+}
+#OffscreenWindow, VTMainWindow,#HVBox_dnd_window {
+ border-style: solid;
+ background-color: alpha(@ayterm-bg-color,0.0);
+}
+HVBox,#quick_options_notebook{
+ background-color: @ayterm-bg-color;
+}
+#settings-scrolledwindow{
+ background-color: @bg_color;
+}
+#settings-scrolledwindow{
+ background-color: @bg_color;
+}
+VTToggleButton{
+ box-shadow: none;
+ transition-duration: 0s;
+}
+.window_single_tab {
+ border-color: #3C3B37;
+ border-style: solid;
+}
+
+""";
+//terminal_palettes_rxvt;
 
 public class point_ActionGroup_store {
 	public unowned Gtk.ActionGroup action_group;
@@ -170,7 +467,7 @@ public class AYSettings : AYTab{
 				int r = 0;
 				Gtk.Widget? child;
 
-				grid = (builder.get_object ("grid1") as Gtk.Grid);
+				grid = (builder.get_object ("grid9") as Gtk.Grid);
 				while( (child=grid.get_child_at(1,r)) != null){
 					switch(child.get_name()){
 						case "terminal_background_image_file":
@@ -178,6 +475,16 @@ public class AYSettings : AYTab{
 						case "terminal_background_fake_transparent_scroll":
 						case "terminal_tint_color":
 						case "terminal_background_saturation":
+						grid.remove_row(r);
+						break;
+						default:
+						r++;
+						break;
+					}
+				}
+				grid = (builder.get_object ("grid1") as Gtk.Grid);
+				while( (child=grid.get_child_at(1,r)) != null){
+					switch(child.get_name()){
 						case "terminal_visible_bell":
 						case "terminal_set_alternate_screen_scroll":
 						grid.remove_row(r);
@@ -797,12 +1104,34 @@ public class AYSettings : AYTab{
     return null;
   }
   [CCode (instance_pos = -1)]
+	public void on_opacity_changed  (Gtk.SpinButton opacity_w) {//ay_settings_on_opacity_changed
+    var CB = builder.get_object ("terminal_color_bg") as Gtk.ColorButton;
+    var bg = CB.get_rgba();
+    bg.alpha=opacity_w.get_value();
+    CB.set_rgba(bg);
+    var B = builder.get_object ("program_style") as Gtk.TextView;
+    string css_inner = B.buffer.text;//get
+    string alpha="%1.2f".printf(round_double(bg.alpha,2));
+    alpha=alpha.replace(",",".");
+    update_css_global_color(ref css_inner,"ayterm-bg-color","alpha(%s,%s)".printf(hexRGBA(bg),alpha) );
+    
+    B.buffer.text=css_inner;//done
+  }
+  [CCode (instance_pos = -1)]
 	public void on_theme_changed  (Gtk.ComboBox w) {//ay_settings_on_theme_changed
     Gtk.ColorButton CB;
-    var B = builder.get_object ("program_style") as Gtk.TextView;
-    string css_inner=B.buffer.text;
-    
     int theme_index=w.get_active();
+    var B = builder.get_object ("program_style") as Gtk.TextView;
+    //B.buffer.text;
+    string css_inner="";
+    switch(theme_index){
+      case 0 : css_inner=settings_css_linux; break;
+      case 1 : css_inner=settings_css_linux; break;
+      case 2 : css_inner=settings_css_linux; break;
+      case 3 : css_inner=settings_css_linux; break;
+      case 4 : css_inner=settings_css_solarized_dark; break;
+    };
+    
     for(int i=1; i<17;i++){
       CB = builder.get_object ("terminal_palette_colorbutton"+i.to_string()) as Gtk.ColorButton;
       if(CB!=null){

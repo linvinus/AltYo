@@ -857,32 +857,33 @@ public class VTMainWindow : Window{
 		this.allow_close=!conf.get_boolean("confirm_to_quit",true);
 
 		var css_main = new CssProvider ();
-		string style_str= ""+
-           ".window_maximized AYTerm{-AYTerm-bg-color: alpha(#000000,1.0);}"+
-           "AYTerm{ -AYTerm-bg-color: alpha(#000000,1.0); -AYTerm-fg-color: #00FFAA; -AYTerm-palette-0:#FF0000; -AYTerm-palette-1:#AA0000; -AYTerm-palette-2:#00AA00; -AYTerm-palette-3:#AA5500; -AYTerm-palette-4:#0000AA; -AYTerm-palette-5:#AA00AA; -AYTerm-palette-6:#00AAAA; -AYTerm-palette-7:#AAAAAA; -AYTerm-palette-8:#555555; -AYTerm-palette-9:#FF5555; -AYTerm-palette-10:#55FF55; -AYTerm-palette-11:#FFFF55; -AYTerm-palette-12:#5555FF; -AYTerm-palette-13:#FF55FF; -AYTerm-palette-14:#55FFFF; -AYTerm-palette-15:#FFFFFF; } " +
-					 "VTToggleButton GtkLabel  { font: Mono 10; -GtkWidget-focus-padding: 0px; -GtkButton-default-border:0px; -GtkButton-default-outside-border:0px; -GtkButton-inner-border:0px; border-width:0px; -outer-stroke-width: 0px; margin:0px; padding:0px;}"+
-					 "VTToggleButton {-GtkWidget-focus-padding: 0px;-GtkButton-default-border:0px;-GtkButton-default-outside-border:0px;-GtkButton-inner-border:0px;border-color:alpha(#000000,0.0);border-width: 1px;-outer-stroke-width: 0px;border-radius: 3px;border-style: solid;background-image: none;margin:0px;padding:0px 0px 0px 0px;background-color: alpha(#000000,0.0);color: #AAAAAA; box-shadow: none;}"+
-					 "VTToggleButton:active{background-color: #00AAAA;background-image: -gtk-gradient(radial,center center, 0,center center, 1, from (#00BBBB),to (#008888) );color: #000000;}"+
-					 "VTToggleButton:prelight {background-color: #AAAAAA;background-image: -gtk-gradient(radial,center center, 0,center center, 1, from (#AAAAAA),to (#777777) ); color: #000000;}"+
-					 "VTToggleButton:active:prelight{background-color: #00AAAA;background-image: -gtk-gradient(radial,center center, 0,center center, 1, from (lighter(#00BBBB)),to (#008888) );color: #000000;}"+
-					 "VTToggleButton *:selected{ background-color: alpha(#FF0000, 0.4);background-image: none;}"+
-					 ".window_multitabs {border-width: 2px 2px 0px 2px;border-color: #3C3B37;border-style: solid;padding:0px;margin:0;}"+
-					 ".window_single_tab {border-width: 2px 2px 2px 2px;border-color: #3C3B37;border-style: solid;}"+
-					 "#terms_notebook {border-width: 0px;border-style: solid;padding:0px;margin:0;}"+
-					 "#search_hbox :active { border-color: @fg_color; color: #FF0000;}"+
-					 "#search_hbox :prelight { background-color: alpha(#000000,0.0); border-color: @fg_color; color: #FF0000;}"+
-					 "#search_hbox {border-width: 0px 0px 0px 0px; -outer-stroke-width: 0px; border-radius: 0px 0px 0px 0px; border-style: solid;  background-image: none; margin:0px; padding:0px 0px 1px 0px; background-color: #000000; border-color: @bg_color; color: #00FFAA;}"+
-					 "HVBox {border-width: 0px 2px 2px 2px; border-color: #3C3B37;border-style: solid; background-color: #000000;}"+
-					 "#OffscreenWindow, VTMainWindow,#HVBox_dnd_window {border-width: 0px; border-style: solid; background-color: alpha(#000000,0.1);}"+
-					 "HVBox,#quick_options_notebook{background-color: alpha(#000000,1.0);}"+
-					 "#settings-scrolledwindow{ background-color: @bg_color;}"+
-					 "";
+//~ 		string style_str= ""+
+//~            ".window_maximized AYTerm{-AYTerm-bg-color: alpha(#000000,1.0);}"+
+//~            "AYTerm{ -AYTerm-bg-color: alpha(#000000,1.0); -AYTerm-fg-color: #00FFAA; -AYTerm-palette-0:#FF0000; -AYTerm-palette-1:#AA0000; -AYTerm-palette-2:#00AA00; -AYTerm-palette-3:#AA5500; -AYTerm-palette-4:#0000AA; -AYTerm-palette-5:#AA00AA; -AYTerm-palette-6:#00AAAA; -AYTerm-palette-7:#AAAAAA; -AYTerm-palette-8:#555555; -AYTerm-palette-9:#FF5555; -AYTerm-palette-10:#55FF55; -AYTerm-palette-11:#FFFF55; -AYTerm-palette-12:#5555FF; -AYTerm-palette-13:#FF55FF; -AYTerm-palette-14:#55FFFF; -AYTerm-palette-15:#FFFFFF; } " +
+//~ 					 "VTToggleButton GtkLabel  { font: Mono 10; -GtkWidget-focus-padding: 0px; -GtkButton-default-border:0px; -GtkButton-default-outside-border:0px; -GtkButton-inner-border:0px; border-width:0px; -outer-stroke-width: 0px; margin:0px; padding:0px;}"+
+//~ 					 "VTToggleButton {-GtkWidget-focus-padding: 0px;-GtkButton-default-border:0px;-GtkButton-default-outside-border:0px;-GtkButton-inner-border:0px;border-color:alpha(#000000,0.0);border-width: 1px;-outer-stroke-width: 0px;border-radius: 3px;border-style: solid;background-image: none;margin:0px;padding:0px 0px 0px 0px;background-color: alpha(#000000,0.0);color: #AAAAAA; box-shadow: none;}"+
+//~ 					 "VTToggleButton:active{background-color: #00AAAA;background-image: -gtk-gradient(radial,center center, 0,center center, 1, from (#00BBBB),to (#008888) );color: #000000;}"+
+//~ 					 "VTToggleButton:prelight {background-color: #AAAAAA;background-image: -gtk-gradient(radial,center center, 0,center center, 1, from (#AAAAAA),to (#777777) ); color: #000000;}"+
+//~ 					 "VTToggleButton:active:prelight{background-color: #00AAAA;background-image: -gtk-gradient(radial,center center, 0,center center, 1, from (lighter(#00BBBB)),to (#008888) );color: #000000;}"+
+//~ 					 "VTToggleButton *:selected{ background-color: alpha(#FF0000, 0.4);background-image: none;}"+
+//~ 					 ".window_multitabs {border-width: 2px 2px 0px 2px;border-color: #3C3B37;border-style: solid;padding:0px;margin:0;}"+
+//~ 					 ".window_single_tab {border-width: 2px 2px 2px 2px;border-color: #3C3B37;border-style: solid;}"+
+//~ 					 "#terms_notebook {border-width: 0px;border-style: solid;padding:0px;margin:0;}"+
+//~ 					 "#search_hbox :active { border-color: @fg_color; color: #FF0000;}"+
+//~ 					 "#search_hbox :prelight { background-color: alpha(#000000,0.0); border-color: @fg_color; color: #FF0000;}"+
+//~ 					 "#search_hbox {border-width: 0px 0px 0px 0px; -outer-stroke-width: 0px; border-radius: 0px 0px 0px 0px; border-style: solid;  background-image: none; margin:0px; padding:0px 0px 1px 0px; background-color: #000000; border-color: @bg_color; color: #00FFAA;}"+
+//~ 					 "HVBox {border-width: 0px 2px 2px 2px; border-color: #3C3B37;border-style: solid; background-color: #000000;}"+
+//~ 					 "#OffscreenWindow, VTMainWindow,#HVBox_dnd_window {border-width: 0px; border-style: solid; background-color: alpha(#000000,0.1);}"+
+//~ 					 "HVBox,#quick_options_notebook{background-color: alpha(#000000,1.0);}"+
+//~ 					 "#settings-scrolledwindow{ background-color: @bg_color;}"+
+//~ 					 "";
+    string style_str=settings_base_css;
 
 		if(Gtk.get_major_version()>=3 && Gtk.get_minor_version()>4)
 			style_str+= "VTToggleButton{transition-duration: 0s;}";
 
-		if(Gtk.get_major_version()>=3 && Gtk.get_minor_version()>6)//special eyecandy if supported ;)
-			style_str+= "VTToggleButton:active { text-shadow: 1px 1px 2px #005555;}";
+//~ 		if(Gtk.get_major_version()>=3 && Gtk.get_minor_version()>6)//special eyecandy if supported ;)
+//~ 			style_str+= "VTToggleButton:active { text-shadow: 1px 1px 2px #005555;}";
 
 		//prevent  transparency of window background in  standalone mode
 		if(conf.standalone_mode)
@@ -896,7 +897,7 @@ public class VTMainWindow : Window{
 			});
 
 		try{
-			css_main.load_from_data (this.conf.get_string("program_style",style_str),-1);
+			css_main.load_from_data (style_str+this.conf.get_string("program_style",settings_css_linux),-1);
 			Gtk.StyleContext.add_provider_for_screen(this.get_screen(),css_main,Gtk.STYLE_PROVIDER_PRIORITY_USER);
 		}catch (Error e) {
 			debug("Theme error! loading default..");

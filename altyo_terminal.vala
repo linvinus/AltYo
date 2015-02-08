@@ -603,8 +603,13 @@ public class AYTerm : Vte.Terminal{
 		if(tct.bg!=null)
 			this.set_opacity((uint16)((tct.bg.alpha)*65535));
 		//set_background_transparent call vte_terminal_queue_background_update
-		this.set_background_transparent(true);//but only when changes
-		this.set_background_transparent(false);//but only when changes
+    if(background_transparent){
+      this.set_background_transparent(false);//but only when changes
+      this.set_background_transparent(true);//but only when changes
+    }else{
+      this.set_background_transparent(true);//but only when changes
+      this.set_background_transparent(false);//but only when changes
+    }
 		#else
 		this.set_colors(tct.fg,tct.bg,tct.palette);
 		#endif
@@ -945,9 +950,9 @@ public class VTTerminal : AYTab{
 			return CFG_CHECK.OK;
 			});
 		this.vte_term.set_background_saturation(sat);
-		if(bg_faket){
-			this.vte_term.set_background_transparent(true);//fake transparent
-		}//else{//moved -> this.vte_term.update_style();
+		//if(bg_faket){
+			this.vte_term.set_background_transparent(bg_faket);//fake transparent
+		//}//else{//moved -> this.vte_term.update_style();
 			//set_background_transparent call vte_terminal_queue_background_update
 			//this.vte_term.set_background_transparent(true);//but only when changes
 			//this.vte_term.set_background_transparent(false);//but only when changes

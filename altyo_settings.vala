@@ -307,6 +307,8 @@ VTToggleButton{
  border-color: #3C3B37;
  border-style: solid;
 }
+.window_maximized{}
+.window_multitabs{}
 """;
 
 
@@ -401,7 +403,8 @@ VTToggleButton{
  border-color: #3C3B37;
  border-style: solid;
 }
-
+.window_maximized{}
+.window_multitabs{}
 """;
 //terminal_palettes_rxvt;
 

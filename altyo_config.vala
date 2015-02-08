@@ -304,6 +304,20 @@ public class MySettings : Object {
 					}
 				}catch (KeyFileError err) {}
 			version[VER.rc]=11;//update version
+		}
+		/*if was 0.3.11
+		 * update program_style option, new theme handling
+		 * */
+		if(version[VER.major]==0 && version[VER.minor]==3 && version[VER.rc]<12){
+				try {
+					string old=kf.get_string(this.profile,"program_style");
+					if(old!=null && old!="" ){
+						kf.remove_key(this.profile,"program_style");
+						kf.remove_key(this.profile,"tab_title_format");
+						kf.remove_key(this.profile,"tab_title_format_regex");
+					}
+				}catch (KeyFileError err) {}
+			version[VER.rc]=12;//update version
 		}	
 		return version;
 	}

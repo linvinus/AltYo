@@ -241,7 +241,9 @@ const string settings_css_solarized_dark="""
 
 
 VTToggleButton {
- -VTToggleButton-username-color:@ayterm-palette-1;
+ -VTToggleButton-tab-index-color:@ayterm-palette-11;
+ -VTToggleButton-username-color:@ayterm-palette-2;
+ -VTToggleButton-hostname-color:@ayterm-palette-9; 
  background-color: alpha(@ayterm-bg-color,0.0);
  color: @ayterm-fg-color;
 }

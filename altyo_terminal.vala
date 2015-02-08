@@ -466,7 +466,7 @@ public class AYTab : Object{
 			return CFG_CHECK.OK;
 			});
 
-		this.tbutton.tab_title_format = my_conf.get_string("tab_title_format","<span foreground='#FFF000'>_INDEX_</span>/_TITLE_<span foreground='#999999' font_family='sans' size='9000' rise='1000'>|</span>",(ref new_val)=>{
+		this.tbutton.tab_title_format = my_conf.get_string("tab_title_format","<span foreground='tab-index-color'>_INDEX_</span>/_TITLE_<span foreground='#999999' font_family='sans' size='9000' rise='1000'>|</span>",(ref new_val)=>{
 			string err;
 			if(!my_conf.check_markup(replace_color_in_markup(this.tbutton,new_val),out err)){
 				debug(_("tab_title_format wrong value! will be used default value. err:%s"),err);
@@ -475,7 +475,7 @@ public class AYTab : Object{
 
 			return CFG_CHECK.OK;
 			});
-		this.tbutton.tab_title_regex = my_conf.get_string_list("tab_title_format_regex",{"^(mc) \\[","<span>_REPLACE_ </span>","([\\w\\.]+)@","<span font_weight='bold' foreground='#EEEEEE'>_USER_</span>@","@([\\w\\.\\-]+)\\]?:(?!/{2})","@<span font_weight='bold' foreground='#FFF000'>_HOSTNAME_</span>:","([^:]*)$","<span>_PATH_</span>"},(ref new_val)=>{
+		this.tbutton.tab_title_regex = my_conf.get_string_list("tab_title_format_regex",{"^(mc) \\[","<span>_REPLACE_ </span>","([\\w\\.]+)@","<span font_weight='bold' foreground='username-color'>_USER_</span>@","@([\\w\\.\\-]+)\\]?:(?!/{2})","@<span font_weight='bold' foreground='hostname-color'>_HOSTNAME_</span>:","([^:]*)$","<span>_PATH_</span>"},(ref new_val)=>{
 			if(new_val!=null && (new_val.length % 2)!=0){
 				debug(_("tab_title_format_regex odd value of array length! will be used default value."));
 				return CFG_CHECK.USE_DEFAULT;

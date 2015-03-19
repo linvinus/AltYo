@@ -62,8 +62,8 @@ How to install from sources is described in INSTALL file.
 
 Tips and tricks:
 ----
-1. You always may open new stand-alone terminal, in current directory, by pressing `<Ctrl><Shift>N` (default key binding)
-2. In search mode (when text entry have a focus), you may use following hotkeys  
+1. A new stand-alone terminal may always be opened in current directory by pressing `<Ctrl><Shift>N` (default key binding).
+2. In search mode (when text entry have a focus), the following hotkeys may be used:
    `ctrl+1` - toggle "Wrap search"  
    `ctrl+2` - toggle "Match case-sensitive"  
    `ctrl+3` - toggle search mode "terminal text"/"terminals titles"  
@@ -72,24 +72,25 @@ Tips and tricks:
    `Up` - search history  
    `Down` - search history  
    `Esc` - close search dialog  
-sorry, this keys is hardcoded.
-3. You may switching to tab by searching in a titles.  
-   To do that you need to open search dialog `<Ctrl><Shift>F` (default key binding),  
-   then activate search option  "terminals titles", by pressing `<Ctrl+3>`,  
-   then type sought-for part of tab title.  
-   Then you may use hotkeys to cycle through the search results  
+(Soddy, but those shortcuts are hardcoded).
+3. Switching tabs by searching in the titles.  
+   In order to switch tabs by searching a search dialog `<Ctrl><Shift>F` (default key binding) should be opened,  
+   then the search option "terminals titles" has to be activated, by pressing `<Ctrl+3>`.
+   Type in order to search for part of the tab titles.  
+   The hotkeys : 
    `ctrl+Up` or `Enter` - find next  
    `ctrl+Down` - find prev  
-   Also, you may configure special hotkey to quickly activate this mode "Search in terminals titles"
-4. You may sort tabs by hostname (if tab title contain host name in the following form `<user>@<host>:<path>`)  
-   To do that press right mouse button on tab title, then, in context menu, select "Sort by hostname"  
-   Also, you may configure special hotkey for this action "Sort by hostname".
-5. Altyo is portable, you may copy executable file on your USB flash drive.  
-   All you need to run on target machine is installed Gtk 3.4 or newer and libvte 3.0 or newer.  
-   This libraries should be available on fresh distributives.
-6. Double click on empty space in tab bar will open new tab.
-7. Middle click on tab button will close tab.
-8. You may set default TERM variable at Advanced -> Terminal regexps ->TERM, for example `TERM=xterm-256color`
+   can be used to cycle through the search results  
+   Also, you may configure special hotkeys to quickly activate the "Search in terminals titles" mode.
+4. Tabs can be sorted by hostname (if tab title contains host name in the following form `<user>@<host>:<path>`)  
+   To do that after pressing right mouse button on tab title, in the context menu, select "Sort by hostname"  
+   Also, you may configure a special hotkey for the "Sort by hostname" action.
+5. Altyo is portable, the executable file can be copied on an USB flash drive.  
+   The only requirement on the target machine is that Gtk 3.4 or newer and libvte 3.0 or newer sould be installed.  
+   Those libraries should be available on fresh distributives.
+6. Double click on an empty space in the tab bar will open a new tab.
+7. Middle mouse button click on a tab button will close the tab.
+8. You may set the default TERM variable at Advanced -> Terminal regexps ->TERM, e.g. `TERM=xterm-256color`
 
 FAQ:
 ----

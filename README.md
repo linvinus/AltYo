@@ -1,42 +1,42 @@
 AltYo
 =====
 
-AltYo - drop-down terminal emulator, written in vala, depends only on libvte and gtk3.
+AltYo - drop-down terminal emulator, written in Vala, depends only on libvte and gtk3.
 
 Main program advantages.
 ------------------------
-* Design of altyo allow open unlimited tab count, even with long terminal title.  
-     if tabs  not fit in the row, they move to a new line.
+* The design of altyo allows to open an unlimited tab count, even with long terminal titles.  
+     if tabs do not fit in one row, they will move to a new line.
 * Drag and drop tabs.
-* Tabs does not stand out from the terminal.(solid view)
+* Tabs do not stand out from the terminal. (solid view)
 * Title of the tabs fully customisable.  
-     You can highlight parts of the terminal header by color (for example, highlight username and hostname)  
-     You can adjust the header of the terminal, using regular expressions(for example cut unnecessary parts).
+     Highlight parts of the terminal header by color (for example, highlight username and hostname)  
+     Adjust the header of the terminal, using regular expressions(for example cut unnecessary parts).
 * Autostart with desktop session.
-* Autostart programs,for example, start mocp and mutt in new tabs by default.
-* Program will warn you if you try to close the terminal with an important program(ssh,wget pattern is customizable), even if program runned in the background.
-* Delayed "Close tab", you have 10 seconds before tab will actually closed, so if you change your mind, press `<Ctrl><Shift>R` to restore tab, also you may restore tab from terminal popup menu.
-* You may "Lock" important tab, program will ask you to confirm close tab. ("Lock tab" is available from context menu on tab button)
+* Autostarts programs in new tabs ,for example start mocp and mutt, by default.
+* Alert popup shows when you the terminal will be closed with an important program (ssh, wget pattern is customizable), even if executed in the background.
+* Delayed "Close tab", 10 seconds before tab will actually be closed. If necessary, `<Ctrl><Shift>R` can be pressed to restore the closed tab, tabs can also be restored from the terminal popup menu.
+* Important tabs can be 'Locked', the program will then ask to confirm tab closing. ("Lock tab" is in from the context menu on tab button)
 * All options can be configured via graphical settings dialog.
-* Program will warn you if you setup incorrect setting value, if settings is absent in config file, program will use default value.
-* Hotkey for ~~the first 20~~ unlimited tabs (double press of `alt+5` will switch to 15 tab, triple press will switch to 25 tab and so on)
-* You may use css to styling program (thanks to gtk3)
+* The program will warn the user when incorrect values are filled in the configuration, if settings are absent in config file, the program will use the default values.
+* Hotkey for ~~the first 20~~ unlimited tabs (double press of `alt+5` will switch to the 15th tab, triple press will switch to the 25th tab and so on)
+* You may use css to style the program (thanks to gtk3)
 * Multi monitor support.  
-  * You can setup, on which monitor start by default.  
+  * The monitor in which altYo is started by default can be configured.  
   * Individual window size and position for each monitor.
-  * Program have mode "Follow the mouse", in this mode, after hiding, window will shown on same monitor with mouse pointer.
+  * Program contains "Follow the mouse" mode, after hiding, window will shown on the monitor with mouse pointer.
 * Tiling window manager support (usual window).  
      Use `--standalone` command line option to run in tiling window manager,  
      For any other window managers, altyo will operate as usual terminal emulator (like xterm).
 * Multiple instances. You may run several instances of alto in same time.  
-  To do that you should setup unique id for each instance and use separate configuration file.  
+  In order to do that, an unique id and configuration file for each instance should be setup.  
   For example:  
   `altyo --id=org.gtk.altyo_left_monitor -c ~/.config/altyo/config_left_monitor.ini`  
   `altyo --id=org.gtk.altyo_right_monitor -c ~/.config/altyo/config_right_monitor.ini`  
-  now you may control each instance individually  
+  now each instance can be controlled individually  
   `altyo --id=org.gtk.altyo_left_monitor -e "htop"`  
   `altyo --id=org.gtk.altyo_right_monitor -e "mc"`  
-  If you don't want invent unique id, you may use `--id=none`, but in that case you will have no possibility to control instances from command line.
+  The id can be omitted: `--id=none` may be used, but in that case there will be no possibility to control instances from the command line.
 
 [![Main window](http://storage6.static.itmages.ru/i/13/0406/s_1365230653_4853839_d41d8cd98f.png)](http://itmages.ru/image/view/971951/d41d8cd9)
 [![Preferences Look and feel](http://storage3.static.itmages.ru/i/13/0406/s_1365229810_3352986_d41d8cd98f.png)](http://itmages.ru/image/view/971932/d41d8cd9)
@@ -46,7 +46,7 @@ Main program advantages.
 [![Tiling window manager](http://storage5.static.itmages.ru/i/13/0612/s_1371022059_3043913_a19d77ddef.png)](http://itmages.ru/image/view/1071252/a19d77dd)
 [![Normal window](http://storage2.static.itmages.ru/i/13/0612/s_1371037750_9206122_f69d88b067.png)](http://itmages.ru/image/view/1071578/f69d88b0)
 
-small video presentation of available features:
+small video presentation of the available features:
 * youtube video altyo 0.3  
   [![youtube altyo 0.3](http://img.youtube.com/vi/IEabsuFresk/0.jpg)](http://youtu.be/IEabsuFresk)
 * altyo 0.2 http://youtu.be/9W8m6T7HyVs and http://youtu.be/utxeh-SBTvI
@@ -62,8 +62,8 @@ How to install from sources is described in INSTALL file.
 
 Tips and tricks:
 ----
-1. You always may open new stand-alone terminal, in current directory, by pressing `<Ctrl><Shift>N` (default key binding)
-2. In search mode (when text entry have a focus), you may use following hotkeys  
+1. A new stand-alone terminal may always be opened in current directory by pressing `<Ctrl><Shift>N` (default key binding).
+2. In search mode (when text entry have a focus), the following hotkeys may be used:
    `ctrl+1` - toggle "Wrap search"  
    `ctrl+2` - toggle "Match case-sensitive"  
    `ctrl+3` - toggle search mode "terminal text"/"terminals titles"  
@@ -72,24 +72,25 @@ Tips and tricks:
    `Up` - search history  
    `Down` - search history  
    `Esc` - close search dialog  
-sorry, this keys is hardcoded.
-3. You may switching to tab by searching in a titles.  
-   To do that you need to open search dialog `<Ctrl><Shift>F` (default key binding),  
-   then activate search option  "terminals titles", by pressing `<Ctrl+3>`,  
-   then type sought-for part of tab title.  
-   Then you may use hotkeys to cycle through the search results  
+(Soddy, but those shortcuts are hardcoded).
+3. Switching tabs by searching in the titles.  
+   In order to switch tabs by searching a search dialog `<Ctrl><Shift>F` (default key binding) should be opened,  
+   then the search option "terminals titles" has to be activated, by pressing `<Ctrl+3>`.
+   Type in order to search for part of the tab titles.  
+   The hotkeys : 
    `ctrl+Up` or `Enter` - find next  
    `ctrl+Down` - find prev  
-   Also, you may configure special hotkey to quickly activate this mode "Search in terminals titles"
-4. You may sort tabs by hostname (if tab title contain host name in the following form `<user>@<host>:<path>`)  
-   To do that press right mouse button on tab title, then, in context menu, select "Sort by hostname"  
-   Also, you may configure special hotkey for this action "Sort by hostname".
-5. Altyo is portable, you may copy executable file on your USB flash drive.  
-   All you need to run on target machine is installed Gtk 3.4 or newer and libvte 3.0 or newer.  
-   This libraries should be available on fresh distributives.
-6. Double click on empty space in tab bar will open new tab.
-7. Middle click on tab button will close tab.
-8. You may set default TERM variable at Advanced -> Terminal regexps ->TERM, for example `TERM=xterm-256color`
+   can be used to cycle through the search results  
+   Also, you may configure special hotkeys to quickly activate the "Search in terminals titles" mode.
+4. Tabs can be sorted by hostname (if tab title contains host name in the following form `<user>@<host>:<path>`)  
+   To do that after pressing right mouse button on tab title, in the context menu, select "Sort by hostname"  
+   Also, you may configure a special hotkey for the "Sort by hostname" action.
+5. Altyo is portable, the executable file can be copied on an USB flash drive.  
+   The only requirement on the target machine is that Gtk 3.4 or newer and libvte 3.0 or newer sould be installed.  
+   Those libraries should be available on fresh distributives.
+6. Double click on an empty space in the tab bar will open a new tab.
+7. Middle mouse button click on a tab button will close the tab.
+8. You may set the default TERM variable at Advanced -> Terminal regexps ->TERM, e.g. `TERM=xterm-256color`
 
 FAQ:
 ----

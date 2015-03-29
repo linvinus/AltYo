@@ -629,6 +629,8 @@ public class VTMainWindow : Window{
 			this.width_request=this.pull_w;
 			this.height_request=this.pull_h;
 			this.check_resize();//container
+			this.pull_w-=2;//reduce size a little, prevent move to another monitor in some cases
+			this.pull_h-=2;
 			
 			this.maximized=false;
 			this.move(this.pull_x,this.pull_y);

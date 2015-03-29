@@ -57,6 +57,7 @@ endif
 PREFIX?=/usr
 
 VALA_FILES  = vapi/config.vapi \
+				vapi/xkb.vapi \
 				main.vala \
 				hvbox.vala \
 				altyo_terminal.vala \

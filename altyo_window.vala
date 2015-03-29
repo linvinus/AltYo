@@ -203,6 +203,7 @@ public class VTMainWindow : Window{
 	private int orig_h_main_vbox=0;
 	private int orig_w_main_vbox=0;
 	private int orig_monitor=-1;
+  private Xkb.State xkbstate;
 	public int position = 1;
 	public bool config_maximized=false;
 	public bool start_maximized=false;
@@ -469,6 +470,8 @@ public class VTMainWindow : Window{
 				debug("on_pull_down very last step");
 				this.update_position_size();
 				this.window_set_active();
+        X.Display display = new X.Display();
+        Xkb.lock_group(display, Xkb.UseCoreKbd, this.xkbstate.group);
 				return false;
 			}
 	}
@@ -505,8 +508,8 @@ public class VTMainWindow : Window{
 		if(!this.pull_maximized)
 			this.configure_position();
 		this.set_default_size(this.pull_w,2);//Default size - used only the FIRST time we map a window
-		this.show();
-		this.display_sync();
+		this.resize(this.pull_w,2);//Default size - used only the FIRST time we map a window
+//~ 		this.display_sync();
 		this.current_state=WStates.VISIBLE;
 		this.window_set_active();//update keep_above stick and focus
 		if((this.mouse_follow || !this.gravity_north_west) && !this.pull_maximized){
@@ -516,11 +519,12 @@ public class VTMainWindow : Window{
 				this.move (this.pull_x,this.pull_y);
 			else
 				this.move (this.pull_x,this.orig_y);
-		this.display_sync();
+//~ 		this.display_sync();
 		if (this.pull_w >1 && this.pull_h >1)
 			this.pull_step=0;
 		else
 			this.pull_step=this.pull_steps;//skip animation
+		this.show();
 		GLib.Timeout.add_full(GLib.Priority.LOW,this.animation_speed,this.on_pull_down);
 	}
 
@@ -568,7 +572,8 @@ public class VTMainWindow : Window{
 		this.orig_w_tasks_notebook = this.ayobject.tasks_notebook.get_allocated_width();
 		debug("pull_up orig_h_tasks_notebook=%d orig_w_tasks_notebook=%d",orig_h_tasks_notebook,orig_w_tasks_notebook);
 		this.pull_maximized=this.maximized;
-		 
+    X.Display display = new X.Display();
+    Xkb.get_state(display, Xkb.UseCoreKbd, out this.xkbstate);
 		if(this.pull_w<2 || this.pull_h<2){//if start hidden
 			//we don't know size , guess
 			this.orig_w_tasks_notebook=orig_w_main_vbox=this.pull_w=this.ayobject.terminal_width;

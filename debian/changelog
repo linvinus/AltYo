@@ -1,3 +1,35 @@
+altyo (0.4~rc14-linvinus1) trusty; urgency=low
+
+  * improvement: .gitignore
+  * improvement: rm data/#preferences.glade#
+  * fix: second attempt to fix #19 and #16 and #17 at same time, improve animation
+  * improvement: store terminal palette in css, first step for #20
+  * improvement: store terminal palette in css, step two, for #20
+  * improvement: store terminal palette in css, step three, for #20
+  * new: support terminal themes,as part of #20
+  * fix: some regressions
+  * fix: use object instead struct for term colors for vala 0.16
+  * fix: wrong color conversion
+  * fix: for vala 0.16
+  * improvement: remove themes duplicate
+  * new: possibility to use css colors in tab title
+  * fix: segfault if color not found
+  * improvement: theme handling, p1
+  * improvement: smooth animation
+  * fix: switch to previous tab after close settings
+  * improvement: theme handling, p2
+  * improvement: theme handling, p3
+  * improvement: theme handling, p4
+  * use XkbLockGroup to restore window layout #16
+  * improvement: prevent window move to another monitor in some cases
+  * cleanup
+
+  [ Giulio Dallatorre ]
+  * Aligned  program advantages with english standards
+  * Tip section aligned to academic english
+
+ -- denis <linvinus@gmail.com>  Tue, 28 Apr 2015 10:51:49 +0400
+
 altyo (0.4~rc13-linvinus1) trusty; urgency=low
 
   * improve compilation on precise v4

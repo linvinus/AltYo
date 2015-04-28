@@ -19,8 +19,8 @@ using Gtk;
 
 
 #if VALA_0_17
-#else //VALA_0_16 and older
-	/*
+#else
+	/* VALA_0_16 and older
 	 * quirk for Ubuntu precise (12.04)
 	 * bug 675403.
 	 * https://mail.gnome.org/archives/commits-list/2012-June/msg05401.html

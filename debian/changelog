@@ -1,3 +1,9 @@
+altyo (0.4~rc16-linvinus1) trusty; urgency=low
+
+  * fix: vala 0.16
+
+ -- denis <linvinus@gmail.com>  Tue, 28 Apr 2015 13:38:25 +0400
+
 altyo (0.4~rc15-linvinus1) trusty; urgency=low
 
   * fix: gtk_style_context_lookup_color vala 0.16

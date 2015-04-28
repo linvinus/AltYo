@@ -16,6 +16,19 @@
  */
 
 using Gtk;
+
+
+#if VALA_0_17
+#else //VALA_0_16 and older
+	/*
+	 * quirk for Ubuntu precise (12.04)
+	 * bug 675403.
+	 * https://mail.gnome.org/archives/commits-list/2012-June/msg05401.html
+	*/ 
+	[CCode (cname = "gtk_style_context_lookup_color")]
+	extern bool vala_016_style_context_lookup_color(Gtk.StyleContext context,string color_name,out Gdk.RGBA color);
+#endif
+
 public enum CFG_CHECK{
 	OK,
 	REPLACE,
@@ -853,7 +866,11 @@ public string replace_color_in_markup(Widget w,string markup,StateFlags state=Gt
 //~                   color=tmp;
 //~                   tmp.free();
                 }
-                if(color!=null || w.get_style_context().lookup_color(name,out color) ){
+				#if VALA_0_17
+				if(color!=null || w.get_style_context().lookup_color(name,out color) ){
+				#else
+				if(color!=null || vala_016_style_context_lookup_color(w.get_style_context(),name,out color) ){
+				#endif
                   result.append("foreground='");
                   result.append(hexRGBA(color));
                   result.append("'");
@@ -883,7 +900,11 @@ public string replace_color_in_markup(Widget w,string markup,StateFlags state=Gt
 //~                     color=tmp;
 //~                     tmp.free();
                   }
-                  if( color!=null || w.get_style_context().lookup_color(name,out color) ){
+				#if VALA_0_17
+				  if(color!=null || w.get_style_context().lookup_color(name,out color) ){
+				#else
+				  if(color!=null || vala_016_style_context_lookup_color(w.get_style_context(),name,out color) ){
+				#endif
                     result.append("background='");
                     result.append(hexRGBA(color));
                     result.append("'");

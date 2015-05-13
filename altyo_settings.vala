@@ -1181,7 +1181,41 @@ public class AYSettings : AYTab{
 //~                   css_result.prepend(css);
 //~               }    
 	}
-    
+
+  [CCode (instance_pos = -1)]
+	public void on_pallette_color_changed  (Gtk.ColorButton CB) {//ay_settings_on_pallette_color_changed
+    var fg = CB.get_rgba();
+    CB.set_rgba(fg);
+    var B = builder.get_object ("program_style") as Gtk.TextView;
+    string css_inner = B.buffer.text;//get
+    update_css_global_color(ref css_inner,"ayterm-palette-%d".printf(int.parse(CB.get_name().replace("terminal_palette_colorbutton",""))-1 ),hexRGBA(fg) );
+    B.buffer.text=css_inner;//done
+  }
+
+  [CCode (instance_pos = -1)]
+	public void on_terminal_color_fg_changed  (Gtk.ColorButton CB) {//ay_settings_on_terminal_color_fg_changed
+    var fg = CB.get_rgba();
+    CB.set_rgba(fg);
+    var B = builder.get_object ("program_style") as Gtk.TextView;
+    string css_inner = B.buffer.text;//get
+    update_css_global_color(ref css_inner,"ayterm-fg-color",hexRGBA(fg) );
+    B.buffer.text=css_inner;//done
+  }
+
+  [CCode (instance_pos = -1)]
+	public void on_terminal_color_bg_changed  (Gtk.ColorButton CB) {//ay_settings_on_terminal_color_bg_changed
+    var opacity_w = builder.get_object ("terminal_opacity") as Gtk.SpinButton;
+    var bg = CB.get_rgba();
+    bg.alpha=opacity_w.get_value();
+    CB.set_rgba(bg);
+    var B = builder.get_object ("program_style") as Gtk.TextView;
+    string css_inner = B.buffer.text;//get
+    string alpha="%1.2f".printf(round_double(bg.alpha,2));
+    alpha=alpha.replace(",",".");
+    update_css_global_color(ref css_inner,"ayterm-bg-color","alpha(%s,%s)".printf(hexRGBA(bg),alpha) );
+    B.buffer.text=css_inner;//done
+  }
+
 	private string css_ini_to_human(string s){
     Regex regex = new Regex ("[{};]");
     string result = regex.replace_eval(s, s.length,0,0, (match_info, result)=>{

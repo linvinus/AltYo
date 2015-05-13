@@ -2910,6 +2910,7 @@ when command is launched</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <signal name="color-set" handler="ay_settings_on_pallette_color_changed" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
@@ -2923,6 +2924,7 @@ when command is launched</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <signal name="color-set" handler="ay_settings_on_pallette_color_changed" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
@@ -2936,6 +2938,7 @@ when command is launched</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <signal name="color-set" handler="ay_settings_on_pallette_color_changed" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">2</property>
@@ -2949,6 +2952,7 @@ when command is launched</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <signal name="color-set" handler="ay_settings_on_pallette_color_changed" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">3</property>
@@ -2962,6 +2966,7 @@ when command is launched</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <signal name="color-set" handler="ay_settings_on_pallette_color_changed" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">4</property>
@@ -2975,6 +2980,7 @@ when command is launched</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <signal name="color-set" handler="ay_settings_on_pallette_color_changed" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">5</property>
@@ -2988,6 +2994,7 @@ when command is launched</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <signal name="color-set" handler="ay_settings_on_pallette_color_changed" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">6</property>
@@ -3001,6 +3008,7 @@ when command is launched</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <signal name="color-set" handler="ay_settings_on_pallette_color_changed" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">7</property>
@@ -3014,6 +3022,7 @@ when command is launched</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <signal name="color-set" handler="ay_settings_on_pallette_color_changed" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
@@ -3027,6 +3036,7 @@ when command is launched</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <signal name="color-set" handler="ay_settings_on_pallette_color_changed" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
@@ -3040,6 +3050,7 @@ when command is launched</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <signal name="color-set" handler="ay_settings_on_pallette_color_changed" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">2</property>
@@ -3053,6 +3064,7 @@ when command is launched</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <signal name="color-set" handler="ay_settings_on_pallette_color_changed" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">3</property>
@@ -3066,6 +3078,7 @@ when command is launched</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <signal name="color-set" handler="ay_settings_on_pallette_color_changed" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">4</property>
@@ -3079,6 +3092,7 @@ when command is launched</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <signal name="color-set" handler="ay_settings_on_pallette_color_changed" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">5</property>
@@ -3092,6 +3106,7 @@ when command is launched</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <signal name="color-set" handler="ay_settings_on_pallette_color_changed" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">6</property>
@@ -3105,6 +3120,7 @@ when command is launched</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <signal name="color-set" handler="ay_settings_on_pallette_color_changed" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">7</property>
@@ -3146,6 +3162,7 @@ when command is launched</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <signal name="color-set" handler="ay_settings_on_terminal_color_fg_changed" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">9</property>
@@ -3160,6 +3177,7 @@ when command is launched</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
                                         <property name="use_alpha">True</property>
+                                        <signal name="color-set" handler="ay_settings_on_terminal_color_bg_changed" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">9</property>

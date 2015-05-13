@@ -1433,8 +1433,7 @@ public class AYSettings : AYTab{
 
 			AccelMap am2=Gtk.AccelMap.get();
 			var p2 = new point_ActionGroup_store(this.ayobject.action_group,this.keybindings_store,this);
-
-			am2.foreach(p2,(pvoid,accel_path,accel_key,accel_mods,ref changed)=>{
+			am2.foreach(p2,(pvoid,accel_path,accel_key,accel_mods,changed)=>{
 				unowned Gtk.ListStore p_store=(Gtk.ListStore)((point_ActionGroup_store)pvoid).store;
 				unowned Gtk.ActionGroup ag=(Gtk.ActionGroup)((point_ActionGroup_store)pvoid).action_group;
 				unowned AYSettings yasettings=(AYSettings)((point_ActionGroup_store)pvoid).yasettings;

@@ -2537,7 +2537,17 @@ public class AYObject :Object{
 			if(this.active_tab!=null){
 				this.set_custom_title_dialog(this.active_tab);
 			}
-        });		
+        });
+
+		this.add_window_toggle_accel("window_toggle_tabbar_visibility", _("Show/Hide tabs"), _("Show/Hide tabs"), Gtk.Stock.EDIT,"",()=> {
+			if(this.hvbox_display_mode != HVBOXDISPLAY.VISIBLE ){
+        this.hvbox_display_mode=HVBOXDISPLAY.VISIBLE;
+      }else {
+        this.hvbox_display_mode=HVBOXDISPLAY.HIDDEN;
+      }
+      this.search_update();
+     });
+
 	}//setup_keyboard_accelerators
 
 

@@ -3311,9 +3311,7 @@ public class QoptNotebook: Notebook{
 		((Entry)this.encodings_combo.get_child()).key_press_event.connect((event)=>{
 			var keyname = Gdk.keyval_name(event.keyval);
 			if( keyname == "Return"){
-				unowned AYTab vtt = ((AYTab)this.ayobject.active_tab.object);
-				if(!(vtt is VTTerminal)) return false;
-				this.apply_encoding(((VTTerminal)vtt));
+				this.apply_encoding();
 				return true;
 			}else if( keyname == "Escape"){
 				this.ayobject.quick_options_notebook_hide();
@@ -3321,6 +3319,10 @@ public class QoptNotebook: Notebook{
 			}
 			return false;
 		});
+    
+    this.encodings_combo.changed.connect(this.apply_encoding);
+    
+    
 		//connect model from encodings_list.glade to main_window_encodings_combo.glade
 		var del_combo = builder.get_object ("terminal_delete_binding") as Gtk.ComboBox;
 		del_combo.model= builder.get_object ("terminal_delete_binding_liststore") as Gtk.ListStore;
@@ -3328,21 +3330,6 @@ public class QoptNotebook: Notebook{
 		bps_combo.model= builder.get_object ("terminal_delete_binding_liststore") as Gtk.ListStore;
 		
 		var settings = Gtk.Settings.get_default();
-		
-		var apply_button = new Button();
-		if(settings.gtk_button_images){
-			var img = new Image.from_stock ("gtk-apply",Gtk.IconSize.SMALL_TOOLBAR);
-			apply_button.add(img);
-		}
-		apply_button.clicked.connect(()=>{
-			unowned AYTab vtt = ((AYTab)this.ayobject.active_tab.object);
-			if(!(vtt is VTTerminal)) return;
-			this.apply_encoding(((VTTerminal)vtt));
-			});
-		apply_button.set_focus_on_click(false);
-		apply_button.tooltip_text=_("Press enter to appy");
-		apply_button.show();
-		encogings_box_hbox.pack_start(apply_button,false,false,0);
 
 		this.delete_binding_combo = builder.get_object ("terminal_delete_binding") as Gtk.ComboBox;
 		encogings_box_hbox.pack_start(this.delete_binding_combo,false,false,0);
@@ -3370,7 +3357,7 @@ public class QoptNotebook: Notebook{
 		hide_button.set_focus_on_click(false);
 		hide_button.tooltip_text=_("Close dialog")+"Esc";
 		hide_button.show();
-		encogings_box_hbox.pack_end(hide_button,false,false,0);
+		encogings_box_hbox.pack_end(hide_button,true,true,0);
 		
 		return encogings_box_hbox;
 	}
@@ -3407,9 +3394,11 @@ public class QoptNotebook: Notebook{
 					}
 			}while(this.encodings_combo.model.iter_next(ref iter));
 			
-		if(found)
+		if(found){
+      GLib.SignalHandler.block_by_func(this.encodings_combo,(void*)this.apply_encoding,this);
 			this.encodings_combo.set_active_iter(iter);
-		else
+      GLib.SignalHandler.unblock_by_func(this.encodings_combo,(void*)this.apply_encoding,this);
+		}else
 			((Entry)this.encodings_combo.get_child()).set_text(term_encoding);
 
 		//prevent double change
@@ -3429,11 +3418,18 @@ public class QoptNotebook: Notebook{
 		this.search_match_case.active=((VTTerminal)vtt).match_case;
 	}
 
-	public void apply_encoding(VTTerminal vtt){
-		var term = vtt.vte_term;
-		vtt.lock_setting(VTT_LOCK_SETTING.ENCODING);
+	public void apply_encoding(){
+    unowned AYTab vtt = ((AYTab)this.ayobject.active_tab.object);
+    if(!(vtt is VTTerminal)) return;
+
+		var term = ((VTTerminal)vtt).vte_term;
+		((VTTerminal)vtt).lock_setting(VTT_LOCK_SETTING.ENCODING);
 		var new_encoding = ((Entry)this.encodings_combo.get_child()).get_text();
-		term.set_encoding (new_encoding);
+    if(new_encoding.strip()!=""){
+      try{//not shure is it needed there
+        term.set_encoding (new_encoding);
+      }catch(Error e){}
+    }
 		this.encodings_combo.grab_focus();
 	}
 	

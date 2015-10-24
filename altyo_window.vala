@@ -964,7 +964,7 @@ public class VTMainWindow : Window{
 		else
 			this.gravity=Gdk.Gravity.SOUTH_WEST;
 		this.autohide  = conf.get_boolean("window_autohide",false);
-	}//reconfigure
+  }//reconfigure
 
 	public bool configure_position(){
 			unowned Gdk.Screen gscreen = this.get_screen ();
@@ -1566,7 +1566,14 @@ public class AYObject :Object{
 			if(new_val<0){ new_val=HVBOXDISPLAY.VISIBLE; return CFG_CHECK.REPLACE;}
 			return CFG_CHECK.OK;
 			});
-	}
+
+    if(conf.get_boolean("window_tabbar_ontop",false)){
+      this.main_vbox.reorder_child( this.hvbox,0);//ontop
+    }else{
+      this.main_vbox.reorder_child( this.hvbox,-1);//onbottom
+    }
+
+	}//reconfigure
 
 	public VTTerminal add_tab(string? session_command=null,string? session_path=null,OnChildExitCallBack? on_exit=null) {
 		VTTerminal vt;

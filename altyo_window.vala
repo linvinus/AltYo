@@ -2016,7 +2016,7 @@ public class AYObject :Object{
 			dialog.license_type = Gtk.License.GPL_3_0;
 			dialog.authors={"Konstantinov Denis linvinus@gmail.com"};
 			dialog.website ="https://github.com/linvinus/AltYo";
-			dialog.version = (AY_CHANGELOG_TAG!="" ? AY_CHANGELOG_TAG : "0.3") +" "+AY_GIT_HASH;
+			dialog.version = (AY_CHANGELOG_TAG!="" ? AY_CHANGELOG_TAG : "0.4") +" "+AY_GIT_HASH;
 			dialog.translator_credits=_("willemw12@gmail.com");
 			dialog.comments="id: "+Globals.app_id;
 			Image img = new Image.from_resource ("/org/gnome/altyo/altyo.svg");

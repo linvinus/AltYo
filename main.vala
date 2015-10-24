@@ -65,6 +65,7 @@ return true;
 struct Globals{
 	static bool reload = false;
 	static bool opt_help = false;
+	static bool opt_version = false;
 	static string? cmd_conf_file = null;
 	static bool toggle = false;
 	static string? app_id = null;
@@ -106,6 +107,7 @@ struct Globals{
 					{ "select-tab", 0, 0, OptionArg.STRING, ref Globals.cmd_select_tab,N_("Select tab by index"), null },
 					{ "close-tab", 0, 0, OptionArg.STRING, ref Globals.cmd_close_tab,N_("Close tab by index"), null },
 					{ "remote", 0, 0, OptionArg.NONE, ref Globals.force_remote,N_("Connect to remote instance or exit."), null },
+					{ "version", 0, 0, OptionArg.NONE, ref Globals.opt_version, N_("Display version number"), null },
 					{ null }
 			};
 
@@ -356,6 +358,12 @@ int main (string[] args) {
 	   GLib.stderr.printf("Error initializing: %s\n", e.message);
 	   return 1;
 	}
+
+  if(Globals.opt_version){
+    printf("altyo %s \nLicense GPLv3+\n",(AY_CHANGELOG_TAG!="" ? AY_CHANGELOG_TAG : "0.4") +" "+AY_GIT_HASH );
+    Posix.exit(0);
+  }
+
 	#if VALA_0_22
 	/*searching for remote instances*/
 	if(Globals.list_id){

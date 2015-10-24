@@ -1,3 +1,17 @@
+altyo (0.4~rc17-linvinus1) vivid; urgency=medium
+
+  * fix: #24
+  * fix: #26
+  * fix: #36
+  * fix #37
+  * fix #33
+  * improvement: possibility to manually show/hide tabs #32
+  * improvement: userfriendly quick settings dialog #34
+  * improvement: new experemental option "tab bar on top" under window settings, for issue #32
+  * improvement: fix style for standalone mode
+
+ -- denis <linvinus@gmail.com>  Sat, 24 Oct 2015 21:31:49 +0300
+
 altyo (0.4~rc16-linvinus1) trusty; urgency=low
 
   * fix: vala 0.16

@@ -885,16 +885,17 @@ public class VTMainWindow : Window{
 //~ 					 "#settings-scrolledwindow{ background-color: @bg_color;}"+
 //~ 					 "";
     string style_str=settings_base_css;
+    string style_str_extra="";
 
 		if(Gtk.get_major_version()>=3 && Gtk.get_minor_version()>4)
-			style_str+= "VTToggleButton{transition-duration: 0s;}";
+			style_str_extra+= " VTToggleButton{transition-duration: 0s;}";
 
 //~ 		if(Gtk.get_major_version()>=3 && Gtk.get_minor_version()>6)//special eyecandy if supported ;)
 //~ 			style_str+= "VTToggleButton:active { text-shadow: 1px 1px 2px #005555;}";
 
 		//prevent  transparency of window background in  standalone mode
 		if(conf.standalone_mode)
-			style_str+= "#OffscreenWindow, VTMainWindow,#HVBox_dnd_window {background-color: alpha(#000000,1.0);}";
+			style_str_extra+= " #OffscreenWindow.*, VTMainWindow ,VTMainWindow > *,#HVBox_dnd_window {background-color: alpha(#000000,1.0);}";
 
 			//todo: bad performance on pull_up. when tab state is prelight then, on every animation step happens recursive size recalculation
 			//style_str+= "VTToggleButton { transition: 400ms ease-in-out;} VTToggleButton:active { transition: 0ms ease-in-out;text-shadow: 1px 1px 2px #005555;} VTToggleButton:prelight {transition: 0ms ease-in-out;}";
@@ -904,7 +905,7 @@ public class VTMainWindow : Window{
 			});
 
 		try{
-			css_main.load_from_data (style_str+this.conf.get_string("program_style",settings_css_linux),-1);
+			css_main.load_from_data (style_str+this.conf.get_string("program_style",settings_css_linux+style_str_extra),-1);
 			Gtk.StyleContext.add_provider_for_screen(this.get_screen(),css_main,Gtk.STYLE_PROVIDER_PRIORITY_USER);
 		}catch (Error e) {
 			debug("Theme error! loading default..");

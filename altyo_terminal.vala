@@ -787,7 +787,7 @@ public class VTTerminal : AYTab{
 			});
 		string term_exclude_vars = this.my_conf.get_string("terminal_exclude_variables","^(COLUMNS|LINES|GNOME_DESKTOP_ICON|COLORTERM|WINDOWID)$",(ref new_val)=>{
 			string err;
-			if(!this.my_conf.check_regex(new_val,out err)){
+			if(!this.my_conf.check_regex(new_val,out err) || new_val.strip() == ""){ //prevent empty regexp issue #36
 				debug(_("terminal_exclude_variables wrong value! will be used default value. err:%s"),err);
 				return CFG_CHECK.USE_DEFAULT;
 			}

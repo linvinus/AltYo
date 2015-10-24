@@ -1016,6 +1016,10 @@ public class AYSettings : AYTab{
 	public void on_terminal_terminal_exclude_variables(Gtk.Editable editable) {
 		var E = builder.get_object ("terminal_exclude_variables") as Gtk.Entry;
 		this.check_entry_regex(E);
+    //prevent empty regexp issue #36
+    if(E.text.strip() == ""){
+      E.text="^()$";
+    }
 	}
 
 	[CCode (instance_pos = -1)]

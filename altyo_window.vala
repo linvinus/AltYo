@@ -2233,6 +2233,33 @@ public class AYObject :Object{
 		if(this.accel_group==null){
 			this.accel_group = new Gtk.AccelGroup();
 			this.main_window.add_accel_group (accel_group);
+
+      //bug #33
+      //manually recheck for action
+      //the problem is in gtk_accelerator_valid() wich exclude GDK_KEY_Tab
+      // function call chain :
+      // gtk_window_key_press_event()-> gtk_window_activate_key() -> gtk_accel_groups_activate() -> gtk_accelerator_valid() (fail)
+      //                             -> key_press_event() -> manually check again
+      //this check will occur only if gtk_accel_groups_activate didn't process key event
+      //
+      // GtkApplication have its own accels handling, so don't have this problem, but it appear only in gtk 3.12
+      //
+      this.main_window.key_press_event.connect((event)=>{
+        AccelKey ak;
+        foreach(var action_in_list in this.action_group.list_actions ()){
+          Gtk.AccelMap.lookup_entry(action_in_list.get_accel_path(),out ak);
+          //debug("checking %s %d==%d %d==%d",action_in_list.get_accel_path(),(int)ak.accel_key , (int)event.keyval , ak.accel_mods , (event.state & Gtk.accelerator_get_default_mod_mask()) );
+          if(ak.accel_key == event.keyval && ak.accel_mods == (event.state & Gtk.accelerator_get_default_mod_mask())){
+            //debug("Found %s",action_in_list.get_accel_path());
+            if(action_in_list.sensitive){
+              action_in_list.activate();
+              return true;//key press was handled
+            }
+            break;
+          }
+        }
+        return false;
+        });//key_press_event
 		}
 
 		if(this.action_group==null)

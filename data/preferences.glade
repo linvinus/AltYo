@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.18.3 -->
+<!-- Generated with glade 3.16.1 -->
 <interface>
   <requires lib="gtk+" version="3.0"/>
   <object class="GtkAdjustment" id="animation_pull_steps_adjustment">
@@ -693,6 +693,8 @@ otherwise - gravity south</property>
                                                             <packing>
                                                             <property name="left_attach">0</property>
                                                             <property name="top_attach">0</property>
+                                                            <property name="width">1</property>
+                                                            <property name="height">1</property>
                                                             </packing>
                                                             </child>
                                                             <child>
@@ -705,6 +707,8 @@ otherwise - gravity south</property>
                                                             <packing>
                                                             <property name="left_attach">0</property>
                                                             <property name="top_attach">1</property>
+                                                            <property name="width">1</property>
+                                                            <property name="height">1</property>
                                                             </packing>
                                                             </child>
                                                             <child>
@@ -717,6 +721,8 @@ otherwise - gravity south</property>
                                                             <packing>
                                                             <property name="left_attach">0</property>
                                                             <property name="top_attach">3</property>
+                                                            <property name="width">1</property>
+                                                            <property name="height">1</property>
                                                             </packing>
                                                             </child>
                                                             <child>
@@ -732,6 +738,8 @@ otherwise - gravity south</property>
                                                             <packing>
                                                             <property name="left_attach">1</property>
                                                             <property name="top_attach">0</property>
+                                                            <property name="width">1</property>
+                                                            <property name="height">1</property>
                                                             </packing>
                                                             </child>
                                                             <child>
@@ -750,6 +758,8 @@ otherwise - gravity south</property>
                                                             <packing>
                                                             <property name="left_attach">1</property>
                                                             <property name="top_attach">1</property>
+                                                            <property name="width">1</property>
+                                                            <property name="height">1</property>
                                                             </packing>
                                                             </child>
                                                             <child>
@@ -767,6 +777,8 @@ otherwise - gravity south</property>
                                                             <packing>
                                                             <property name="left_attach">1</property>
                                                             <property name="top_attach">3</property>
+                                                            <property name="width">1</property>
+                                                            <property name="height">1</property>
                                                             </packing>
                                                             </child>
                                                             <child>
@@ -779,6 +791,8 @@ otherwise - gravity south</property>
                                                             <packing>
                                                             <property name="left_attach">2</property>
                                                             <property name="top_attach">0</property>
+                                                            <property name="width">1</property>
+                                                            <property name="height">1</property>
                                                             </packing>
                                                             </child>
                                                             <child>
@@ -791,6 +805,8 @@ otherwise - gravity south</property>
                                                             <packing>
                                                             <property name="left_attach">2</property>
                                                             <property name="top_attach">1</property>
+                                                            <property name="width">1</property>
+                                                            <property name="height">1</property>
                                                             </packing>
                                                             </child>
                                                             <child>
@@ -803,6 +819,8 @@ otherwise - gravity south</property>
                                                             <packing>
                                                             <property name="left_attach">0</property>
                                                             <property name="top_attach">2</property>
+                                                            <property name="width">1</property>
+                                                            <property name="height">1</property>
                                                             </packing>
                                                             </child>
                                                             <child>
@@ -815,6 +833,8 @@ otherwise - gravity south</property>
                                                             <packing>
                                                             <property name="left_attach">1</property>
                                                             <property name="top_attach">2</property>
+                                                            <property name="width">1</property>
+                                                            <property name="height">1</property>
                                                             </packing>
                                                             </child>
                                                             <child>
@@ -827,6 +847,8 @@ otherwise - gravity south</property>
                                                             <packing>
                                                             <property name="left_attach">2</property>
                                                             <property name="top_attach">2</property>
+                                                            <property name="width">1</property>
+                                                            <property name="height">1</property>
                                                             </packing>
                                                             </child>
                                                             <child>
@@ -1000,6 +1022,8 @@ otherwise - gravity south</property>
                                               <packing>
                                                 <property name="left_attach">0</property>
                                                 <property name="top_attach">0</property>
+                                                <property name="width">1</property>
+                                                <property name="height">1</property>
                                               </packing>
                                             </child>
                                             <child>
@@ -1017,6 +1041,8 @@ otherwise - gravity south</property>
                                               <packing>
                                                 <property name="left_attach">1</property>
                                                 <property name="top_attach">0</property>
+                                                <property name="width">1</property>
+                                                <property name="height">1</property>
                                               </packing>
                                             </child>
                                             <child>
@@ -1029,6 +1055,8 @@ otherwise - gravity south</property>
                                               <packing>
                                                 <property name="left_attach">0</property>
                                                 <property name="top_attach">1</property>
+                                                <property name="width">1</property>
+                                                <property name="height">1</property>
                                               </packing>
                                             </child>
                                             <child>
@@ -1046,6 +1074,8 @@ otherwise - gravity south</property>
                                               <packing>
                                                 <property name="left_attach">1</property>
                                                 <property name="top_attach">1</property>
+                                                <property name="width">1</property>
+                                                <property name="height">1</property>
                                               </packing>
                                             </child>
                                             <child>
@@ -1058,6 +1088,8 @@ otherwise - gravity south</property>
                                               <packing>
                                                 <property name="left_attach">0</property>
                                                 <property name="top_attach">2</property>
+                                                <property name="width">1</property>
+                                                <property name="height">1</property>
                                               </packing>
                                             </child>
                                             <child>
@@ -1070,6 +1102,8 @@ otherwise - gravity south</property>
                                               <packing>
                                                 <property name="left_attach">1</property>
                                                 <property name="top_attach">2</property>
+                                                <property name="width">1</property>
+                                                <property name="height">1</property>
                                               </packing>
                                             </child>
                                             <child>
@@ -1082,6 +1116,8 @@ otherwise - gravity south</property>
                                               <packing>
                                                 <property name="left_attach">0</property>
                                                 <property name="top_attach">3</property>
+                                                <property name="width">1</property>
+                                                <property name="height">1</property>
                                               </packing>
                                             </child>
                                             <child>
@@ -1099,6 +1135,8 @@ otherwise - gravity south</property>
                                               <packing>
                                                 <property name="left_attach">1</property>
                                                 <property name="top_attach">3</property>
+                                                <property name="width">1</property>
+                                                <property name="height">1</property>
                                               </packing>
                                             </child>
                                           </object>
@@ -1241,6 +1279,8 @@ otherwise - gravity south</property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">4</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1253,6 +1293,8 @@ otherwise - gravity south</property>
                                       <packing>
                                         <property name="left_attach">0</property>
                                         <property name="top_attach">4</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1265,6 +1307,8 @@ otherwise - gravity south</property>
                                       <packing>
                                         <property name="left_attach">0</property>
                                         <property name="top_attach">6</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1278,6 +1322,8 @@ otherwise - gravity south</property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">6</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1290,6 +1336,8 @@ otherwise - gravity south</property>
                                       <packing>
                                         <property name="left_attach">0</property>
                                         <property name="top_attach">7</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1303,6 +1351,8 @@ otherwise - gravity south</property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">7</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1321,7 +1371,9 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">15</property>
+                                        <property name="top_attach">16</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1334,6 +1386,8 @@ otherwise - gravity south</property>
                                       <packing>
                                         <property name="left_attach">0</property>
                                         <property name="top_attach">0</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1347,6 +1401,8 @@ otherwise - gravity south</property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">0</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1356,7 +1412,9 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">24</property>
+                                        <property name="top_attach">25</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1366,7 +1424,9 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">24</property>
+                                        <property name="top_attach">25</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1379,6 +1439,8 @@ otherwise - gravity south</property>
                                       <packing>
                                         <property name="left_attach">0</property>
                                         <property name="top_attach">1</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1392,6 +1454,8 @@ otherwise - gravity south</property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">1</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1403,7 +1467,9 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">17</property>
+                                        <property name="top_attach">18</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1420,7 +1486,9 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">17</property>
+                                        <property name="top_attach">18</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1432,7 +1500,9 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">18</property>
+                                        <property name="top_attach">19</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1449,7 +1519,9 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">18</property>
+                                        <property name="top_attach">19</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1461,7 +1533,9 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">19</property>
+                                        <property name="top_attach">20</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1477,7 +1551,9 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">19</property>
+                                        <property name="top_attach">20</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1489,7 +1565,9 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">20</property>
+                                        <property name="top_attach">21</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1505,7 +1583,9 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">20</property>
+                                        <property name="top_attach">21</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1518,6 +1598,8 @@ otherwise - gravity south</property>
                                       <packing>
                                         <property name="left_attach">0</property>
                                         <property name="top_attach">12</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1531,6 +1613,8 @@ otherwise - gravity south</property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">12</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1543,6 +1627,8 @@ otherwise - gravity south</property>
                                       <packing>
                                         <property name="left_attach">0</property>
                                         <property name="top_attach">13</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1556,6 +1642,8 @@ otherwise - gravity south</property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">13</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1567,7 +1655,9 @@ otherwise - gravity south</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">15</property>
+                                        <property name="top_attach">16</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1580,6 +1670,8 @@ otherwise - gravity south</property>
                                       <packing>
                                         <property name="left_attach">0</property>
                                         <property name="top_attach">14</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1598,6 +1690,8 @@ Allow use mouse scroll in some programs,for example in less</property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">14</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1610,6 +1704,8 @@ Allow use mouse scroll in some programs,for example in less</property>
                                       <packing>
                                         <property name="left_attach">0</property>
                                         <property name="top_attach">11</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1623,6 +1719,8 @@ Allow use mouse scroll in some programs,for example in less</property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">11</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1635,6 +1733,8 @@ Allow use mouse scroll in some programs,for example in less</property>
                                       <packing>
                                         <property name="left_attach">0</property>
                                         <property name="top_attach">8</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1648,6 +1748,8 @@ Allow use mouse scroll in some programs,for example in less</property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">8</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1660,6 +1762,8 @@ Allow use mouse scroll in some programs,for example in less</property>
                                       <packing>
                                         <property name="left_attach">0</property>
                                         <property name="top_attach">9</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1673,6 +1777,8 @@ Allow use mouse scroll in some programs,for example in less</property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">9</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1685,6 +1791,8 @@ Allow use mouse scroll in some programs,for example in less</property>
                                       <packing>
                                         <property name="left_attach">0</property>
                                         <property name="top_attach">10</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1698,6 +1806,8 @@ Allow use mouse scroll in some programs,for example in less</property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">10</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1715,7 +1825,9 @@ Allow use mouse scroll in some programs,for example in less</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">21</property>
+                                        <property name="top_attach">22</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1727,7 +1839,9 @@ Allow use mouse scroll in some programs,for example in less</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">21</property>
+                                        <property name="top_attach">22</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1739,7 +1853,9 @@ Allow use mouse scroll in some programs,for example in less</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">22</property>
+                                        <property name="top_attach">23</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1751,7 +1867,9 @@ Allow use mouse scroll in some programs,for example in less</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">22</property>
+                                        <property name="top_attach">23</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1763,7 +1881,9 @@ Allow use mouse scroll in some programs,for example in less</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">23</property>
+                                        <property name="top_attach">24</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1780,7 +1900,9 @@ Allow use mouse scroll in some programs,for example in less</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">23</property>
+                                        <property name="top_attach">24</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1793,6 +1915,8 @@ Allow use mouse scroll in some programs,for example in less</property>
                                       <packing>
                                         <property name="left_attach">0</property>
                                         <property name="top_attach">5</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1806,6 +1930,8 @@ Allow use mouse scroll in some programs,for example in less</property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">5</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1817,7 +1943,9 @@ Allow use mouse scroll in some programs,for example in less</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">16</property>
+                                        <property name="top_attach">17</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1841,7 +1969,9 @@ Allow use mouse scroll in some programs,for example in less</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">16</property>
+                                        <property name="top_attach">17</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1854,6 +1984,8 @@ Allow use mouse scroll in some programs,for example in less</property>
                                       <packing>
                                         <property name="left_attach">0</property>
                                         <property name="top_attach">2</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1867,6 +1999,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">0</property>
                                         <property name="top_attach">3</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1880,6 +2014,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">2</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1893,6 +2029,37 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">3</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="label72">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="xalign">0</property>
+                                        <property name="label" translatable="yes">Scroll by page</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">15</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="terminal_scroll_by_page">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="xalign">0</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">15</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                   </object>
@@ -2269,6 +2436,8 @@ when command is launched</property>
                                           <packing>
                                             <property name="left_attach">0</property>
                                             <property name="top_attach">0</property>
+                                            <property name="width">1</property>
+                                            <property name="height">1</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -2282,6 +2451,8 @@ when command is launched</property>
                                           <packing>
                                             <property name="left_attach">1</property>
                                             <property name="top_attach">0</property>
+                                            <property name="width">1</property>
+                                            <property name="height">1</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -2294,6 +2465,8 @@ when command is launched</property>
                                           <packing>
                                             <property name="left_attach">0</property>
                                             <property name="top_attach">1</property>
+                                            <property name="width">1</property>
+                                            <property name="height">1</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -2307,6 +2480,8 @@ when command is launched</property>
                                           <packing>
                                             <property name="left_attach">1</property>
                                             <property name="top_attach">1</property>
+                                            <property name="width">1</property>
+                                            <property name="height">1</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -2489,6 +2664,8 @@ when command is launched</property>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">3</property>
+                                    <property name="width">1</property>
+                                    <property name="height">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -2503,6 +2680,8 @@ when command is launched</property>
                                   <packing>
                                     <property name="left_attach">1</property>
                                     <property name="top_attach">3</property>
+                                    <property name="width">1</property>
+                                    <property name="height">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -2515,6 +2694,8 @@ when command is launched</property>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">4</property>
+                                    <property name="width">1</property>
+                                    <property name="height">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -2528,6 +2709,8 @@ when command is launched</property>
                                   <packing>
                                     <property name="left_attach">1</property>
                                     <property name="top_attach">4</property>
+                                    <property name="width">1</property>
+                                    <property name="height">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -2540,6 +2723,8 @@ when command is launched</property>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">2</property>
+                                    <property name="width">1</property>
+                                    <property name="height">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -2551,6 +2736,8 @@ when command is launched</property>
                                   <packing>
                                     <property name="left_attach">1</property>
                                     <property name="top_attach">2</property>
+                                    <property name="width">1</property>
+                                    <property name="height">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -2563,6 +2750,8 @@ when command is launched</property>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">0</property>
+                                    <property name="width">1</property>
+                                    <property name="height">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -2573,6 +2762,8 @@ when command is launched</property>
                                   <packing>
                                     <property name="left_attach">1</property>
                                     <property name="top_attach">0</property>
+                                    <property name="width">1</property>
+                                    <property name="height">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -2585,6 +2776,8 @@ when command is launched</property>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">1</property>
+                                    <property name="width">1</property>
+                                    <property name="height">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -2596,6 +2789,8 @@ when command is launched</property>
                                   <packing>
                                     <property name="left_attach">1</property>
                                     <property name="top_attach">1</property>
+                                    <property name="width">1</property>
+                                    <property name="height">1</property>
                                   </packing>
                                 </child>
                               </object>
@@ -2765,6 +2960,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">0</property>
                                         <property name="top_attach">0</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -2777,6 +2974,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">0</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -2789,6 +2988,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">2</property>
                                         <property name="top_attach">0</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -2801,6 +3002,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">3</property>
                                         <property name="top_attach">0</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -2813,6 +3016,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">4</property>
                                         <property name="top_attach">0</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -2825,6 +3030,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">5</property>
                                         <property name="top_attach">0</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -2837,6 +3044,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">6</property>
                                         <property name="top_attach">0</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -2849,6 +3058,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">7</property>
                                         <property name="top_attach">0</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -2861,6 +3072,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">0</property>
                                         <property name="top_attach">1</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -2873,6 +3086,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">1</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -2885,6 +3100,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">2</property>
                                         <property name="top_attach">1</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -2897,6 +3114,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">3</property>
                                         <property name="top_attach">1</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -2909,6 +3128,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">4</property>
                                         <property name="top_attach">1</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -2921,6 +3142,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">5</property>
                                         <property name="top_attach">1</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -2933,6 +3156,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">6</property>
                                         <property name="top_attach">1</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -2945,6 +3170,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">7</property>
                                         <property name="top_attach">1</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -2957,6 +3184,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">8</property>
                                         <property name="top_attach">0</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -2969,6 +3198,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">8</property>
                                         <property name="top_attach">1</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -2981,6 +3212,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">9</property>
                                         <property name="top_attach">0</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -2994,6 +3227,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">9</property>
                                         <property name="top_attach">1</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                   </object>
@@ -3028,6 +3263,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">0</property>
                                         <property name="top_attach">0</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -3045,6 +3282,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">0</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -3057,6 +3296,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">0</property>
                                         <property name="top_attach">1</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -3074,6 +3315,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">1</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -3088,6 +3331,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">2</property>
                                         <property name="top_attach">0</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -3101,6 +3346,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">3</property>
                                         <property name="top_attach">0</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -3114,6 +3361,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">2</property>
                                         <property name="top_attach">1</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -3129,6 +3378,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">3</property>
                                         <property name="top_attach">1</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -3143,6 +3394,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">4</property>
                                         <property name="top_attach">0</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -3157,6 +3410,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">4</property>
                                         <property name="top_attach">1</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -3168,6 +3423,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">5</property>
                                         <property name="top_attach">1</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -3208,6 +3465,8 @@ when command is launched</property>
                                       <packing>
                                         <property name="left_attach">5</property>
                                         <property name="top_attach">0</property>
+                                        <property name="width">1</property>
+                                        <property name="height">1</property>
                                       </packing>
                                     </child>
                                   </object>
@@ -3244,6 +3503,8 @@ when command is launched</property>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">0</property>
+                                    <property name="width">1</property>
+                                    <property name="height">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -3255,6 +3516,8 @@ when command is launched</property>
                                   <packing>
                                     <property name="left_attach">1</property>
                                     <property name="top_attach">0</property>
+                                    <property name="width">1</property>
+                                    <property name="height">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -3270,6 +3533,8 @@ when command is launched</property>
                                   <packing>
                                     <property name="left_attach">2</property>
                                     <property name="top_attach">0</property>
+                                    <property name="width">1</property>
+                                    <property name="height">1</property>
                                   </packing>
                                 </child>
                               </object>
@@ -3400,6 +3665,8 @@ when command is launched</property>
                   <packing>
                     <property name="left_attach">1</property>
                     <property name="top_attach">0</property>
+                    <property name="width">1</property>
+                    <property name="height">1</property>
                   </packing>
                 </child>
                 <child>
@@ -3418,6 +3685,8 @@ when command is launched</property>
                   <packing>
                     <property name="left_attach">0</property>
                     <property name="top_attach">0</property>
+                    <property name="width">1</property>
+                    <property name="height">1</property>
                   </packing>
                 </child>
                 <child>
@@ -3428,6 +3697,8 @@ when command is launched</property>
                   <packing>
                     <property name="left_attach">2</property>
                     <property name="top_attach">0</property>
+                    <property name="width">1</property>
+                    <property name="height">1</property>
                   </packing>
                 </child>
               </object>

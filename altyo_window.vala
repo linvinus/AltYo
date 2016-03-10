@@ -1619,6 +1619,10 @@ public class AYObject :Object{
 			this.title_changed((Vte.Terminal)vt.vte_term);
         } );
 
+		#if VTE_2_91
+		vt.vte_term.notification_received.connect(notification_received_cb);
+		#endif
+
 		vt.tbutton.button_press_event.connect(tab_button_press_event);
 		this.hvbox.insert( vt.tbutton ,(int) index);
 
@@ -1942,6 +1946,19 @@ public class AYObject :Object{
 
 	}
 
+	private void notification_received_cb(Vte.Terminal terminal, string summary, string? body)
+  	{
+	    print ("[%s]: %s\n", summary, body);
+	    //FIXME: detect actual tab
+	    if (this.main_window.current_state == WStates.VISIBLE)
+	    	return;
+
+	    var notification = new GLib.Notification (summary);
+	    notification.set_body (body);
+ 	    var gicon = GLib.Icon.new_for_string ("altyo");
+	    notification.set_icon (gicon);
+	    GLib.Application.get_default().send_notification (null, notification);
+  	}
 
 	public void tab_sort () {
 		bool update_titles=false;

@@ -1,3 +1,11 @@
+altyo (0.4~rc18-linvinus1) vivid; urgency=medium
+
+  * fix #33
+  * improvement: implement feature-request #43, new default behaviour for scrolling
+  * fix #50, build package for xenial
+
+ -- denis <linvinus@gmail.com>  Sat, 16 Apr 2016 21:14:37 +0300
+
 altyo (0.4~rc17-linvinus1) vivid; urgency=medium
 
   * fix: #24

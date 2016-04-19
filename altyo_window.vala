@@ -427,6 +427,12 @@ public class VTMainWindow : Window{
 				}
 	}
 
+  public void gdk_resize(int width,int height){
+    var window = this.get_window();
+    if(window!=null)
+      window.resize(width,height);
+  }
+
 	public bool on_pull_down(){
 
 			if(this.pull_step<this.pull_steps){
@@ -434,14 +440,16 @@ public class VTMainWindow : Window{
 				float arith_progress=( ((float)(1+this.pull_steps)/(float)2.0)*this.pull_steps);
 				int tmp =this.pull_steps-this.pull_step;
 				float arith_progress2=( ((float)(1+tmp)/(float)2.0)*(tmp));
-				uint h=(uint)(this.pull_h-(((float)this.pull_h)/arith_progress)*(arith_progress2) )+1;
+				uint h=(uint)(this.pull_h-(((float)this.pull_h)/arith_progress)*(arith_progress2) );
+        if(h == 0) h = 1;
 
         //simple animation
         //float step = ((float)this.pull_h/(float)this.pull_steps);
         //uint h = (this.pull_h - (int)(step*(float)(this.pull_steps-this.pull_step)) )+1;
 
-				this.resize(this.pull_w,(int)h);
-				this.display_sync();
+				this.gdk_resize(this.pull_w,(int)h);
+        this.update_events();
+//~				this.display_sync();
 				this.pull_step++;
 				return true;//continue animation
 			}else{
@@ -454,9 +462,9 @@ public class VTMainWindow : Window{
 							this.maximized=true;
 						}
 					}else{
-						this.resize (this.pull_w,pull_h);
+            this.gdk_resize(this.pull_w,pull_h);
 					}
-					this.display_sync();
+					this.update_events();
 					this.pull_step++;
 					return true;//continue animation
 				}
@@ -508,7 +516,7 @@ public class VTMainWindow : Window{
 		if(!this.pull_maximized)
 			this.configure_position();
 		this.set_default_size(this.pull_w,2);//Default size - used only the FIRST time we map a window
-		this.resize(this.pull_w,2);//Default size - used only the FIRST time we map a window
+		this.gdk_resize(this.pull_w,2);//Default size - used only the FIRST time we map a window
 //~ 		this.display_sync();
 		this.current_state=WStates.VISIBLE;
 		this.window_set_active();//update keep_above stick and focus
@@ -534,7 +542,8 @@ public class VTMainWindow : Window{
 				float arith_progress=( ((float)(1+this.pull_steps)/(float)2.0)*this.pull_steps);
 				int tmp =this.pull_steps-this.pull_step;
 				float arith_progress2=( ((float)(this.pull_steps+tmp)/(float)2.0)*this.pull_step);
-				uint h=(uint)(this.pull_h-((float)this.pull_h/arith_progress)*(arith_progress2) )+1;
+				uint h=(uint)(this.pull_h-((float)this.pull_h/arith_progress)*(arith_progress2) );
+        if(h == 0) h = 1;
 
         //simple animation
         //float step = ((float)this.pull_h/(float)this.pull_steps);
@@ -543,8 +552,9 @@ public class VTMainWindow : Window{
 				/* object Gdk.Window have option "state" with current window state
 				 * we will check is window still in fullscreen satate*/
 				this.fullscreened=false;//force unfullscreen, some WMs sets fullscreen state if window size equal to fullscreen
-				this.resize(this.pull_w,(int)h);
-				this.display_sync();
+				this.gdk_resize(this.pull_w,(int)h);
+        this.update_events();
+//~				this.display_sync();
 
 				this.pull_step++;
 				return true;//continue animation
@@ -833,8 +843,8 @@ public class VTMainWindow : Window{
 	public void update_events(){
 		while (Gtk.events_pending ()){
 			Gtk.main_iteration ();
-			//Gdk.flush();
 			}
+    Gdk.flush();
 	}
 
 	public void display_sync(){
@@ -1226,7 +1236,9 @@ public class VTMainWindow : Window{
 					int should_be_h=this.ayobject.get_altyo_height();
 					int allocated_height=this.get_allocated_height();
 					if(allocated_height>should_be_h){
-						this.resize(this.ayobject.terminal_width,should_be_h);
+						//this.resize(this.ayobject.terminal_width,should_be_h);
+            this.gdk_resize(this.ayobject.terminal_width,should_be_h);
+            this.update_events();
 						this.move (this.orig_x,this.orig_y);
 						this.wait_for_window_position_update=5;//wait while movement will be confirmed in configure_event 
 						debug("WINDOW update_position_size resize!!! %d",should_be_h);

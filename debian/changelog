@@ -1,3 +1,13 @@
+altyo (0.4~rc18-linvinus1) testing; urgency=medium
+
+  * trying to resolve #25
+  * fix #51
+  * fix build under ubuntu 12.04
+  * fix theme for ubuntu 12.04
+  * improve Makefile
+
+ -- denis <linvinus@gmail.com>  Tue, 19 Apr 2016 23:53:33 +0300
+
 altyo (0.4~rc18-linvinus1) vivid; urgency=medium
 
   * fix #33

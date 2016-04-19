@@ -1100,7 +1100,9 @@ public class VTTerminal : AYTab{
     this.disable_terminal_popup=my_conf.get_boolean("terminal_disable_popup_menu",false);
     this.vte_term.update_style();
 
+    #if VALA_0_22
     this.scrollbar.get_settings().gtk_primary_button_warps_slider=!my_conf.get_boolean("terminal_scroll_by_page",true);
+    #endif
   }//configure
 
   public bool vte_button_press_event(Widget widget,Gdk.EventButton event) {

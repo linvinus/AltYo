@@ -116,7 +116,13 @@ source-package:
 	sed -i -re '1 s/(altyo \(.*)\) .*\;/\1~precise\) precise\;/' ./debian/changelog
 	dpkg-buildpackage -S -sa
 	git checkout ./debian/changelog
+	sed -i -re '1 s/(altyo \(.*)\) .*\;/\1~trusty\) trusty\;/' ./debian/changelog
+	dpkg-buildpackage -S -sa
+	git checkout ./debian/changelog
 	sed -i -re '1 s/(altyo \(.*)\) .*\;/\1~vivid\) vivid\;/' ./debian/changelog
+	dpkg-buildpackage -S -sa
+	git checkout ./debian/changelog
+	sed -i -re '1 s/(altyo \(.*)\) .*\;/\1~wily\) wily\;/' ./debian/changelog
 	dpkg-buildpackage -S -sa
 	git checkout ./debian/changelog
 	sed -i -re '1 s/(altyo \(.*)\) .*\;/\1~xenial\) xenial\;/' ./debian/changelog

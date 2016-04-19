@@ -104,9 +104,9 @@ public const Gdk.RGBA terminal_palettes_linux[16] = {
       { 0.57647,  0.631372, 0.631372, 1 },
       { 0.992156, 0.964705, 0.890196, 1 }
     };
-
+//vte-terminal
 const string settings_base_css = """
- AYTerm {
+ vte-terminal {
  -AYTerm-bg-color: @ayterm-bg-color;
  -AYTerm-fg-color: @ayterm-fg-color;
  -AYTerm-palette-0 : @ayterm-palette-0;
@@ -127,25 +127,29 @@ const string settings_base_css = """
  -AYTerm-palette-15 : @ayterm-palette-15;
  }
 
-VTToggleButton GtkLabel  {
+#VTToggleButton .label  {
  font: Mono 10;
- -GtkWidget-focus-padding: 0px;
- -GtkButton-default-border:0px;
+ outline-width: 0px;
+ outline-offset: 0px;
+/* -GtkButton-default-border:0px;
  -GtkButton-default-outside-border:0px;
  -GtkButton-inner-border:0px;
+ */
  border-width:0px;
  -outer-stroke-width: 0px;
  margin:0px;
  padding:0px;
 }
 
-VTToggleButton {
- -GtkWidget-focus-padding: 0px;
- -GtkButton-default-border:0px;
+#VTToggleButton {
+ outline-width: 0px;
+ outline-offset: 0px;
+/* -GtkButton-default-border:0px;
  -GtkButton-default-outside-border:0px;
- -GtkButton-inner-border:0px;
+ -GtkButton-inner-border:0px;*/
  border-color:alpha(#000000,0.0);
- border-width: 1px;
+ border-width: 0px;
+ border-image-width: 0px;
  -outer-stroke-width: 0px;
  border-radius: 3px;
  border-style: solid;
@@ -154,7 +158,7 @@ VTToggleButton {
  padding:0px 0px 0px 0px;
 }
 
-VTToggleButton:active {
+#VTToggleButton:active {
  text-shadow: none;
 }
 .window_multitabs {
@@ -170,11 +174,11 @@ border-style: solid;
 padding:0px;
 margin:0;
 }
-#search_hbox :active {
+#search_hbox .label:active {
  border-color: @fg_color;
  color: #FF0000;
 }
-#search_hbox :prelight {
+#search_hbox .label:hover {
  background-color: @ayterm-bg-color;
  border-color: @fg_color;
  color: #FF0000;
@@ -188,24 +192,24 @@ margin:0;
  margin:0px;
  padding:0px 0px 1px 0px;
 }
-HVBox {
+#HVBox {
  border-width: 0px 2px 2px 2px;
  border-style: solid;
 }
 
-#OffscreenWindow, VTMainWindow,#HVBox_dnd_window {
+#OffscreenWindow, #VTMainWindow,#HVBox_dnd_window {
  border-width: 0px;
  border-style: solid;
  background-color: alpha(@ayterm-bg-color,0.0);
 }
-HVBox,#quick_options_notebook{
+#HVBox,#quick_options_notebook{
  background-color: @ayterm-bg-color;
 }
 #settings-scrolledwindow{
  background-color: @bg_color;
 }
 
-VTToggleButton{
+#VTToggleButton{
  box-shadow: none;
  transition-duration: 0s;
 }
@@ -240,24 +244,24 @@ const string settings_css_solarized_dark="""
  @define-color hostname-color  @ayterm-palette-9;
 
 
-VTToggleButton {
+#VTToggleButton {
  -VTToggleButton-tab-index-color:@ayterm-palette-11;
  -VTToggleButton-username-color:@ayterm-palette-2;
  -VTToggleButton-hostname-color:@ayterm-palette-9;
  background-color: alpha(@ayterm-bg-color,0.0);
  color: @ayterm-fg-color;
 }
-VTToggleButton:active{
+#VTToggleButton:active{
  background-color: @ayterm-palette-15;
  background-image: none;
  color: @ayterm-palette-11;
 }
-VTToggleButton:prelight {
+#VTToggleButton:hover {
  background-color: @ayterm-palette-7;
  background-image:none;
  color: @ayterm-bg-color;
 }
-VTToggleButton:active:prelight{
+#VTToggleButton:active:hover{
  background-color:@ayterm-palette-7;
  background-image: none;
  color: @ayterm-palette-0;
@@ -266,30 +270,31 @@ VTToggleButton:active:prelight{
  border-color: #3C3B37;
  border-style: solid;
 }
-#search_hbox :active {
+#search_hbox .label:active {
  border-color: @fg_color;
  color: #FF0000;
 }
-#search_hbox :prelight {
+#search_hbox .label:hover {
  background-color: @ayterm-bg-color;
  border-color: @fg_color;
  color: #FF0000;
 }
-#search_hbox {
+#search_hbox , #search_hbox .entry{
  background-color: @ayterm-bg-color;
  border-color: @bg_color;
  color: #00FFAA;
+ background-image: none;
 }
-HVBox {
+#HVBox , #main_vbox{
  border-color: #3C3B37;
  border-style: solid;
  background-color: @ayterm-bg-color;
 }
-#OffscreenWindow, VTMainWindow,#HVBox_dnd_window {
+#OffscreenWindow, #VTMainWindow,#HVBox_dnd_window {
  border-style: solid;
  background-color: alpha(@ayterm-bg-color,0.0);
 }
-HVBox,#quick_options_notebook{
+#HVBox,#quick_options_notebook{
  background-color: @ayterm-bg-color;
 }
 #settings-scrolledwindow{
@@ -298,7 +303,7 @@ HVBox,#quick_options_notebook{
 #settings-scrolledwindow{
  background-color: @bg_color;
 }
-VTToggleButton{
+#VTToggleButton{
  box-shadow: none;
  transition-duration: 0s;
 }
@@ -335,7 +340,7 @@ const string settings_css_linux = """
  @define-color username-color  @ayterm-palette-15;
  @define-color hostname-color  @ayterm-palette-11;
 
-VTToggleButton {
+#VTToggleButton {
   -VTToggleButton-tab-index-color:@ayterm-palette-11;
   -VTToggleButton-username-color:@ayterm-palette-15;
   -VTToggleButton-hostname-color:@ayterm-palette-11;
@@ -344,17 +349,17 @@ VTToggleButton {
   color: #AAAAAA;
   box-shadow: none;
 }
-VTToggleButton:active{
+#VTToggleButton:active{
   background-color: #00AAAA;
   background-image: -gtk-gradient(radial,center center, 0,center center, 1, from (#00BBBB),to (#008888) );
   color: #000000;
 }
-VTToggleButton:prelight {
+#VTToggleButton:hover {
   background-color: #AAAAAA;
   background-image: -gtk-gradient(radial,center center, 0,center center, 1, from (#AAAAAA),to (#777777) );
   color: #000000;
 }
-VTToggleButton:active:prelight{
+#VTToggleButton:active:hover{
   background-color: #00AAAA;
   background-image: -gtk-gradient(radial,center center, 0,center center, 1, from (lighter(#00BBBB)),to (#008888) );
   color: #000000;
@@ -363,11 +368,11 @@ VTToggleButton:active:prelight{
  border-color: #3C3B37;
  border-style: solid;
 }
-#search_hbox :active {
+#search_hbox .label:active {
  border-color: @fg_color;
  color: #FF0000;
 }
-#search_hbox :prelight {
+#search_hbox .label:hover {
  background-color: @ayterm-bg-color;
  border-color: @fg_color;
  color: #FF0000;
@@ -377,16 +382,16 @@ VTToggleButton:active:prelight{
  border-color: @bg_color;
  color: #00FFAA;
 }
-HVBox {
+#HVBox {
  border-color: #3C3B37;
  border-style: solid;
  background-color: @ayterm-bg-color;
 }
-#OffscreenWindow, VTMainWindow,#HVBox_dnd_window {
+#OffscreenWindow, #VTMainWindow,#HVBox_dnd_window {
  border-style: solid;
  background-color: alpha(@ayterm-bg-color,0.0);
 }
-HVBox,#quick_options_notebook{
+#HVBox,#quick_options_notebook{
  background-color: @ayterm-bg-color;
 }
 #settings-scrolledwindow{
@@ -395,7 +400,7 @@ HVBox,#quick_options_notebook{
 #settings-scrolledwindow{
  background-color: @bg_color;
 }
-VTToggleButton{
+#VTToggleButton{
  box-shadow: none;
  transition-duration: 0s;
 }

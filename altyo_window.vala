@@ -219,6 +219,7 @@ public class VTMainWindow : Window{
 
   public VTMainWindow(WindowType type) {
     Object(type:type);
+    name="VTMainWindow";
     }
 
   construct {

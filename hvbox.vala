@@ -90,7 +90,7 @@ public class HVBox : Container {
     drag_dest_set (this, 0, target_entries, Gdk.DragAction.MOVE);
     //this.set_reallocate_redraws(true);//redraw all elements, needed for redraw HVBox border
     //this.resize_mode=ResizeMode.QUEUE; //this break window size
-
+    name="HVBox";
     }
 
   public override bool drag_motion (Gdk.DragContext context,

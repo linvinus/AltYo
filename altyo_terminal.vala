@@ -143,6 +143,7 @@ public class VTToggleButton : Gtk.Button{
 
   public VTToggleButton() {
     Object();
+    name="VTToggleButton";
   }
   /*public VTToggleButton.with_label (string label) {
     this.label_text = label;
@@ -564,8 +565,9 @@ public class AYTerm : Vte.Terminal{
 //~   }
 
   private bool get_style_color(string name,ref Gdk.RGBA color){
-    unowned Gdk.RGBA? tmp;
-    this.style_get(name,out tmp);
+    unowned     Gdk.RGBA? tmp;
+    unowned Gtk.StyleContext context = this.get_style_context();
+    context.get_style(name,out tmp,null);
     if(tmp!=null){
       color=tmp;
       debug("AYTerm: %s:%s",name,color.to_string());

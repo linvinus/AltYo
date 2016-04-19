@@ -104,9 +104,9 @@ public const Gdk.RGBA terminal_palettes_linux[16] = {
       { 0.57647,  0.631372, 0.631372, 1 },
       { 0.992156, 0.964705, 0.890196, 1 }
     };
-//vte-terminal
+
 const string settings_base_css = """
- vte-terminal {
+ vte-terminal,AYTerm {
  -AYTerm-bg-color: @ayterm-bg-color;
  -AYTerm-fg-color: @ayterm-fg-color;
  -AYTerm-palette-0 : @ayterm-palette-0;

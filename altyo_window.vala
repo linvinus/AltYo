@@ -901,6 +901,12 @@ public class VTMainWindow : Window{
     if(Gtk.get_major_version()>=3 && Gtk.get_minor_version()>4)
       style_str_extra+= " VTToggleButton{transition-duration: 0s;}";
 
+    if(Gtk.get_major_version()>=3 && Gtk.get_minor_version()>8)
+      style_str_extra+= " #VTToggleButton, #VTToggleButton .label  { outline-offset: 0px; } ";//gtk 3.20
+    else
+      style_str_extra+= " #VTToggleButton, #VTToggleButton .label  {  -GtkWidget-focus-padding: 0px; -GtkButton-default-border:0px;  -GtkButton-default-outside-border:0px;  -GtkButton-inner-border:0px; background-image: none; box-shadow: none; -outer-stroke-width: 0px;} ";
+
+
 //~     if(Gtk.get_major_version()>=3 && Gtk.get_minor_version()>6)//special eyecandy if supported ;)
 //~       style_str+= "VTToggleButton:active { text-shadow: 1px 1px 2px #005555;}";
 
@@ -912,7 +918,7 @@ public class VTMainWindow : Window{
       //style_str+= "VTToggleButton { transition: 400ms ease-in-out;} VTToggleButton:active { transition: 0ms ease-in-out;text-shadow: 1px 1px 2px #005555;} VTToggleButton:prelight {transition: 0ms ease-in-out;}";
 
     css_main.parsing_error.connect((section,error)=>{
-      debug("css_main.parsing_error %s",error.message);
+      debug("css_main.parsing_error %s line:%d pos:%d",error.message,(int)section.get_end_line(),(int)section.get_end_position());
       });
 
     try{

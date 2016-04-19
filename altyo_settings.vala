@@ -130,11 +130,6 @@ const string settings_base_css = """
 #VTToggleButton .label  {
  font: Mono 10;
  outline-width: 0px;
- outline-offset: 0px;
-/* -GtkButton-default-border:0px;
- -GtkButton-default-outside-border:0px;
- -GtkButton-inner-border:0px;
- */
  border-width:0px;
  -outer-stroke-width: 0px;
  margin:0px;
@@ -143,10 +138,6 @@ const string settings_base_css = """
 
 #VTToggleButton {
  outline-width: 0px;
- outline-offset: 0px;
-/* -GtkButton-default-border:0px;
- -GtkButton-default-outside-border:0px;
- -GtkButton-inner-border:0px;*/
  border-color:alpha(#000000,0.0);
  border-width: 0px;
  border-image-width: 0px;
@@ -211,7 +202,6 @@ margin:0;
 
 #VTToggleButton{
  box-shadow: none;
- transition-duration: 0s;
 }
 
 .window_single_tab {
@@ -305,7 +295,6 @@ const string settings_css_solarized_dark="""
 }
 #VTToggleButton{
  box-shadow: none;
- transition-duration: 0s;
 }
 
 .window_single_tab {
@@ -402,7 +391,6 @@ const string settings_css_linux = """
 }
 #VTToggleButton{
  box-shadow: none;
- transition-duration: 0s;
 }
 .window_single_tab {
  border-color: #3C3B37;

@@ -161,7 +161,8 @@ public class VTToggleButton : Gtk.Button{
     this.label.mnemonic_widget=null;
     this.user_notify=false;
     unowned Gtk.StyleContext context = this.get_style_context();
-//~     context.remove_class("button");//don't use default button theme
+    if(Gtk.get_major_version()>=3 && Gtk.get_minor_version()<8) //for precise (12.04LTS)
+      context.remove_class("button");//don't use default button theme
     context.add_class("aytab");
   }
 

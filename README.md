@@ -138,5 +138,7 @@ FAQ:
 
 Reviews about AltYo
 -------------------
+Video Review from Noah and Chris in Linux Action Show The worlds #1 Linux podcast. https://www.youtube.com/watch?v=RJyBoqvQg54#t=665 (http://www.jupiterbroadcasting.com/show/linuxactionshow/)
+
 zenway.ru (Russian) http://zenway.ru/page/altyo  
 muhas.ru (Russian) http://muhas.ru/?p=202

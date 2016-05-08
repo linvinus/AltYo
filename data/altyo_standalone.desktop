@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=AltYo Stand-alone
 Exec=altyo --standalone
-Icon=altyo.png
+Icon=altyo
 Terminal=false
 Type=Application
 Categories=GTK;Utility;TerminalEmulator;

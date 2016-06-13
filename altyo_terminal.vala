@@ -687,6 +687,10 @@ public class VTTerminal : AYTab{
 			});
 		
 		this.vte_term.button_press_event.connect(vte_button_press_event);
+		#if VTE_2_91
+                this.vte_term.notification_received.connect(notification_received_cb);
+                #endif
+
 		this.tbutton.button_press_event.connect(vttoggle_button_press_event);
 		this.configure(my_conf);
 		//GLib.Idle.add(call);
@@ -1113,6 +1117,25 @@ public class VTTerminal : AYTab{
 		}
 		return false; //true == ignore event
 	}
+
+	private void notification_received_cb(Vte.Terminal terminal, string summary, string? body) {
+           print ("[%s]: %s\n", summary, body);
+
+           //FIXME: detect actual tab
+	   unowned Gtk.Widget parent;
+			parent = this.vte_term;
+			while(parent.parent!=null ){parent = parent.parent;} //find VTMainWindow
+	   VTMainWindow vtw=(VTMainWindow)parent;
+           if (vtw.current_state == WStates.VISIBLE)
+               return;
+
+           var notification = new GLib.Notification (summary);
+           notification.set_body (body);
+           var gicon = GLib.Icon.new_for_string ("altyo");
+           notification.set_icon (gicon);
+           GLib.Application.get_default().send_notification (null, notification);
+       }
+
 
 	public bool vttoggle_button_press_event(Widget widget,Gdk.EventButton event) {
 		if(event.type==Gdk.EventType.BUTTON_PRESS){

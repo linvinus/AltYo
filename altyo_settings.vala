@@ -507,6 +507,13 @@ public class AYSettings : AYTab{
         #endif
         this.vttbut = new VTToggleButton();
         this.get_from_conf();
+        var font_button = (builder.get_object ("terminal_font") as Gtk.FontButton);
+        font_button.set_filter_func((family, face)=>{
+          //show only monospace fonts
+          bool ret = !face.is_synthesized() && family.is_monospace();
+//~          debug("system_font=%d %s %s",(int)ret, family.get_name(), face.get_face_name());
+          return ret;
+          });
       } catch (Error e) {
         error ("loading menu builder file: %s", e.message);
       }
@@ -1211,6 +1218,18 @@ public class AYSettings : AYTab{
     alpha=alpha.replace(",",".");
     update_css_global_color(ref css_inner,"ayterm-bg-color","alpha(%s,%s)".printf(hexRGBA(bg),alpha) );
     B.buffer.text=css_inner;//done
+  }
+
+  [CCode (instance_pos = -1)]
+  public void on_fontreset_button(Gtk.Button CB){
+      var font_button = (builder.get_object ("terminal_font") as Gtk.FontButton);
+      var settings = new GLib.Settings("org.gnome.desktop.interface");
+      var system_font = settings.get_string("monospace-font-name");
+      if(system_font == null || system_font == ""){
+        system_font="Mono 12";
+      }
+      font_button.font_name = system_font;
+      debug("reset to system_font=%s",system_font);
   }
 
   private string css_ini_to_human(string s){

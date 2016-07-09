@@ -915,7 +915,13 @@ public class VTTerminal : AYTab{
     //debug("\t tbutton.path=%s",spath);
     //new Pango.FontDescription();
 
-    Pango.FontDescription font_description = Pango.FontDescription.from_string (my_conf.get_string("terminal_font","Mono 12")) ;
+    var settings = new GLib.Settings("org.gnome.desktop.interface");
+    var system_font = settings.get_string("monospace-font-name");
+    if(system_font == null || system_font == ""){
+      system_font="Mono 12";
+    }
+    debug("system_font=%s",system_font);
+    Pango.FontDescription font_description = Pango.FontDescription.from_string (my_conf.get_string("terminal_font",system_font)) ;
 
     this.vte_term.set_font(font_description);//same color for terminal
     this.auto_restart=my_conf.get_boolean("terminal_auto_restart_shell",true);

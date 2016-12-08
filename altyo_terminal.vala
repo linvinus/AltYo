@@ -705,6 +705,12 @@ public class VTTerminal : AYTab{
   }
 
   public void start_shell(){
+    unowned Gtk.Widget parent;
+    parent = this.vte_term;
+    while(parent.parent!=null ){parent = parent.parent;} //find VTMainWindow
+    VTMainWindow vtw=(VTMainWindow)parent;
+    vtw.update_events();//update the size of terminal before execute command
+
     if(!this.start_command(this.session_command,this.session_path)){
       if(!this.start_command()){//try without session
         this.my_conf.set_string("custom_command","");

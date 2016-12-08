@@ -1605,7 +1605,7 @@ public class AYObject :Object{
       index=(int)this.children.length();//NEW_TAB_MODE.FAR_RIGHT
 
     if(on_exit==null){
-      vt = new VTTerminal(this.conf,this.terms_notebook,index,session_command,(session_path!=null?session_path:conf.default_path),(terminal)=>{
+      vt = new VTTerminal(this.main_window,this.terms_notebook,index,session_command,(session_path!=null?session_path:conf.default_path),(terminal)=>{
         /* if child exited (guess by ctrl+d) and it was last tab
          * and action_on_close_last_tab==quit then quit*/
         if(this.children.length()==1 && this.action_on_close_last_tab==2){//quit
@@ -1629,7 +1629,7 @@ public class AYObject :Object{
 
       });
     }else{
-      vt = new VTTerminal(this.conf,this.terms_notebook,index,session_command,session_path,on_exit );
+      vt = new VTTerminal(this.main_window,this.terms_notebook,index,session_command,session_path,on_exit );
     }
     index++;//next position
     this.children.insert( vt ,(int) index);

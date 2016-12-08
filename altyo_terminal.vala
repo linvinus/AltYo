@@ -647,11 +647,13 @@ public class VTTerminal : AYTab{
   private int?    last_tag;
   private bool disable_terminal_popup=false;
   private Array<VTT_LOCK_SETTING> lock_settings;
+  private unowned VTMainWindow win;
 
 
-  public VTTerminal(MySettings my_conf,Notebook notebook, uint tab_index/*starting from 0*/,string? session_command=null,string? session_path=null,OnChildExitCallBack? on_child_exit=null) {
-    base(my_conf, notebook, tab_index);
-    this.my_conf=my_conf;
+  public VTTerminal(VTMainWindow win,Notebook notebook, uint tab_index/*starting from 0*/,string? session_command=null,string? session_path=null,OnChildExitCallBack? on_child_exit=null) {
+    base(win.conf, notebook, tab_index);
+    this.win = win;
+    this.my_conf=win.conf;
     this.notebook=notebook;
     this.session_command=session_command;
     this.session_path=session_path;
@@ -705,11 +707,7 @@ public class VTTerminal : AYTab{
   }
 
   public void start_shell(){
-    unowned Gtk.Widget parent;
-    parent = this.vte_term;
-    while(parent.parent!=null ){parent = parent.parent;} //find VTMainWindow
-    VTMainWindow vtw=(VTMainWindow)parent;
-    vtw.update_events();//update the size of terminal before execute command
+    this.win.update_events();//update the size of terminal before execute command
 
     if(!this.start_command(this.session_command,this.session_path)){
       if(!this.start_command()){//try without session
@@ -1169,12 +1167,8 @@ public class VTTerminal : AYTab{
 
   public void create_popup_menu(Gtk.Menu menu){
     //debug("popup_menu ref_count=%d",(int)menu.ref_count);
-    unowned Gtk.Widget parent;
-      parent = this.vte_term;
-      while(parent.parent!=null ){parent = parent.parent;} //find VTMainWindow
-    VTMainWindow vtw=(VTMainWindow)parent;
-    menu.set_accel_group(vtw.ayobject.accel_group);
-    Gtk.ActionGroup acg=vtw.ayobject.action_group;
+    menu.set_accel_group(this.win.ayobject.accel_group);
+    Gtk.ActionGroup acg=this.win.ayobject.action_group;
 
     Gtk.MenuItem menuitem;
 
@@ -1195,7 +1189,7 @@ public class VTTerminal : AYTab{
       menu.append(menuitem);
     }
 
-    vtw.ayobject.create_popup_menu_for_removed_tabs(menu);
+    this.win.ayobject.create_popup_menu_for_removed_tabs(menu);
 
     menuitem = (Gtk.MenuItem)acg.get_action("terminal_search_dialog").create_menu_item();
     menu.append(menuitem);
@@ -1216,17 +1210,17 @@ public class VTTerminal : AYTab{
         submenu.append(menuitem);
 
         var action_keepabove = acg.get_action("keep_above") as ToggleAction;
-        action_keepabove.set_active(vtw.keep_above);
+        action_keepabove.set_active(this.win.keep_above);
         menuitem = (Gtk.MenuItem)action_keepabove.create_menu_item();
         submenu.append(menuitem);
 
         var action_stick = acg.get_action("window_toggle_stick") as ToggleAction;
-        action_stick.set_active(vtw.orig_stick);
+        action_stick.set_active(this.win.orig_stick);
         menuitem = (Gtk.MenuItem)action_stick.create_menu_item();
         submenu.append(menuitem);
 
         var action_autohide = acg.get_action("window_toggle_autohide") as ToggleAction;
-        action_autohide.set_active(vtw.autohide);
+        action_autohide.set_active(this.win.autohide);
         menuitem = (Gtk.MenuItem)action_autohide.create_menu_item();
         submenu.append(menuitem);
 

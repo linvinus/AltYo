@@ -20,7 +20,7 @@ endif
 
 CHANGELOG_TAG=${shell grep -m 1 "^altyo" ./debian/changelog | sed 's/.*(//' | sed 's/).*$$//'| sed 's/~/_/' | sed 's/:/%/'}
 GIT_HASH=${shell which git >/dev/null && git log -1 --pretty=format:%h}
-VALA_FLAGS ?= 
+VALA_FLAGS ?=
 
 #use tmpfs for ssd hard drive
 TMPFS=$(shell ls -d ./tmpfs 2>/dev/null)
@@ -83,7 +83,7 @@ source: data/altyo.c
 
 data/altyo.c: data/altyo.gresource.xml data/altyo.svg $(GLADE_FILES)
 	glib-compile-resources --sourcedir=./data --generate-source ./data/altyo.gresource.xml
-	
+
 clean:
 	rm *.c *.h || true
 	rm ./altyo || true
@@ -112,25 +112,22 @@ gen_mo:
 source-package:
 	rm ./altyo || true
 	rm ./po/ru/LC_MESSAGES/$(PRG_NAME).mo || true
-	git-buildpackage --git-upstream-tree=branch --git-upstream-branch=master -rfakeroot -S -sa
+	gbp buildpackage --git-upstream-tree=branch --git-upstream-branch=master -rfakeroot -S -sa
 	sed -i -re '1 s/(altyo \(.*)\) .*\;/\1~precise\) precise\;/' ./debian/changelog
 	dpkg-buildpackage -S -sa
 	git checkout ./debian/changelog
 	sed -i -re '1 s/(altyo \(.*)\) .*\;/\1~trusty\) trusty\;/' ./debian/changelog
 	dpkg-buildpackage -S -sa
 	git checkout ./debian/changelog
-	sed -i -re '1 s/(altyo \(.*)\) .*\;/\1~vivid\) vivid\;/' ./debian/changelog
-	dpkg-buildpackage -S -sa
-	git checkout ./debian/changelog
-	sed -i -re '1 s/(altyo \(.*)\) .*\;/\1~wily\) wily\;/' ./debian/changelog
-	dpkg-buildpackage -S -sa
-	git checkout ./debian/changelog
 	sed -i -re '1 s/(altyo \(.*)\) .*\;/\1~xenial\) xenial\;/' ./debian/changelog
+	dpkg-buildpackage -S -sa
+	git checkout ./debian/changelog
+	sed -i -re '1 s/(altyo \(.*)\) .*\;/\1~yakkety\) wily\;/' ./debian/changelog
 	dpkg-buildpackage -S -sa
 	git checkout ./debian/changelog
 
 gen_changes:
-	git-dch --ignore-branch --debian-branch=master --verbose -a -R
+	gbp dch --ignore-branch --debian-branch=master --verbose -a -R
 	git add .
 	$(MAKE) gen_changes_stage2
 

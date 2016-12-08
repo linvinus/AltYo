@@ -1,3 +1,17 @@
+altyo (0.4~rc20-linvinus1) xenial; urgency=medium
+
+  * Update README.md
+  [ palob ]
+  * Don't hardocde icon file type
+  * fix #64, show only monospace fonts in terminal font selection button
+  [ Alexey Shiklomanov ]
+  * Fix ambiguous Regex references
+
+  [ denis ]
+  * fix: update terminal size before execute command, bug http://forum.ubuntu.ru/index.php?topic=198594.msg2243535#msg2243535
+
+ -- denis <linvinus@gmail.com>  Thu, 08 Dec 2016 22:09:54 +0300
+
 altyo (0.4~rc19-linvinus1) testing; urgency=medium
 
   * trying to resolve #25

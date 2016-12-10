@@ -403,8 +403,9 @@ int main (string[] args) {
   try {
      local_ctx.add_main_entries(Globals.options, null);
      string[] args2 = args;         //copy args for local use, original args will be used on remote side
+     unowned string[] args3 = args2;//tmp pointer
 
-     local_ctx.parse_strv(ref args2);
+     local_ctx.parse(ref args3);
      args2=null;
 
      var self_basename = GLib.Path.get_basename(args[0]);

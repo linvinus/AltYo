@@ -1,3 +1,13 @@
+altyo (0.4~rc21-linvinus1) testing; urgency=medium
+
+  * adapt for new debian build scripts
+  * fix: monitor name in settings
+  * fix: broken output of terminal when executing remote commands
+  * new: xterm -e compatibility mode
+  * new: support x-terminal-emulator alternative in debian
+
+ -- denis <linvinus@gmail.com>  Sat, 10 Dec 2016 17:43:20 +0300
+
 altyo (0.4~rc20-linvinus1) xenial; urgency=medium
 
   * Update README.md

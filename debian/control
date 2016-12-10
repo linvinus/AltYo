@@ -11,6 +11,10 @@ Vcs-Browser: https://github.com/linvinus/AltYo
 Package: altyo
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Provides: x-terminal-emulator
+Section: x11
+Priority: optional
+Homepage: https://github.com/linvinus/AltYo
 Description: AltYo - drop-down terminal emulator, written in vala, depends only on libvte and gtk3.
  AltYo - drop-down terminal emulator, written in vala, depends only on libvte and gtk3.
 

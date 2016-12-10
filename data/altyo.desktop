@@ -1,7 +1,11 @@
 [Desktop Entry]
 Name=AltYo
+TryExec=altyo
 Exec=altyo
 Icon=altyo
 Terminal=false
 Type=Application
 Categories=GTK;Utility;TerminalEmulator;
+StartupNotify=true
+Keywords=Run;
+Actions=New

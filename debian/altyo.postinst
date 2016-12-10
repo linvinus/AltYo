@@ -1,0 +1,12 @@
+#!/bin/sh
+set -e
+
+if [ "$1" = configure ]; then
+
+    update-alternatives \
+        --install /usr/bin/x-terminal-emulator \
+            x-terminal-emulator /usr/bin/altyo 20
+
+fi
+
+#DEBHELPER#

@@ -696,18 +696,20 @@ public class VTTerminal : AYTab{
     this.configure(my_conf);
     //GLib.Idle.add(call);
 
-    this.start_shell();
 
-    this.hbox.show();
     this.vte_term.destroy.connect(()=>{ debug("VTTerminal vte_term destroyed"); });
     this.on_destroy.connect(()=>{
       this.vte_term.child_exited.disconnect(this.child_exited);
       debug("VTTerminal destroyed");
       });
+
+//~     this.vte_term.show();
+//~     this.hbox.show();
+    this.start_shell();
   }
 
   public void start_shell(){
-    this.win.update_events();//update the size of terminal before execute command
+//~     this.win.update_events();//update the size of terminal before execute command
 
     if(!this.start_command(this.session_command,this.session_path)){
       if(!this.start_command()){//try without session

@@ -1299,6 +1299,12 @@ public class AYSettings : AYTab{
         int win_x,win_y;
         this.ayobject.main_window.get_position (out win_x, out win_y);
     this.monitor_name = gscreen.get_monitor_plug_name(gscreen.get_monitor_at_point (win_x,win_y));
+
+    if(this.monitor_name==null){
+      this.monitor_name="null";
+    }
+
+
     this.ignore_on_loading = true;
 
     var keys = this.my_conf.get_profile_keys();

@@ -81,6 +81,7 @@ struct Globals{
   static bool list_id = false;
   static bool force_remote = false;
   static string? remote_cwd = null;
+  static bool xterm_mode = false;
 
   [CCode (array_length = false, array_null_terminated = true)]
   public static string[]? exec_file_with_args = null;
@@ -92,6 +93,7 @@ struct Globals{
           { "cfg", 'c', 0, OptionArg.FILENAME, ref Globals.cmd_conf_file,N_("Read configuration from file"), N_("/path/to/config.ini") },
           /*The option takes a string argument, multiple uses of the option are collected into an array of strings. */
           { "exec", 'e', 0, OptionArg.STRING_ARRAY, ref Globals.exec_file_with_args,N_("Run command in new tab"), N_("\"command arg1 argN...\"") },
+          { "command",0, OptionFlags.HIDDEN, OptionArg.STRING_ARRAY, ref Globals.exec_file_with_args,N_("Run command in new tab"), N_("\"command arg1 argN...\"") },
           { "toggle", 0, 0, OptionArg.NONE, ref Globals.toggle,N_("Show/hide window"), null },
           { "id", 0, 0, OptionArg.STRING, ref Globals.app_id,N_("Set application id, none means disable application id"),"org.gtk.altyo_my,none" },
           { "listid", 0, 0, OptionArg.NONE, ref Globals.list_id,N_("Show ids of running AltYo instances"), null },
@@ -108,9 +110,59 @@ struct Globals{
           { "close-tab", 0, 0, OptionArg.STRING, ref Globals.cmd_close_tab,N_("Close tab by index"), null },
           { "remote", 0, 0, OptionArg.NONE, ref Globals.force_remote,N_("Connect to remote instance or exit."), null },
           { "version", 0, 0, OptionArg.NONE, ref Globals.opt_version, N_("Display version number"), null },
+          { "xterm", 0, 0, OptionArg.NONE, ref Globals.xterm_mode, N_("Run in xterm compatibility mode"), null },
           { null }
       };
 
+      /* https://www.debian.org/doc/debian-policy/ch-customized-programs.html#s11.8.3
+       * To be an x-terminal-emulator, a program must:
+       *     Be able to emulate a DEC VT100 terminal, or a compatible terminal.
+       *     Support the command-line option -e command, which creates a new terminal window[106] and runs the specified command,
+       *     interpreting the entirety of the rest of the command line as a command to pass straight to exec, in the manner that xterm does.
+       *     Support the command-line option -T title, which creates a new terminal window with the window title title.
+       * */
+      public static bool x_terminal_emulator_exec (ref unowned string[] args)
+      {
+        bool found=false;
+        try {
+          if(args != null){
+
+            string s = "";
+            string [] arr = {};
+            foreach (unowned string arg in args) {
+              if(found){
+                /* for compatibility with xterm, don't allow miltiply exec commands
+                 * if(arg == "-e" || arg == "--command"){
+                  arr += s;
+                  s = "";
+                  continue;
+                }*/
+                s += " "+arg; //combine everything after '-e' as single string
+              }else{
+                if(arg == "-e" || arg == "--command" || arg == "--exec")
+                  found = true;
+                if(arg.has_prefix("--command=") ){
+                  s +=arg.substring(10);
+                  found = true;
+                }
+                if(arg.has_prefix("--exec=")){
+                  s +=arg.substring(7);
+                  found = true;
+                }
+              }
+            }
+            if(found){
+              arr += s;
+              Globals.exec_file_with_args = null;
+              Globals.exec_file_with_args = arr;
+            }
+          }
+        } catch (ShellError e) {
+          GLib.stdout.printf ("Error: %s\n", e.message);
+        }
+
+        return found;
+      }
 }//Globals
 
 unowned Gtk.Window main_win;
@@ -351,9 +403,17 @@ int main (string[] args) {
   try {
      local_ctx.add_main_entries(Globals.options, null);
      string[] args2 = args;         //copy args for local use, original args will be used on remote side
-     unowned string[] args3 = args2;//tmp pointer
-     local_ctx.parse(ref args3);
-     args2=null;                    //destroy
+
+     local_ctx.parse_strv(ref args2);
+     args2=null;
+
+     var self_basename = GLib.Path.get_basename(args[0]);
+
+     if( self_basename != "altyo" || Globals.xterm_mode){
+       Globals.xterm_mode = true;
+       Globals.x_terminal_emulator_exec(ref args);
+       GLib.stderr.printf("AltYo runnied as %s in xterm mode\n",self_basename);
+     }
   } catch (Error e) {
      GLib.stderr.printf("Error initializing: %s\n", e.message);
      return 1;
@@ -455,8 +515,7 @@ int main (string[] args) {
           return 0;//just ignore it
 
       string[] argv = command_line.get_arguments();
-      debug("app.command_line.connect argv.length=%d",argv.length);
-
+      debug("app.command_line.connect argv.length=%d %s",argv.length,argv[0]);
       OptionContext ctx = new OptionContext("AltYo");
       ctx.add_main_entries(Globals.options, null);
 
@@ -481,6 +540,7 @@ int main (string[] args) {
         Globals.cmd_select_tab = null;
         Globals.cmd_close_tab = null;
         Globals.remote_cwd = command_line.get_cwd();
+        Globals.xterm_mode = false;
 
         var old_standalone_mode=Globals.standalone_mode;
         try {
@@ -489,6 +549,18 @@ int main (string[] args) {
             command_line.print("altyo: Error initializing: %s\n", e.message);
         }
         Globals.standalone_mode=old_standalone_mode;//restore standalone_mode state
+
+        var self_basename = GLib.Path.get_basename(argv[0]);
+
+        if( self_basename != "altyo" || Globals.xterm_mode){
+         Globals.xterm_mode = true;
+         string[] argv2 = command_line.get_arguments();
+         unowned string[] argv3 = argv2;
+         Globals.x_terminal_emulator_exec (ref argv3);
+         debug("AltYo runnied as %s in xterm mode\n",self_basename);
+         argv2=null;
+        }else
+          Globals.xterm_mode = false;
 
         debug("app.command_line.connect reload=%d",(int)Globals.reload);
         VTMainWindow remote_window=null;

@@ -1641,6 +1641,8 @@ public class AYObject :Object{
     vt.tbutton.button_press_event.connect(tab_button_press_event);
     this.hvbox.insert( vt.tbutton ,(int) index);
 
+    vt.start_shell();
+
 
     this.activate_tab(vt.tbutton) ;//this.active_tab = this.hvbox.children_index(tbutton);
 

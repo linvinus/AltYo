@@ -434,7 +434,7 @@ public class AYTab : Object{
     //this.hbox.pack_start(this.vte_term,true,true,0);
     //this.vte_term.grab_focus();
     //this.vte_term.can_default=true;
-    this.hbox.show();
+//~     this.hbox.show();
 //~   this.scrollbar = new VScrollbar(((Scrollable)this.vte_term).get_vadjustment());
 //~   hbox.pack_start(scrollbar,false,false,0);
     page_index = this.notebook.insert_page (hbox,null,(int)tab_index);
@@ -705,11 +705,10 @@ public class VTTerminal : AYTab{
 
 //~     this.vte_term.show();
 //~     this.hbox.show();
-    this.start_shell();
+//~     this.start_shell();
   }
 
   public void start_shell(){
-//~     this.win.update_events();//update the size of terminal before execute command
 
     if(!this.start_command(this.session_command,this.session_path)){
       if(!this.start_command()){//try without session
@@ -720,6 +719,10 @@ public class VTTerminal : AYTab{
           }
       }
     }
+    this.hbox.show();
+    this.hbox.check_resize();
+    this.win.update_events();//update the size of terminal before execute command
+
   }
 
 

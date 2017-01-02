@@ -425,6 +425,8 @@ public class AYSettings : AYTab{
 
   public AYSettings(MySettings my_conf,Notebook notebook, int tab_index,AYObject ayo) {
     base(my_conf, notebook, tab_index);
+    this.hbox.show();
+    this.hbox.check_resize();
     this.tbutton.set_title(tab_index, _("AYsettings") );
     this.ayobject=ayo;
     if(this.ayobject.main_window.application.application_id!=null)

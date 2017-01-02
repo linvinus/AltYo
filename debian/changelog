@@ -1,3 +1,9 @@
+altyo (0.4~rc22-linvinus2) testing; urgency=medium
+
+  * fix: regression after 01fe0e2622d0790d655dced0346ab6be96668136
+
+ -- denis <linvinus@gmail.com>  Mon, 02 Jan 2017 11:30:15 +0300
+
 altyo (0.4~rc22-linvinus1) testing; urgency=medium
 
   * fix: compatibility with old vala in trusty and precise

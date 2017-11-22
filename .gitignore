@@ -12,3 +12,4 @@ syntax: glob
 /*.h
 /tmpfs
 /data/#preferences.glade#
+.install_log

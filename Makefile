@@ -21,6 +21,11 @@ endif
 CHANGELOG_TAG=${shell grep -m 1 "^altyo" ./debian/changelog | sed 's/.*(//' | sed 's/).*$$//'| sed 's/~/_/' | sed 's/:/%/'}
 GIT_HASH=${shell which git >/dev/null && git log -1 --pretty=format:%h}
 VALA_FLAGS ?=
+INSTALL?=install -v
+AWK?=awk
+XARGS=xargs
+
+INSTALLED_FILES:=$(shell $(AWK) '/.* -> .*/{print $$3}' .install_log | $(XARGS))
 
 #use tmpfs for ssd hard drive
 TMPFS=$(shell ls -d ./tmpfs 2>/dev/null)
@@ -91,16 +96,19 @@ clean:
 
 install: gen_mo
 	test -z "$(DESTDIR)$(PREFIX)/bin" || mkdir -p "$(DESTDIR)$(PREFIX)/bin";
-	cp -a ./$(PRG_NAME) $(DESTDIR)$(PREFIX)/bin
+	$(INSTALL) -m 0755 ./$(PRG_NAME) $(DESTDIR)$(PREFIX)/bin >>.install_log
 	test -z "$(DESTDIR)$(PREFIX)/share/applications" || mkdir -p "$(DESTDIR)$(PREFIX)/share/applications";
-	cp -a ./data/altyo.desktop $(DESTDIR)$(PREFIX)/share/applications
-	cp -a ./data/altyo_standalone.desktop $(DESTDIR)$(PREFIX)/share/applications
+	$(INSTALL) -m 0644 ./data/altyo.desktop $(DESTDIR)$(PREFIX)/share/applications  >>.install_log
+	$(INSTALL) -m 0644 ./data/altyo_standalone.desktop $(DESTDIR)$(PREFIX)/share/applications  >>.install_log
 	test -z "$(DESTDIR)$(PREFIX)/share/locale/ru/LC_MESSAGES" || mkdir -p "$(DESTDIR)$(PREFIX)/share/locale/ru/LC_MESSAGES";
-	cp -a ./po/ru/LC_MESSAGES/altyo.mo $(DESTDIR)$(PREFIX)/share/locale/ru/LC_MESSAGES
+	$(INSTALL) -m 0644 ./po/ru/LC_MESSAGES/altyo.mo $(DESTDIR)$(PREFIX)/share/locale/ru/LC_MESSAGES  >>.install_log
 	test -z "$(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps" || mkdir -p "$(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps";
-	cp -a ./data/altyo.png $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps
+	$(INSTALL) -m 0644 ./data/altyo.png $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/apps  >>.install_log
 	test -z "$(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps" || mkdir -p "$(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps";
-	cp -a ./data/altyo.svg $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps
+	$(INSTALL) -m 0644 ./data/altyo.svg $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps  >>.install_log
+
+uninstall: .install_log $(INSTALLED_FILES)
+	rm -f $?
 
 gen_po:
 	xgettext -o ./po/altyo.po --from-code=UTF-8 -language=C --keyword=_ --keyword=N_ $(VALA_FILES) $(GLADE_FILES)

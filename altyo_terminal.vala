@@ -645,7 +645,7 @@ public class VTTerminal : AYTab{
   public  string session_path {get;set;default=null;}
   private string? last_link;
   private int?    last_tag;
-  private bool disable_terminal_popup=false;
+  public bool disable_terminal_popup=false;
   private Array<VTT_LOCK_SETTING> lock_settings;
   private unowned VTMainWindow win;
 
@@ -1140,7 +1140,7 @@ public class VTTerminal : AYTab{
 //~       this.check_match(event);
 //~     }else
       if(event.button== 3){//right mouse button
-        this.popup_tab_menu(event);
+        this.popup_tab_menu(widget, event);
         return true;
       }
     }
@@ -1290,14 +1290,14 @@ public class VTTerminal : AYTab{
     //debug("popup_menu ref_count=%d",(int)menu.ref_count);
   }
 
-  private void force_action_state(Gtk.ToggleAction action, bool new_state){
+/*  private void force_action_state(Gtk.ToggleAction action, bool new_state){
     Type type = action.get_type();
     uint sig_id=GLib.Signal.lookup("activate",type);
     var handler_id =  GLib.SignalHandler.find(action,GLib.SignalMatchType.ID,sig_id,0,null,null,null);
     GLib.SignalHandler.block(action,handler_id);//prevent emit signal
     action.set_active(new_state);
     GLib.SignalHandler.unblock(action,handler_id);
-  }
+  }*/
 
   private void stop_signal_emission(Gtk.Action action){
     Type type = action.get_type();
@@ -1305,18 +1305,21 @@ public class VTTerminal : AYTab{
     GLib.Signal.stop_emission(action,sig_id,0);
   }
 
-  public void popup_tab_menu(Gdk.EventButton event){
-    //debug("terminal popup_menu");
+  public void popup_tab_menu(Gtk.Widget widget,Gdk.EventButton event){
+    debug("terminal popup_menu %d %s",(int)widget,widget.name);
     var menu = new Gtk.Menu();
     //debug("popup_menu ref_count=%d",(int)menu.ref_count);
+    VTToggleButton _tbutton = (VTToggleButton)widget;
+    VTTerminal _vt_term = ((VTTerminal)_tbutton.object);//popup menu on tab button enabled only in VTTerminal
     unowned Gtk.Widget parent;
-      parent = this.vte_term;
-      while(parent.parent!=null ){parent = parent.parent;} //find VTMainWindow
+    parent = (Gtk.Widget)_vt_term.vte_term;
+    while(parent.parent!=null ){parent = parent.parent;} //find VTMainWindow
     VTMainWindow vtw=(VTMainWindow)parent;
-    menu.set_accel_group(vtw.ayobject.accel_group);
+//~     menu.set_accel_group(vtw.ayobject.accel_group);
     Gtk.ActionGroup acg=vtw.ayobject.action_group;
 
     Gtk.MenuItem menuitem;
+    Gtk.CheckMenuItem chmenuitem;
 
     menuitem = (Gtk.MenuItem)acg.get_action("terminal_sort_by_hostname").create_menu_item();
     menu.append(menuitem);
@@ -1324,23 +1327,13 @@ public class VTTerminal : AYTab{
     menu.append(menuitem);
 
     if(vtw.ayobject.tab_sort_order==TAB_SORT_ORDER.HOSTNAME ){
-      var action_sort=acg.get_action("disable_sort_tab") as ToggleAction;
-
-      this.force_action_state(action_sort,this.tbutton.do_not_sort);
-
-      //override default action handler
-      var action_sort_activate_id = action_sort.activate.connect(()=>{
+      chmenuitem = new Gtk.CheckMenuItem.with_label (acg.get_action("disable_sort_tab").label);
+      chmenuitem.set_active (_tbutton.do_not_sort);
+      chmenuitem.activate.connect(()=>{
         debug("disable_sort_tab.activate");
-        this.tbutton.do_not_sort=!this.tbutton.do_not_sort;
-        this.stop_signal_emission(action_sort);
+        _tbutton.do_not_sort=!_tbutton.do_not_sort;
         });
-      //restore default action handler
-      menu.destroy.connect(()=>{
-        GLib.SignalHandler.disconnect(action_sort,action_sort_activate_id);
-        });
-
-      menuitem = (Gtk.MenuItem)action_sort.create_menu_item();
-      menu.append(menuitem);
+      menu.append(chmenuitem);
     }
     Gtk.Settings settings = Gtk.Settings.get_default();
 
@@ -1355,11 +1348,11 @@ public class VTTerminal : AYTab{
     image_menuitem.activate.connect(()=>{
       Gdk.Display display = vtw.get_display ();
       Gtk.Clipboard clipboard = Gtk.Clipboard.get_for_display (display, Gdk.SELECTION_CLIPBOARD);
-      clipboard.set_text(this.tbutton.tab_title,-1);
+      clipboard.set_text(_tbutton.tab_title,-1);
       });
     menu.append(image_menuitem);
 
-    if(this.tbutton.host_name!=null && this.tbutton.host_name!=""){
+    if(_tbutton.host_name!=null && _tbutton.host_name!=""){
       image_menuitem = new Gtk.ImageMenuItem.with_label (_("Copy terminal host name"));
       if(settings.gtk_menu_images){
         //show images only if it not disabled globally
@@ -1369,7 +1362,7 @@ public class VTTerminal : AYTab{
       image_menuitem.activate.connect(()=>{
         Gdk.Display display = vtw.get_display ();
         Gtk.Clipboard clipboard = Gtk.Clipboard.get_for_display (display, Gdk.SELECTION_CLIPBOARD);
-        clipboard.set_text(this.tbutton.host_name,-1);
+        clipboard.set_text(_tbutton.host_name,-1);
         });
       menu.append(image_menuitem);
     }
@@ -1383,11 +1376,11 @@ public class VTTerminal : AYTab{
     image_menuitem.activate.connect(()=>{
       Gdk.Display display = vtw.get_display ();
       Gtk.Clipboard clipboard = Gtk.Clipboard.get_for_display (display, Gdk.SELECTION_CLIPBOARD);
-      clipboard.set_text(this.find_tty_pgrp(this.pid,FIND_TTY.CMDLINE),-1);
+      clipboard.set_text(_vt_term.find_tty_pgrp(_vt_term.pid,FIND_TTY.CMDLINE),-1);
       });
     menu.append(image_menuitem);
 
-    image_menuitem = new Gtk.ImageMenuItem.with_label (_("Kill running command")+" "+this.find_tty_pgrp(this.pid,FIND_TTY.CMDLINE));
+    image_menuitem = new Gtk.ImageMenuItem.with_label (_("Kill running command")+" "+_vt_term.find_tty_pgrp(_vt_term.pid,FIND_TTY.CMDLINE));
     if(settings.gtk_menu_images){
       //show images only if it not disabled globally
       image = new Gtk.Image.from_icon_name ("gtk-delete", Gtk.IconSize.MENU);
@@ -1395,11 +1388,10 @@ public class VTTerminal : AYTab{
     }
     image_menuitem.activate.connect(()=>{
       if(vtw.ayobject.show_question_message_box(_("Do you really want to kill running command?")))
-        Posix.kill(int.parse(this.find_tty_pgrp(this.pid,FIND_TTY.PID)),GLib.ProcessSignal.KILL);
+        Posix.kill(int.parse(_vt_term.find_tty_pgrp(_vt_term.pid,FIND_TTY.PID)),GLib.ProcessSignal.KILL);
       });
     menu.append(image_menuitem);
 
-    Gtk.CheckMenuItem chmenuitem;
 
     chmenuitem = new Gtk.CheckMenuItem.with_label (_("Disable key bindings"));
     chmenuitem.set_active (!acg.get_sensitive());
@@ -1409,56 +1401,42 @@ public class VTTerminal : AYTab{
     menu.append(chmenuitem);
 
     chmenuitem = new Gtk.CheckMenuItem.with_label (_("Disable terminal menu"));
-    chmenuitem.set_active (this.disable_terminal_popup);
+    chmenuitem.set_active(_vt_term.disable_terminal_popup);
     chmenuitem.activate.connect(()=>{
-      this.disable_terminal_popup=chmenuitem.get_active();
+      _vt_term.disable_terminal_popup=!_vt_term.disable_terminal_popup;
+      debug("Disable terminal menu %d",(int)_vt_term.disable_terminal_popup);
     });
     menu.append(chmenuitem);
 
-    var lock_tab=acg.get_action("lock_tab") as ToggleAction;
-    this.force_action_state(lock_tab,this.tbutton.prevent_close);
-    //override default action handler
-    var lock_tab_activate_id = lock_tab.activate.connect(()=>{
+    chmenuitem = new Gtk.CheckMenuItem.with_label (acg.get_action("lock_tab").label);
+    chmenuitem.set_active (_tbutton.prevent_close);
+    chmenuitem.activate.connect(()=>{
       debug("lock_tab.activate");
-      this.tbutton.prevent_close=!this.tbutton.prevent_close;
-      this.tbutton.reconfigure();
+      _tbutton.prevent_close=!_tbutton.prevent_close;
+      _tbutton.reconfigure();
       vtw.ayobject.hvbox.queue_draw();//redraw border
-      this.stop_signal_emission(lock_tab);
       });
-    //restore default action handler
-    menu.destroy.connect(()=>{
-      GLib.SignalHandler.disconnect(lock_tab,lock_tab_activate_id);
-      });
-    menuitem = (Gtk.MenuItem)lock_tab.create_menu_item();
-    menu.append(menuitem);
+    menu.append(chmenuitem);
 
-    var custom_title=acg.get_action("tab_custom_title") as ToggleAction;
-    this.force_action_state(custom_title,this.tbutton.tab_custom_title_enabled);
-    //override default action handler
-    var custom_title_activate_id = custom_title.activate.connect(()=>{
+    chmenuitem = new Gtk.CheckMenuItem.with_label (acg.get_action("tab_custom_title").label);
+    chmenuitem.set_active (_tbutton.tab_custom_title_enabled);
+    chmenuitem.activate.connect(()=>{
       debug("custom_title.activate");
-      vtw.ayobject.set_custom_title_dialog(this.tbutton);
-      this.stop_signal_emission(custom_title);
+      vtw.ayobject.set_custom_title_dialog(_tbutton);
       });
-    //restore default action handler
-    menu.destroy.connect(()=>{
-      GLib.SignalHandler.disconnect(custom_title,custom_title_activate_id);
-      });
-
-    menuitem = (Gtk.MenuItem)custom_title.create_menu_item();
-    menu.append(menuitem);
+    menu.append(chmenuitem);
 
 
-    if(this.disable_terminal_popup){
+    if(_vt_term.disable_terminal_popup){
       var submenu = new Gtk.Menu ();
       menuitem = new Gtk.MenuItem.with_label (_("Terminal menu"));
       menuitem.set_submenu(submenu);
       menu.append(menuitem);
-      this.create_popup_menu(submenu);
+      _vt_term.create_popup_menu(submenu);
     }
 
 
-    menu.deactivate.connect (this.on_deactivate);
+    menu.deactivate.connect (_vt_term.on_deactivate);
     menu.show_all();
         //menu.attach_to_widget (this.vte_term, null);
     menu.popup(null, null, null, event.button, event.time);

@@ -1,3 +1,22 @@
+altyo (0.4~rc24-linvinus1) xenial; urgency=medium
+
+  [ Matthew D. Scholefield ]
+  * Fix build errors
+
+  [ denis ]
+  * new uninstall command in make file, resolve #79
+  * improve pull request #78
+  * new: possibility search by tabindex
+  * new: possibility kill the last child of terminal, resolve #76
+  * improvements: more friendly Terminal Settings dialog #34
+  * fix: restore tab title if custom tab title was canceled
+  * improvements: make the pop-up menu of tab independent of the active tab
+  * fix: for #69, not all features will be working in wayland
+  * update: Russian translation
+  * udate Makefile
+
+ -- denis <linvinus@gmail.com>  Tue, 05 Dec 2017 23:16:56 +0300
+
 altyo (0.4~rc23-linvinus1) testing; urgency=medium
 
   * fix: regression after 01fe0e2622d0790d655dced0346ab6be96668136

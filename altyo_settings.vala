@@ -710,7 +710,11 @@ public class AYSettings : AYTab{
         view.get_cursor(out path,out s_column);
         if(store.get_iter(out iter,path))
         if(!store.iter_has_child(iter)){
+	  #if VALA_0_36
           store.remove(ref iter);
+	  #else
+	  store.remove(iter);
+	  #endif
           if(store.get_iter(out iter,path))
             view.set_cursor(path,null,false);
           else if(path.prev())
@@ -744,7 +748,11 @@ public class AYSettings : AYTab{
         view.get_cursor(out path,out s_column);
         if(store.get_iter(out iter,path))
         if(!store.iter_has_child(iter)){
+          #if VALA_0_36
           store.remove(ref iter);
+          #else
+          store.remove(iter);
+          #endif
           if(store.get_iter(out iter,path))
             view.set_cursor(path,null,false);
           else if(path.prev())
@@ -778,7 +786,11 @@ public class AYSettings : AYTab{
         view.get_cursor(out path,out s_column);
         if(store.get_iter(out iter,path))
         if(!store.iter_has_child(iter)){
+          #if VALA_0_36
           store.remove(ref iter);
+          #else
+          store.remove(iter);
+          #endif
           if(store.get_iter(out iter,path))
             view.set_cursor(path,null,false);
           else if(path.prev())

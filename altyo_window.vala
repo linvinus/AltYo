@@ -2641,11 +2641,26 @@ public class AYObject :Object{
 
     unowned List<unowned AYTab> item_it = null;
     unowned AYTab vt = null;
+    int64 index;
 
     uint length = this.children.length();
 
     //skip search if pattern is empty, or if only one tab is open
     if(new_pattern==null || new_pattern=="" || length<2) return;
+
+    /* switch to tab by index */
+    if(int64.try_parse (new_pattern, out index) && index >=0){
+
+          if(index > 0) --index; //index starting from zero
+
+          if(index >= length)
+            index = length-1;//switch to last tab
+
+          vt = this.children.nth_data((uint)index);
+          if(vt != null)
+            this.activate_tab(vt.tbutton);
+      return;
+    }
 
     var reg_exp = new GLib.Regex(".*"+new_pattern+".*",0);
 

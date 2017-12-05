@@ -212,6 +212,7 @@ public class VTMainWindow : Window{
   public bool allow_close=false;
   public bool gravity_north_west=true;
   public bool autohide=false;
+  public bool wayland=false;
 
   private uint32 last_focus_out_event_time;
   private unowned Gdk.Window ignore_last_active_window = null;
@@ -274,11 +275,13 @@ public class VTMainWindow : Window{
     /* since VTE 2.91,
      * needed for PanelHotkey to receive X.EventType.PropertyNotify events
      * */
-    var gdkwin = this.get_screen().get_root_window();
-    gdkwin.set_events(gdkwin.get_events()|Gdk.EventMask.PROPERTY_CHANGE_MASK);
-
-    this.hotkey = new PanelHotkey ();
-    this.hotkey.on_active_window_change.connect(this.check_focusout);
+    this.wayland = Gdk.Display.get_default().get_name().has_prefix("wayland");
+    if(!this.wayland){
+      var gdkwin = this.get_screen().get_root_window();
+      gdkwin.set_events(gdkwin.get_events()|Gdk.EventMask.PROPERTY_CHANGE_MASK);
+      this.hotkey = new PanelHotkey ();
+      this.hotkey.on_active_window_change.connect(this.check_focusout);
+    }
     this.reconfigure();//window
     this.not_configured=false;
 
@@ -296,8 +299,10 @@ public class VTMainWindow : Window{
 
     this.destroy.connect (()=>{
       this.hide();
-      this.hotkey.on_active_window_change.disconnect(this.check_focusout);
-      this.hotkey.unref();//destroy
+      if(!this.wayland){
+        this.hotkey.on_active_window_change.disconnect(this.check_focusout);
+        this.hotkey.unref();//destroy
+      }
       this.ayobject.save_configuration();
       this.conf.save();
       unowned Gtk.Widget ch=this.pixwin.get_child();
@@ -677,15 +682,17 @@ public class VTMainWindow : Window{
      * as workaround, remember last focus-out time,
      * if it more than 100ms, then window was unfocused
      * */
-     X.Window w=this.hotkey.get_input_focus();
-     var slf_win=this.get_window();
-     if(slf_win!=null)
-      debug("slf=%d w=%d",(int)Gdk.X11Window.get_xid(slf_win),(int)w);
-    //debug("toggle_window %d %d",(int)this.last_event_time,(int)this.hotkey.last_focus_out_event_time);
-    //&& !this.is_active && (this.current_state == WStates.VISIBLE) && ((int)this.hotkey.last_key_event_time-(int)this.last_focus_out_event_time)>100
-    if(this.current_state==WStates.VISIBLE && !this.keep_above && slf_win!=null && Gdk.X11Window.get_xid(slf_win) != w ){
-      this.window_set_active();
-      return;
+     if(!this.wayland){
+       X.Window w=this.hotkey.get_input_focus();
+       var slf_win=this.get_window();
+       if(slf_win!=null)
+        debug("slf=%d w=%d",(int)Gdk.X11Window.get_xid(slf_win),(int)w);
+      //debug("toggle_window %d %d",(int)this.last_event_time,(int)this.hotkey.last_focus_out_event_time);
+      //&& !this.is_active && (this.current_state == WStates.VISIBLE) && ((int)this.hotkey.last_key_event_time-(int)this.last_focus_out_event_time)>100
+      if(this.current_state==WStates.VISIBLE && !this.keep_above && slf_win!=null && Gdk.X11Window.get_xid(slf_win) != w ){
+        this.window_set_active();
+        return;
+      }
     }
 
     if(this.current_state == WStates.HIDDEN)
@@ -796,7 +803,9 @@ public class VTMainWindow : Window{
   }
 
   public override bool focus_out_event (Gdk.EventFocus event) {
-    this.last_focus_out_event_time=Gdk.x11_get_server_time(this.get_window());
+    if(!this.wayland){
+      this.last_focus_out_event_time=Gdk.x11_get_server_time(this.get_window());
+    }
     return base.focus_out_event (event);
   }
 
@@ -808,16 +817,18 @@ public class VTMainWindow : Window{
          this.current_state==WStates.VISIBLE ){
         var slf_win=this.get_window();
         if(slf_win!=null){
-          X.Window w=this.hotkey.get_input_focus();
-          X.Window slf_xid = Gdk.X11Window.get_xid(slf_win);
-          debug("active_window4 slf=%x focus=%x",(int)slf_xid,(int)w);
+          if(!this.wayland){
+            X.Window w=this.hotkey.get_input_focus();
+            X.Window slf_xid = Gdk.X11Window.get_xid(slf_win);
+            debug("active_window4 slf=%x focus=%x",(int)slf_xid,(int)w);
 
-          if(slf_xid!=w){
-            X.Window transient = this.hotkey.get_transient_for_xid(w);
-            debug("active_window5 slf=%x transient_for=%x",(int)slf_xid,(int)transient);
-            if(transient!=slf_xid)//include transient==0
-              this.pull_up();//not exist,hide
-          }
+            if(slf_xid!=w){
+              X.Window transient = this.hotkey.get_transient_for_xid(w);
+              debug("active_window5 slf=%x transient_for=%x",(int)slf_xid,(int)transient);
+              if(transient!=slf_xid)//include transient==0
+                this.pull_up();//not exist,hide
+            }
+          }//not wayland
         }
     }
   }
@@ -940,40 +951,42 @@ public class VTMainWindow : Window{
         return CFG_CHECK.OK;
       });
 
-    this.hotkey.unbind();
-    if(!this.conf.disable_hotkey){
-      KeyBinding grave=this.hotkey.bind (this.conf.get_accel_string("main_hotkey","<Alt>grave"));
-      if(grave!=null)
-        grave.on_trigged.connect(this.toggle_window);
-      else{
-        var new_key = this.conf.get_accel_string("main_hotkey","<Alt>grave");
-        do{
-          new_key = this.ShowGrabKeyDialog(new_key);
-          if(this.ayobject!=null && this.ayobject.action_group!=null){
-            /*update main_hotkey on reset*/
-            var action = this.ayobject.action_group.get_action("main_hotkey");
-            if(action!=null){
-              uint accelerator_key;
-              Gdk.ModifierType accelerator_mods;
-              Gtk.accelerator_parse(new_key,out accelerator_key,out accelerator_mods);
-              if(accelerator_key!=0){
-                if(this.ayobject.update_action_keybinding(action,accelerator_key,accelerator_mods))
-                  grave=this.hotkey.bind (new_key);//if new_key is not used for other actions then, try to bind
+    if( !this.wayland ){
+      this.hotkey.unbind();
+      if(!this.conf.disable_hotkey){
+        KeyBinding grave=this.hotkey.bind (this.conf.get_accel_string("main_hotkey","<Alt>grave"));
+        if(grave!=null)
+          grave.on_trigged.connect(this.toggle_window);
+        else{
+          var new_key = this.conf.get_accel_string("main_hotkey","<Alt>grave");
+          do{
+            new_key = this.ShowGrabKeyDialog(new_key);
+            if(this.ayobject!=null && this.ayobject.action_group!=null){
+              /*update main_hotkey on reset*/
+              var action = this.ayobject.action_group.get_action("main_hotkey");
+              if(action!=null){
+                uint accelerator_key;
+                Gdk.ModifierType accelerator_mods;
+                Gtk.accelerator_parse(new_key,out accelerator_key,out accelerator_mods);
+                if(accelerator_key!=0){
+                  if(this.ayobject.update_action_keybinding(action,accelerator_key,accelerator_mods))
+                    grave=this.hotkey.bind (new_key);//if new_key is not used for other actions then, try to bind
+                }
               }
+            }else{
+              grave=this.hotkey.bind (new_key);//currently we have no actions, try to bind
             }
-          }else{
-            grave=this.hotkey.bind (new_key);//currently we have no actions, try to bind
-          }
-        }while(grave==null && !this.allow_close);
+          }while(grave==null && !this.allow_close);
 
-        if(this.allow_close) return;//possible on destroying
+          if(this.allow_close) return;//possible on destroying
 
-        this.conf.set_accel_string("main_hotkey",new_key);
-        grave.on_trigged.connect(this.toggle_window);
+          this.conf.set_accel_string("main_hotkey",new_key);
+          grave.on_trigged.connect(this.toggle_window);
+        }
+      }else{
+        this.conf.get_accel_string("main_hotkey","<Alt>grave");//just read option
       }
-    }else{
-      this.conf.get_accel_string("main_hotkey","<Alt>grave");//just read option
-    }
+    }//not wayland
 
     this.mouse_follow  = conf.get_boolean("follow_the_white_rabbit",false);
     this.gravity_north_west  = conf.get_boolean("window_gravity_north_west",true);
@@ -1115,8 +1128,9 @@ public class VTMainWindow : Window{
         this.skip_taskbar_hint = false;
         this.set_keep_above(false);
       }
-
-      this.hotkey.send_net_active_window(this.get_window ());
+      if(!this.wayland){
+        this.hotkey.send_net_active_window(this.get_window ());
+      }
       if(this.prev_focus!=null)
         this.prev_focus.grab_focus();
       else
@@ -1165,7 +1179,9 @@ public class VTMainWindow : Window{
       Gdk.Window w = dialog.get_window();
       w.set_functions((Gdk.WMFunction.ALL|Gdk.WMFunction.CLOSE));
       dialog.grab_focus();
-      this.hotkey.send_net_active_window(dialog.get_window ());
+      if(!this.wayland){
+        this.hotkey.send_net_active_window(dialog.get_window ());
+      }
       string accelerator_name="";
 
       dialog.key_press_event.connect((widget,event) => {
@@ -1210,7 +1226,9 @@ public class VTMainWindow : Window{
       dialog.set_transient_for(this);
       dialog.show_all();
       dialog.grab_focus();
-      this.hotkey.send_net_active_window(dialog.get_window ());
+      if(!this.wayland){
+        this.hotkey.send_net_active_window(dialog.get_window ());
+      }
       int result = dialog.run();
       dialog.destroy ();
       if(result != Gtk.ResponseType.NONE)

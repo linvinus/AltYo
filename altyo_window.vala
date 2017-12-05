@@ -3438,10 +3438,12 @@ public class QoptNotebook: Notebook{
         this.encodings_combo.grab_focus();
       });
 
-    var hide_button = new Button.with_label(_("Apply"));
+    var hide_button = new Button();
     if(settings.gtk_button_images){
       var img = new Image.from_stock ("gtk-close",Gtk.IconSize.SMALL_TOOLBAR);
       hide_button.add(img);
+    }else{
+      hide_button.set_label(_("Apply"));
     }
     hide_button.clicked.connect(()=>{
       this.ayobject.quick_options_notebook_hide();

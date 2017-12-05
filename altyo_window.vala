@@ -1660,7 +1660,7 @@ public class AYObject :Object{
     return vt;
   }
 
-  private bool confirm_close_tab(string question){
+  public bool show_question_message_box(string question){
     bool close=true;
     Gtk.MessageType message_type=Gtk.MessageType.OTHER;
     var settings = Gtk.Settings.get_default();
@@ -1705,7 +1705,7 @@ public class AYObject :Object{
       bool close=true;
       VTTerminal vt=(VTTerminal)vtt;
       if(vt.tbutton.prevent_close){
-        if(!this.confirm_close_tab(_("Tab is locked, are you sure you want to close?"))){
+        if(!this.show_question_message_box(_("Tab is locked, are you sure you want to close?"))){
           return;//prevent close
         }else{
           vt.tbutton.prevent_close=false;
@@ -1741,7 +1741,7 @@ public class AYObject :Object{
         if(grx_exclude!=null && grx_exclude.match_all(ch,0,null)){
           var q=_("Found important task \"%s\"").printf(ch);
           q+="\n"+_("Close tab anyway?");
-          if(!this.confirm_close_tab(q)){
+          if(!this.show_question_message_box(q)){
             close=false;
           }
         }

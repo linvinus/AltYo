@@ -1387,6 +1387,18 @@ public class VTTerminal : AYTab{
       });
     menu.append(image_menuitem);
 
+    image_menuitem = new Gtk.ImageMenuItem.with_label (_("Kill running command")+" "+this.find_tty_pgrp(this.pid,FIND_TTY.CMDLINE));
+    if(settings.gtk_menu_images){
+      //show images only if it not disabled globally
+      image = new Gtk.Image.from_icon_name ("gtk-delete", Gtk.IconSize.MENU);
+      image_menuitem.set_image(image);
+    }
+    image_menuitem.activate.connect(()=>{
+      if(vtw.ayobject.show_question_message_box(_("Do you really want to kill running command?")))
+        Posix.kill(int.parse(this.find_tty_pgrp(this.pid,FIND_TTY.PID)),GLib.ProcessSignal.KILL);
+      });
+    menu.append(image_menuitem);
+
     Gtk.CheckMenuItem chmenuitem;
 
     chmenuitem = new Gtk.CheckMenuItem.with_label (_("Disable key bindings"));

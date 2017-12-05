@@ -3347,6 +3347,7 @@ public class QoptNotebook: Notebook{
     encogings_box_hbox.valign=Gtk.Align.START;
     encogings_box_hbox.expand=false;
     encogings_box_hbox.name="encogings_box_hbox";
+    encogings_box_hbox.set_spacing(5);
 
 
     var builder = new Gtk.Builder ();
@@ -3402,6 +3403,7 @@ public class QoptNotebook: Notebook{
 
     var settings = Gtk.Settings.get_default();
 
+    encogings_box_hbox.pack_start(new Gtk.Label ("Del:"),false,false,0);
     this.delete_binding_combo = builder.get_object ("terminal_delete_binding") as Gtk.ComboBox;
     encogings_box_hbox.pack_start(this.delete_binding_combo,false,false,0);
     //catch deactivate signal from combobox popup
@@ -3409,6 +3411,7 @@ public class QoptNotebook: Notebook{
     popup1.deactivate.connect(()=>{
         this.encodings_combo.grab_focus();
       });
+    encogings_box_hbox.pack_start(new Gtk.Label ("BS:"),false,false,0);
     this.terminal_backspace_combo = builder.get_object ("terminal_backspace_binding") as Gtk.ComboBox;
     encogings_box_hbox.pack_start(this.terminal_backspace_combo,false,false,0);
     //catch deactivate signal from combobox popup
@@ -3417,7 +3420,7 @@ public class QoptNotebook: Notebook{
         this.encodings_combo.grab_focus();
       });
 
-    var hide_button = new Button();
+    var hide_button = new Button.with_label(_("Apply"));
     if(settings.gtk_button_images){
       var img = new Image.from_stock ("gtk-close",Gtk.IconSize.SMALL_TOOLBAR);
       hide_button.add(img);

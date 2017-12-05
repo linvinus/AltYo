@@ -100,7 +100,7 @@ public class VTToggleButton : Gtk.Button{
     set{
       _tab_custom_title=value;
       this.force_update_tab_title = true;
-      this.set_title(this.tab_index,null);
+      this.set_title(this.tab_index,this.tab_title);//save old tab title, custom title will be setted because of tab_custom_title_enabled  = this.tab_custom_title != null
       this.user_notify=false;
     }
   }

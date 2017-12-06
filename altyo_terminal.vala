@@ -637,6 +637,7 @@ public class AYTerm : Vte.Terminal{
 public class VTTerminal : AYTab{
   public AYTerm vte_term {get; set; default = null;}
   public Pid pid {get; set; default = -1;}
+  public string terminal_running_command = "";
   public bool auto_restart {get; set; default = true;}
   public bool match_case {get; set; default = false;}
   private OnChildExitCallBack on_child_exit {get; set; default = null;}
@@ -859,6 +860,7 @@ public class VTTerminal : AYTab{
       this.vte_term.watch_child(child_pid);
       this.pid=child_pid;
     }
+    this.terminal_running_command = argvp[0];
 
     return ret;
   }
@@ -1387,8 +1389,14 @@ public class VTTerminal : AYTab{
       image_menuitem.set_image(image);
     }
     image_menuitem.activate.connect(()=>{
-      if(vtw.ayobject.show_question_message_box(_("Do you really want to kill running command?")))
-        Posix.kill(int.parse(_vt_term.find_tty_pgrp(_vt_term.pid,FIND_TTY.PID)),GLib.ProcessSignal.KILL);
+      if( vtw.ayobject.show_question_message_box(_("Do you really want to kill running command?\nProcess to kill:")+_vt_term.find_tty_pgrp(_vt_term.pid,FIND_TTY.CMDLINE)+" ["+_vt_term.find_tty_pgrp(_vt_term.pid,FIND_TTY.PID)+"]" ) ){
+        if(Posix.kill(int.parse(_vt_term.find_tty_pgrp(_vt_term.pid,FIND_TTY.PID)),GLib.ProcessSignal.KILL) < 0 && Posix.errno == Posix.EPERM){
+          if( vtw.ayobject.show_question_message_box(_("Permission error, do you want to kill terminal shell?\nProcess to kill:") + _vt_term.terminal_running_command +" ["+_vt_term.pid.to_string()+"]" ) ){
+            if( Posix.kill(_vt_term.pid, GLib.ProcessSignal.KILL) < 0 )
+                debug("error Posix.kill = %d",Posix.errno);
+          }
+        }
+      }
       });
     menu.append(image_menuitem);
 

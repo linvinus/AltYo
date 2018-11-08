@@ -376,6 +376,53 @@ public class HVBox : Container {
       return (get_max_natural_height == true ? natural_height : minimum_height);
   }//get_line_height
 
+  private int get_allocated_line_height (ref unowned List<HVBoxItem> first_item=null,int width, bool get_max_natural_height = false) {
+
+      if(first_item==null)
+        return -1;//assert
+
+      int minimum_height = 0;
+      int natural_height = 0;
+      int natural_width = 0;
+
+      var allocation = Gtk.Allocation();//don't use new for struct
+
+      allocation.x=0;
+      allocation.y=0;
+      allocation.height=0;
+      allocation.width=0;
+
+      var sum_w=0;
+
+
+      unowned List<HVBoxItem> item_it=null;
+      unowned List<HVBoxItem> last_item=first_item;
+
+      for (item_it = first_item; item_it != null; item_it = item_it.next) {
+        unowned HVBoxItem item = item_it.data;
+        unowned Widget widget = item.widget;
+        var m_h =0;
+        var n_h =0;
+
+//~         widget.get_preferred_width (out allocation.width, out natural_width);
+//~         widget.get_preferred_height(out m_h,out n_h);
+        allocation.width = m_h = widget.get_allocated_width();
+        n_h = widget.get_allocated_height();
+
+        minimum_height=int.max(minimum_height,m_h);
+        natural_height=int.max(natural_height,n_h);
+
+        if( (sum_w + allocation.width) > width)
+          break;//normal out
+
+        sum_w += allocation.width;
+        last_item=item_it;
+      }
+
+      first_item=last_item;
+      return (get_max_natural_height == true ? natural_height : minimum_height);
+  }//get_line_height
+
 
    public override void size_allocate (Gtk.Allocation allocation) {
       //this.update_size();
@@ -707,6 +754,7 @@ public class HVBox : Container {
     base.propagate_draw (child, cr);
   }*/
   public override  bool draw (Cairo.Context cr){
+//~     Globals.print_backtrace();
     if(!this.get_realized()){
       debug("draw invisible\n");
       return false;//prevent X Window System error
@@ -720,6 +768,7 @@ public class HVBox : Container {
     cr.save ();
 
     Gtk.StyleContext context = this.get_style_context();
+    context.save();
     Gtk.Border border=context.get_border(StateFlags.NORMAL);
 
     var line_h = 0;
@@ -748,7 +797,7 @@ public class HVBox : Container {
     for (item_it = this.children; item_it != null; item_it = item_it.next) {
 
       end_of_line=item_it;
-      line_h = get_line_height(ref end_of_line, width-border.left-border.right,false);//get end of line
+      line_h = get_allocated_line_height(ref end_of_line, width-border.left-border.right,false);//get end of line
 
       allocation.x = 0 ;//start of the line
       allocation.height=line_h;//base height for line
@@ -757,7 +806,6 @@ public class HVBox : Container {
 
       for (line_item=item_it; (line_item != null && end_of_line != null) &&
         line_item != end_of_line.next ; line_item = line_item.next) {
-
         unowned HVBoxItem item = line_item.data;
         unowned Widget widget = item.widget;
         allocation.width+=item.widget.get_allocated_width();
@@ -854,6 +902,7 @@ public class HVBox : Container {
       //cr.restore();
       //cr.restore();
     }
+    context.restore();
     return false;
   }
 

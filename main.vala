@@ -61,6 +61,11 @@ else
 
 return true;
 }
+[CCode ( cheader_filename = "execinfo.h",cname = "backtrace")]
+extern int linux_backtrace (void*[] buffer, int size);
+
+[CCode ( cheader_filename = "execinfo.h",cname = "backtrace_symbols")]
+extern string[]? linux_backtrace_symbols (void **buffer, int size);
 
 struct Globals{
   static bool reload = false;
@@ -163,6 +168,21 @@ struct Globals{
 
         return found;
       }
+    public static void print_backtrace () {
+            void*[] array = new void*[20];
+
+            int size = linux_backtrace (array, 20);
+
+            string[] strings = linux_backtrace_symbols (array, size);
+            for(int i=0; i< size; i++) {
+                    print ("(%d): %s\n", i, strings[i]);
+            }
+
+            /* this can't work because the array length in unknown by vala
+            foreach (string trace in strings) {
+                stdout.printf("%s\n", trace);
+            }*/
+    }
 }//Globals
 
 unowned Gtk.Window main_win;

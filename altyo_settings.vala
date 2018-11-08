@@ -128,7 +128,7 @@ const string settings_base_css = """
  }
 
 #VTToggleButton .label  {
- font: Mono 10;
+ /*font: 'Mono' 10px;*/
  outline-width: 0px;
  border-width:0px;
  -outer-stroke-width: 0px;

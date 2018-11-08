@@ -3033,11 +3033,13 @@ public class QoptNotebook: Notebook{
       int width = this.get_allocated_width ();
       int height = this.get_allocated_height ();
       var context = this.get_style_context();
+      context.save();
       render_background(context,cr, 0, 0,width, height);
       this.foreach((widget)=>{
         if(widget.parent==this)
           this.propagate_draw(widget,cr);
         });
+        context.restore();
         return false;
       });
 
